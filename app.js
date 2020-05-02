@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const MongoClient = require('mongodb').MongoClient;
 const path = require('path');
-const url = 'mongodb://localhost:27017'; //
+const url = 'mongodb://localhost:27017'; //how to connect to locally hosted mongodb
 
 const dbName = 'spark'
 let db
