@@ -5,11 +5,12 @@ const MongoClient = require('mongodb').MongoClient;
 const path = require('path');
 const url = 'mongodb://localhost:27017'; //how to connect to locally hosted mongodb
 
-const dbName = 'spark'
-let db
+const dbName = 'spark';
+let db;
 
 MongoClient.connect(url, {
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 }, (err, client) => {
     if (err) return console.log(err)
 
