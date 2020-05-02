@@ -1,0 +1,21 @@
+{
+  "name": "sparksubmit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hanna Flores",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dev": "nodemon app.js",
+    "express": "^4.17.1",
+    "mongodb": "^3.5.7",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3"
+  }
+}
