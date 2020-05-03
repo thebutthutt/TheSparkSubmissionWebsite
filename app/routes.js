@@ -7,11 +7,6 @@ module.exports = function (app, passport) {
         res.render('index.ejs'); // load the index.ejs file
     });
 
-
-
-
-
-
     // =====================================
     // LOGIN ===============================
     // =====================================
@@ -31,11 +26,6 @@ module.exports = function (app, passport) {
         failureFlash: true // allow flash messages
     }));
 
-
-
-
-
-
     // =====================================
     // SIGNUP ==============================
     // =====================================
@@ -50,15 +40,10 @@ module.exports = function (app, passport) {
 
     // process the signup form
     app.post('/signup', passport.authenticate('local-signup', {
-        successRedirect: '/profile', // redirect to the secure profile section
-        failureRedirect: '/signup', // redirect back to the signup page if there is an error
-        failureFlash: true // allow flash messages
-    }));
-
-
-
-
-
+            successRedirect: '/profile', // redirect to the secure profile section
+            failureRedirect: '/signup', // redirect back to the signup page if there is an error
+            failureFlash: true // allow flash messages
+        }));
 
     // =====================================
     // PROFILE SECTION =====================
@@ -71,11 +56,6 @@ module.exports = function (app, passport) {
         });
     });
 
-
-
-
-
-
     // =====================================
     // LOGOUT ==============================
     // =====================================
@@ -84,11 +64,6 @@ module.exports = function (app, passport) {
         res.redirect('/');
     });
 };
-
-
-
-
-
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {

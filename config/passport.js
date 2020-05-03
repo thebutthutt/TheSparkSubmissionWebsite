@@ -32,37 +32,35 @@ module.exports = function (passport) {
     // by default, if there was no name, it would just be called 'local'
 
     passport.use('local-signup', new LocalStrategy({
-            // by default, local strategy uses username and password, we will override with email
-            usernameField: 'email',
+            // by default, local strategy uses username and password, we will override with euid
+            usernameField: 'euid',
             passwordField: 'password',
             passReqToCallback: true // allows us to pass back the entire request to the callback
         },
-        function (req, email, password, done) {
-
+        function (req, euid, password, done) {
             // asynchronous
             // User.findOne wont fire unless data is sent back
             process.nextTick(function () {
-
-                // find a user whose email is the same as the forms email
+                // find a user whose euid is the same as the forms euid
                 // we are checking to see if the user trying to login already exists
                 User.findOne({
-                    'local.email': email
+                    'local.euid': euid
                 }, function (err, user) {
                     // if there are any errors, return the error
                     if (err)
                         return done(err);
 
-                    // check to see if theres already a user with that email
+                    // check to see if theres already a user with that euid
                     if (user) {
-                        return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
-                    } else {
-
-                        // if there is no user with that email
+                        return done(null, false, req.flash('signupMessage', 'That euid is already taken.'));
+                    } else if (req.body.magic == 'Barbie.com') { 
+                        //must enter correct magic words to continue
+                        // if there is no user with that euid
                         // create the user
                         var newUser = new User();
 
                         // set the user's local credentials
-                        newUser.local.email = email;
+                        newUser.local.euid = euid;
                         newUser.local.password = newUser.generateHash(password);
 
                         // save the user
@@ -71,6 +69,9 @@ module.exports = function (passport) {
                                 throw err;
                             return done(null, newUser);
                         });
+                    } else {
+                        //incorrect magic words means no sign up
+                        return done(null, false, req.flash('signupMessage', 'Your magic words have no power here.'));
                     }
 
                 });
@@ -85,17 +86,17 @@ module.exports = function (passport) {
     // by default, if there was no name, it would just be called 'local'
 
     passport.use('local-login', new LocalStrategy({
-            // by default, local strategy uses username and password, we will override with email
-            usernameField: 'email',
+            // by default, local strategy uses username and password, we will override with euid
+            usernameField: 'euid',
             passwordField: 'password',
             passReqToCallback: true // allows us to pass back the entire request to the callback
         },
-        function (req, email, password, done) { // callback with email and password from our form
+        function (req, euid, password, done) { // callback with euid and password from our form
 
-            // find a user whose email is the same as the forms email
+            // find a user whose euid is the same as the forms euid
             // we are checking to see if the user trying to login already exists
             User.findOne({
-                'local.email': email
+                'local.euid': euid
             }, function (err, user) {
                 // if there are any errors, return the error before anything else
                 if (err)
