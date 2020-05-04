@@ -1,7 +1,7 @@
 .container {
     padding-top: 80px;
     margin: auto;
-    max-width: 500px;
+    max-width: 600px;
 }
 
 .pgTitle {
@@ -47,4 +47,8 @@ form .middle-row {
 
 form .middle-row input {
     border-radius: 0px;
+}
+
+.col-form-label {
+    padding-left: 0px;
 }

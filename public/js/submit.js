@@ -1,5 +1,12 @@
 $(document).ready(function () {
-    $.ajax({ type: 'GET', url: '/oneprint', dataType: 'html', success: function(data){ $('#files-list').append(data); } });
+    $.ajax({
+        type: 'GET',
+        url: '/oneprint',
+        dataType: 'html',
+        success: function (data) {
+            $('#files-list').append(data);
+        }
+    });
 
     $("#requestTypeSelector").change(function () {
         var requestType = $(this).children("option:selected").val();
@@ -10,9 +17,18 @@ $(document).ready(function () {
         }
     });
 
-    $("#change").click(function() {
-        $.ajax({ type: 'GET', url: '/oneprint', dataType: 'html', success: function(data){ $('#files-list').append(data); } });
-    }); 
+    $("#change").click(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/oneprint',
+            dataType: 'html',
+            success: function (data) {
+                $('#files-list').append(data);
+            }
+        });
+    });
 
-    
+    $("#remove").click(function () {
+        $(".single-print:last").remove();
+    });
 });

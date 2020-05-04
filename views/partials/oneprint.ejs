@@ -1,31 +1,31 @@
-<div class="form-group">
+<div class="form-group single-print">
   <div class="form-group row">
     <div class="custom-file" id="customFile" lang="es">
       <input type="file" class="custom-file-input" id="exampleInputFile" aria-describedby="fileHelp">
       <label class="custom-file-label" for="exampleInputFile">
-         Select file...
+        Select file...
       </label>
-</div>
+    </div>
   </div>
 
   <div class="row first-row">
-      <label class="col-form-label col-sm-3">Material</label>
-      <select class="form-control col-sm-9">
-          <option value="pla">PLA</option>
-          <option value="abs">ABS</option>
-          <option value="other">Other (requires prior approval)</option>
-      </select>
+    <label class="col-form-label col-sm-3">Material</label>
+    <select class="form-control col-sm-9">
+      <option value="pla">PLA</option>
+      <option value="abs">ABS</option>
+      <option value="other">Other (requires prior approval)</option>
+    </select>
 
   </div>
 
   <div class="row middle-row">
-      <label class="col-form-label col-sm-3">Infill</label>
-      <input type="text" class="form-control col-sm-9" name="infill" placeholder="Default 12.5%">
+    <label class="col-form-label col-sm-3">Infill</label>
+    <input type="text" class="form-control col-sm-9" name="infill" placeholder="Default 12.5%">
   </div>
 
   <div class="row last-row">
-      <label class="col-form-label col-sm-3">Color</label>
-      <input type="text" class="form-control col-sm-9" name="color" placeholder="If we don't have it, we'll ket you know">
+    <label class="col-form-label col-sm-3">Color</label>
+    <input type="text" class="form-control col-sm-9" name="color" placeholder="If we don't have it, we'll ket you know">
   </div>
 
   <hr>
@@ -33,8 +33,8 @@
 </div>
 
 <script type="text/javascript">
-  $('.custom-file-input').on('change', function() { 
-let fileName = $(this).val().split('\\').pop(); 
-$(this).siblings('.custom-file-label').addClass("selected").html(fileName); 
-});
+  $('.custom-file-input').on('change', function () {
+    let fileName = $(this).val().split('\\').pop();
+    $(this).siblings('.custom-file-label').addClass("selected").html(fileName);
+  });
 </script>

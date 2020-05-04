@@ -4,7 +4,9 @@ module.exports = function (app, passport) {
     // HOME PAGE (with login links) ========
     // =====================================
     app.get('/', function (req, res) {
-        res.render('pages/index', {pgnum:1}); // load the index.ejs file
+        res.render('pages/index', {
+            pgnum: 1
+        }); // load the index.ejs file
     });
 
     // =====================================
@@ -15,15 +17,16 @@ module.exports = function (app, passport) {
         res.render('pages/submit', {
             message: req.flash('submitMessage'),
             pgnum: 2
-        }); 
+        });
     });
 
-    app.get('/oneprint', function (req, res) { 
+    app.get('/oneprint', function (req, res) {
         res.render('partials/oneprint');
-        
-    }, function(err, html){ res.send(html); });
+    }, function (err, html) {
+        res.send(html);
+    });
 
-    app.post('/submit', function(req, res) {
+    app.post('/submit', function (req, res) {
         //something here
         req.flash('submitMessage', 'Testing');
         res.redirect('/submit');
@@ -62,10 +65,10 @@ module.exports = function (app, passport) {
 
     // process the signup form
     app.post('/signup', passport.authenticate('local-signup', {
-            successRedirect: '/profile', // redirect to the secure profile section
-            failureRedirect: '/signup', // redirect back to the signup page if there is an error
-            failureFlash: true // allow flash messages
-        }));
+        successRedirect: '/profile', // redirect to the secure profile section
+        failureRedirect: '/signup', // redirect back to the signup page if there is an error
+        failureFlash: true // allow flash messages
+    }));
 
     // =====================================
     // PROFILE SECTION =====================
@@ -110,8 +113,8 @@ function isLoggedOut(req, res, next) {
         res.redirect('/profile');
     } else {
         //else let them to the login page
-    return next();
+        return next();
     }
 
-    
+
 }
