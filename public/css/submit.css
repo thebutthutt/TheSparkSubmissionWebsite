@@ -1,0 +1,49 @@
+.container {
+    padding-top: 80px;
+    margin: auto;
+}
+
+.pgTitle {
+    margin-bottom: 50px;
+}
+
+.input-group input[type="text"], form .first-row select {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.form-group input[type="email"] {
+    border-radius: 0px;
+    margin-top: -1px;
+    margin-bottom: -1px;
+    position: relative;
+    z-index: 1;
+}
+
+form-group input[type="email"]:focus {
+    z-index: 5;
+}
+
+.form-group .euid, form .last-row input {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    position: relative;
+}
+
+.form-group .euid:focus {
+    z-index: 6;
+}
+
+form .row {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+form .middle-row {
+    margin-top: -1px;
+    margin-bottom: -1px;
+}
+
+form .middle-row input {
+    border-radius: 0px;
+}

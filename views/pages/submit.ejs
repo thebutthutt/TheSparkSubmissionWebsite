@@ -4,61 +4,102 @@
 
 <head>
     <%- include ("../partials/head") %>
-    <style>
-        .container {
-            padding-top: 80px;
-        }
-    </style>
+    <link type="text/css" rel="stylesheet" href="css/submit.css">
+    <script src="js/submit.js"></script>
 </head>
 
 <body>
     <%- include ("../partials/header") %>
-    <div class="container">
+    <div class="container col-sm-6 offset-sm-3">
 
-        <div class="col-sm-6 col-sm-offset-3">
+        <h1 class="pgTitle"><svg class="bi bi-pencil-square" width="1em" height="1em" viewBox="0 0 16 16"
+                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M15.502 1.94a.5.5 0 010 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 01.707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 00-.121.196l-.805 2.414a.25.25 0 00.316.316l2.414-.805a.5.5 0 00.196-.12l6.813-6.814z" />
+                <path fill-rule="evenodd"
+                    d="M1 13.5A1.5 1.5 0 002.5 15h11a1.5 1.5 0 001.5-1.5v-6a.5.5 0 00-1 0v6a.5.5 0 01-.5.5h-11a.5.5 0 01-.5-.5v-11a.5.5 0 01.5-.5H9a.5.5 0 000-1H2.5A1.5 1.5 0 001 2.5v11z"
+                    clip-rule="evenodd" />
+            </svg> New Submission</h1>
 
-            <h1><span class="fa fa-sign-in"></span> New Submission</h1>
+        <!-- show any messages that come back with authentication -->
+        <% if (message.length > 0) { %>
+        <div class="alert alert-danger"><%= message %></div>
+        <% } %>
 
-            <!-- show any messages that come back with authentication -->
-            <% if (message.length > 0) { %>
-            <div class="alert alert-danger"><%= message %></div>
-            <% } %>
+        <!-- SUBMISSION FORM -->
+        <form action="/submit" method="post">
 
-            <!-- SUBMISSION FORM -->
-            <form action="/submit" method="post">
-                <div class="form-group form-row">
-                    <div class="col">
-                        <input type="text" class="form-control" name="name">
-                    </div>
-                    <div class="col">
-                        <input type="text" class="form-control" name="euid">
+            <div class="form-group row">
+                <label>Patron Info</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" name="first" placeholder="First name">
+                    <input type="text" class="form-control" name="last" placeholder="Last name">
+                </div>
+                <input type="email" class="form-control" name="email" placeholder="Email">
+                <input type="text" class="form-control euid" name="euid" placeholder="EUID">
+            </div>
+
+
+            <div class="form-group row">
+                <label>Request Type</label>
+                <select class="form-control" id="requestTypeSelector">
+                    <option value="print">3D Print</option>
+                    <option value="cnc">CNC Work Order</option>
+                    <option value="laser">Laser Cut/Engrave Work Order</option>
+                    <option value="embroider">Embroidery Machine Work Order</option>
+                    <option value="other">Other (please specify in the notes)</option>
+                </select>
+            </div>
+
+            <div class="form-group print-only">
+                <div class="form-group row">
+                    <label>STL File</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="uploadedFile"
+                            aria-describedby="inputGroupFileAddon01">
+                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                     </div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="requestType">Request Type</label>
-                    <select class="form-control" id="requestTypeSelector">
-                        <option>3D Print</option>
-                        <option>CNC Work Order</option>
-                        <option>Laser Cut/Engrave Work Order</option>
-                        <option>Embroidery Machine Work Order</option>
-                        <option>Other (please specify in the notes)</option>
+
+                <div class="row first-row">
+                    <label class="col-form-label col-sm-3">Material</label>
+                    <select class="form-control col-sm-9" id="materialSelector">
+                        <option value="pla">PLA</option>
+                        <option value="abs">ABS</option>
+                        <option value="other">Other (requires prior approval)</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="notes">Additional Notes</label>
-                    <textarea class="form-control" id="notesContainer" rows="3"></textarea>
+
                 </div>
 
-                <button type="submit" class="btn btn-warning btn-lg">Submit</button>
-            </form>
+                <div class="row middle-row">
+                    <label class="col-form-label col-sm-3">Infill</label>
+                    <input type="text" class="form-control col-sm-9" name="infill" placeholder="12.5%">
+                </div>
 
-            <hr>
+                <div class="row last-row">
+                    <label class="col-form-label col-sm-3">Color</label>
+                    <input type="text" class="form-control col-sm-9" name="color" placeholder="Color">
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+                <label for="notes">Additional Notes</label>
+                <textarea class="form-control" id="notesContainer" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-lg btn-primary btn-block">Submit</button>
+        </form>
+        <script>
+            $('#uploadedFile').on('change', function () {
+                let fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').addClass("selected").html(fileName);
+            });
+        </script>
+        <hr>
 
 
-            <p>Go <a href="/">home</a>?</p>
-
-        </div>
+        <p>Go <a href="/">home</a>?</p>
 
     </div>
 </body>

@@ -31,6 +31,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json()); // get information from html forms
 
 app.set('view engine', 'ejs'); // set up ejs for templating
+app.use(express.static(__dirname + '/public')); //allow us to grab local files in the public directory
 
 // required for passport
 app.use(session({
