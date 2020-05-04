@@ -1,0 +1,24 @@
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #00853E;">
+
+    <a class="navbar-brand" href="/">The Spark Makerspace</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav mr-auto">
+            <li class='nav-item <% if (pgnum == 1) { %> active <%}%>'>
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class='nav-item <% if (pgnum == 2) { %> active <%}%>'>
+                <a class="nav-link" href="/submit">Submit</a>
+            </li>
+            <li class='nav-item <% if (pgnum == 3) { %> active <%}%>'>
+                <a class="nav-link" href="/login">Admin Login </a>
+            </li>
+        </ul>
+    </div>
+
+</nav>
