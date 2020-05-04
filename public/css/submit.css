@@ -1,6 +1,7 @@
 .container {
     padding-top: 80px;
     margin: auto;
+    max-width: 500px;
 }
 
 .pgTitle {

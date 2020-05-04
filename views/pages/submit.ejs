@@ -29,6 +29,7 @@
         <!-- SUBMISSION FORM -->
         <form action="/submit" method="post">
 
+
             <div class="form-group row">
                 <label>Patron Info</label>
                 <div class="input-group">
@@ -51,36 +52,13 @@
                 </select>
             </div>
 
-            <div class="form-group print-only">
-                <div class="form-group row">
-                    <label>STL File</label>
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="uploadedFile"
-                            aria-describedby="inputGroupFileAddon01">
-                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                    </div>
+
+            <div class="print-only">
+                <hr>
+                <div id="files-list"></div>
+                <div class="clearfix">
+                    <button type="button" id="change" class="btn btn-light btn-sm float-right">Add another</button>
                 </div>
-
-                <div class="row first-row">
-                    <label class="col-form-label col-sm-3">Material</label>
-                    <select class="form-control col-sm-9" id="materialSelector">
-                        <option value="pla">PLA</option>
-                        <option value="abs">ABS</option>
-                        <option value="other">Other (requires prior approval)</option>
-                    </select>
-
-                </div>
-
-                <div class="row middle-row">
-                    <label class="col-form-label col-sm-3">Infill</label>
-                    <input type="text" class="form-control col-sm-9" name="infill" placeholder="12.5%">
-                </div>
-
-                <div class="row last-row">
-                    <label class="col-form-label col-sm-3">Color</label>
-                    <input type="text" class="form-control col-sm-9" name="color" placeholder="Color">
-                </div>
-
             </div>
 
             <div class="form-group row">
@@ -90,12 +68,6 @@
 
             <button type="submit" class="btn btn-lg btn-primary btn-block">Submit</button>
         </form>
-        <script>
-            $('#uploadedFile').on('change', function () {
-                let fileName = $(this).val().split('\\').pop();
-                $(this).next('.custom-file-label').addClass("selected").html(fileName);
-            });
-        </script>
         <hr>
 
 

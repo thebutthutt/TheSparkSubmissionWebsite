@@ -18,6 +18,11 @@ module.exports = function (app, passport) {
         }); 
     });
 
+    app.get('/oneprint', function (req, res) { 
+        res.render('partials/oneprint');
+        
+    }, function(err, html){ res.send(html); });
+
     app.post('/submit', function(req, res) {
         //something here
         req.flash('submitMessage', 'Testing');
@@ -28,7 +33,7 @@ module.exports = function (app, passport) {
     // LOGIN ===============================
     // =====================================
     // show the login form
-    app.get('/login', function (req, res) {
+    app.get('/login', isLoggedOut, function (req, res) {
         // render the page and pass in any flash data if it exists
         res.render('pages/login', {
             message: req.flash('loginMessage'),
@@ -69,6 +74,7 @@ module.exports = function (app, passport) {
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get('/profile', isLoggedIn, function (req, res) {
         res.render('pages/profile', {
+            message: req.flash('logoutMessage'),
             pgnum: 5,
             user: req.user // get the user out of session and pass to template
         });
@@ -91,5 +97,21 @@ function isLoggedIn(req, res, next) {
         return next();
 
     // if they aren't redirect them to the home page
-    res.redirect('/');
+    req.flash('loginMessage', 'Please log in');
+    res.redirect('/login');
+}
+
+//make sure user is logged out
+function isLoggedOut(req, res, next) {
+
+    //if the user is already logged in, send them to their profile page
+    if (req.isAuthenticated()) {
+        req.flash('logoutMessage', 'You\'re already logged in!');
+        res.redirect('/profile');
+    } else {
+        //else let them to the login page
+    return next();
+    }
+
+    
 }

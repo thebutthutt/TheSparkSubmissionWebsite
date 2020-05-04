@@ -11,6 +11,10 @@
 <body>
     <%- include ("../partials/header") %>
 <div class="container">
+    <!-- show any messages that come back with authentication -->
+    <% if (message.length > 0) { %>
+        <div class="alert alert-warning"><%= message %></div>
+        <% } %>
     <div class="page-header text-center">
         <h1><span class="fa fa-anchor"></span> Profile Page</h1>
         <a href="/logout" class="btn btn-default btn-sm">Logout</a>

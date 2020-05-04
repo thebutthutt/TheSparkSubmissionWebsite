@@ -7,15 +7,15 @@
     <style>
         .container {
             padding-top: 80px;
+            max-width: 300px;
+            margin: auto;
         }
     </style>
 </head>
 
 <body>
     <%- include ("../partials/header") %>
-    <div class="container">
-
-        <div class="col-sm-6 col-sm-offset-3">
+    <div class="container col-sm-6 offset-sm-3">
 
             <h1><span class="fa fa-sign-in"></span> Signup</h1>
 
@@ -27,27 +27,24 @@
             <!-- LOGIN FORM -->
             <form action="/signup" method="post">
                 <div class="form-group">
-                    <label>EUID</label>
-                    <input type="text" class="form-control" name="euid">
+                    <label class="sr-only">EUID</label>
+                    <input type="text" class="form-control" name="euid" placeholder="EUID">
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" class="form-control" name="password">
+                    <label class="sr-only">Password</label>
+                    <input type="password" class="form-control" name="password" placeholder="Password">
                 </div>
                 <div class="form-group">
-                    <label>Magic Words</label>
-                    <input type="text" class="form-control" name="magic">
+                    <label class="sr-only">Magic Words</label>
+                    <input type="text" class="form-control" name="magic" placeholder="Magic Words...">
                 </div>
 
-                <button type="submit" class="btn btn-warning btn-lg">Signup</button>
+                <button type="submit" class="btn btn-lg btn-primary btn-block">Signup</button>
             </form>
 
             <hr>
 
             <p>Already have an account? <a href="/login">Login</a></p>
-            <p>Or go <a href="/">home</a>.</p>
-
-        </div>
 
     </div>
 </body>

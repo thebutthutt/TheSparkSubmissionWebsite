@@ -53,7 +53,7 @@ module.exports = function (passport) {
                     // check to see if theres already a user with that euid
                     if (user) {
                         return done(null, false, req.flash('signupMessage', 'That euid is already taken.'));
-                    } else if (req.body.magic == 'Barbie.com') { 
+                    } else if (req.body.magic == 'The Empire Strikes Back') { 
                         //must enter correct magic words to continue
                         // if there is no user with that euid
                         // create the user
