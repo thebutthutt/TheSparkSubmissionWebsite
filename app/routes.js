@@ -5,7 +5,7 @@ module.exports = function (app, passport, printHandler) {
     // =====================================
     app.get('/', function (req, res) {
         res.render('pages/index', {
-            pgnum: 1
+            pgnum: 1//tells the navbar what page to highlight
         }); // load the index.ejs file
     });
 
@@ -16,22 +16,24 @@ module.exports = function (app, passport, printHandler) {
         //load the submission page and flash any messages
         res.render('pages/submit', {
             message: req.flash('submitMessage'),
-            pgnum: 2
+            pgnum: 2 //tells the navbar what page to highlight
         });
     });
 
     //send the HTML from the single print submission segment to the browser
     //used for adding more than one 3d print in a single submission form
     app.get('/oneprint', function (req, res) {
-        res.render('partials/oneprint');
+        res.render('partials/oneprint'); //render the html
     }, function (err, html) {
-        res.send(html);
+        res.send(html); //send it to the webapp
     });
 
     app.post('/submit', function (req, res) {
         //something here
         req.flash('submitMessage', 'Testing');
-        printHandler.addToDatabase(req);
+        if (req.body.requestType == 'print') { //checks to make sure the request was for a print submission
+            printHandler.addToDatabase(req); //send the data to the print handler to make a new entry in the database
+        }
         res.redirect('/submit');
     });
 
@@ -43,7 +45,7 @@ module.exports = function (app, passport, printHandler) {
         // render the page and pass in any flash data if it exists
         res.render('pages/login', {
             message: req.flash('loginMessage'),
-            pgnum: 3
+            pgnum: 3//tells the navbar what page to highlight
         });
     });
 
@@ -62,7 +64,7 @@ module.exports = function (app, passport, printHandler) {
         // render the page and pass in any flash data if it exists
         res.render('pages/signup', {
             message: req.flash('signupMessage'),
-            pgnum: 4
+            pgnum: 4//tells the navbar what page to highlight
         });
     });
 
@@ -81,7 +83,7 @@ module.exports = function (app, passport, printHandler) {
     app.get('/profile', isLoggedIn, function (req, res) {
         res.render('pages/profile', {
             message: req.flash('logoutMessage'),
-            pgnum: 5,
+            pgnum: 5, //tells the navbar what page to highlight
             user: req.user // get the user out of session and pass to template
         });
     });
