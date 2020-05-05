@@ -20,6 +20,8 @@ module.exports = function (app, passport) {
         });
     });
 
+    //send the HTML from the single print submission segment to the browser
+    //used for adding more than one 3d print in a single submission form
     app.get('/oneprint', function (req, res) {
         res.render('partials/oneprint');
     }, function (err, html) {
