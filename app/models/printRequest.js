@@ -4,7 +4,9 @@ var singlePrintSchema = mongoose.Schema({
     fileName: String,
     material: String,
     infill: String,
-    color: String
+    color: String,
+    copies: String,
+    notes: String,
 });
 
 // define the schema for a single patron submission
@@ -13,7 +15,6 @@ var printSubmissionSchema = mongoose.Schema({
     lname: String,
     email: String,
     euid: String,
-    notes: String,
     files: [singlePrintSchema] //array of actual print files
 });
 
