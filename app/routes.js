@@ -1,4 +1,4 @@
-module.exports = function (app, passport) {
+module.exports = function (app, passport, printHandler) {
 
     // =====================================
     // HOME PAGE (with login links) ========
@@ -31,6 +31,7 @@ module.exports = function (app, passport) {
     app.post('/submit', function (req, res) {
         //something here
         req.flash('submitMessage', 'Testing');
+        printHandler.addToDatabase(req);
         res.redirect('/submit');
     });
 

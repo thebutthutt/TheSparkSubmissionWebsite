@@ -33,17 +33,17 @@
             <div class="form-group">
                 <label>Patron Info</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" name="first" placeholder="First name">
-                    <input type="text" class="form-control" name="last" placeholder="Last name">
+                    <input type="text" class="form-control" name="first" placeholder="First name" required>
+                    <input type="text" class="form-control" name="last" placeholder="Last name" required>
                 </div>
-                <input type="email" class="form-control" name="email" placeholder="Email">
-                <input type="text" class="form-control euid" name="euid" placeholder="EUID">
+                <input type="email" class="form-control" name="email" placeholder="Email" required>
+                <input type="text" class="form-control euid" name="euid" placeholder="EUID" required>
             </div>
 
 
             <div class="form-group">
                 <label>Request Type</label>
-                <select class="form-control" id="requestTypeSelector">
+                <select class="form-control" id="requestTypeSelector" name="requestType" required>
                     <option value="print">3D Print</option>
                     <option value="cnc">CNC Work Order</option>
                     <option value="laser">Laser Cut/Engrave Work Order</option>
@@ -57,25 +57,27 @@
                 <hr>
                 <div id="files-list"></div>
                 <div class="clearfix">
-                    <button type="button" id="change" class="btn btn-outline-primary btn-sm float-left">Add another</button>
-                    <button type="button" id="remove" class="btn btn-outline-danger btn-sm float-right">Remove One</button>
+                    <button type="button" id="change" class="btn btn-outline-primary btn-sm float-left">Add
+                        another</button>
+                    <button type="button" id="remove" class="btn btn-outline-danger btn-sm float-right">Remove
+                        One</button>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="notes">Additional Notes</label>
-                <textarea class="form-control" id="notesContainer" rows="3"></textarea>
+                <textarea name="notes" class="form-control" id="notesContainer" rows="3"></textarea>
             </div>
 
             <button type="submit" class="btn btn-lg btn-primary btn-block">Submit</button>
         </form>
         <hr>
-
+        
 
         <p>Go <a href="/">home</a>?</p>
 
     </div>
-    
+
 </body>
 
 </html>
