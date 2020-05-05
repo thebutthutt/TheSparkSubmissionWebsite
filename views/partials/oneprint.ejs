@@ -1,7 +1,7 @@
 <div class="form-group single-print">
   <div class="form-group row">
     <div class="custom-file" id="customFile" lang="es">
-      <input name="file" type="file" class="custom-file-input" id="exampleInputFile" aria-describedby="fileHelp">
+      <input name="file" type="file" class="custom-file-input" id="exampleInputFile" aria-describedby="fileHelp" required>
       <label class="custom-file-label" for="exampleInputFile">
         Select file...
       </label>
@@ -21,21 +21,14 @@
 
   <div class="row middle-row">
     <label class="col-form-label col-sm-3">Infill</label>
-    <input name="infill" type="text" class="form-control col-sm-9" name="infill" value="12.5%">
+    <input name="infill" type="text" class="form-control col-sm-9" name="infill" placeholder="12.5%" required>
   </div>
 
   <div class="row last-row">
     <label class="col-form-label col-sm-3">Color</label>
-    <input name="color" type="text" class="form-control col-sm-9" name="color" value="No preference">
+    <input name="color" type="text" class="form-control col-sm-9" name="color" placeholder="No preference" required>
   </div>
 
   <hr>
 
 </div>
-
-<script type="text/javascript">
-  $('.custom-file-input').on('change', function () {
-    let fileName = $(this).val().split('\\').pop();
-    $(this).siblings('.custom-file-label').addClass("selected").html(fileName);
-  });
-</script>
