@@ -2,38 +2,31 @@ var printRequest = require('./models/printRequest');
 
 module.exports = {
     //function receives the input from filled out request form and saves to the database
-    addPrint: function (req) {
+    handle: function (fields, prints) {
         var request = new printRequest(); //new instance of a request
 
         //fill the patron details
         request.patron = {
-            fname: req.body.first,
-            lname: req.body.last,
-            email: req.body.email,
-            euid: req.body.euid
+            fname: fields.first,
+            lname: fields.last,
+            email: fields.email,
+            euid: fields.euid
         }
 
         //if submitted multiple files, add each
-        if (req.body.file instanceof Array) {
-            for (let i = 0; i < req.body.file.length; i++) {
-                request.files.push({
-                    fileName: req.body.file[i],
-                    material: req.body.material[i],
-                    infill: req.body.infill[i],
-                    color: req.body.color[i],
-                    notes: req.body.notes
-                });
-            }
-        } else { //else just add the one
+        for (let i = 0; i < prints[0].length; i++) {
             request.files.push({
-                fileName: req.body.file,
-                material: req.body.material,
-                infill: req.body.infill,
-                color: req.body.color,
-                notes: req.body.notes
+                fileName: prints[0][i],
+                material: prints[1][i],
+                infill: prints[2][i],
+                color: prints[3][i],
+                copies: prints[4][i]
             });
         }
 
+        console.log(request);
+
+        /*
         console.log(request);
         request.save(function (err, document) {
             if (err) {
@@ -42,5 +35,6 @@ module.exports = {
                 console.log('saved');
             }
         });
+        */
     }
 }

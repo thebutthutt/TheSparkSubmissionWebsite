@@ -1,7 +1,7 @@
 var printQueue = require('./models/printRequest');
 const formidable = require('formidable');
 
-module.exports = function (app, passport, printHandler) {
+module.exports = function (app, passport, submissionHandler) {
 
     // =====================================
     // HOME PAGE (with login links) ========
@@ -43,14 +43,39 @@ module.exports = function (app, passport, printHandler) {
 
     app.post('/submit', function (req, res) {
         //handle incoming uplods
+        var filenames = [], materials = [], infills = [], colors = [], copies = [], prints = [], patron = [];
         new formidable.IncomingForm().parse(req, function (err, fields, files) {
-            console.log('Fields', fields);
-            console.log('Files', files);
-            }).on('fileBegin', (name, file) => { //change name to something unique
-                file.path = __dirname + '/uploads/' + Date.now() + file.name;
+                patron = fields;
+            }).on('field', function(name, field) { 
+                //handling duplicate input names cause for some reason formidable doesnt do it yet...
+                if (name == 'material') {
+                    materials.push(field);
+                }
+                if (name == 'infill') {
+                    infills.push(field);
+                }
+                if (name == 'color') {
+                    colors.push(field);
+                }
+                if (name == 'copies') {
+                    copies.push(field);
+                }
+            })
+            .on('fileBegin', (name, file) => { //change name to something unique
+                var time = Date.now();
+                file.name = time + file.name;
+                file.path = __dirname + '/uploads/' + file.name;
             })
             .on('file', (name, file) => {
                 console.log('Uploaded file', file.path); //make sure we got it
+                filenames.push(file.path);
+            }).on('end', function() {
+                prints.push(filenames);
+                prints.push(materials);
+                prints.push(infills);
+                prints.push(colors);
+                prints.push(copies);
+                submissionHandler.handle(patron, prints);
             });
         req.flash('submitMessage', 'Testing');
         res.redirect('/submit');
