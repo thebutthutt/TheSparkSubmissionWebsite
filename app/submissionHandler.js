@@ -23,10 +23,6 @@ module.exports = {
                 copies: prints[4][i]
             });
         }
-
-        console.log(request);
-
-        /*
         console.log(request);
         request.save(function (err, document) {
             if (err) {
@@ -35,6 +31,6 @@ module.exports = {
                 console.log('saved');
             }
         });
-        */
+        
     }
 }
