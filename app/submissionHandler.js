@@ -10,8 +10,12 @@ module.exports = {
             fname: fields.first,
             lname: fields.last,
             email: fields.email,
-            euid: fields.euid
+            euid: fields.euid,
         }
+
+        request.numFiles = prints[6]; //always the number of files
+        console.log(prints[6]);
+        request.dateSubmitted = prints[5][0]; //always the date submitted
 
         //if submitted multiple files, add each
         for (let i = 0; i < prints[0].length; i++) {
@@ -20,10 +24,10 @@ module.exports = {
                 material: prints[1][i],
                 infill: prints[2][i],
                 color: prints[3][i],
-                copies: prints[4][i]
+                copies: prints[4][i],
+                dateSubmitted: prints[5][0] //always holds the date submitted
             });
         }
-        console.log(request);
         request.save(function (err, document) {
             if (err) {
                 return console.error(err);

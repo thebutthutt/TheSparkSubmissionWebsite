@@ -1,4 +1,4 @@
-var printQueue = require('./models/printRequest');
+var printRequestModel = require('./models/printRequest');
 const formidable = require('formidable');
 
 module.exports = function (app, passport, submissionHandler) {
@@ -43,21 +43,26 @@ module.exports = function (app, passport, submissionHandler) {
 
     app.post('/submit', function (req, res) {
         //handle incoming uplods
-        var filenames = [], materials = [], infills = [], colors = [], copies = [], prints = [], patron = [];
+        var filenames = [],
+            materials = [],
+            infills = [],
+            colors = [],
+            copies = [],
+            prints = [],
+            patron = [],
+            numFiles = 0;
         new formidable.IncomingForm().parse(req, function (err, fields, files) {
                 patron = fields;
-            }).on('field', function(name, field) { 
+            }).on('field', function (name, field) {
                 //handling duplicate input names cause for some reason formidable doesnt do it yet...
+                //makes arrays of all the suplicate form names
                 if (name == 'material') {
                     materials.push(field);
-                }
-                if (name == 'infill') {
+                } else if (name == 'infill') {
                     infills.push(field);
-                }
-                if (name == 'color') {
+                } else if (name == 'color') {
                     colors.push(field);
-                }
-                if (name == 'copies') {
+                } else if (name == 'copies') {
                     copies.push(field);
                 }
             })
@@ -68,13 +73,18 @@ module.exports = function (app, passport, submissionHandler) {
             })
             .on('file', (name, file) => {
                 console.log('Uploaded file', file.path); //make sure we got it
-                filenames.push(file.path);
-            }).on('end', function() {
+                filenames.push(file.path); //add this files path to the list of filenames
+                numFiles++;
+            }).on('end', function () {
+                // add all our lists to one list to pass to the submission handler
                 prints.push(filenames);
                 prints.push(materials);
                 prints.push(infills);
                 prints.push(colors);
                 prints.push(copies);
+                prints.push(Date.now());
+                prints.push(numFiles);
+                console.log(numFiles);
                 submissionHandler.handle(patron, prints);
             });
         req.flash('submitMessage', 'Testing');
@@ -87,7 +97,7 @@ module.exports = function (app, passport, submissionHandler) {
     // show the prints queue
     app.get('/prints', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printQueue.find({}, function (err, data) {
+        printRequestModel.find({}, function (err, data) {
             res.render('pages/prints', {
                 pgnum: 6, //tells the navbar what page to highlight
                 dbdata: data,
@@ -95,6 +105,30 @@ module.exports = function (app, passport, submissionHandler) {
             });
         });
 
+    });
+
+    app.post('/prints/delete', function (req, res, next) {
+        var userId = req.body.userId || req.query.userId;
+
+        console.log("Trying deletion");
+        printRequestModel.find({
+            'files._id': userId
+        }, function (err, result) {
+            result[0].files.id(userId).remove();
+            result[0].numFiles -= 1;
+            if (result[0].numFiles < 1) {
+                printRequestModel.deleteOne({'_id' : result[0]._id}, function(err) {
+                    if (err) console.log(err);
+                    console.log("Successful deletion");
+                });
+            } else {
+                result[0].save(function (err) {
+                    if (err) console.log(err);
+                    console.log("Successful deletion");
+                });
+            }
+            
+        });
     });
 
 
