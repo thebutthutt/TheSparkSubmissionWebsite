@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+    <head>
+        <%- include ("../partials/head") %>
+    </head>
+
+    <body>
+        <%- include ("../partials/header") %>
+
+        <%dbdata.forEach(function (item) {%>
+            <span>Name: </span><%= item.patron.fname %> <%= item.patron.lname %> <br>
+            <span>Info: </span><%= item.patron.euid %> <%= item.patron.email %> <br>
+            <% item.files.forEach(function (file) {%>
+                <span>Filename: </span><%= file.fileName %> <br>
+                <span>Material: </span><%= file.material %> <br>
+                <span>Infill: </span><%= file.infill %> <br>
+                <span>Color: </span><%= file.color %> <br>
+                <span>Copies: </span><%= file.copies %> <br>
+                <span>Notes: </span><%= file.notes %> <br>
+            <%})%>
+        <%})%>
+    </body>
+
+</html>

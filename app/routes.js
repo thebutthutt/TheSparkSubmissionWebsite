@@ -1,11 +1,19 @@
+var printQueue = require('./models/printRequest');
+const formidable = require('formidable');
+
 module.exports = function (app, passport, printHandler) {
 
     // =====================================
     // HOME PAGE (with login links) ========
     // =====================================
     app.get('/', function (req, res) {
+        var admin = false;
+        if (req.isAuthenticated()) {
+            admin = true;
+        }
         res.render('pages/index', {
-            pgnum: 1//tells the navbar what page to highlight
+            pgnum: 1, //tells the navbar what page to highlight
+            isAdmin: admin
         }); // load the index.ejs file
     });
 
@@ -14,9 +22,14 @@ module.exports = function (app, passport, printHandler) {
     // =====================================
     app.get('/submit', function (req, res) {
         //load the submission page and flash any messages
+        var admin = false;
+        if (req.isAuthenticated()) {
+            admin = true;
+        }
         res.render('pages/submit', {
             message: req.flash('submitMessage'),
-            pgnum: 2 //tells the navbar what page to highlight
+            pgnum: 2, //tells the navbar what page to highlight
+            isAdmin: admin
         });
     });
 
@@ -29,13 +42,36 @@ module.exports = function (app, passport, printHandler) {
     });
 
     app.post('/submit', function (req, res) {
-        //something here
+        //handle incoming uplods
+        new formidable.IncomingForm().parse(req, function (err, fields, files) {
+            console.log('Fields', fields);
+            console.log('Files', files);
+            }).on('fileBegin', (name, file) => { //change name to something unique
+                file.path = __dirname + '/uploads/' + Date.now() + file.name;
+            })
+            .on('file', (name, file) => {
+                console.log('Uploaded file', file.path); //make sure we got it
+            });
         req.flash('submitMessage', 'Testing');
-        if (req.body.requestType == 'print') { //checks to make sure the request was for a print submission
-            printHandler.addToDatabase(req); //send the data to the print handler to make a new entry in the database
-        }
         res.redirect('/submit');
     });
+
+    // =====================================
+    // PRINTS ===============================
+    // =====================================
+    // show the prints queue
+    app.get('/prints', isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printQueue.find({}, function (err, data) {
+            res.render('pages/prints', {
+                pgnum: 6, //tells the navbar what page to highlight
+                dbdata: data,
+                isAdmin: true
+            });
+        });
+
+    });
+
 
     // =====================================
     // LOGIN ===============================
@@ -45,7 +81,8 @@ module.exports = function (app, passport, printHandler) {
         // render the page and pass in any flash data if it exists
         res.render('pages/login', {
             message: req.flash('loginMessage'),
-            pgnum: 3//tells the navbar what page to highlight
+            pgnum: 3, //tells the navbar what page to highlight
+            isAdmin: false
         });
     });
 
@@ -64,7 +101,8 @@ module.exports = function (app, passport, printHandler) {
         // render the page and pass in any flash data if it exists
         res.render('pages/signup', {
             message: req.flash('signupMessage'),
-            pgnum: 4//tells the navbar what page to highlight
+            pgnum: 4, //tells the navbar what page to highlight
+            isAdmin: false
         });
     });
 
@@ -84,7 +122,8 @@ module.exports = function (app, passport, printHandler) {
         res.render('pages/profile', {
             message: req.flash('logoutMessage'),
             pgnum: 5, //tells the navbar what page to highlight
-            user: req.user // get the user out of session and pass to template
+            user: req.user, // get the user out of session and pass to template
+            isAdmin: true
         });
     });
 
@@ -120,6 +159,5 @@ function isLoggedOut(req, res, next) {
         //else let them to the login page
         return next();
     }
-
 
 }

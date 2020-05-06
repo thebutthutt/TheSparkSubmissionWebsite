@@ -6,13 +6,13 @@ var port = process.env.PORT || 8080;
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash = require('connect-flash');
-
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+const multer = require('multer');
 
 var configDB = require('./config/database.js');
-var printHandler = require('./app/printing.js');
+var submissionHandler = require('./app/submissionHandler.js');
 
 // configuration ===============================================================
 mongoose.connect(configDB.url, {
@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json()); // get information from html forms
 
 app.set('view engine', 'ejs'); // set up ejs for templating
-app.use(express.static(__dirname + '/public')); //allow us to grab local files in the public directory
+app.use('/', express.static(__dirname + '/public')); //allow us to grab local files in the public directory
 
 // required for passport
 app.use(session({
@@ -43,7 +43,7 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require('./app/routes.js')(app, passport, printHandler); // load our routes and pass in our app and fully configured passport
+require('./app/routes.js')(app, passport, submissionHandler); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
 app.listen(port);

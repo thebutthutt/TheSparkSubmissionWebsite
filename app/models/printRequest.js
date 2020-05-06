@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+require('./patron.js');
 
 var singlePrintSchema = mongoose.Schema({
     fileName: String,
@@ -11,12 +12,8 @@ var singlePrintSchema = mongoose.Schema({
 
 // define the schema for a single patron submission
 var printSubmissionSchema = mongoose.Schema({
-    fname: String,
-    lname: String,
-    email: String,
-    euid: String,
+    patron: mongoose.model('Patron').schema,
     files: [singlePrintSchema] //array of actual print files
 });
 
-// create the model for a print submission and expose it to our app
 module.exports = mongoose.model('PrintRequest', printSubmissionSchema);
