@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+
+<head>
+    <%- include ("../partials/head") %>
+    <style>
+      .container div {
+        overflow: hidden;
+      }
+    </style>
+</head>
+
+<body>
+    <%- include ("../partials/header") %>
+    <div class="container">
+      <%dbdata.forEach(function (item) {%>
+        <div class="row">
+          <div class="col-1">
+            <%= item.patron.fname %> <%= item.patron.lname %>
+          </div>
+          <div class="col-1">
+            <%= item.dateSubmitted %>
+          </div>
+          <div class="col-10">
+                <% item.files.forEach(function (file) {%>
+                <div class="row">
+                  <div class="col-5"><%= (file.fileName) %></div>
+                  <div class="col-1"><%= file.material %></div>
+                  <div class="col-1"><%= file.infill %></div>
+                  <div class="col-1"><%= file.color %></div>
+                  <div class="col-1"><%= file.copies %></div>
+                  <div class="col-1"><%= file.notes %></div>
+                  <div class="col-1">
+                    <button type="button" class="btn btn-success download-btn" id='<%= file.fileName%>'>Download</button>
+                  </div>
+                  <div class="col-1">
+                    <button type="button" class="btn btn-danger delete-btn" id='<%= file._id%>'>Delete</button>
+                  </div>
+                </div>
+              <%})%>
+          </div>
+        </div>
+      <%})%>
+    </div>
+        
+    <script src="js/prints.js"></script>
+</body>
+
+</html>

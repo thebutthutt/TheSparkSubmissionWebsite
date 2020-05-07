@@ -1,5 +1,5 @@
 var printRequestModel = require('./models/printRequest');
-const formidable = require('formidable');
+
 
 module.exports = function (app, passport, submissionHandler) {
 
@@ -42,51 +42,7 @@ module.exports = function (app, passport, submissionHandler) {
     });
 
     app.post('/submit', function (req, res) {
-        //handle incoming uplods
-        var filenames = [],
-            materials = [],
-            infills = [],
-            colors = [],
-            copies = [],
-            prints = [],
-            patron = [],
-            numFiles = 0;
-        new formidable.IncomingForm().parse(req, function (err, fields, files) {
-                patron = fields;
-            }).on('field', function (name, field) {
-                //handling duplicate input names cause for some reason formidable doesnt do it yet...
-                //makes arrays of all the suplicate form names
-                if (name == 'material') {
-                    materials.push(field);
-                } else if (name == 'infill') {
-                    infills.push(field);
-                } else if (name == 'color') {
-                    colors.push(field);
-                } else if (name == 'copies') {
-                    copies.push(field);
-                }
-            })
-            .on('fileBegin', (name, file) => { //change name to something unique
-                var time = Date.now();
-                file.name = time + file.name;
-                file.path = __dirname + '/uploads/' + file.name;
-            })
-            .on('file', (name, file) => {
-                console.log('Uploaded file', file.path); //make sure we got it
-                filenames.push(file.path); //add this files path to the list of filenames
-                numFiles++;
-            }).on('end', function () {
-                // add all our lists to one list to pass to the submission handler
-                prints.push(filenames);
-                prints.push(materials);
-                prints.push(infills);
-                prints.push(colors);
-                prints.push(copies);
-                prints.push(Date.now());
-                prints.push(numFiles);
-                console.log(numFiles);
-                submissionHandler.handle(patron, prints);
-            });
+        submissionHandler.handleSubmission(req); //pass the stuff to the submission handler
         req.flash('submitMessage', 'Testing');
         res.redirect('/submit');
     });
@@ -98,7 +54,7 @@ module.exports = function (app, passport, submissionHandler) {
     app.get('/prints', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({}, function (err, data) {
-            res.render('pages/prints', {
+            res.render('pages/newSubmissions', {
                 pgnum: 6, //tells the navbar what page to highlight
                 dbdata: data,
                 isAdmin: true

@@ -1,6 +1,6 @@
 $(document).ready(function () {
     console.log('ready');
-    $('.remove-btn').on('click', function () {
+    $('.delete-btn').on('click', function () {
         var userId = $(this).attr('id');
         $.ajax({
             method: "POST",

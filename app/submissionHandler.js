@@ -1,8 +1,9 @@
 var printRequest = require('./models/printRequest');
+const formidable = require('formidable');
 
 module.exports = {
     //function receives the input from filled out request form and saves to the database
-    handle: function (fields, prints) {
+    addPrint: function (fields, prints) {
         var request = new printRequest(); //new instance of a request
 
         //fill the patron details
@@ -13,9 +14,8 @@ module.exports = {
             euid: fields.euid,
         }
 
-        request.numFiles = prints[6]; //always the number of files
-        console.log(prints[6]);
-        request.dateSubmitted = prints[5][0]; //always the date submitted
+        request.dateSubmitted = prints[7]; //always the date submitted
+        request.numFiles = prints[8]; //always the number of files
 
         //if submitted multiple files, add each
         for (let i = 0; i < prints[0].length; i++) {
@@ -25,7 +25,19 @@ module.exports = {
                 infill: prints[2][i],
                 color: prints[3][i],
                 copies: prints[4][i],
-                dateSubmitted: prints[5][0] //always holds the date submitted
+                notes: prints[6][i],
+                printLocation: prints[5][i],
+                pickupLocation: prints[5][i],
+                isReviewed: false,
+                isRejected: false,
+                isPaid: false,
+                isPrinted: false,
+                isPickedUp: false,
+                dateSubmitted: prints[7], //always holds the date submitted
+                dateReviewed: "Never",
+                datePaid: "Never",
+                datePrinted: "Never",
+                datePickedUp: "Never"
             });
         }
         request.save(function (err, document) {
@@ -35,6 +47,60 @@ module.exports = {
                 console.log('saved');
             }
         });
-        
+
+    },
+
+    handleSubmission: function (req) {
+        var filenames = [],
+            materials = [],
+            infills = [],
+            colors = [],
+            copies = [],
+            notes = [],
+            pickups = [],
+            prints = [],
+            patron = [],
+            numFiles = 0;
+        new formidable.IncomingForm().parse(req, function (err, fields, files) {
+                patron = fields;
+            }).on('field', function (name, field) {
+                //handling duplicate input names cause for some reason formidable doesnt do it yet...
+                //makes arrays of all the suplicate form names
+                if (name == 'material') {
+                    materials.push(field);
+                } else if (name == 'infill') {
+                    infills.push(field);
+                } else if (name == 'color') {
+                    colors.push(field);
+                } else if (name == 'copies') {
+                    copies.push(field);
+                } else if (name == 'pickup') {
+                    pickups.push(field);
+                } else if (name == 'notes') {
+                    notes.push(field);
+                }
+            })
+            .on('fileBegin', (name, file) => { //change name to something unique
+                var time = Date.now();
+                file.name = time + file.name;
+                file.path = __dirname + '/uploads/' + file.name;
+            })
+            .on('file', (name, file) => {
+                console.log('Uploaded file', file.path); //make sure we got it
+                filenames.push(file.path); //add this files path to the list of filenames
+                numFiles++;
+            }).on('end', function () {
+                // add all our lists to one list to pass to the submission handler
+                prints.push(filenames);
+                prints.push(materials);
+                prints.push(infills);
+                prints.push(colors);
+                prints.push(copies);
+                prints.push(pickups);
+                prints.push(notes);
+                prints.push(Date.now());
+                prints.push(numFiles);
+                module.exports.addPrint(patron, prints);
+            });
     }
 }
