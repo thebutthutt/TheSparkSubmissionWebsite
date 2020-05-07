@@ -28,7 +28,10 @@
             <td><%= file.fileName %></td>
             <td><%= file.material %></td>
             <td>
-                <button type="button" class="btn btn-danger remove-btn" id='<%= file._id %>'>Delete</button>
+              <button type="button" class="btn btn-success download-btn" id='<%= file.fileName%>'>Download</button>
+            </td>
+            <td>
+              <button type="button" class="btn btn-danger remove-btn" id='<%= file._id %>'>Delete</button>
             </td>
           </tr>
           <%})%>

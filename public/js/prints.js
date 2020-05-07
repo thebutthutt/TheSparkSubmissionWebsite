@@ -1,7 +1,6 @@
 $(document).ready(function () {
     console.log('ready');
     $('.remove-btn').on('click', function () {
-        console.log('click');
         var userId = $(this).attr('id');
         $.ajax({
             method: "POST",
@@ -9,11 +8,15 @@ $(document).ready(function () {
             data: {
                 "userId": userId
             },
-            success: function (result) {
-                console.log('done');
-
-                location.reload();
-            }
+            dataType: "json"
+        }).done(function() {
+            console.log('done');
+            location.reload();
         });
+    });
+
+    $('.download-btn').on('click', function () {
+        var fileID = $(this).attr('id');
+        window.location = '/prints/download?fileID=' + fileID;
     });
 });

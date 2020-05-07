@@ -107,28 +107,35 @@ module.exports = function (app, passport, submissionHandler) {
 
     });
 
+    //deletes a database entry
     app.post('/prints/delete', function (req, res, next) {
         var userId = req.body.userId || req.query.userId;
-
         console.log("Trying deletion");
-        printRequestModel.find({
+        printRequestModel.find({ //find top level print request by single file ID
             'files._id': userId
         }, function (err, result) {
-            result[0].files.id(userId).remove();
+            result[0].files.id(userId).remove(); //remove the single file from the top level
             result[0].numFiles -= 1;
-            if (result[0].numFiles < 1) {
+            if (result[0].numFiles < 1) { //if no more files in this request delete the request itself
                 printRequestModel.deleteOne({'_id' : result[0]._id}, function(err) {
                     if (err) console.log(err);
                     console.log("Successful deletion");
                 });
-            } else {
-                result[0].save(function (err) {
+            } else { //else just delete the file
+                result[0].save(function (err) { //save top level request db entry
                     if (err) console.log(err);
                     console.log("Successful deletion");
                 });
             }
-            
+            res.json(['done']); //tell the front end the request is done
         });
+    });
+
+    //downloads file specified in the parameter
+    app.get('/prints/download', function(req, res){
+        var fileID = req.body.fileID || req.query.fileID;
+        console.log(fileID);
+        res.download(fileID); //send the download
     });
 
 
