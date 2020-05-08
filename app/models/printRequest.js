@@ -28,6 +28,13 @@ var printSubmissionSchema = mongoose.Schema({
     dateSubmitted: String,
     numFiles: Number,
     allFilesReviewed: Boolean,
+    hasNew: Boolean,
+    hasPendingPayment: Boolean,
+    hasReadyToPrint: Boolean,
+    hasRejected: Boolean,
+    hasReadyForPickup: Boolean,
+    hasStaleOnPayment: Boolean,
+    hasStaleOnPickup: Boolean,
     files: [singlePrintSchema] //array of actual print files
 });
 

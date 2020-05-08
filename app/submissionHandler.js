@@ -17,6 +17,16 @@ module.exports = {
         request.dateSubmitted = prints[7]; //always the date submitted
         request.numFiles = prints[8]; //always the number of files
 
+        //set intitial parameters of the printRequest schema
+        request.allFilesReviewed = false;
+        request.hasNew = true;
+        request.hasPendingPayment = false;
+        request.hasReadyToPrin = false;
+        request.hasRejected = false;
+        request.hasReadyForPickup = false;
+        request.hasStaleOnPayment = false;
+        request.hasStaleOnPickup = false;
+
         //if submitted multiple files, add each
         for (let i = 0; i < prints[0].length; i++) {
             request.files.push({
