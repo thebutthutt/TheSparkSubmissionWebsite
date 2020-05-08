@@ -27,6 +27,7 @@ var printSubmissionSchema = mongoose.Schema({
     patron: mongoose.model('Patron').schema,
     dateSubmitted: String,
     numFiles: Number,
+    allFilesReviewed: Boolean,
     files: [singlePrintSchema] //array of actual print files
 });
 

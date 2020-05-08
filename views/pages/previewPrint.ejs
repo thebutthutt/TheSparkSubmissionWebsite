@@ -3,11 +3,99 @@
 
 <head>
     <%- include ("../partials/head") %>
+    <style>
+        .container {
+            margin-top: 80px;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $('.download-btn').on('click', function () {
+                var fileID = $(this).attr('id');
+                console.log('click');
+                window.location = '/prints/download?fileID=' + fileID;
+            });
+        });
+    </script>
 </head>
 
 <body>
     <%- include ("../partials/header") %>
-    <span><%= print%></span>
+    <div class="container">
+        <table class="table table-bordered">
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>File name</td>
+                    <td><%=print.fileName.substring(print.fileName.lastIndexOf("%$%$%") + 5)%></td>
+                </tr>
+                <tr>
+                    <td>Submitted on</td>
+                    <td><%=Date(print.dateSubmitted).toString()%></td>
+                </tr>
+                <tr>
+                    <td>Material</td>
+                    <td><%=print.material%></td>
+                </tr>
+                <tr>
+                    <td>Infill</td>
+                    <td><%=print.infill%></td>
+                </tr>
+                <tr>
+                    <td>Color</td>
+                    <td><%=print.color%></td>
+                </tr>
+                <tr>
+                    <td>Copies</td>
+                    <td><%=print.copies%></td>
+                </tr>
+                <tr>
+                    <td>Notes</td>
+                    <td><%=print.notes%></td>
+                </tr>
+                <tr>
+                    <td>Print location</td>
+                    <td><%=print.printLocation%></td>
+                </tr>
+                <tr>
+                    <td>Pickup location</td>
+                    <td><%=print.pickupLocation%></td>
+                </tr>
+                <tr>
+                    <td>Reviewed on</td>
+                    <td>
+                        <%if (print.isReviewed) {%>
+                        <%=Date(print.dateReviewed).toString()%>
+                        <%} else {%>
+                        Not reviewed
+                        <%}%>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Paid on</td>
+                    <td>
+                        <%if (print.isPaid) {%>
+                        <%=Date(print.datePaid).toString()%>
+                        <%} else {%>
+                        Not paid
+                        <%}%>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Picked up on</td>
+                    <td>
+                        <%if (print.isPickedUp) {%>
+                        <%=Date(print.datePickedUp).toString()%>
+                        <%} else {%>
+                        Not picked up
+                        <%}%>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-success download-btn" id='<%= print.fileName%>'>Download</button>
+    </div>
 </body>
 
 </html>

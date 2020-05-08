@@ -24,4 +24,9 @@ $(document).ready(function () {
         var fileID = $(this).attr('id');
         window.location = '/prints/preview?fileID=' + fileID;
     });
+
+    $('.edit-btn').on('click', function () {
+        var fileID = $(this).attr('id');
+        window.location = '/prints/edit?fileID=' + fileID;
+    });
 });

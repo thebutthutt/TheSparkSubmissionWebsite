@@ -2,50 +2,61 @@
 <html>
 
 <head>
-    <%- include ("../partials/head") %>
-    <style>
-      .container div {
-        overflow: hidden;
-      }
-    </style>
+  <%- include ("../partials/head") %>
+  <style>
+    .container {
+      margin-top: 80px;
+    }
+
+    .plain tbody tr,
+    .plain tbody tr:hover,
+    .plain tbody td {
+      background-color: transparent !important;
+      border: none;
+    }
+
+    .no-padding {
+      padding: 0px !important;
+    }
+  </style>
 </head>
 
 <body>
-    <%- include ("../partials/header") %>
-    <div class="container">
-      <%dbdata.forEach(function (item) {%>
-        <div class="row">
-          <div class="col-1">
-            <%= item.patron.fname %> <%= item.patron.lname %>
-          </div>
-          <div class="col-1">
-            <%= Date(item.dateSubmitted).toString() %>
-          </div>
-          <div class="col-10">
-                <% item.files.forEach(function (file) {%>
-                <div class="row">
-                  <div class="col-2"><%= (file.fileName).substring(file.fileName.lastIndexOf("%$%$%") + 5) %></div>
-                  <div class="col-1"><%= file.material %></div>
-                  <div class="col-1"><%= file.infill %></div>
-                  <div class="col-1"><%= file.color %></div>
-                  <div class="col-1"><%= file.copies %></div>
-                  <div class="col-2">
-                    <button type="button" class="btn btn-success download-btn" id='<%= file.fileName%>'>Download</button>
-                  </div>
-                  <div class="col-2">
-                    <button type="button" class="btn btn-primary preview-btn" id='<%= file._id%>'>Preview</button>
-                  </div>
-                  <div class="col-2">
-                    <button type="button" class="btn btn-danger delete-btn" id='<%= file._id%>'>Delete</button>
-                  </div>
-                </div>
+  <%- include ("../partials/header") %>
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Submitted</th>
+          <th scope="col">Files</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%dbdata.slice().reverse().forEach(function (item) {%>
+        <tr>
+          <td><%= item.patron.fname %> <%= item.patron.lname %></td>
+          <td><%=item.dateSubmitted%></td>
+          <td class="no-padding">
+            <table class="plain" style="width:100%">
+              <% item.files.forEach(function (file) {%>
+              <tr>
+                <td style="width:99%"><%=file.fileName.substring(file.fileName.lastIndexOf("%$%$%") + 5)%></td>
+                <td style="white-space: nowrap;"><button type="button" class="btn btn-success download-btn"
+                    id='<%= file.fileName%>'>Download</button>
+                  <button type="button" class="btn btn-primary preview-btn" id='<%= file._id%>'>Preview</button>
+                  <button type="button" class="btn btn-danger delete-btn" id='<%= file._id%>'>Delete</button></td>
+              </tr>
               <%})%>
-          </div>
-        </div>
-      <%})%>
-    </div>
-        
-    <script src="js/prints.js"></script>
+            </table>
+          </td>
+        </tr>
+        <%})%>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="js/prints.js"></script>
 </body>
 
 </html>
