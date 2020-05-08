@@ -60,7 +60,9 @@ module.exports = {
             pickups = [],
             prints = [],
             patron = [],
-            numFiles = 0;
+            numFiles = 0,
+            time = Date.now();
+        console.log('here');
         new formidable.IncomingForm().parse(req, function (err, fields, files) {
                 patron = fields;
             }).on('field', function (name, field) {
@@ -81,8 +83,10 @@ module.exports = {
                 }
             })
             .on('fileBegin', (name, file) => { //change name to something unique
-                var time = Date.now();
-                file.name = time + file.name;
+                console.log('here');
+
+                file.name = time + "%$%$%" + file.name; //add special separater so we can get just the filename later
+                //yes this is a dumb way to keep track of the original filename but I dont care
                 file.path = __dirname + '/uploads/' + file.name;
             })
             .on('file', (name, file) => {
@@ -98,7 +102,7 @@ module.exports = {
                 prints.push(copies);
                 prints.push(pickups);
                 prints.push(notes);
-                prints.push(Date.now());
+                prints.push(time);
                 prints.push(numFiles);
                 module.exports.addPrint(patron, prints);
             });

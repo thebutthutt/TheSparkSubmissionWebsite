@@ -19,4 +19,9 @@ $(document).ready(function () {
         var fileID = $(this).attr('id');
         window.location = '/prints/download?fileID=' + fileID;
     });
+
+    $('.preview-btn').on('click', function () {
+        var fileID = $(this).attr('id');
+        window.location = '/prints/preview?fileID=' + fileID;
+    });
 });

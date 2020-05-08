@@ -1,4 +1,5 @@
 var printRequestModel = require('./models/printRequest');
+const fs = require('fs');
 
 
 module.exports = function (app, passport, submissionHandler) {
@@ -70,14 +71,19 @@ module.exports = function (app, passport, submissionHandler) {
         printRequestModel.find({ //find top level print request by single file ID
             'files._id': userId
         }, function (err, result) {
-            result[0].files.id(userId).remove(); //remove the single file from the top level
-            result[0].numFiles -= 1;
+            fs.unlink(result[0].files.id(userId).fileName, function(err){
+                if (err) {
+                    console.log(err);
+                }
+            }); //delete the file on disk
+            result[0].files.id(userId).remove(); //remove the single file from the top level print submission
+            result[0].numFiles -= 1; //decrement nu,ber of files associated with this print request
             if (result[0].numFiles < 1) { //if no more files in this request delete the request itself
-                printRequestModel.deleteOne({'_id' : result[0]._id}, function(err) {
+                printRequestModel.deleteOne({'_id' : result[0]._id}, function(err) { //delete top level request
                     if (err) console.log(err);
                     console.log("Successful deletion");
                 });
-            } else { //else just delete the file
+            } else { //else save the top level with one less file
                 result[0].save(function (err) { //save top level request db entry
                     if (err) console.log(err);
                     console.log("Successful deletion");
@@ -92,6 +98,21 @@ module.exports = function (app, passport, submissionHandler) {
         var fileID = req.body.fileID || req.query.fileID;
         console.log(fileID);
         res.download(fileID); //send the download
+    });
+
+    //send to reveiw page
+    app.get('/prints/preview', function(req, res){
+        var fileID = req.body.fileID || req.query.fileID;
+        printRequestModel.find({
+            'files._id': fileID
+        }, function (err, result) {
+            res.render('pages/previewPrint', {
+                pgnum: 7,
+                isAdmin: true,
+                print: result[0].files.id(fileID) //send the review page the file to review
+            });
+        });
+        console.log(fileID);
     });
 
 
