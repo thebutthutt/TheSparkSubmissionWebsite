@@ -6,14 +6,51 @@
     <style>
         .container {
             margin-top: 80px;
+            margin-bottom: 80px;
         }
     </style>
     <script>
         $(document).ready(function () {
+            $(".accepted-controls").show();
+            $(".accepted-controls input").prop('required', true);
+            $(".rejected-controls").hide();
+            $(".rejected-controls input").prop('required', false);
+
             $('.download-btn').on('click', function () {
                 var fileID = $(this).attr('id');
                 console.log('click');
                 window.location = '/prints/download?fileID=' + fileID;
+            });
+
+            $("#decision").change(function () {
+                var requestType = $(this).children("option:selected").val();
+                if (requestType == 'accepted') {
+                    $(".accepted-controls").show();
+                    $(".accepted-controls input").prop('required', true);
+                    $(".rejected-controls").hide();
+                    $(".rejected-controls input").prop('required', false);
+                } else {
+                    $(".accepted-controls").hide();
+                    $(".accepted-controls input").prop('required', false);
+                    $(".rejected-controls").show();
+                    $(".rejected-controls input").prop('required', true);
+                }
+                //may change if other request types need extra options
+            });
+
+            $(".submit-btn").on('click', function () {
+                var fileID = $(this).attr('fileID');
+                $.ajax({
+                    method: "POST",
+                    url: "/prints/singleReview",
+                    data: {
+                        "fileID": fileID
+                    },
+                    dataType: "json"
+                }).done(function () {
+                    console.log('done');
+                    location.reload();
+                });
             });
         });
     </script>
@@ -22,79 +59,195 @@
 <body>
     <%- include ("../partials/header") %>
     <div class="container">
-        <table class="table table-bordered">
-            <thead>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>File name</td>
-                    <td><%=print.fileName.substring(print.fileName.lastIndexOf("%$%$%") + 5)%></td>
-                </tr>
-                <tr>
-                    <td>Submitted on</td>
-                    <td><%=Date(print.dateSubmitted).toString()%></td>
-                </tr>
-                <tr>
-                    <td>Material</td>
-                    <td><%=print.material%></td>
-                </tr>
-                <tr>
-                    <td>Infill</td>
-                    <td><%=print.infill%></td>
-                </tr>
-                <tr>
-                    <td>Color</td>
-                    <td><%=print.color%></td>
-                </tr>
-                <tr>
-                    <td>Copies</td>
-                    <td><%=print.copies%></td>
-                </tr>
-                <tr>
-                    <td>Notes</td>
-                    <td><%=print.notes%></td>
-                </tr>
-                <tr>
-                    <td>Print location</td>
-                    <td><%=print.printLocation%></td>
-                </tr>
-                <tr>
-                    <td>Pickup location</td>
-                    <td><%=print.pickupLocation%></td>
-                </tr>
-                <tr>
-                    <td>Reviewed on</td>
-                    <td>
-                        <%if (print.isReviewed) {%>
-                        <%=Date(print.dateReviewed).toString()%>
-                        <%} else {%>
-                        Not reviewed
-                        <%}%>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Paid on</td>
-                    <td>
-                        <%if (print.isPaid) {%>
-                        <%=Date(print.datePaid).toString()%>
-                        <%} else {%>
-                        Not paid
-                        <%}%>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Picked up on</td>
-                    <td>
-                        <%if (print.isPickedUp) {%>
-                        <%=Date(print.datePickedUp).toString()%>
-                        <%} else {%>
-                        Not picked up
-                        <%}%>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <button type="button" class="btn btn-success download-btn" id='<%= print.fileName%>'>Download</button>
+
+        <p>
+            <button type="button" class="btn btn-success download-btn" id='<%= print.fileName%>'>Download</button>
+            <button type="button" class="btn btn-primary review-btn" data-toggle="collapse" data-target="#collapser"
+                aria-expanded="false" aria-controls="collapser">Review</button>
+        </p>
+
+        <div class="collapse" id="collapser">
+            <div class="card card-body">
+                <form action="/prints/review" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label>Decision</label>
+                        <select class="form-control" id="decision" name="decision" required>
+                            <option value="accepted">Accepted</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+
+                    <div class="accepted-controls">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col-3">
+                                    <label class="col-form-label">Estimated time</label>
+                                </div>
+                                <div class="col-9">
+                                    <div class="form-row">
+                                        <div class="col-4">
+                                            <input type="number" class="form-control" name="hours" required>
+                                        </div>
+                                        <div class="col-2">
+                                            <input type="text" readonly class="form-control-plaintext" value="hours">
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="number" class="form-control" name="minutes" required>
+                                        </div>
+                                        <div class="col-2">
+                                            <input type="text" readonly class="form-control-plaintext" value="minutes">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col-3">
+                                    <label class="col-form-label">Estimated material</label>
+                                </div>
+                                <div class="col-9">
+                                    <div class="form-row">
+                                        <div class="col-10">
+                                            <input type="number" class="form-control" name="grams" required>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="col">
+                                                <input type="text" readonly class="form-control-plaintext"
+                                                    value="grams">
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label>Print Location</label>
+                            <select class="form-control" id="locationSelector" name="printLocation" required>
+                                <option value="willis">Willis Library</option>
+                                <option value="dp">Discovery Park</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>GCODE Details</label>
+                            <div class="custom-file" id="customFile" lang="es">
+                                <input name="uploadedFile" type="file" class="custom-file-input" id="exampleInputFile"
+                                    aria-describedby="fileHelp" required>
+                                <label class="custom-file-label" for="exampleInputFile">
+                                    Upload GCODE
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="printer" placeholder="Sliced for printer..."
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="sliceMaterial"
+                                placeholder="Sliced for material..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="technotes">Technician Notes</label>
+                            <textarea name="technotes" class="form-control" rows="2"></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="rejected-controls">
+                        <div class="form-group">
+                            <label for="patronNotes">Notes to Patron</label>
+                            <textarea name="patronNotes" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success submit-btn" fileID='<%= print._id%>'>Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <p>
+            <table class="table table-bordered">
+                <thead>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>File name</td>
+                        <td><%=print.fileName.substring(print.fileName.lastIndexOf("%$%$%") + 5)%></td>
+                    </tr>
+                    <tr>
+                        <td>Submitted on</td>
+                        <td>print.dateSubmitted</td>
+                    </tr>
+                    <tr>
+                        <td>Material</td>
+                        <td><%=print.material%></td>
+                    </tr>
+                    <tr>
+                        <td>Infill</td>
+                        <td><%=print.infill%></td>
+                    </tr>
+                    <tr>
+                        <td>Color</td>
+                        <td><%=print.color%></td>
+                    </tr>
+                    <tr>
+                        <td>Copies</td>
+                        <td><%=print.copies%></td>
+                    </tr>
+                    <tr>
+                        <td>Notes</td>
+                        <td><%=print.notes%></td>
+                    </tr>
+                    <tr>
+                        <td>Print location</td>
+                        <td><%=print.printLocation%></td>
+                    </tr>
+                    <tr>
+                        <td>Pickup location</td>
+                        <td><%=print.pickupLocation%></td>
+                    </tr>
+                    <tr>
+                        <td>Reviewed on</td>
+                        <td>
+                            <%if (print.isReviewed) {%>
+                            <%=Date(print.dateReviewed).toString()%>
+                            <%} else {%>
+                            Not reviewed
+                            <%}%>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Paid on</td>
+                        <td>
+                            <%if (print.isPaid) {%>
+                            <%=Date(print.datePaid).toString()%>
+                            <%} else {%>
+                            Not paid
+                            <%}%>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Picked up on</td>
+                        <td>
+                            <%if (print.isPickedUp) {%>
+                            <%=Date(print.datePickedUp).toString()%>
+                            <%} else {%>
+                            Not picked up
+                            <%}%>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </p>
+        
+
     </div>
 </body>
 

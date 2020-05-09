@@ -115,6 +115,13 @@ module.exports = function (app, passport, submissionHandler) {
         console.log(fileID);
     });
 
+    app.post('/prints/singleReview', function(req, res) {
+        var fileID = req.body.fileID || req.query.fileID;
+        submissionHandler.updateSingle(req, function callBack() {
+            res.json(['done']);
+        });
+    });
+
 
     // =====================================
     // LOGIN ===============================

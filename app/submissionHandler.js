@@ -27,7 +27,7 @@ module.exports = {
         request.hasStaleOnPayment = false;
         request.hasStaleOnPickup = false;
 
-        //if submitted multiple files, add each
+        //loop through the arrays of file details possibly more than one file
         for (let i = 0; i < prints[0].length; i++) {
             request.files.push({
                 fileName: prints[0][i],
@@ -72,6 +72,7 @@ module.exports = {
             patron = [],
             numFiles = 0,
             time = Date.now();
+            //FIX same file name will get the same time stamp big no no
         console.log('here');
         new formidable.IncomingForm().parse(req, function (err, fields, files) {
                 patron = fields;
@@ -94,7 +95,6 @@ module.exports = {
             })
             .on('fileBegin', (name, file) => { //change name to something unique
                 console.log('here');
-
                 file.name = time + "%$%$%" + file.name; //add special separater so we can get just the filename later
                 //yes this is a dumb way to keep track of the original filename but I dont care
                 file.path = __dirname + '/uploads/' + file.name;
@@ -116,5 +116,16 @@ module.exports = {
                 prints.push(numFiles);
                 module.exports.addPrint(patron, prints);
             });
+    },
+
+    updateSingle: function(req, callback) {
+
+        new formidable.IncomingForm().parse(req, function (err, fields, files) {
+            //do something with the new form data here
+        });
+
+        if (typeof callback == 'function') {
+            callback(); //running the callback specified in calling function (in routes.js)
+        }
     }
 }

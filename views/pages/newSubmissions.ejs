@@ -35,17 +35,21 @@
       <tbody>
         <%dbdata.slice().reverse().forEach(function (item) {%>
         <tr>
-          <td><%= item.patron.fname %> <%= item.patron.lname %></td>
+          <td>
+            <%= item.patron.fname %> <%= item.patron.lname %> <br>
+            <button type="button" class="btn btn-success submit-btn" id='<%= item._id%>' <% if (!item.allFilesReviewed) { %> disabled <%}%> >Send</button>
+          </td>
           <td><%=item.dateSubmitted%></td>
           <td class="no-padding">
             <table class="plain" style="width:100%">
               <% item.files.forEach(function (file) {%>
               <tr>
                 <td style="width:99%"><%=file.fileName.substring(file.fileName.lastIndexOf("%$%$%") + 5)%></td>
-                <td style="white-space: nowrap;"><button type="button" class="btn btn-success download-btn"
-                    id='<%= file.fileName%>'>Download</button>
+                <td style="white-space: nowrap;">
+                  <button type="button" class="btn btn-success download-btn" id='<%= file.fileName%>'>Download</button>
                   <button type="button" class="btn btn-primary preview-btn" id='<%= file._id%>'>Preview</button>
-                  <button type="button" class="btn btn-danger delete-btn" id='<%= file._id%>'>Delete</button></td>
+                  <button type="button" class="btn btn-danger delete-btn" id='<%= file._id%>'>Delete</button>
+                </td>
               </tr>
               <%})%>
             </table>

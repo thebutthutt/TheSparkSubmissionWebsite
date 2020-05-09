@@ -19,7 +19,14 @@ var singlePrintSchema = mongoose.Schema({
     dateReviewed: String,
     datePaid: String,
     datePrinted: String,
-    datePickedUp: String
+    datePickedUp: String,
+    gcodeName: String,
+    slicedPrinter: String,
+    slicedMaterial: String,
+    timeHours: Number,
+    timeMinutes: Number,
+    grams: Number,
+    techNotes: String
 });
 
 // define the schema for a single patron submission
