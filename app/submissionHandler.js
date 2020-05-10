@@ -50,17 +50,20 @@ module.exports = {
                 datePickedUp: "Never"
             });
         }
+
+        //save the top level submission and low level files to the database
         request.save(function (err, document) {
             if (err) {
                 return console.error(err);
-            } else {
-                console.log('saved');
             }
         });
 
     },
 
+
+    //handles the data for a new top level print request with possibly multiple low level file submissions
     handleSubmission: function (req) {
+        //arrays of each files specifications (will only hold one entry each if patron submits only one file)
         var filenames = [],
             materials = [],
             infills = [],
@@ -72,13 +75,14 @@ module.exports = {
             patron = [],
             numFiles = 0,
             time = Date.now();
-            //FIX same file name will get the same time stamp big no no
-        console.log('here');
+            //FIX same file name will get the same time stamp big no no!!
+
+        //get the incoming form data
         new formidable.IncomingForm().parse(req, function (err, fields, files) {
-                patron = fields;
-            }).on('field', function (name, field) {
+                patron = fields; //put the fields data into the patron container to send to the database function
+            }).on('field', function (name, field) { //when a new field comes through
                 //handling duplicate input names cause for some reason formidable doesnt do it yet...
-                //makes arrays of all the suplicate form names
+                //makes arrays of all the duplicate form names
                 if (name == 'material') {
                     materials.push(field);
                 } else if (name == 'infill') {
@@ -93,16 +97,15 @@ module.exports = {
                     notes.push(field);
                 }
             })
-            .on('fileBegin', (name, file) => { //change name to something unique
-                console.log('here');
+            .on('fileBegin', (name, file) => { //when a new file comes through
                 file.name = time + "%$%$%" + file.name; //add special separater so we can get just the filename later
                 //yes this is a dumb way to keep track of the original filename but I dont care
                 file.path = __dirname + '/uploads/' + file.name;
             })
-            .on('file', (name, file) => {
+            .on('file', (name, file) => {//when a file finishes coming through
                 console.log('Uploaded file', file.path); //make sure we got it
                 filenames.push(file.path); //add this files path to the list of filenames
-                numFiles++;
+                numFiles++; //increment the number of files this top level submission is holding
             }).on('end', function () {
                 // add all our lists to one list to pass to the submission handler
                 prints.push(filenames);
@@ -114,16 +117,19 @@ module.exports = {
                 prints.push(notes);
                 prints.push(time);
                 prints.push(numFiles);
-                module.exports.addPrint(patron, prints);
+                module.exports.addPrint(patron, prints); //send the patron info and the prints info to the database function defined above
             });
     },
 
+    //this function handles when a technician is reviewing a print file within a top level submission
     updateSingle: function(req, callback) {
 
+        //get the incoming form data
         new formidable.IncomingForm().parse(req, function (err, fields, files) {
             //do something with the new form data here
         });
 
+        //fire the callback function (reloads the print review page to show the updated data)
         if (typeof callback == 'function') {
             callback(); //running the callback specified in calling function (in routes.js)
         }

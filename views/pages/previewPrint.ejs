@@ -11,17 +11,22 @@
     </style>
     <script>
         $(document).ready(function () {
+            //initial form to show is an accepted ptint
             $(".accepted-controls").show();
             $(".accepted-controls input").prop('required', true);
             $(".rejected-controls").hide();
             $(".rejected-controls input").prop('required', false);
 
+
+            //setting up the download button to woro
             $('.download-btn').on('click', function () {
                 var fileID = $(this).attr('id');
                 console.log('click');
                 window.location = '/prints/download?fileID=' + fileID;
             });
 
+
+            //which set of form items to show based on accepted or rejected print
             $("#decision").change(function () {
                 var requestType = $(this).children("option:selected").val();
                 if (requestType == 'accepted') {
@@ -38,6 +43,8 @@
                 //may change if other request types need extra options
             });
 
+
+            //sending the review print form to the backend server
             $(".submit-btn").on('click', function () {
                 var fileID = $(this).attr('fileID');
                 $.ajax({

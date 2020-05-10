@@ -42,11 +42,15 @@ module.exports = function (app, passport, submissionHandler) {
         res.send(html); //send it to the webapp
     });
 
+    //what do do when the user hits submit
     app.post('/submit', function (req, res) {
         submissionHandler.handleSubmission(req); //pass the stuff to the submission handler
         req.flash('submitMessage', 'Testing');
         res.redirect('/submit');
     });
+
+
+
 
     // =====================================
     // PRINTS ===============================
@@ -54,7 +58,7 @@ module.exports = function (app, passport, submissionHandler) {
     // show the prints queue
     app.get('/prints', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find({}, function (err, data) {
+        printRequestModel.find({}, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/newSubmissions', {
                 pgnum: 6, //tells the navbar what page to highlight
                 dbdata: data,
@@ -77,7 +81,7 @@ module.exports = function (app, passport, submissionHandler) {
                 }
             }); //delete the file on disk
             result[0].files.id(userId).remove(); //remove the single file from the top level print submission
-            result[0].numFiles -= 1; //decrement nu,ber of files associated with this print request
+            result[0].numFiles -= 1; //decrement number of files associated with this print request
             if (result[0].numFiles < 1) { //if no more files in this request delete the request itself
                 printRequestModel.deleteOne({'_id' : result[0]._id}, function(err) { //delete top level request
                     if (err) console.log(err);
@@ -96,29 +100,28 @@ module.exports = function (app, passport, submissionHandler) {
     //downloads file specified in the parameter
     app.get('/prints/download', function(req, res){
         var fileID = req.body.fileID || req.query.fileID;
-        console.log(fileID);
         res.download(fileID); //send the download
     });
 
     //send to reveiw page
     app.get('/prints/preview', function(req, res){
         var fileID = req.body.fileID || req.query.fileID;
-        printRequestModel.find({
+        printRequestModel.find({ //find the top level submission from the low level file id
             'files._id': fileID
         }, function (err, result) {
-            res.render('pages/previewPrint', {
+            res.render('pages/previewPrint', { //render the review page
                 pgnum: 7,
                 isAdmin: true,
                 print: result[0].files.id(fileID) //send the review page the file to review
             });
         });
-        console.log(fileID);
     });
 
+    //handle technician updating file by reviewing print file
     app.post('/prints/singleReview', function(req, res) {
         var fileID = req.body.fileID || req.query.fileID;
-        submissionHandler.updateSingle(req, function callBack() {
-            res.json(['done']);
+        submissionHandler.updateSingle(req, function callBack() { //send all the stuff to the submission handler
+            res.json(['done']); //when we are done tell the review page it's okay to reload now
         });
     });
 
