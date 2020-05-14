@@ -185,7 +185,10 @@
                 <tbody>
                     <tr>
                         <td>File name</td>
-                        <td><%=print.fileName.substring(print.fileName.lastIndexOf("%$%$%") + 5)%></td>
+                        <td><%=print.fileName.substring(print.fileName.lastIndexOf("%$%$%") + 5)%>
+                            <button type="button" class="btn btn-success download-btn"
+                                location='<%= print.fileName%>'>Download</button>
+                        </td>
                     </tr>
                     <tr>
                         <td>Submitted on</td>
