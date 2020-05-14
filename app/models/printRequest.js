@@ -36,7 +36,7 @@ var printSubmissionSchema = mongoose.Schema({
     dateSubmitted: String,
     numFiles: Number,
     allFilesReviewed: Boolean,
-    hasNew: Boolean,
+    hasNew: Boolean, //if this submission has new files unreviewed
     hasPendingPayment: Boolean,
     hasReadyToPrint: Boolean,
     hasRejected: Boolean,

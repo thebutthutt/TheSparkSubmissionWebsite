@@ -85,7 +85,7 @@ module.exports = function (app, passport, submissionHandler) {
                 //delete gcode from disk if it exists
                 fs.unlink(result.files.id(fileID).gcodeName, function(err){
                     if (err) {
-                        console.log(err);
+                        console.log("gcode delete", err);
                     }
                 });
             }

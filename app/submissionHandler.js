@@ -1,6 +1,7 @@
 var printRequestModel = require('./models/printRequest');
 const formidable = require('formidable');
 const moment = require('moment');
+const fs = require('fs');
 
 module.exports = {
     //function receives the input from filled out request form and saves to the database
@@ -124,76 +125,134 @@ module.exports = {
     updateSingle: function (req, callback) {
         var gcode;
         var time = moment();
-
+        var shouldUpload = true;
         //get the incoming form data
         new formidable.IncomingForm().parse(req, function (err, fields, files) {
-            //do something with the new form data here
-            if (fields.decision == 'accepted') { //if the technician accepted the print, update accordingly
-                console.log('accepted print');
-                console.log(fields);
-                printRequestModel.findOneAndUpdate({
+                printRequestModel.findOne({
                     'files._id': fields.fileID
-                }, {
-                    "$set": {
-                        "files.$.gcodeName": gcode,
-                        "files.$.slicedPrinter": fields.printer,
-                        "files.$.slicedMaterial": fields.material,
-                        "files.$.timeHours": fields.hours,
-                        "files.$.timeMinutes": fields.minutes,
-                        "files.$.grams": fields.grams,
-                        "files.$.techNotes": fields.technotes,
-                        "files.$.printLocation": fields.printLocation,
-                        "files.$.isReviewed": true,
-                        "files.$.isRejected": false,
-                        "files.$.dateReviewed": time.format("dddd, MMMM Do YYYY, h:mm:ss a"),
-                    }
-                }, {
-                    new: true
                 }, function (err, result) {
                     if (err) {
                         console.log(err);
+                    } else {
+                        if (result.files.id(fields.fileID).gcodeName != null) {
+                            //delete gcode from disk if it exists
+                            console.log("Submission had old GCODE file! deleting...");
+                            fs.unlink(result.files.id(fields.fileID).gcodeName, function (err) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                            });
+                        }
                     }
-                    //console.log(result);
                 });
-            } else { //the tecnicican rejected the print, so update differently
-                printRequestModel.findOneAndUpdate({
+                //update the low level print according to the form data
+                if (fields.decision == 'accepted') { //if the technician accepted the print, update accordingly
+                    printRequestModel.findOneAndUpdate({
+                        'files._id': fields.fileID
+                    }, {
+                        "$set": {
+                            "hasPendingPayment": true,
+                            "files.$.gcodeName": gcode,
+                            "files.$.slicedPrinter": fields.printer,
+                            "files.$.slicedMaterial": fields.material,
+                            "files.$.timeHours": fields.hours,
+                            "files.$.timeMinutes": fields.minutes,
+                            "files.$.grams": fields.grams,
+                            "files.$.techNotes": fields.technotes,
+                            "files.$.printLocation": fields.printLocation,
+                            "files.$.isReviewed": true,
+                            "files.$.isRejected": false,
+                            "files.$.dateReviewed": time.format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                        }
+                    }, {
+                        new: true
+                    }, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        //console.log(result);
+                    });
+                } else { //the tecnicican rejected the print, so update differently
+                    printRequestModel.findOneAndUpdate({
+                        'files._id': fields.fileID
+                    }, {
+                        "$set": {
+                            "hasRejected": true,
+                            "files.$.isReviewed": true,
+                            "files.$.isRejected": true,
+                            "files.$.dateReviewed": time.format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                            "files.$.rejectedNotes": fields.patronNotes,
+                        }
+                    }, {
+                        new: true
+                    }, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        //console.log(result);
+                    });
+                }
+
+                //now find the fully updated top level submission so we can check if all the files have been reviewed
+                printRequestModel.findOne({
                     'files._id': fields.fileID
-                }, {
-                    "$set": {
-                        "files.$.isReviewed": true,
-                        "files.$.isRejected": true,
-                        "files.$.dateReviewed": time.format("dddd, MMMM Do YYYY, h:mm:ss a"),
-                        "files.$.rejectedNotes": fields.patronNotes,
-                    }
-                }, {
-                    new: true
                 }, function (err, result) {
                     if (err) {
                         console.log(err);
+                    } else {
+                        console.log("updating");
+                        var numFiles = result.numFiles;
+                        var numReviewed = 0;
+                        //count number of reviewed files
+                        for (var i = 0; i < result.files.length; i++) {
+                            if (result.files[i].isReviewed) {
+                                numReviewed += 1;
+                            }
+                        }
+                        console.log("Values = numFiles: ", numFiles, " numReviewed: ", numReviewed);
+                        //if they are the same we can allow the top level submission to be processed
+                        if (numReviewed == numFiles) {
+                            result.hasNew = false;
+                            result.allFilesReviewed = true;
+                            result.save();
+                        } else if (numReviewed > numFiles) { //this should never happen, log the error
+                            console.log("something is very wrong. numFiles: ", numFiles, " numReviewed: ", numReviewed);
+                        }
+                        //else the numreviewed is less than numfiles which is fine and normal
                     }
-                    //console.log(result);
                 });
-            }
 
-            if (typeof callback == 'function') {
-                callback(fields.fileID); //running the callback specified in calling function (in routes.js)
-            }
+                if (typeof callback == 'function') {
+                    callback(fields.fileID); //running the callback specified in calling function (in routes.js)
+                }
 
-        }).on('fileBegin', (name, file) => {
-            if (file.name != null) {
-                file.name = time.unix() + "%$%$%" + file.name; //add special separater so we can get just the filename later
-                file.path = __dirname + '/uploads/gcode/' + file.name;
-                console.log('uploaded gcode');
-            } else {
-                console.log('file was null');
-            }
-        }).on('file', (name, file) => { //when a file finishes coming through
-            console.log('Uploaded file', file.path); //make sure we got it
-            gcode = file.path;
-            console.log(gcode);
-        }).on('end', function () {
-            console.log('ended');
-        });
+            }).on('field', (name, field) => {
+                if (name == "decision") {
+                    if (field == "accepted") {
+                        shouldUpload = true;
+                    } else {
+                        shouldUpload = false;
+                    }
+                }
+            })
+            .on('fileBegin', (name, file) => {
+                if (shouldUpload) {
+                    console.log(file.name);
+                    file.name = time.unix() + "%$%$%" + file.name; //add special separater so we can get just the filename later
+                    file.path = __dirname + '/uploads/gcode/' + file.name;
+                    console.log('uploaded gcode');
+                } else {
+                    console.log('file was null');
+                }
+            }).on('file', (name, file) => { //when a file finishes coming through
+                if (shouldUpload) {
+                    gcode = file.path;
+                    console.log(gcode);
+                }
+
+            }).on('end', function () {
+                console.log('ended');
+            });
 
         //fire the callback function (reloads the print review page to show the updated data)
 
