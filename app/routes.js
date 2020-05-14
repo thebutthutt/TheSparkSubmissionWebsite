@@ -135,7 +135,7 @@ module.exports = function (app, passport, submissionHandler) {
     });
 
     app.post('/prints/changeLocation', function (req, res) {
-        var fileID = req.body.userId || req.query.userId;
+        var fileID = req.body.fileID || req.query.fileID;
         printRequestModel.findOne({
             "files._id": fileID
         }, function (err, result) {
@@ -147,6 +147,7 @@ module.exports = function (app, passport, submissionHandler) {
                 } else {
                     result.files.id(fileID).printLocation = "Willis Library";
                 }
+                result.save();
             }
         });
         res.json(['done']);
