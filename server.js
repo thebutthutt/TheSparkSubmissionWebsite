@@ -17,7 +17,8 @@ var submissionHandler = require('./app/submissionHandler.js');
 // configuration ===============================================================
 mongoose.connect(configDB.url, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
 }); // connect to our database
 
 require('./config/passport')(passport); // pass passport for configuration

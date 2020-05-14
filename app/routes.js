@@ -70,25 +70,34 @@ module.exports = function (app, passport, submissionHandler) {
 
     //deletes a database entry
     app.post('/prints/delete', function (req, res, next) {
-        var userId = req.body.userId || req.query.userId;
+        var fileID = req.body.userId || req.query.userId;
         console.log("Trying deletion");
-        printRequestModel.find({ //find top level print request by single file ID
-            'files._id': userId
+        printRequestModel.findOne({ //find top level print request by single file ID
+            'files._id': fileID
         }, function (err, result) {
-            fs.unlink(result[0].files.id(userId).fileName, function(err){
+            //delete stl from disk
+            fs.unlink(result.files.id(fileID).fileName, function(err){
                 if (err) {
                     console.log(err);
                 }
-            }); //delete the file on disk
-            result[0].files.id(userId).remove(); //remove the single file from the top level print submission
-            result[0].numFiles -= 1; //decrement number of files associated with this print request
-            if (result[0].numFiles < 1) { //if no more files in this request delete the request itself
-                printRequestModel.deleteOne({'_id' : result[0]._id}, function(err) { //delete top level request
+            });
+            if (result.files.id(fileID).gcodeName != null) {
+                //delete gcode from disk if it exists
+                fs.unlink(result.files.id(fileID).gcodeName, function(err){
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            }
+            result.files.id(fileID).remove(); //remove the single file from the top level print submission
+            result.numFiles -= 1; //decrement number of files associated with this print request
+            if (result.numFiles < 1) { //if no more files in this request delete the request itself
+                printRequestModel.deleteOne({'_id' : result._id}, function(err) { //delete top level request
                     if (err) console.log(err);
                     console.log("Successful deletion");
                 });
             } else { //else save the top level with one less file
-                result[0].save(function (err) { //save top level request db entry
+                result.save(function (err) { //save top level request db entry
                     if (err) console.log(err);
                     console.log("Successful deletion");
                 });
@@ -99,30 +108,48 @@ module.exports = function (app, passport, submissionHandler) {
 
     //downloads file specified in the parameter
     app.get('/prints/download', function(req, res){
-        var fileID = req.body.fileID || req.query.fileID;
-        res.download(fileID); //send the download
+        var fileLocation = req.body.fileID || req.query.fileID;
+        res.download(fileLocation); //send the download
     });
 
-    //send to reveiw page
+    //send technician to reveiw page for a specific low level print file
     app.get('/prints/preview', function(req, res){
         var fileID = req.body.fileID || req.query.fileID;
-        printRequestModel.find({ //find the top level submission from the low level file id
+        printRequestModel.findOne({ //find the top level submission from the low level file id
             'files._id': fileID
         }, function (err, result) {
             res.render('pages/previewPrint', { //render the review page
                 pgnum: 7,
                 isAdmin: true,
-                print: result[0].files.id(fileID) //send the review page the file to review
+                timestamp: fileID.dateSubmitted,
+                print: result.files.id(fileID) //send the review page the file to review
             });
         });
     });
 
     //handle technician updating file by reviewing print file
     app.post('/prints/singleReview', function(req, res) {
-        var fileID = req.body.fileID || req.query.fileID;
-        submissionHandler.updateSingle(req, function callBack() { //send all the stuff to the submission handler
-            res.json(['done']); //when we are done tell the review page it's okay to reload now
+        submissionHandler.updateSingle(req, function callBack(fileID) { //send all the stuff to the submission handler
+            res.redirect('/prints/preview?fileID=' + fileID); //when we are done tell the review page it's okay to reload now
         });
+    });
+
+    app.post('/prints/changeLocation', function (req, res) {
+        var fileID = req.body.userId || req.query.userId;
+        printRequestModel.findOne({
+            "files._id": fileID
+        }, function (err, result) {
+            if (err) {
+                console.log(err)
+            } else {
+                if (result.files.id(fileID).printLocation == "Willis Library") {
+                    result.files.id(fileID).printLocation = "Discovery Park";
+                } else {
+                    result.files.id(fileID).printLocation = "Willis Library";
+                }
+            }
+        });
+        res.json(['done']);
     });
 
 

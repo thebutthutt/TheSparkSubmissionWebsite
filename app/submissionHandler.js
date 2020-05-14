@@ -1,11 +1,11 @@
-var printRequest = require('./models/printRequest');
+var printRequestModel = require('./models/printRequest');
 const formidable = require('formidable');
+const moment = require('moment');
 
 module.exports = {
     //function receives the input from filled out request form and saves to the database
     addPrint: function (fields, prints) {
-        var request = new printRequest(); //new instance of a request
-
+        var request = new printRequestModel(); //new instance of a request
         //fill the patron details
         request.patron = {
             fname: fields.first,
@@ -60,7 +60,6 @@ module.exports = {
 
     },
 
-
     //handles the data for a new top level print request with possibly multiple low level file submissions
     handleSubmission: function (req) {
         //arrays of each files specifications (will only hold one entry each if patron submits only one file)
@@ -74,9 +73,8 @@ module.exports = {
             prints = [],
             patron = [],
             numFiles = 0,
-            time = Date.now();
-            //FIX same file name will get the same time stamp big no no!!
-
+            time = moment(),
+            unique = 1;
         //get the incoming form data
         new formidable.IncomingForm().parse(req, function (err, fields, files) {
                 patron = fields; //put the fields data into the patron container to send to the database function
@@ -98,11 +96,12 @@ module.exports = {
                 }
             })
             .on('fileBegin', (name, file) => { //when a new file comes through
-                file.name = time + "%$%$%" + file.name; //add special separater so we can get just the filename later
+                file.name = time.unix() + unique + "%$%$%" + file.name; //add special separater so we can get just the filename later
                 //yes this is a dumb way to keep track of the original filename but I dont care
+                unique += 1; //increment unique so every file is not the same name
                 file.path = __dirname + '/uploads/' + file.name;
             })
-            .on('file', (name, file) => {//when a file finishes coming through
+            .on('file', (name, file) => { //when a file finishes coming through
                 console.log('Uploaded file', file.path); //make sure we got it
                 filenames.push(file.path); //add this files path to the list of filenames
                 numFiles++; //increment the number of files this top level submission is holding
@@ -115,23 +114,88 @@ module.exports = {
                 prints.push(copies);
                 prints.push(pickups);
                 prints.push(notes);
-                prints.push(time);
+                prints.push(time.format("dddd, MMMM Do YYYY, h:mm:ss a"));
                 prints.push(numFiles);
                 module.exports.addPrint(patron, prints); //send the patron info and the prints info to the database function defined above
             });
     },
 
     //this function handles when a technician is reviewing a print file within a top level submission
-    updateSingle: function(req, callback) {
+    updateSingle: function (req, callback) {
+        var gcode;
+        var time = moment();
 
         //get the incoming form data
         new formidable.IncomingForm().parse(req, function (err, fields, files) {
             //do something with the new form data here
+            if (fields.decision == 'accepted') { //if the technician accepted the print, update accordingly
+                console.log('accepted print');
+                console.log(fields);
+                printRequestModel.findOneAndUpdate({
+                    'files._id': fields.fileID
+                }, {
+                    "$set": {
+                        "files.$.gcodeName": gcode,
+                        "files.$.slicedPrinter": fields.printer,
+                        "files.$.slicedMaterial": fields.material,
+                        "files.$.timeHours": fields.hours,
+                        "files.$.timeMinutes": fields.minutes,
+                        "files.$.grams": fields.grams,
+                        "files.$.techNotes": fields.technotes,
+                        "files.$.printLocation": fields.printLocation,
+                        "files.$.isReviewed": true,
+                        "files.$.isRejected": false,
+                        "files.$.dateReviewed": time.format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                    }
+                }, {
+                    new: true
+                }, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    //console.log(result);
+                });
+            } else { //the tecnicican rejected the print, so update differently
+                printRequestModel.findOneAndUpdate({
+                    'files._id': fields.fileID
+                }, {
+                    "$set": {
+                        "files.$.isReviewed": true,
+                        "files.$.isRejected": true,
+                        "files.$.dateReviewed": time.format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                        "files.$.rejectedNotes": fields.patronNotes,
+                    }
+                }, {
+                    new: true
+                }, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    //console.log(result);
+                });
+            }
+
+            if (typeof callback == 'function') {
+                callback(fields.fileID); //running the callback specified in calling function (in routes.js)
+            }
+
+        }).on('fileBegin', (name, file) => {
+            if (file.name != null) {
+                file.name = time.unix() + "%$%$%" + file.name; //add special separater so we can get just the filename later
+                file.path = __dirname + '/uploads/gcode/' + file.name;
+                console.log('uploaded gcode');
+            } else {
+                console.log('file was null');
+            }
+        }).on('file', (name, file) => { //when a file finishes coming through
+            console.log('Uploaded file', file.path); //make sure we got it
+            gcode = file.path;
+            console.log(gcode);
+        }).on('end', function () {
+            console.log('ended');
         });
 
         //fire the callback function (reloads the print review page to show the updated data)
-        if (typeof callback == 'function') {
-            callback(); //running the callback specified in calling function (in routes.js)
-        }
+
     }
 }
