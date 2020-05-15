@@ -9,8 +9,7 @@ var flash = require('connect-flash');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-const multer = require('multer');
-
+const path = require('path');
 var configDB = require('./config/database.js');
 var submissionHandler = require('./app/submissionHandler.js');
 
@@ -31,7 +30,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json()); // get information from html forms
 
 app.set('view engine', 'ejs'); // set up ejs for templating
-app.use('/', express.static(__dirname + '/public')); //allow us to grab local files in the public directory
+app.use('/public', express.static(path.join(__dirname + '/public'))); //allow us to grab local files in the public directory
 
 // required for passport
 app.use(session({

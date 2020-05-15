@@ -55,20 +55,125 @@ module.exports = function (app, passport, submissionHandler) {
     // =====================================
     // PRINTS ===============================
     // =====================================
-    // show the prints queue
-    app.get('/prints', isLoggedIn, function (req, res) {
+    // show the new prints queue
+    app.get('/prints/new', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find({}, function (err, data) { //loading every single top level request FOR NOW
+        printRequestModel.find({
+            "hasNew": true
+        }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/newSubmissions', {
                 pgnum: 6, //tells the navbar what page to highlight
                 dbdata: data,
+                printPage: "newSub",
                 isAdmin: true
             });
         });
 
     });
 
-    //deletes a database entry
+    //send technician to reveiw page for a specific low level print file
+    app.get('/prints/preview', function(req, res){
+        var fileID = req.body.fileID || req.query.fileID;
+        printRequestModel.findOne({ //find the top level submission from the low level file id
+            'files._id': fileID
+        }, function (err, result) {
+            res.render('pages/previewPrint', { //render the review page
+                pgnum: 7,
+                isAdmin: true,
+                timestamp: fileID.dateSubmitted,
+                print: result.files.id(fileID) //send the review page the file to review
+            });
+        });
+    });
+
+    //show pending payment prints
+    app.get('/prints/pendpay', isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printRequestModel.find({
+            "hasPendingPayment": true
+        }, function (err, data) { //loading every single top level request FOR NOW
+            res.render('pages/pendingPayment', {
+                pgnum: 6, //tells the navbar what page to highlight
+                dbdata: data,
+                printPage: "pendpay",
+                isAdmin: true
+            });
+        });
+
+    });
+
+    //show pready to print all locations
+    app.get('/prints/ready', isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printRequestModel.find({
+            "hasReadyToPrint": true
+        }, function (err, data) { //loading every single top level request FOR NOW
+            res.render('pages/ready', {
+                pgnum: 6, //tells the navbar what page to highlight
+                dbdata: data,
+                printPage: "ready",
+                location: "all",
+                isAdmin: true
+            });
+        });
+
+    });
+
+    //show ready to print at willis
+    app.get('/prints/ready/willis', isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printRequestModel.find({
+            "hasReadyToPrint": true,
+            "files.printLocation": "Willis Library"
+        }, function (err, data) { //loading every single top level request FOR NOW
+            res.render('pages/ready', {
+                pgnum: 6, //tells the navbar what page to highlight
+                dbdata: data,
+                printPage: "ready",
+                location: "willis",
+                isAdmin: true
+            });
+        });
+
+    });
+
+    //show ready to print at dp
+    app.get('/prints/ready/dp', isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printRequestModel.find({
+            "hasReadyToPrint": true,
+            "files.printLocation": "Discovery Park"
+        }, function (err, data) { //loading every single top level request FOR NOW
+            res.render('pages/ready', {
+                pgnum: 6, //tells the navbar what page to highlight
+                dbdata: data,
+                printPage: "ready",
+                location: "dp",
+                isAdmin: true
+            });
+        });
+
+    });
+
+    //show rejected files
+    app.get('/prints/rejected', isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printRequestModel.find({
+            "hasNew": false,
+            "hasRejected": true,
+        }, function (err, data) { //loading every single top level request FOR NOW
+            res.render('pages/rejected', {
+                pgnum: 6, //tells the navbar what page to highlight
+                dbdata: data,
+                printPage: "rejected",
+                location: "willis",
+                isAdmin: true
+            });
+        });
+
+    });
+
+    //deletes a database entry and asscoiated files
     app.post('/prints/delete', function (req, res, next) {
         var fileID = req.body.userId || req.query.userId;
         console.log("Trying deletion");
@@ -112,21 +217,6 @@ module.exports = function (app, passport, submissionHandler) {
         res.download(fileLocation); //send the download
     });
 
-    //send technician to reveiw page for a specific low level print file
-    app.get('/prints/preview', function(req, res){
-        var fileID = req.body.fileID || req.query.fileID;
-        printRequestModel.findOne({ //find the top level submission from the low level file id
-            'files._id': fileID
-        }, function (err, result) {
-            res.render('pages/previewPrint', { //render the review page
-                pgnum: 7,
-                isAdmin: true,
-                timestamp: fileID.dateSubmitted,
-                print: result.files.id(fileID) //send the review page the file to review
-            });
-        });
-    });
-
     //handle technician updating file by reviewing print file
     app.post('/prints/singleReview', function(req, res) {
         submissionHandler.updateSingle(req, function callBack(fileID) { //send all the stuff to the submission handler
@@ -134,6 +224,7 @@ module.exports = function (app, passport, submissionHandler) {
         });
     });
 
+    //simple change location without reviewing
     app.post('/prints/changeLocation', function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
         printRequestModel.findOne({
@@ -151,6 +242,13 @@ module.exports = function (app, passport, submissionHandler) {
             }
         });
         res.json(['done']);
+    });
+
+    app.post('/prints/requestPayment', function (req, res) {
+        var submissionID = req.body.submissionID || req.query.submissionID;
+        submissionHandler.requestPayment(submissionID, function callback() {
+            res.redirect('/prints/new');
+        });
     });
     
 //testing

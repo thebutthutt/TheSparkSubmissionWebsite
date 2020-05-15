@@ -22,8 +22,9 @@ module.exports = {
         request.allFilesReviewed = false;
         request.hasNew = true;
         request.hasPendingPayment = false;
-        request.hasReadyToPrin = false;
+        request.hasReadyToPrint = false;
         request.hasRejected = false;
+        request.hasAccepted = false;
         request.hasReadyForPickup = false;
         request.hasStaleOnPayment = false;
         request.hasStaleOnPickup = false;
@@ -151,7 +152,6 @@ module.exports = {
                         'files._id': fields.fileID
                     }, {
                         "$set": {
-                            "hasPendingPayment": true,
                             "files.$.gcodeName": gcode,
                             "files.$.slicedPrinter": fields.printer,
                             "files.$.slicedMaterial": fields.material,
@@ -177,7 +177,6 @@ module.exports = {
                         'files._id': fields.fileID
                     }, {
                         "$set": {
-                            "hasRejected": true,
                             "files.$.isReviewed": true,
                             "files.$.isRejected": true,
                             "files.$.dateReviewed": time.format("dddd, MMMM Do YYYY, h:mm:ss a"),
@@ -200,25 +199,38 @@ module.exports = {
                     if (err) {
                         console.log(err);
                     } else {
-                        console.log("updating");
                         var numFiles = result.numFiles;
-                        var numReviewed = 0;
-                        //count number of reviewed files
+                        var numReviewed = 0, numRejected = 0;
+                        var hasRejected = false;
+
+                        //count number of reviewed files and see if any are rejected
                         for (var i = 0; i < result.files.length; i++) {
                             if (result.files[i].isReviewed) {
                                 numReviewed += 1;
                             }
+
+                            if (result.files[i].isRejected) {
+                                hasRejected = true;
+                                numRejected++;
+                            }
                         }
-                        console.log("Values = numFiles: ", numFiles, " numReviewed: ", numReviewed);
+
+                        result.hasRejected = hasRejected; //update if the top level contains a rejected file
+                        if (numRejected == numFiles) {
+                            result.hasAccepted = false;
+                        } else if (numReviewed > 0) { //if at least one is reviewed and we know not all are rejected
+                            result.hasAccepted = true;
+                        }
+
                         //if they are the same we can allow the top level submission to be processed
                         if (numReviewed == numFiles) {
-                            result.hasNew = false;
                             result.allFilesReviewed = true;
                             result.save();
                         } else if (numReviewed > numFiles) { //this should never happen, log the error
                             console.log("something is very wrong. numFiles: ", numFiles, " numReviewed: ", numReviewed);
+                        } else { //else the numreviewed is less than numfiles which is fine and normal
+                            result.save();
                         }
-                        //else the numreviewed is less than numfiles which is fine and normal
                     }
                 });
 
@@ -226,7 +238,7 @@ module.exports = {
                     callback(fields.fileID); //running the callback specified in calling function (in routes.js)
                 }
 
-            }).on('field', (name, field) => {
+            }).on('field', (name, field) => { //if we should be looking for a file uploaded for GCODE
                 if (name == "decision") {
                     if (field == "accepted") {
                         shouldUpload = true;
@@ -235,7 +247,7 @@ module.exports = {
                     }
                 }
             })
-            .on('fileBegin', (name, file) => {
+            .on('fileBegin', (name, file) => { //handle uploading a file if needed
                 if (shouldUpload) {
                     console.log(file.name);
                     file.name = time.unix() + "%$%$%" + file.name; //add special separater so we can get just the filename later
@@ -256,5 +268,28 @@ module.exports = {
 
         //fire the callback function (reloads the print review page to show the updated data)
 
+    },
+
+    requestPayment: function (submissionID, callback) {
+        //somwhow request the payment for only the accepted prints
+        var time = moment();
+        printRequestModel.findOne({
+            "_id": submissionID
+        }, function(err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                if (result.hasAccepted) {
+                    //request payment hereS
+                    result.hasNew = false; //submission wont be in new queue
+                    result.hasPendingPayment = true; //submission will be in pendpay queue
+                    result.datePaymentRequested = time.format("dddd, MMMM Do YYYY, h:mm:ss a");
+                } else {
+                    //none of the prints were accepted
+                    result.hasNew = false; //submission not in new queue
+                }
+                result.save();
+            }
+        });
     }
 }

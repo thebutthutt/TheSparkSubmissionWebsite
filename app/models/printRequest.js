@@ -34,12 +34,14 @@ var singlePrintSchema = mongoose.Schema({
 var printSubmissionSchema = mongoose.Schema({
     patron: mongoose.model('Patron').schema,
     dateSubmitted: String,
+    datePaymentRequested: String,
     numFiles: Number,
     allFilesReviewed: Boolean,
     hasNew: Boolean, //if this submission has new files unreviewed
     hasPendingPayment: Boolean,
     hasReadyToPrint: Boolean,
     hasRejected: Boolean,
+    hasAccepted: Boolean,
     hasReadyForPickup: Boolean,
     hasStaleOnPayment: Boolean,
     hasStaleOnPickup: Boolean,
