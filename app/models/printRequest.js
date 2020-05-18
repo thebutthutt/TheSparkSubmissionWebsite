@@ -35,6 +35,7 @@ var printSubmissionSchema = mongoose.Schema({
     patron: mongoose.model('Patron').schema,
     dateSubmitted: String,
     datePaymentRequested: String,
+    datePaid: String,
     numFiles: Number,
     allFilesReviewed: Boolean,
     hasNew: Boolean, //if this submission has new files unreviewed

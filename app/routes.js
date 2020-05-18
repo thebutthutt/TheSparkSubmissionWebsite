@@ -130,7 +130,7 @@ module.exports = function (app, passport, submissionHandler) {
                 pgnum: 6, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "ready",
-                location: "willis",
+                location: "Willis Library",
                 isAdmin: true
             });
         });
@@ -148,7 +148,7 @@ module.exports = function (app, passport, submissionHandler) {
                 pgnum: 6, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "ready",
-                location: "dp",
+                location: "Discovery Park",
                 isAdmin: true
             });
         });
@@ -177,38 +177,8 @@ module.exports = function (app, passport, submissionHandler) {
     app.post('/prints/delete', function (req, res, next) {
         var fileID = req.body.userId || req.query.userId;
         console.log("Trying deletion");
-        printRequestModel.findOne({ //find top level print request by single file ID
-            'files._id': fileID
-        }, function (err, result) {
-            //delete stl from disk
-            fs.unlink(result.files.id(fileID).fileName, function(err){
-                if (err) {
-                    console.log(err);
-                }
-            });
-            if (result.files.id(fileID).gcodeName != null) {
-                //delete gcode from disk if it exists
-                fs.unlink(result.files.id(fileID).gcodeName, function(err){
-                    if (err) {
-                        console.log("gcode delete", err);
-                    }
-                });
-            }
-            result.files.id(fileID).remove(); //remove the single file from the top level print submission
-            result.numFiles -= 1; //decrement number of files associated with this print request
-            if (result.numFiles < 1) { //if no more files in this request delete the request itself
-                printRequestModel.deleteOne({'_id' : result._id}, function(err) { //delete top level request
-                    if (err) console.log(err);
-                    console.log("Successful deletion");
-                });
-            } else { //else save the top level with one less file
-                result.save(function (err) { //save top level request db entry
-                    if (err) console.log(err);
-                    console.log("Successful deletion");
-                });
-            }
-            res.json(['done']); //tell the front end the request is done
-        });
+        submissionHandler.deleteFile(fileID);
+        res.json(['done']); //tell the front end the request is done
     });
 
     //downloads file specified in the parameter
@@ -247,7 +217,16 @@ module.exports = function (app, passport, submissionHandler) {
     app.post('/prints/requestPayment', function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         submissionHandler.requestPayment(submissionID, function callback() {
-            res.redirect('/prints/new');
+            console.log('done');
+            res.json(['done']); //tell the front end the request is done
+        });
+    });
+
+    app.post('/prints/recievePayment', function (req, res) {
+        var submissionID = req.body.submissionID || req.query.submissionID;
+        submissionHandler.recievePayment(submissionID, function callback() {
+            console.log('done');
+            res.json(['done']); //tell the front end the request is done
         });
     });
     

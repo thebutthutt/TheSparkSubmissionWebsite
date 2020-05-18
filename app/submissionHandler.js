@@ -2,6 +2,7 @@ var printRequestModel = require('./models/printRequest');
 const formidable = require('formidable');
 const moment = require('moment');
 const fs = require('fs');
+const constants = require('./constants');
 
 module.exports = {
     //function receives the input from filled out request form and saves to the database
@@ -116,7 +117,7 @@ module.exports = {
                 prints.push(copies);
                 prints.push(pickups);
                 prints.push(notes);
-                prints.push(time.format("dddd, MMMM Do YYYY, h:mm:ss a"));
+                prints.push(time.format(constants.format));
                 prints.push(numFiles);
                 module.exports.addPrint(patron, prints); //send the patron info and the prints info to the database function defined above
             });
@@ -162,7 +163,7 @@ module.exports = {
                             "files.$.printLocation": fields.printLocation,
                             "files.$.isReviewed": true,
                             "files.$.isRejected": false,
-                            "files.$.dateReviewed": time.format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                            "files.$.dateReviewed": time.format(constants.format),
                         }
                     }, {
                         new: true
@@ -179,7 +180,7 @@ module.exports = {
                         "$set": {
                             "files.$.isReviewed": true,
                             "files.$.isRejected": true,
-                            "files.$.dateReviewed": time.format("dddd, MMMM Do YYYY, h:mm:ss a"),
+                            "files.$.dateReviewed": time.format(constants.format),
                             "files.$.rejectedNotes": fields.patronNotes,
                         }
                     }, {
@@ -193,46 +194,7 @@ module.exports = {
                 }
 
                 //now find the fully updated top level submission so we can check if all the files have been reviewed
-                printRequestModel.findOne({
-                    'files._id': fields.fileID
-                }, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        var numFiles = result.numFiles;
-                        var numReviewed = 0, numRejected = 0;
-                        var hasRejected = false;
-
-                        //count number of reviewed files and see if any are rejected
-                        for (var i = 0; i < result.files.length; i++) {
-                            if (result.files[i].isReviewed) {
-                                numReviewed += 1;
-                            }
-
-                            if (result.files[i].isRejected) {
-                                hasRejected = true;
-                                numRejected++;
-                            }
-                        }
-
-                        result.hasRejected = hasRejected; //update if the top level contains a rejected file
-                        if (numRejected == numFiles) {
-                            result.hasAccepted = false;
-                        } else if (numReviewed > 0) { //if at least one is reviewed and we know not all are rejected
-                            result.hasAccepted = true;
-                        }
-
-                        //if they are the same we can allow the top level submission to be processed
-                        if (numReviewed == numFiles) {
-                            result.allFilesReviewed = true;
-                            result.save();
-                        } else if (numReviewed > numFiles) { //this should never happen, log the error
-                            console.log("something is very wrong. numFiles: ", numFiles, " numReviewed: ", numReviewed);
-                        } else { //else the numreviewed is less than numfiles which is fine and normal
-                            result.save();
-                        }
-                    }
-                });
+                module.exports.setFlags(fields.fileID);
 
                 if (typeof callback == 'function') {
                     callback(fields.fileID); //running the callback specified in calling function (in routes.js)
@@ -266,8 +228,6 @@ module.exports = {
                 console.log('ended');
             });
 
-        //fire the callback function (reloads the print review page to show the updated data)
-
     },
 
     requestPayment: function (submissionID, callback) {
@@ -283,13 +243,126 @@ module.exports = {
                     //request payment hereS
                     result.hasNew = false; //submission wont be in new queue
                     result.hasPendingPayment = true; //submission will be in pendpay queue
-                    result.datePaymentRequested = time.format("dddd, MMMM Do YYYY, h:mm:ss a");
+                    result.datePaymentRequested = time.format(constants.format);
                 } else {
                     //none of the prints were accepted
                     result.hasNew = false; //submission not in new queue
+                    result.datePaymentRequested = time.format(constants.format); //still capture review time
                 }
                 result.save();
+                if (typeof callback == 'function') {
+                    callback();
+                }
             }
+        });
+        
+    },
+
+    recievePayment: function(submissionID) {
+        var time = moment();
+        printRequestModel.findOne({
+            "_id": submissionID
+        }, function(err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                if (result.hasAccepted) {
+                    result.hasReadyToPrint = true; //now we have files ready to print
+                    result.hasPendingPayment = false; //submission will be in pendpay queue
+                    result.datePaid = time.format(constants.format);
+                    for (var i = 0; i < result.files.length; i++) {
+                        result.files[i].datePaid = time.format(constants.format);
+                    }
+                } else {
+                    //none of the prints were acceptedrs
+                    result.hasPendingPayment = false; //submission not in new queue
+                }
+                result.save();
+                if (typeof callback == 'function') {
+                    callback();
+                }
+            }
+        });
+        
+    },
+
+    //set appropriate flags for top level submission
+    setFlags: function(submissionID) {
+        printRequestModel.findOne({
+            'files._id': submissionID
+        }, function (err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                var numFiles = result.numFiles;
+                var numReviewed = 0, numRejected = 0;
+                var hasRejected = false;
+
+                //count number of reviewed files and see if any are rejected
+                for (var i = 0; i < result.files.length; i++) {
+                    if (result.files[i].isReviewed == true) {
+                        numReviewed += 1;
+                    }
+
+                    if (result.files[i].isRejected == true) {
+                        hasRejected = true;
+                        numRejected++;
+                    }
+                }
+
+                result.hasRejected = hasRejected; //update if the top level contains a rejected file
+                if (numRejected == numFiles) {
+                    result.hasAccepted = false;
+                } else if (numReviewed > 0) { //if at least one is reviewed and we know not all are rejected
+                    result.hasAccepted = true;
+                }
+
+                //if they are the same we can allow the top level submission to be processed
+                if (numReviewed == numFiles) {
+                    result.allFilesReviewed = true;
+                    result.save();
+                } else if (numReviewed > numFiles) { //this should never happen, log the error
+                    console.log("something is very wrong. numFiles: ", numFiles, " numReviewed: ", numReviewed);
+                } else { //else the numreviewed is less than numfiles which is fine and normal
+                    result.save();
+                }
+            }
+        });
+    },
+
+    deleteFile: function(fileID) {
+        printRequestModel.findOne({ //find top level print request by single file ID
+            'files._id': fileID
+        }, function (err, result) {
+            //delete stl from disk
+            fs.unlink(result.files.id(fileID).fileName, function(err){
+                if (err) {
+                    console.log(err);
+                }
+            });
+            if (result.files.id(fileID).isRejected == false) {
+                //delete gcode from disk if it exists
+                fs.unlink(result.files.id(fileID).gcodeName, function(err){
+                    if (err) {
+                        console.log("gcode delete", err);
+                    }
+                });
+            }
+            result.files.id(fileID).remove(); //remove the single file from the top level print submission
+            result.numFiles -= 1; //decrement number of files associated with this print request
+            if (result.numFiles < 1) { //if no more files in this request delete the request itself
+                printRequestModel.deleteOne({'_id' : result._id}, function(err) { //delete top level request
+                    if (err) console.log(err);
+                    console.log("Successful deletion");
+                });
+            } else { //else save the top level with one less file
+                result.save(function (err) { //save top level request db entry
+                    if (err) console.log(err);
+                    console.log("Successful deletion");
+                });
+                module.exports.setFlags(result.files[0]._id); //now set all the flags of the updated top level submission
+            }
+            
         });
     }
 }

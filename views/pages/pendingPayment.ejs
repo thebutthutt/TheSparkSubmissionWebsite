@@ -3,28 +3,7 @@
 
 <head>
   <%- include ("../partials/head") %>
-  <style>
-    .container {
-      margin-top: 80px;
-    }
-
-    .plain tbody tr,
-    .plain tbody tr:hover,
-    .plain tbody td {
-      background-color: transparent !important;
-      border: none;
-    }
-
-    .no-padding {
-      padding: 0px !important;
-    }
-
-    .fake-tab {
-      border: 1px solid #ddd;
-      border-top: none;
-      margin-top: -1px;
-    }
-  </style>
+  <link type="text/css" rel="stylesheet" href="../../public/css/prints.css">
   <script src="../public/js/prints.js"></script>
 </head>
 
@@ -47,21 +26,26 @@
           <tr>
             <td>
               <%= item.patron.fname %> <%= item.patron.lname %> <br>
+              <button type="button" class="btn btn-primary push-btn" id='<%= item._id%>'>Send</button>
             </td>
             <td><%=item.dateSubmitted%></td>
             <td><%=item.datePaymentRequested%></td>
             <td class="no-padding">
-                <table class="plain" style="width:100%">
-                  <% item.files.forEach(function (file) {%>
-                    <% if (file.isRejected == false) { %>
-                        <tr>
-                            <td>
-                              <%=file.fileName.substring(file.fileName.lastIndexOf("%$%$%") + 5)%>
-                            </td>
-                          </tr>
-                    <% } %>
-                  <%})%>
-                </table>
+              <table class="plain">
+                <% item.files.forEach(function (file) {%>
+                <% if (file.isRejected == false) { %>
+                <tr>
+                  <td>
+                    <%=file.fileName.substring(file.fileName.lastIndexOf("%$%$%") + 5)%>
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-danger delete-btn" id='<%= file._id%>'>D</button>
+                    <button type="button" class="btn btn-primary preview-btn" id='<%= file._id%>'>P</button>
+                  </td>
+                </tr>
+                <% } %>
+                <%})%>
+              </table>
             </td>
           </tr>
           <%})%>

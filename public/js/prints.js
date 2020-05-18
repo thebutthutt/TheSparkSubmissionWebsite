@@ -9,7 +9,7 @@ $(document).ready(function () {
                 "userId": userId
             },
             dataType: "json"
-        }).done(function() {
+        }).done(function () {
             console.log('done');
             location.reload();
         });
@@ -32,12 +32,30 @@ $(document).ready(function () {
     $('.submit-btn').on('click', function () {
         let submissionID = $(this).attr('id');
         $.ajax({
-          type: 'POST',
-          url: '/prints/requestPayment',
-          data: {
-            "submissionID": submissionID
-          },
-          dataType: 'json'
+            type: 'POST',
+            url: '/prints/requestPayment',
+            data: {
+                "submissionID": submissionID
+            },
+            dataType: 'json'
+        }).done(function () {
+            console.log('done');
+            location.reload();
         });
-      });
+    });
+
+    $('.push-btn').on('click', function () {
+        let submissionID = $(this).attr('id');
+        $.ajax({
+            type: 'POST',
+            url: '/prints/recievePayment',
+            data: {
+                "submissionID": submissionID
+            },
+            dataType: 'json'
+        }).done(function () {
+            console.log('done');
+            location.reload();
+        });
+    });
 });
