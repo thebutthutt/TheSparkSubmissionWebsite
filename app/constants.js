@@ -1,3 +1,3 @@
 module.exports = {
-    'format': 'dddd, MMMM Do YYYY, h:mm:ss a'
+    'format': 'MMM Do YYYY [(]h:mm a[)]' //Jan 1st 2020 (2:07 pm)
 }

@@ -120,7 +120,7 @@ module.exports = function (app, passport, submissionHandler) {
     });
 
     //show ready to print at willis
-    app.get('/prints/ready/willis', isLoggedIn, function (req, res) {
+    app.get('/prints/readywillis', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
             "hasReadyToPrint": true,
@@ -138,7 +138,7 @@ module.exports = function (app, passport, submissionHandler) {
     });
 
     //show ready to print at dp
-    app.get('/prints/ready/dp', isLoggedIn, function (req, res) {
+    app.get('/prints/readydp', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
             "hasReadyToPrint": true,
@@ -189,8 +189,8 @@ module.exports = function (app, passport, submissionHandler) {
 
     //handle technician updating file by reviewing print file
     app.post('/prints/singleReview', function(req, res) {
-        submissionHandler.updateSingle(req, function callBack(fileID) { //send all the stuff to the submission handler
-            res.redirect('/prints/preview?fileID=' + fileID); //when we are done tell the review page it's okay to reload now
+        submissionHandler.updateSingle(req, function callBack() { //send all the stuff to the submission handler
+            res.redirect('/prints/new'); //when we are done tell the review page it's okay to reload now
         });
     });
 
@@ -225,7 +225,7 @@ module.exports = function (app, passport, submissionHandler) {
     app.post('/prints/recievePayment', function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         submissionHandler.recievePayment(submissionID, function callback() {
-            console.log('done');
+            console.log('done receiving');
             res.json(['done']); //tell the front end the request is done
         });
     });

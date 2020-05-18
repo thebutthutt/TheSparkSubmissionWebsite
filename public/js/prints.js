@@ -29,6 +29,7 @@ $(document).ready(function () {
         var fileID = $(this).attr('id');
         window.location = '/prints/edit?fileID=' + fileID;
     });
+
     $('.submit-btn').on('click', function () {
         let submissionID = $(this).attr('id');
         $.ajax({

@@ -197,7 +197,7 @@ module.exports = {
                 module.exports.setFlags(fields.fileID);
 
                 if (typeof callback == 'function') {
-                    callback(fields.fileID); //running the callback specified in calling function (in routes.js)
+                    callback(); //running the callback specified in calling function (in routes.js)
                 }
 
             }).on('field', (name, field) => { //if we should be looking for a file uploaded for GCODE
@@ -258,7 +258,7 @@ module.exports = {
         
     },
 
-    recievePayment: function(submissionID) {
+    recievePayment: function(submissionID, callback) {
         var time = moment();
         printRequestModel.findOne({
             "_id": submissionID
@@ -279,6 +279,7 @@ module.exports = {
                 }
                 result.save();
                 if (typeof callback == 'function') {
+                    console.log('firing callback');
                     callback();
                 }
             }
