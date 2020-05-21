@@ -2,7 +2,7 @@ var printRequestModel = require('./models/printRequest');
 const formidable = require('formidable');
 const moment = require('moment');
 const fs = require('fs');
-const constants = require('./constants');
+const constants = require('../config/constants');
 
 module.exports = {
     //function receives the input from filled out request form and saves to the database
@@ -230,6 +230,8 @@ module.exports = {
 
     },
 
+    //this function fires when a tech says a submission is ready to be sent to the pendpay queue
+    //eventually will ask for payment from a patron
     requestPayment: function (submissionID, callback) {
         //somwhow request the payment for only the accepted prints
         var time = moment();
@@ -239,12 +241,13 @@ module.exports = {
             if (err) {
                 console.log(err);
             } else {
+                //only ask for payment if there were any files accepted
                 if (result.hasAccepted) {
-                    //request payment hereS
+                    //request payment here
                     result.hasNew = false; //submission wont be in new queue
                     result.hasPendingPayment = true; //submission will be in pendpay queue
                     result.datePaymentRequested = time.format(constants.format);
-                } else {
+                } else { //dont ask for payment, just move to the rejected queue
                     //none of the prints were accepted
                     result.hasNew = false; //submission not in new queue
                     result.datePaymentRequested = time.format(constants.format); //still capture review time
@@ -258,6 +261,8 @@ module.exports = {
         
     },
 
+    //should fire when a user pays for a submission
+    //pushes print from the pendpy queue to the paid and ready queue
     recievePayment: function(submissionID, callback) {
         var time = moment();
         printRequestModel.findOne({
@@ -266,18 +271,19 @@ module.exports = {
             if (err) {
                 console.log(err);
             } else {
-                if (result.hasAccepted) {
+                //this check is redundant but still
+                if (result.hasAccepted) { //if there were any accepted files
                     result.hasReadyToPrint = true; //now we have files ready to print
                     result.hasPendingPayment = false; //submission will be in pendpay queue
                     result.datePaid = time.format(constants.format);
                     for (var i = 0; i < result.files.length; i++) {
                         result.files[i].datePaid = time.format(constants.format);
                     }
-                } else {
-                    //none of the prints were acceptedrs
+                } else { //would never happen but just in case
+                    //none of the prints were accepted
                     result.hasPendingPayment = false; //submission not in new queue
                 }
-                result.save();
+                result.save();//save the db entry
                 if (typeof callback == 'function') {
                     console.log('firing callback');
                     callback();
