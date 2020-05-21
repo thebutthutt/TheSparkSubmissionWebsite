@@ -66,5 +66,4 @@ var http_server = http.createServer(function(req,res){
 }).listen(80, '0.0.0.0');
 
 console.log('The magic happens on port ' + port);
-payment.generatePaymentURL("Joe Average", 123.23, "Extra data I want back");
 
