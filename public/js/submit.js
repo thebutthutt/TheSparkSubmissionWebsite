@@ -15,18 +15,20 @@ var addOne = function () {
 
 $(document).ready(function () {
     var numPrints = 1;
+    var requestType = 'print';
     //this inserts the first 3d print file segment
     addOne();
 
     //this hides the 3d print specific section of the form when the dropdown isnt 3d print
     $("#requestTypeSelector").change(function () {
-        var requestType = $(this).children("option:selected").val();
+        requestType = $(this).children("option:selected").val();
         if (requestType == 'print') {
-            console.log('printinf');
+            $("#submission-form").attr("action", "/submitprint");
             $(".print-only").show();
             addOne();
             $(".print-only input").prop('required', true);
         } else {
+            $("#submission-form").attr("action", "/submitcle");
             $("#files-list").empty();
             $(".print-only").hide();
             $(".print-only input").prop('required', false);
