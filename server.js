@@ -1,8 +1,10 @@
 // set up ======================================================================
 // get all the tools we need
 var express = require('express');
+const https = require('https');
+const fs = require('fs');
 var app = express();
-var port = process.env.PORT || 8080;
+var port = 443;
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash = require('connect-flash');
@@ -46,5 +48,9 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 require('./app/routes.js')(app, passport, submissionHandler); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
-app.listen(port);
+https.createServer({
+    key: fs.readFileSync('./npserver2048.key'),
+    cert: fs.readFileSync('./sparkorders_library_unt_edu_cert.cer'),
+    passphrase: 'THEsparkMakerSPACE'
+},app).listen(port, '0.0.0.0');
 console.log('The magic happens on port ' + port);
