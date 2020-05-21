@@ -17,6 +17,8 @@ const path = require('path');
 
 var configDB = require('./config/database.js');
 var printHandler = require('./app/printHandler.js');
+var cleHandler = require('./app/cleHandler.js');
+const payment = require('./config/payment.js');
 
 // configuration ===============================================================
 mongoose.connect(configDB.url, {
@@ -48,7 +50,7 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require('./app/routes.js')(app, passport, printHandler); // load our routes and pass in our app and fully configured passport
+require('./app/routes.js')(app, passport, printHandler, cleHandler); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
 https.createServer({
@@ -64,3 +66,5 @@ var http_server = http.createServer(function(req,res){
 }).listen(80, '0.0.0.0');
 
 console.log('The magic happens on port ' + port);
+payment.generatePaymentURL("Joe Average", 123.23, "Extra data I want back");
+

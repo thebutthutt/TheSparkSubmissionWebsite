@@ -3,10 +3,13 @@ const formidable = require('formidable');
 const moment = require('moment');
 const fs = require('fs');
 const constants = require('../config/constants');
+const payment = require('../config/payment.js');
 
 module.exports = {
     //function receives the input from filled out request form and saves to the database
     addPrint: function (fields, prints) {
+        console.log('in add print');
+
         var request = new printRequestModel(); //new instance of a request
         //fill the patron details
         request.patron = {
@@ -55,6 +58,8 @@ module.exports = {
         }
 
         //save the top level submission and low level files to the database
+        console.log('saving print');
+
         request.save(function (err, document) {
             if (err) {
                 return console.error(err);
@@ -65,6 +70,7 @@ module.exports = {
 
     //handles the data for a new top level print request with possibly multiple low level file submissions
     handleSubmission: function (req) {
+        console.log('handling print');
         //arrays of each files specifications (will only hold one entry each if patron submits only one file)
         var filenames = [],
             materials = [],
@@ -81,6 +87,18 @@ module.exports = {
         //get the incoming form data
         new formidable.IncomingForm().parse(req, function (err, fields, files) {
                 patron = fields; //put the fields data into the patron container to send to the database function
+                // add all our lists to one list to pass to the submission handler
+                prints.push(filenames);
+                prints.push(materials);
+                prints.push(infills);
+                prints.push(colors);
+                prints.push(copies);
+                prints.push(pickups);
+                prints.push(notes);
+                prints.push(time.format(constants.format));
+                prints.push(numFiles);
+                console.log('adding print');
+                module.exports.addPrint(patron, prints);
             }).on('field', function (name, field) { //when a new field comes through
                 //handling duplicate input names cause for some reason formidable doesnt do it yet...
                 //makes arrays of all the duplicate form names
@@ -108,18 +126,6 @@ module.exports = {
                 console.log('Uploaded file', file.path); //make sure we got it
                 filenames.push(file.path); //add this files path to the list of filenames
                 numFiles++; //increment the number of files this top level submission is holding
-            }).on('end', function () {
-                // add all our lists to one list to pass to the submission handler
-                prints.push(filenames);
-                prints.push(materials);
-                prints.push(infills);
-                prints.push(colors);
-                prints.push(copies);
-                prints.push(pickups);
-                prints.push(notes);
-                prints.push(time.format(constants.format));
-                prints.push(numFiles);
-                module.exports.addPrint(patron, prints); //send the patron info and the prints info to the database function defined above
             });
     },
 
@@ -237,7 +243,7 @@ module.exports = {
         var time = moment();
         printRequestModel.findOne({
             "_id": submissionID
-        }, function(err, result) {
+        }, function (err, result) {
             if (err) {
                 console.log(err);
             } else {
@@ -247,6 +253,11 @@ module.exports = {
                     result.hasNew = false; //submission wont be in new queue
                     result.hasPendingPayment = true; //submission will be in pendpay queue
                     result.datePaymentRequested = time.format(constants.format);
+                    var nameString = result.patron.fname;
+                    nameString.concat("+");
+                    nameString.concat(result.patron.lname);
+                    console.log(nameString);
+                    payment.generatePaymentURL("hanna_flores", 12.6, result._id);
                 } else { //dont ask for payment, just move to the rejected queue
                     //none of the prints were accepted
                     result.hasNew = false; //submission not in new queue
@@ -258,16 +269,16 @@ module.exports = {
                 }
             }
         });
-        
+
     },
 
     //should fire when a user pays for a submission
     //pushes print from the pendpy queue to the paid and ready queue
-    recievePayment: function(submissionID, callback) {
+    recievePayment: function (submissionID, callback) {
         var time = moment();
         printRequestModel.findOne({
             "_id": submissionID
-        }, function(err, result) {
+        }, function (err, result) {
             if (err) {
                 console.log(err);
             } else {
@@ -283,18 +294,18 @@ module.exports = {
                     //none of the prints were accepted
                     result.hasPendingPayment = false; //submission not in new queue
                 }
-                result.save();//save the db entry
+                result.save(); //save the db entry
                 if (typeof callback == 'function') {
                     console.log('firing callback');
                     callback();
                 }
             }
         });
-        
+
     },
 
     //set appropriate flags for top level submission
-    setFlags: function(submissionID) {
+    setFlags: function (submissionID) {
         printRequestModel.findOne({
             'files._id': submissionID
         }, function (err, result) {
@@ -302,7 +313,8 @@ module.exports = {
                 console.log(err);
             } else {
                 var numFiles = result.numFiles;
-                var numReviewed = 0, numRejected = 0;
+                var numReviewed = 0,
+                    numRejected = 0;
                 var hasRejected = false;
 
                 //count number of reviewed files and see if any are rejected
@@ -337,28 +349,33 @@ module.exports = {
         });
     },
 
-    deleteFile: function(fileID) {
+    deleteFile: function (fileID) {
         printRequestModel.findOne({ //find top level print request by single file ID
             'files._id': fileID
         }, function (err, result) {
             //delete stl from disk
-            fs.unlink(result.files.id(fileID).fileName, function(err){
+            fs.unlink(result.files.id(fileID).fileName, function (err) {
                 if (err) {
                     console.log(err);
                 }
             });
             if (result.files.id(fileID).isRejected == false) {
                 //delete gcode from disk if it exists
-                fs.unlink(result.files.id(fileID).gcodeName, function(err){
-                    if (err) {
-                        console.log("gcode delete", err);
-                    }
-                });
+                if (result.files.id(fileID).gcodeName != null) {
+                    console.log(result.files.id(fileID).gcodeName);
+                    fs.unlink(result.files.id(fileID).gcodeName, function (err) {
+                        if (err) {
+                            console.log("gcode delete", err);
+                        }
+                    });
+                }
             }
             result.files.id(fileID).remove(); //remove the single file from the top level print submission
             result.numFiles -= 1; //decrement number of files associated with this print request
             if (result.numFiles < 1) { //if no more files in this request delete the request itself
-                printRequestModel.deleteOne({'_id' : result._id}, function(err) { //delete top level request
+                printRequestModel.deleteOne({
+                    '_id': result._id
+                }, function (err) { //delete top level request
                     if (err) console.log(err);
                     console.log("Successful deletion");
                 });
@@ -369,7 +386,7 @@ module.exports = {
                 });
                 module.exports.setFlags(result.files[0]._id); //now set all the flags of the updated top level submission
             }
-            
+
         });
     }
 }

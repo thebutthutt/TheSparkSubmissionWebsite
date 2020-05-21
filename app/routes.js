@@ -2,7 +2,7 @@ var printRequestModel = require('./models/printRequest');
 const fs = require('fs');
 
 
-module.exports = function (app, passport, submissionHandler) {
+module.exports = function (app, passport, printHandler, cleHandler) {
 
     // =====================================
     // HOME PAGE (with login links) ========
@@ -43,9 +43,16 @@ module.exports = function (app, passport, submissionHandler) {
     });
 
     //what do do when the user hits submit
-    app.post('/submit', function (req, res) {
-        submissionHandler.handleSubmission(req); //pass the stuff to the submission handler
-        req.flash('submitMessage', 'Testing');
+    app.post('/submitprint', function (req, res) {
+        printHandler.handleSubmission(req); //pass the stuff to the print handler
+        req.flash('submitMessage', 'Submitted the print!');
+        res.redirect('/submit');
+    });
+
+    //what do do when the user hits submit
+    app.post('/submitcle', function (req, res) {
+        cleHandler.handleSubmission(req); //pass the stuff to the print handler
+        req.flash('submitMessage', 'Submitted the request!');
         res.redirect('/submit');
     });
 
@@ -177,7 +184,7 @@ module.exports = function (app, passport, submissionHandler) {
     app.post('/prints/delete', function (req, res, next) {
         var fileID = req.body.userId || req.query.userId;
         console.log("Trying deletion");
-        submissionHandler.deleteFile(fileID);
+        printHandler.deleteFile(fileID);
         res.json(['done']); //tell the front end the request is done
     });
 
@@ -189,7 +196,7 @@ module.exports = function (app, passport, submissionHandler) {
 
     //handle technician updating file by reviewing print file
     app.post('/prints/singleReview', function(req, res) {
-        submissionHandler.updateSingle(req, function callBack() { //send all the stuff to the submission handler
+        printHandler.updateSingle(req, function callBack() { //send all the stuff to the submission handler
             res.redirect('/prints/new'); //when we are done tell the review page it's okay to reload now
         });
     });
@@ -216,7 +223,7 @@ module.exports = function (app, passport, submissionHandler) {
 
     app.post('/prints/requestPayment', function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
-        submissionHandler.requestPayment(submissionID, function callback() {
+        printHandler.requestPayment(submissionID, function callback() {
             console.log('done');
             res.json(['done']); //tell the front end the request is done
         });
@@ -224,7 +231,7 @@ module.exports = function (app, passport, submissionHandler) {
 
     app.post('/prints/recievePayment', function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
-        submissionHandler.recievePayment(submissionID, function callback() {
+        printHandler.recievePayment(submissionID, function callback() {
             console.log('done receiving');
             res.json(['done']); //tell the front end the request is done
         });
