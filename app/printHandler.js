@@ -1,13 +1,6 @@
-var printRequestModel = require('./models/printRequest');
-const formidable = require('formidable');
-const moment = require('moment');
-const fs = require('fs');
-const constants = require('../config/constants');
-const payment = require('../config/payment.js');
-
-module.exports = {
+module.exports = function (printRequestModel, formidable, moment, fs, constants, payment) {
     //function receives the input from filled out request form and saves to the database
-    addPrint: function (fields, prints) {
+    addPrint = function (fields, prints) {
         console.log('in add print');
 
         var request = new printRequestModel(); //new instance of a request
@@ -69,7 +62,7 @@ module.exports = {
     },
 
     //handles the data for a new top level print request with possibly multiple low level file submissions
-    handleSubmission: function (req) {
+    handleSubmission = function (req) {
         console.log('handling print');
         //arrays of each files specifications (will only hold one entry each if patron submits only one file)
         var filenames = [],
@@ -130,7 +123,7 @@ module.exports = {
     },
 
     //this function handles when a technician is reviewing a print file within a top level submission
-    updateSingle: function (req, callback) {
+    updateSingle = function (req, callback) {
         var gcode;
         var time = moment();
         var shouldUpload = true;
@@ -238,7 +231,7 @@ module.exports = {
 
     //this function fires when a tech says a submission is ready to be sent to the pendpay queue
     //eventually will ask for payment from a patron
-    requestPayment: function (submissionID, callback) {
+    requestPayment = function (submissionID, callback) {
         //somwhow request the payment for only the accepted prints
         var time = moment();
         printRequestModel.findOne({
@@ -249,21 +242,42 @@ module.exports = {
             } else {
                 //only ask for payment if there were any files accepted
                 if (result.hasAccepted) {
-                    //request payment here
                     result.hasNew = false; //submission wont be in new queue
                     result.hasPendingPayment = true; //submission will be in pendpay queue
                     result.datePaymentRequested = time.format(constants.format);
-                    var nameString = result.patron.fname;
-                    nameString.concat("+");
-                    nameString.concat(result.patron.lname);
-                    console.log(nameString);
-                    payment.generatePaymentURL("hanna_flores", 12.6, result._id);
+
+                    //calc full name of patron
+                    var nameString = "";
+                    nameString = nameString.concat(result.patron.fname, " ", result.patron.lname);
+
+                    //calc amount to charge for print
+                    var amount = 0.0;
+                    for (var i = 0; i < result.files.length; i++) {
+                        if (result.files[i].isRejected == false && result.files[i].isReviewed == true) { //print is accepted
+                            if (result.files[i].timeHours <= 0) { //if its less than an hour, just charge one dollar
+                                amount += 1;
+                            } else { //charge hours plus minutes out of 60 in cents
+                                amount += result.files[i].timeHours;
+                                amount += (result.files[i].timeMinutes/60);
+                            }
+                        }
+                    }
+                    amount = Math.round((amount + Number.EPSILON) * 100) / 100; //make it a normal 2 decimal place charge
+
+                    console.log("Name: ", nameString);
+                    console.log("Amount: ", amount);
+                    console.log("ID: ", result._id);
+
+                    payment.generatePaymentURL(nameString, amount, result._id); //generate the URL
+
                 } else { //dont ask for payment, just move to the rejected queue
                     //none of the prints were accepted
                     result.hasNew = false; //submission not in new queue
                     result.datePaymentRequested = time.format(constants.format); //still capture review time
                 }
+
                 result.save();
+
                 if (typeof callback == 'function') {
                     callback();
                 }
@@ -274,7 +288,7 @@ module.exports = {
 
     //should fire when a user pays for a submission
     //pushes print from the pendpy queue to the paid and ready queue
-    recievePayment: function (submissionID, callback) {
+    recievePayment = function (submissionID, callback) {
         var time = moment();
         printRequestModel.findOne({
             "_id": submissionID
@@ -305,7 +319,7 @@ module.exports = {
     },
 
     //set appropriate flags for top level submission
-    setFlags: function (submissionID) {
+    setFlags = function (submissionID) {
         printRequestModel.findOne({
             'files._id': submissionID
         }, function (err, result) {
@@ -349,7 +363,7 @@ module.exports = {
         });
     },
 
-    deleteFile: function (fileID) {
+    deleteFile = function (fileID) {
         printRequestModel.findOne({ //find top level print request by single file ID
             'files._id': fileID
         }, function (err, result) {

@@ -1,11 +1,5 @@
-var cleRequestModel = require('./models/cleRequest');
-const formidable = require('formidable');
-const moment = require('moment');
-const fs = require('fs');
-const constants = require('../config/constants');
-
-module.exports = {
-    handleSubmission: function (req) {
+module.exports = function (cleRequestModel, formidable, moment, fs, constants) {
+    handleSubmission = function (req) {
         var time = moment(),
             unique = 1,
             numFiles,
@@ -28,7 +22,7 @@ module.exports = {
 
     },
 
-    addCNC: function (fields, additional) {
+    addCNC = function (fields, additional) {
         var request = new cleRequestModel(); //new instance of a request
         request.type = "CNC";
         request.patron = {
@@ -41,11 +35,11 @@ module.exports = {
 
     },
 
-    addLaser: function () {
+    addLaser = function () {
 
     },
 
-    addEmbroidery: function () {
+    addEmbroidery = function () {
 
     }
 }
