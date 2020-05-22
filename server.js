@@ -1,9 +1,9 @@
 // set up ======================================================================
 // get all the tools we need
 var express = require('express');
-const https = require('https');
+var https = require('https');
 var http = require('http');
-const fs = require('fs');
+var fs = require('fs');
 var app = express();
 var port = 443;
 
@@ -13,12 +13,20 @@ var flash = require('connect-flash');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-const path = require('path');
+var path = require('path');
+var nodemailer = require('nodemailer');
+const formidable = require('formidable');
+const moment = require('moment');
+const constants = require('./config/constants');
 
 var configDB = require('./config/database.js');
-var printHandler = require('./app/printHandler.js');
-var cleHandler = require('./app/cleHandler.js');
-const payment = require('./config/payment.js');
+var printRequestModel = require('./app/models/printRequest');
+var cleRequestModel = require('./app/models/cleRequest');
+var payment = require('./config/payment.js');
+
+var printHandler = require('./app/printHandler.js')(printRequestModel, formidable, moment, fs, constants, payment);
+var cleHandler = require('./app/cleHandler.js')(cleRequestModel, formidable, moment, fs, constants);
+
 
 // configuration ===============================================================
 mongoose.connect(configDB.url, {
@@ -50,7 +58,7 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require('./app/routes.js')(app, passport, printHandler, cleHandler); // load our routes and pass in our app and fully configured passport
+require('./app/routes.js')(app, passport, printHandler, cleHandler, printRequestModel, payment); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
 https.createServer({
@@ -59,6 +67,7 @@ https.createServer({
     passphrase: 'THEsparkMakerSPACE'
 },app).listen(port, '0.0.0.0');
 
+//http server to redirect to https
 var http_server = http.createServer(function(req,res){    
     // 301 redirect (reclassifies google listings)
     res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });

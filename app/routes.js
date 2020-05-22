@@ -1,8 +1,4 @@
-var printRequestModel = require('./models/printRequest');
-const fs = require('fs');
-
-
-module.exports = function (app, passport, printHandler, cleHandler) {
+module.exports = function (app, passport, printHandler, cleHandler, printRequestModel, payment) {
 
     // =====================================
     // HOME PAGE (with login links) ========
@@ -180,6 +176,32 @@ module.exports = function (app, passport, printHandler, cleHandler) {
 
     });
 
+    //displays to the user once they sucesfully submit payment through 3rd party service
+    app.get('/payment/complete', function (req, res) {
+        var admin = false;
+        if (req.isAuthenticated()) {
+            admin = true;
+        }
+        payment.handlePaymentComplete(req, function (success, submissionID) {//tell the payment handler to update our databases
+            if (success == true) {
+                printHandler.recievePayment(submissionID, function callback() {
+                    console.log('updated database hopefully');
+                });
+                res.render('pages/paymentComplete', { //render the success page
+                    data: req.query,
+                    pgnum: 6,
+                    isAdmin: admin
+                });
+            } else {
+                console.log("invalid payment URL");
+            }
+        }); 
+        
+    });
+
+
+
+
     //deletes a database entry and asscoiated files
     app.post('/prints/delete', function (req, res, next) {
         var fileID = req.body.userId || req.query.userId;
@@ -236,6 +258,8 @@ module.exports = function (app, passport, printHandler, cleHandler) {
             res.json(['done']); //tell the front end the request is done
         });
     });
+
+    
     
 //testing
 
