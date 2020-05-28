@@ -205,7 +205,6 @@ module.exports = function (app, passport, printHandler, cleHandler, printRequest
     //deletes a database entry and asscoiated files
     app.post('/prints/delete', function (req, res, next) {
         var fileID = req.body.userId || req.query.userId;
-        console.log("Trying deletion");
         printHandler.deleteFile(fileID);
         res.json(['done']); //tell the front end the request is done
     });
@@ -246,7 +245,6 @@ module.exports = function (app, passport, printHandler, cleHandler, printRequest
     app.post('/prints/requestPayment', function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         printHandler.requestPayment(submissionID, function callback() {
-            console.log('done');
             res.json(['done']); //tell the front end the request is done
         });
     });
@@ -254,7 +252,6 @@ module.exports = function (app, passport, printHandler, cleHandler, printRequest
     app.post('/prints/recievePayment', function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         printHandler.recievePayment(submissionID, function callback() {
-            console.log('done receiving');
             res.json(['done']); //tell the front end the request is done
         });
     });

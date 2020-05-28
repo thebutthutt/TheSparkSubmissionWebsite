@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    console.log('ready');
     $('.delete-btn').on('click', function () {
         var userId = $(this).attr('id');
         $.ajax({
@@ -10,7 +9,6 @@ $(document).ready(function () {
             },
             dataType: "json"
         }).done(function () {
-            console.log('done');
             location.reload();
         });
     });
@@ -40,7 +38,6 @@ $(document).ready(function () {
             },
             dataType: 'json'
         }).done(function () {
-            console.log('done');
             location.reload();
         });
     });
@@ -55,7 +52,6 @@ $(document).ready(function () {
             },
             dataType: 'json'
         }).done(function () {
-            console.log('done');
             location.reload();
         });
     });
