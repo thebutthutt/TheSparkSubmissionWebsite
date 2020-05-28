@@ -1,7 +1,13 @@
-module.exports = function (printRequestModel, formidable, moment, fs, constants, payment) {
+const formidable = require('formidable');
+const moment = require('moment');
+const constants = require('../config/constants');
+var payment = require('../config/payment.js');
+var fs = require('fs');
+var printRequestModel = require('./models/printRequest');
+
+module.exports = {
     //function receives the input from filled out request form and saves to the database
-    addPrint = function (fields, prints) {
-        console.log('in add print');
+    addPrint: function (fields, prints) {
 
         var request = new printRequestModel(); //new instance of a request
         //fill the patron details
@@ -51,7 +57,6 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
         }
 
         //save the top level submission and low level files to the database
-        console.log('saving print');
 
         request.save(function (err, document) {
             if (err) {
@@ -62,8 +67,7 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
     },
 
     //handles the data for a new top level print request with possibly multiple low level file submissions
-    handleSubmission = function (req) {
-        console.log('handling print');
+    handleSubmission: function (req) {
         //arrays of each files specifications (will only hold one entry each if patron submits only one file)
         var filenames = [],
             materials = [],
@@ -90,7 +94,6 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
                 prints.push(notes);
                 prints.push(time.format(constants.format));
                 prints.push(numFiles);
-                console.log('adding print');
                 module.exports.addPrint(patron, prints);
             }).on('field', function (name, field) { //when a new field comes through
                 //handling duplicate input names cause for some reason formidable doesnt do it yet...
@@ -110,20 +113,20 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
                 }
             })
             .on('fileBegin', (name, file) => { //when a new file comes through
+                file.name = file.name.split(" ").join(""); //remove spaces from file names
                 file.name = time.unix() + unique + "%$%$%" + file.name; //add special separater so we can get just the filename later
                 //yes this is a dumb way to keep track of the original filename but I dont care
                 unique += 1; //increment unique so every file is not the same name
                 file.path = __dirname + '/uploads/' + file.name;
             })
             .on('file', (name, file) => { //when a file finishes coming through
-                console.log('Uploaded file', file.path); //make sure we got it
                 filenames.push(file.path); //add this files path to the list of filenames
                 numFiles++; //increment the number of files this top level submission is holding
             });
     },
 
     //this function handles when a technician is reviewing a print file within a top level submission
-    updateSingle = function (req, callback) {
+    updateSingle: function (req, callback) {
         var gcode;
         var time = moment();
         var shouldUpload = true;
@@ -158,6 +161,7 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
                             "files.$.timeHours": fields.hours,
                             "files.$.timeMinutes": fields.minutes,
                             "files.$.grams": fields.grams,
+                            "files.$.patronNotes": fields.patronNotes,
                             "files.$.techNotes": fields.technotes,
                             "files.$.printLocation": fields.printLocation,
                             "files.$.isReviewed": true,
@@ -170,7 +174,6 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
                         if (err) {
                             console.log(err);
                         }
-                        //console.log(result);
                     });
                 } else { //the tecnicican rejected the print, so update differently
                     printRequestModel.findOneAndUpdate({
@@ -180,7 +183,7 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
                             "files.$.isReviewed": true,
                             "files.$.isRejected": true,
                             "files.$.dateReviewed": time.format(constants.format),
-                            "files.$.rejectedNotes": fields.patronNotes,
+                            "files.$.patronNotes": fields.patronNotes,
                         }
                     }, {
                         new: true
@@ -188,7 +191,6 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
                         if (err) {
                             console.log(err);
                         }
-                        //console.log(result);
                     });
                 }
 
@@ -210,7 +212,6 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
             })
             .on('fileBegin', (name, file) => { //handle uploading a file if needed
                 if (shouldUpload) {
-                    console.log(file.name);
                     file.name = time.unix() + "%$%$%" + file.name; //add special separater so we can get just the filename later
                     file.path = __dirname + '/uploads/gcode/' + file.name;
                     console.log('uploaded gcode');
@@ -220,18 +221,15 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
             }).on('file', (name, file) => { //when a file finishes coming through
                 if (shouldUpload) {
                     gcode = file.path;
-                    console.log(gcode);
                 }
 
-            }).on('end', function () {
-                console.log('ended');
             });
 
     },
 
     //this function fires when a tech says a submission is ready to be sent to the pendpay queue
     //eventually will ask for payment from a patron
-    requestPayment = function (submissionID, callback) {
+    requestPayment: function (submissionID, callback) {
         //somwhow request the payment for only the accepted prints
         var time = moment();
         printRequestModel.findOne({
@@ -241,6 +239,31 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
                 console.log(err);
             } else {
                 //only ask for payment if there were any files accepted
+                var acceptedFiles = [],
+                    rejectedFiles = [],
+                    acceptedMessages = [],
+                    rejectedMessages = [];
+
+                var email = result.patron.email;
+
+                var amount = 0.0;
+                for (var i = 0; i < result.files.length; i++) {
+                    if (result.files[i].isRejected == false && result.files[i].isReviewed == true) { //print is accepted
+                        if (result.files[i].timeHours <= 0) { //if its less than an hour, just charge one dollar
+                            amount += 1;
+                        } else { //charge hours plus minutes out of 60 in cents
+                            amount += result.files[i].timeHours;
+                            amount += (result.files[i].timeMinutes / 60);
+                        }
+                        acceptedFiles.push(result.files[i].fileName.substring(result.files[i].fileName.lastIndexOf("%$%$%") + 5));
+                        acceptedMessages.push(result.files[i].patronNotes);
+                    } else {
+                        rejectedFiles.push(result.files[i].fileName.substring(result.files[i].fileName.lastIndexOf("%$%$%") + 5));
+                        rejectedMessages.push(result.files[i].patronNotes);
+                    }
+                }
+                amount = Math.round((amount + Number.EPSILON) * 100) / 100; //make it a normal 2 decimal place charge
+                
                 if (result.hasAccepted) {
                     result.hasNew = false; //submission wont be in new queue
                     result.hasPendingPayment = true; //submission will be in pendpay queue
@@ -250,30 +273,13 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
                     var nameString = "";
                     nameString = nameString.concat(result.patron.fname, " ", result.patron.lname);
 
-                    //calc amount to charge for print
-                    var amount = 0.0;
-                    for (var i = 0; i < result.files.length; i++) {
-                        if (result.files[i].isRejected == false && result.files[i].isReviewed == true) { //print is accepted
-                            if (result.files[i].timeHours <= 0) { //if its less than an hour, just charge one dollar
-                                amount += 1;
-                            } else { //charge hours plus minutes out of 60 in cents
-                                amount += result.files[i].timeHours;
-                                amount += (result.files[i].timeMinutes/60);
-                            }
-                        }
-                    }
-                    amount = Math.round((amount + Number.EPSILON) * 100) / 100; //make it a normal 2 decimal place charge
-
-                    console.log("Name: ", nameString);
-                    console.log("Amount: ", amount);
-                    console.log("ID: ", result._id);
-
-                    payment.generatePaymentURL(nameString, amount, result._id); //generate the URL
+                    payment.generatePaymentURL(nameString, email, acceptedFiles, acceptedMessages, rejectedFiles, rejectedMessages, amount, result._id); //generate the URL
 
                 } else { //dont ask for payment, just move to the rejected queue
                     //none of the prints were accepted
                     result.hasNew = false; //submission not in new queue
                     result.datePaymentRequested = time.format(constants.format); //still capture review time
+                    payment.sendRejected(email, rejectedFiles, rejectedMessages); //send a completely rejected email
                 }
 
                 result.save();
@@ -288,7 +294,7 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
 
     //should fire when a user pays for a submission
     //pushes print from the pendpy queue to the paid and ready queue
-    recievePayment = function (submissionID, callback) {
+    recievePayment: function (submissionID, callback) {
         var time = moment();
         printRequestModel.findOne({
             "_id": submissionID
@@ -310,7 +316,6 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
                 }
                 result.save(); //save the db entry
                 if (typeof callback == 'function') {
-                    console.log('firing callback');
                     callback();
                 }
             }
@@ -319,7 +324,7 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
     },
 
     //set appropriate flags for top level submission
-    setFlags = function (submissionID) {
+    setFlags: function (submissionID) {
         printRequestModel.findOne({
             'files._id': submissionID
         }, function (err, result) {
@@ -363,7 +368,7 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
         });
     },
 
-    deleteFile = function (fileID) {
+    deleteFile: function (fileID) {
         printRequestModel.findOne({ //find top level print request by single file ID
             'files._id': fileID
         }, function (err, result) {
@@ -376,10 +381,9 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
             if (result.files.id(fileID).isRejected == false) {
                 //delete gcode from disk if it exists
                 if (result.files.id(fileID).gcodeName != null) {
-                    console.log(result.files.id(fileID).gcodeName);
                     fs.unlink(result.files.id(fileID).gcodeName, function (err) {
                         if (err) {
-                            console.log("gcode delete", err);
+                            console.log("gcode delete error:", err);
                         }
                     });
                 }
@@ -391,12 +395,10 @@ module.exports = function (printRequestModel, formidable, moment, fs, constants,
                     '_id': result._id
                 }, function (err) { //delete top level request
                     if (err) console.log(err);
-                    console.log("Successful deletion");
                 });
             } else { //else save the top level with one less file
                 result.save(function (err) { //save top level request db entry
                     if (err) console.log(err);
-                    console.log("Successful deletion");
                 });
                 module.exports.setFlags(result.files[0]._id); //now set all the flags of the updated top level submission
             }

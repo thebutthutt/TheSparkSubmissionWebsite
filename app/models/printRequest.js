@@ -27,7 +27,7 @@ var singlePrintSchema = mongoose.Schema({
     timeMinutes: Number,
     grams: Number,
     techNotes: String,
-    rejectedNotes: String
+    patronNotes: String
 });
 
 // define the schema for a single patron submission

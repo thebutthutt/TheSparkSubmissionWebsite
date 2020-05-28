@@ -7,7 +7,6 @@ $(document).ready(function () {
     //setting up the download button to woro
     $('.download-btn').on('click', function () {
         var fileLocation = $(this).attr('location');
-        console.log('click');
         window.location = '/prints/download?fileID=' + fileLocation;
     });
 
@@ -40,7 +39,6 @@ $(document).ready(function () {
             },
             dataType: 'json'
         }).done(function () {
-            console.log('done');
             location.reload();
         });
     })

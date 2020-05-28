@@ -14,18 +14,13 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var path = require('path');
-var nodemailer = require('nodemailer');
-const formidable = require('formidable');
-const moment = require('moment');
-const constants = require('./config/constants');
-
 var configDB = require('./config/database.js');
 var printRequestModel = require('./app/models/printRequest');
 var cleRequestModel = require('./app/models/cleRequest');
 var payment = require('./config/payment.js');
 
-var printHandler = require('./app/printHandler.js')(printRequestModel, formidable, moment, fs, constants, payment);
-var cleHandler = require('./app/cleHandler.js')(cleRequestModel, formidable, moment, fs, constants);
+var printHandler = require('./app/printHandler.js');
+var cleHandler = require('./app/cleHandler.js');
 
 
 // configuration ===============================================================
