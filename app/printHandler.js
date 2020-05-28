@@ -263,6 +263,7 @@ module.exports = {
                     }
                 }
                 amount = Math.round((amount + Number.EPSILON) * 100) / 100; //make it a normal 2 decimal place charge
+                amount = amount.toFixed(2);
                 
                 if (result.hasAccepted) {
                     result.hasNew = false; //submission wont be in new queue
