@@ -38,6 +38,14 @@ module.exports = function (app, passport, printHandler, cleHandler, printRequest
         res.send(html); //send it to the webapp
     });
 
+    //send the HTML from the single print submission segment to the browser
+    //used for adding more than one file in a single submission form
+    app.get('/onefile', function (req, res) {
+        res.render('partials/onefile'); //render the html
+    }, function (err, html) {
+        res.send(html); //send it to the webapp
+    });
+
     //what do do when the user hits submit
     app.post('/submitprint', function (req, res) {
         printHandler.handleSubmission(req); //pass the stuff to the print handler
