@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+
+<head>
+    <%- include ("../partials/head") %>
+    <link type="text/css" rel="stylesheet" href="../../public/css/prints.css">
+    <script src="../public/js/workrequests.js"></script>
+</head>
+
+<body>
+    <%- include ("../partials/header") %>
+    <div class="container ">
+        <div class="fake-tab">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Maker</th>
+                        <th scope="col">Actions</th>
+                        <th scope="col">Submitted</th>
+                        <th scope="col">Files</th>
+                        <th scope="col" style="text-align: end;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%dbdata.slice().reverse().forEach(function (item) {%>
+                    <tr>
+                        <td>
+                            <%= item.patron.fname %> <%= item.patron.lname %> <br>
+                        </td>
+                        <td>
+                            <%= item.maker %>
+                        </td>
+                        <td>
+                            <button class="claim-btn" id='<%= item._id%>'>Claim</button>
+                            <button class="complete-btn" id='<%= item._id%>'>Complete</button>
+                            <button class="remove-btn" id='<%= item._id%>'>Delete</button>
+                        </td>
+                        <td><%=item.submissionDate%></td>
+                        
+                        <td colspan="2" <% if (item.files.length != 0) {%></td>class="no-padding"<% } %>>
+                            <% if (item.files.length == 0) {%>
+                                No files were uploaded.
+                            <% } else { %>
+                                <table class="plain" style="width:100%">
+                                    <% item.files.forEach(function (file) {%>
+                                    <tr>
+                                        <td style="width:99%">
+                                            <%=file.fileName.substring(file.fileName.lastIndexOf("%$%$%") + 5)%>
+                                        </td>
+                                        <td style="white-space: nowrap;">
+                                            <button type="button" class="btn btn-success download-btn"
+                                                id='<%= file.fileName%>'>Download</button>
+                                            <button type="button" class="btn btn-danger delete-btn"
+                                                id='<%= file._id%>'>Delete</button>
+                                        </td>
+                                    </tr>
+                                    <%})%>
+                                </table>
+                            <% } %>
+                        </td>
+                    </tr>
+                    <%})%>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</body>
+
+</html>
