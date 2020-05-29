@@ -2,6 +2,7 @@ const formidable = require('formidable');
 const moment = require('moment');
 const constants = require('../config/constants');
 var payment = require('../config/payment.js');
+var emailer = require('../config/email.js');
 var fs = require('fs');
 var printRequestModel = require('./models/printRequest');
 
@@ -228,9 +229,7 @@ module.exports = {
     },
 
     //this function fires when a tech says a submission is ready to be sent to the pendpay queue
-    //eventually will ask for payment from a patron
     requestPayment: function (submissionID, callback) {
-        //somwhow request the payment for only the accepted prints
         var time = moment();
         printRequestModel.findOne({
             "_id": submissionID
@@ -238,7 +237,9 @@ module.exports = {
             if (err) {
                 console.log(err);
             } else {
-                //only ask for payment if there were any files accepted
+
+                //found the submission in the database, now calc payment and send the link to the email
+
                 var acceptedFiles = [],
                     rejectedFiles = [],
                     acceptedMessages = [],
@@ -246,6 +247,7 @@ module.exports = {
 
                 var email = result.patron.email;
 
+                //calculate paumet amount
                 var amount = 0.0;
                 for (var i = 0; i < result.files.length; i++) {
                     if (result.files[i].isRejected == false && result.files[i].isReviewed == true) { //print is accepted
@@ -263,8 +265,9 @@ module.exports = {
                     }
                 }
                 amount = Math.round((amount + Number.EPSILON) * 100) / 100; //make it a normal 2 decimal place charge
-                amount = amount.toFixed(2);
+                amount = amount.toFixed(2); //correct formatting
                 
+                //if the submission had any accepted files, we will ask for payment
                 if (result.hasAccepted) {
                     result.hasNew = false; //submission wont be in new queue
                     result.hasPendingPayment = true; //submission will be in pendpay queue
@@ -274,15 +277,17 @@ module.exports = {
                     var nameString = "";
                     nameString = nameString.concat(result.patron.fname, " ", result.patron.lname);
 
+                    //hand it to the payment handler to generate the url for the patron
                     payment.generatePaymentURL(nameString, email, acceptedFiles, acceptedMessages, rejectedFiles, rejectedMessages, amount, result._id); //generate the URL
 
                 } else { //dont ask for payment, just move to the rejected queue
                     //none of the prints were accepted
                     result.hasNew = false; //submission not in new queue
                     result.datePaymentRequested = time.format(constants.format); //still capture review time
-                    payment.sendRejected(email, rejectedFiles, rejectedMessages); //send a completely rejected email
+                    email.fullyRejected(email, rejectedFiles, rejectedMessages); //send a completely rejected email
                 }
 
+                //save result to the database with updated flags
                 result.save();
 
                 if (typeof callback == 'function') {

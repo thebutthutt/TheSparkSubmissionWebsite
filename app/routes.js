@@ -1,4 +1,4 @@
-module.exports = function (app, passport, printHandler, cleHandler, printRequestModel, payment) {
+module.exports = function (app, passport, printHandler, cleHandler, printRequestModel, cleRequestModel, payment) {
 
     // =====================================
     // HOME PAGE (with login links) ========
@@ -257,8 +257,15 @@ module.exports = function (app, passport, printHandler, cleHandler, printRequest
     });
 
     
-    
-//testing
+    // =====================================
+    // CLE REQUESTS ========================
+    // =====================================
+    // show the CNC, Laser, and Embroidery requests
+
+    //page to display all 
+    app.get('/workrequests/all', function (req, res) {
+
+    });
 
     // =====================================
     // LOGIN ===============================
