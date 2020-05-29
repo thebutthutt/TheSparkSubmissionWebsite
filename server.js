@@ -14,7 +14,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var path = require('path');
-var configDB = require('./config/database.js');
+var constants = require('./config/constants.js');
 var printRequestModel = require('./app/models/printRequest');
 var cleRequestModel = require('./app/models/cleRequest');
 var payment = require('./config/payment.js');
@@ -24,7 +24,7 @@ var cleHandler = require('./app/cleHandler.js');
 
 
 // configuration ===============================================================
-mongoose.connect(configDB.url, {
+mongoose.connect(constants.url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false
@@ -53,7 +53,7 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require('./app/routes.js')(app, passport, printHandler, cleHandler, printRequestModel, payment); // load our routes and pass in our app and fully configured passport
+require('./app/routes.js')(app, passport, printHandler, cleHandler, printRequestModel, cleRequestModel, payment); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
 https.createServer({

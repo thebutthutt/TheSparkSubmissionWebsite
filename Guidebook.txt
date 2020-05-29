@@ -1,0 +1,114 @@
+Intro guide to the Spark Submission Website!
+by Hanna Flores
+
+
+Languages/Frameworks:
+    JavaScript using:
+    - Node.js
+    - Express
+
+    HTML/CSS/JS using:
+    - Embedded JavaScript (EJS)
+    - Bootstrap
+    - JQuery
+
+    MongoDB using:
+    - Mongoose
+
+
+Overview
+    This is the submission website for The Spark Makerspace at UNT! 
+    It handles 3D print submissions as well as our other work order subissions. 
+    At the time of writing, these are laser cutting/engraving, embroidery, and CNC milling, but should this list expand, 
+    this web app can also expand with it. 
+
+
+Development
+    This was developed by Hanna Flores in 2020. 
+    This app is written in javascript using the Node.js and Express frameworks. 
+    Node.js is the basic framework used to make the web app and (with the help of npm) install various packages. 
+    Express is the web server framework to make it do the internet so I dont have to. 
+    This app uses MongoDB as a databse to hold both the admin user accounts and all the data for the submissions. 
+    Mongo is a document based NoSQL database but I'm using Mongoose to give it a little more structure. 
+    The website is displayed using EJS as a templating agent for dynamic pages and variables from the server.
+    The front end javascript is using JQuery because I like it.
+
+
+Deployment
+    This website is currently being served on a UNT server, hostname libwebfactory.library.unt.edu
+    Domain name is https://sparkorders.library.unt.edu
+    All http traffic is redirected to https traffic by the web app.
+
+
+Setup
+    1. SSH into libwebfactory.library.unt.edu
+    2. Navigate to the webserver directory /tbd/TheSparkSubmissionWebsite/
+    3. Verify that Mongo is running: `sudo service mongod status`
+        3a. if mongo is not running: `sudo mongod`
+    4. Start the webserver: `sudo node server.js`
+
+
+Project Structure
+    ***This project is messy and I am sorry.
+
+    /server.js
+        Entry point. Sets up dependancies and starts the web server. 
+        Listents to port 80 (http) and 443 (https) and redirects all traffic through https.
+        Sets up our database models and database handlers for later use
+        Sets up passport for user authentication.
+        Sets up Mongo and Mongoose for the database.
+        Calls on /app/routes.js to handle actual requests (passing models and handlers)
+
+    /app/routes.js
+        Handles GET and POST requests to all the pages on the website.
+        Serves the requested EJS to the browser when requested.
+        Handles making sure a user is logged in to access admin rights.
+        When a user requests or POSTs info to or from the database, routes will pass to the appropriate handler
+        User redirected to payment complete URL; this is then passed to the payment handler and then to print handler
+
+    /app/printHandler.js
+        Contains all the functions for manipulating the 3D print request section of the database
+        Handling submissions, adding new prints, updating prints, deleting files, and managing payment
+        requestPayment() passes to /config/payment.js to manage payment
+    
+    /app/cleHandler.js
+        Contains all the functions for manipulating the CNC, Laser, and Embroidery request section of the database.
+        These kinds of requests all use the same basic structure so they are grouped together.
+        These do not require payment
+        UNDER CONSTRUCTION
+
+    /app/models/*.js
+        These are the structure definitions for the database schemas. 
+        All request schemas have one subdoc for a patron schema
+        CNC, Laser, and Embroidery requests are all one schema: cleRequest
+        Print request has both a patron subdoc and an array of file subdocs
+        File schema is within the printRequest.js schema
+        otherRequest is separate
+        user is the schema for an admin user of the site.
+        Username is stored as text, but only the hashed cycphertext of a user's password is stored in the database
+
+    /config/constants.js
+        contains constants stored in one place for easy editing
+    
+    /config/passport.js
+        configures passport for the admin user creation and login.
+        only uses local account authentication strategy
+
+    /config/payment.js
+        handles generating a link to an external UNT payment system for the patron to pay through.
+        Handles verifying an incoming "payment complete" url to make sure the payment was correct
+        
+    /config/communication.js
+        Handles generating the payment request and complete rejection emails to the patron
+        handles emailing patron when their print is completed
+
+    /views/pages/*.ejs
+        Templates for the pages displayed on the front end for the user
+        These are eventually turned into HTML
+
+    /views/partials/*.ejs
+        Little snippets of EJS that are used repeatedly or on multiple pages, but only typed out once
+
+    /public/css and /js
+        Contains CSS and JS (JQuery) for the front end to use. 
+        Only this /public/ folder and subfolders are visible from the website

@@ -21,6 +21,32 @@ form .row {
     margin-right: 0px;
 }
 
+form .row:not(:first-child), .no-margin {
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: -1px;
+}
+
+form .inner {
+    border-radius: 0px;
+}
+
+form .top {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+form .bottom {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
 .col-form-label {
     padding-left: 0px;
 }
