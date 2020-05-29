@@ -6,7 +6,10 @@ var cleSubmissionSchema = mongoose.Schema({
     maker: String,
     type: String,
     files: [String],
-    notes: String
+    notes: String,
+    completed: Boolean,
+    submissionDate: String,
+    completedDate: String
 });
 
 // create the model for a print submission and expose it to our app

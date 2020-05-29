@@ -271,8 +271,19 @@ module.exports = function (app, passport, printHandler, cleHandler, printRequest
     // show the CNC, Laser, and Embroidery requests
 
     //page to display all 
-    app.get('/workrequests/all', function (req, res) {
-
+    app.get('/workrequests/all', isLoggedIn, function (req, res) {
+        cleRequestModel.find({
+            "completed": false
+        }, function (err, data) { //loading every single top level request FOR NOW
+            if (err) {
+                console.log(err);
+            }
+            res.render('pages/workrequests', {
+                pgnum: 7,
+                dbdata: data,
+                isAdmin: true
+            });
+        });
     });
 
     // =====================================
