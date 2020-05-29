@@ -50,3 +50,7 @@ select {
 .col-form-label {
     padding-left: 0px;
 }
+
+.non-print textarea {
+    margin-bottom: 20px;
+}

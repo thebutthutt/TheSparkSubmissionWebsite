@@ -61,16 +61,27 @@
                 <div id="files-list"></div>
                 <div class="clearfix">
                     <button type="button" id="change" class="btn btn-outline-primary btn-sm float-left">Add
-                        another</button>
+                        a file</button>
                     <button type="button" id="remove" class="btn btn-outline-danger btn-sm float-right">Remove
-                        One</button>
+                        last file</button>
+                </div>
+            </div>
+
+            <div class="non-print form-group">
+                <hr>
+                <textarea name="notes" class="form-control" rows="3" placeholder="What can we help you with?"></textarea>
+                <div id="files-list-other"></div>
+                <div class="clearfix">
+                    <button type="button" id="change-other" class="btn btn-outline-primary btn-sm float-left">Add
+                        a file</button>
+                    <button type="button" id="remove-other" class="btn btn-outline-danger btn-sm float-right">Remove
+                        last file</button>
                 </div>
             </div>
 
             <button type="submit" class="btn btn-lg btn-primary btn-block submit-form">Submit</button>
         </form>
         <hr>
-        
 
         <p>Go <a href="/">home</a>?</p>
 
