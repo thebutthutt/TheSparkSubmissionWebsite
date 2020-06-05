@@ -7,7 +7,9 @@ var userSchema = mongoose.Schema({
     local: {
         euid: String,
         password: String,
-    }
+    },
+    email: String,
+    isSuperAdmin: Boolean
 
 });
 

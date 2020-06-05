@@ -52,7 +52,7 @@
                     <td style="white-space: nowrap;">
                       <button type="button" class="btn btn-success download-btn" id='<%= file.fileName%>'>D</button>
                       <button type="button" class="btn btn-primary preview-btn" id='<%= file._id%>'>P</button>
-                      <button type="button" class="btn btn-danger delete-btn" id='<%= file._id%>'>D</button>
+                      <button type="button" class="btn btn-danger delete-btn" id='<%= file._id%>' isSuperAdmin='<%= isSuperAdmin%>'>Delete</button>
                     </td>
                   </tr>
                   <%})%>
