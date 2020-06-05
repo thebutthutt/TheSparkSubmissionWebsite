@@ -37,12 +37,10 @@
                     </p>
 
             </div>
-            <button class="btn btn-danger delete-account" userID='<%= user._id %>'>Delete account</button>
-            <% if (isSuperAdmin == true) { %>
-            <div>
-                
+            <button class="btn btn-danger delete-account" userID='<%= user._id %>' isSuperAdmin='<%= isSuperAdmin%>'>Delete account</button>
+            <div id="actionQueue">
+
             </div>
-            <% } %>
         </div>
 
     </div>

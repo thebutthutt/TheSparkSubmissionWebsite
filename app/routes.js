@@ -34,7 +34,7 @@ module.exports = function (app, printHandler, cleHandler) {
             message: req.flash('submitMessage'),
             pgnum: 2, //tells the navbar what page to highlight
             isAdmin: admin,
-            isSuperAdmin: req.user.superAdmin
+            isSuperAdmin: superAdmin
         });
     });
 
