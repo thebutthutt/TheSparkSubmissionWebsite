@@ -1,4 +1,4 @@
-module.exports = function (app, passport, userModel, printHandler, printRequestModel, payment) {
+module.exports = function (app, passport, userModel, adminRequestHandler, printHandler, printRequestModel, payment) {
         // =====================================
     // PRINTS ===============================
     // =====================================
@@ -158,13 +158,12 @@ module.exports = function (app, passport, userModel, printHandler, printRequestM
     app.post('/prints/delete', function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
         printHandler.deleteFile(fileID);
-        console.log("delleted");
         res.json(['done']); //tell the front end the request is done
     });
 
     app.post('/prints/requestdelete', function (req, res, next) {
-        var fileID = req.body.userId || req.query.userId;
-        adminRequestHandler.addDelete(fileID);
+        var fileID = req.body.fileID || req.query.fileID;
+        adminRequestHandler.addDelete(fileID, "print");
         res.json(['done']); //tell the front end the request is done
     });
 

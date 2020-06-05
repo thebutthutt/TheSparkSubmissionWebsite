@@ -53,7 +53,8 @@ module.exports = {
                 dateReviewed: "Never",
                 datePaid: "Never",
                 datePrinted: "Never",
-                datePickedUp: "Never"
+                datePickedUp: "Never",
+                isPendingDelete: false
             });
         }
 

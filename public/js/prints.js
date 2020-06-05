@@ -2,7 +2,6 @@ $(document).ready(function () {
     $('.delete-btn').on('click', function () {
         var fileID = $(this).attr('id');
         var isSuperAdmin = $(this).attr('isSuperAdmin');
-        console.log(isSuperAdmin);
 
         if (isSuperAdmin == "true") { //attributes come over as strings not booleans!!
             console.log("fully delete");

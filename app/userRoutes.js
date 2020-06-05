@@ -1,4 +1,4 @@
-module.exports = function (app, passport, userModel, adminRequestHandler, adminRequestModel) {
+module.exports = function (app, passport, userModel, adminRequestHandler, adminRequestModel, printRequestModel, cleRequestModel) {
     // =====================================
     // LOGIN ===============================
     // =====================================
@@ -45,7 +45,6 @@ module.exports = function (app, passport, userModel, adminRequestHandler, adminR
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get('/profile', isLoggedIn, function (req, res) {
-        console.log(req.user);
         res.render('pages/profile', {
             message: req.flash('logoutMessage'),
             pgnum: 5, //tells the navbar what page to highlight
@@ -55,17 +54,46 @@ module.exports = function (app, passport, userModel, adminRequestHandler, adminR
         });
     });
 
-    app.get('/accounts/delete', function(req, res) {
+    app.get('/accounts/delete', function (req, res) {
         console.log('here');
         var userID = req.body.userID || req.query.userID;
         userModel.deleteOne({
             "_id": userID
-        }, function(err) {
+        }, function (err) {
             if (err) {
                 console.log(err);
             }
         });
         res.redirect('/logout');
+    });
+
+    app.get('/pendingDelete', function (req, res) {
+        var filenames = [],
+            fileIDs = [];
+        printRequestModel.find({
+            'files.isPendingDelete': true
+        }, function (err, data) {
+            data.forEach(element => {
+                element.files.forEach(file => {
+                    if (file.isPendingDelete == true) {
+                        filenames.push(file.fileName);
+                        fileIDs.push(file._id);
+                    }
+                })
+            });
+
+            res.render('partials/actionQueue', {
+                filenames: filenames,
+                fileIDs: fileIDs
+            }); //render the html
+        });
+
+        console.log(filenames);
+
+
+
+    }, function (err, html) {
+        res.send(html); //send it to the webapp
     });
 
     // =====================================

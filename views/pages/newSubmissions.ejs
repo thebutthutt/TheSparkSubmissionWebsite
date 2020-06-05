@@ -48,6 +48,9 @@
                       <% } else { %>
                       <span class="badge badge-primary">Unreviewed</span>
                       <% } %>
+                      <% if (file.isPendingDelete) { %>
+                        <span class="badge badge-danger">Pending Delete</span>
+                      <% } %>
                     </td>
                     <td style="white-space: nowrap;">
                       <button type="button" class="btn btn-success download-btn" id='<%= file.fileName%>'>D</button>

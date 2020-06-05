@@ -27,7 +27,8 @@ var singlePrintSchema = mongoose.Schema({
     timeMinutes: Number,
     grams: Number,
     techNotes: String,
-    patronNotes: String
+    patronNotes: String,
+    isPendingDelete: Boolean
 });
 
 // define the schema for a single patron submission
@@ -46,7 +47,7 @@ var printSubmissionSchema = mongoose.Schema({
     hasReadyForPickup: Boolean,
     hasStaleOnPayment: Boolean,
     hasStaleOnPickup: Boolean,
-    files: [singlePrintSchema] //array of actual print files
+    files: [singlePrintSchema], //array of actual print files
 });
 
 module.exports = mongoose.model('PrintRequest', printSubmissionSchema);
