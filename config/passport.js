@@ -62,6 +62,15 @@ module.exports = function (passport) {
                         // set the user's local credentials
                         newUser.local.euid = euid;
                         newUser.local.password = newUser.generateHash(password);
+                        newUser.email = req.body.email;
+                        if (req.body.superAdmin) {
+                            newUser.isSuperAdmin = true;
+                        } else {
+                            newUser.isSuperAdmin = false;
+                        }  
+
+                        console.log(newUser.isSuperAdmin);
+                        console.log(newUser.email);
 
                         // save the user
                         newUser.save(function (err) {
@@ -69,6 +78,8 @@ module.exports = function (passport) {
                                 throw err;
                             return done(null, newUser);
                         });
+
+                        console.log(newUser);
                     } else {
                         //incorrect magic words means no sign up
                         return done(null, false, req.flash('signupMessage', 'Your magic words have no power here.'));

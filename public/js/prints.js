@@ -1,16 +1,35 @@
 $(document).ready(function () {
     $('.delete-btn').on('click', function () {
-        var userId = $(this).attr('id');
-        $.ajax({
-            method: "POST",
-            url: "/prints/delete",
-            data: {
-                "userId": userId
-            },
-            dataType: "json"
-        }).done(function () {
-            location.reload();
-        });
+        var fileID = $(this).attr('id');
+        var isSuperAdmin = $(this).attr('isSuperAdmin');
+        console.log(isSuperAdmin);
+
+        if (isSuperAdmin == "true") { //attributes come over as strings not booleans!!
+            console.log("fully delete");
+            $.ajax({
+                method: "POST",
+                url: "/prints/delete",
+                data: {
+                    "fileID": fileID
+                },
+                dataType: "json"
+            }).done(function () {
+                location.reload();
+            });
+        } else {
+            console.log("pending delete");
+            $.ajax({
+                method: "POST",
+                url: "/prints/requestdelete",
+                data: {
+                    "fileID": fileID
+                },
+                dataType: "json"
+            }).done(function () {
+                location.reload();
+            });
+        }
+        
     });
 
     $('.download-btn').on('click', function () {

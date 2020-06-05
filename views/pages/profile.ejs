@@ -7,6 +7,7 @@
             padding-top: 80px;
         }
     </style>
+  <script src="../public/js/myAccount.js"></script>
 </head>
 <body>
     <%- include ("../partials/header") %>
@@ -31,9 +32,17 @@
                         <strong>id</strong>: <%= user._id %><br>
                         <strong>euid</strong>: <%= user.local.euid %><br>
                         <strong>password</strong>: <%= user.local.password %>
+                        <strong>Email</strong>: <%= user.email %><br>
+                        <strong>Super Admin?</strong>: <%= user.isSuperAdmin %><br>
                     </p>
 
             </div>
+            <button class="btn btn-danger delete-account" userID='<%= user._id %>'>Delete account</button>
+            <% if (isSuperAdmin == true) { %>
+            <div>
+                
+            </div>
+            <% } %>
         </div>
 
     </div>

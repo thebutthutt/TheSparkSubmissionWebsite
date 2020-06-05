@@ -17,10 +17,13 @@ var path = require('path');
 var constants = require('./config/constants.js');
 var printRequestModel = require('./app/models/printRequest');
 var cleRequestModel = require('./app/models/cleRequest');
+var adminRequestModel = require('./app/models/adminRequest');
+var userModel = require('./app/models/user');
 var payment = require('./config/payment.js');
 
 var printHandler = require('./app/printHandler.js');
 var cleHandler = require('./app/cleHandler.js');
+var adminRequestHandler = require('./app/adminRequestHandler.js');
 
 
 // configuration ===============================================================
@@ -53,7 +56,10 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require('./app/routes.js')(app, passport, printHandler, cleHandler, printRequestModel, cleRequestModel, payment); // load our routes and pass in our app and fully configured passport
+require('./app/routes.js')(app, printHandler, cleHandler); // load our routes and pass in our app and fully configured passport
+require('./app/printRoutes.js')(app, passport, userModel, printHandler, printRequestModel, payment); // load our routes and pass in our app and fully configured passport
+require('./app/userRoutes.js')(app, passport, userModel, adminRequestHandler, adminRequestModel); // load our routes and pass in our app and fully configured passport
+require('./app/cleRoutes.js')(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
 https.createServer({
