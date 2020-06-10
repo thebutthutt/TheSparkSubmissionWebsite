@@ -28,7 +28,8 @@ var singlePrintSchema = mongoose.Schema({
     grams: Number,
     techNotes: String,
     patronNotes: String,
-    isPendingDelete: Boolean
+    isPendingDelete: Boolean,
+    canBeReviewed: Boolean
 });
 
 // define the schema for a single patron submission
@@ -47,6 +48,7 @@ var printSubmissionSchema = mongoose.Schema({
     hasReadyForPickup: Boolean,
     hasStaleOnPayment: Boolean,
     hasStaleOnPickup: Boolean,
+    isPendingWaive: Boolean,
     files: [singlePrintSchema], //array of actual print files
 });
 

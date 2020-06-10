@@ -1,7 +1,8 @@
 $(document).ready(function () {
+    $('[data-toggle="tooltip"]').tooltip();
     $('.delete-btn').on('click', function () {
         var fileID = $(this).attr('id');
-        var isSuperAdmin = $(this).attr('isSuperAdmin');
+        var isSuperAdmin = $(this).attr('issuperadmin');
 
         if (isSuperAdmin == "true") { //attributes come over as strings not booleans!!
             console.log("fully delete");
@@ -31,6 +32,20 @@ $(document).ready(function () {
         
     });
 
+    $('.undo-delete-btn').on('click', function () {
+        var fileID = $(this).attr('id');
+        $.ajax({
+            method: "POST",
+            url: "/prints/undodelete",
+            data: {
+                "fileID": fileID
+            },
+            dataType: "json"
+        }).done(function () {
+            location.reload();
+        });
+    });
+
     $('.download-btn').on('click', function () {
         var fileID = $(this).attr('id');
         window.location = '/prints/download?fileID=' + fileID;
@@ -41,12 +56,8 @@ $(document).ready(function () {
         window.location = '/prints/preview?fileID=' + fileID;
     });
 
-    $('.edit-btn').on('click', function () {
-        var fileID = $(this).attr('id');
-        window.location = '/prints/edit?fileID=' + fileID;
-    });
-
     $('.submit-btn').on('click', function () {
+        console.log("yes?");
         let submissionID = $(this).attr('id');
         $.ajax({
             type: 'POST',
@@ -60,17 +71,34 @@ $(document).ready(function () {
         });
     });
 
-    $('.push-btn').on('click', function () {
+    $('.waive-btn').on('click', function () {
         let submissionID = $(this).attr('id');
-        $.ajax({
-            type: 'POST',
-            url: '/prints/recievePayment',
-            data: {
-                "submissionID": submissionID
-            },
-            dataType: 'json'
-        }).done(function () {
-            location.reload();
-        });
+        var isSuperAdmin = $(this).attr('issuperadmin');
+
+        if (isSuperAdmin == "true") { //attributes come over as strings not booleans!!
+            console.log("fully delete");
+            $.ajax({
+                method: "POST",
+                url: "/prints/waive",
+                data: {
+                    "submissionID": submissionID
+                },
+                dataType: "json"
+            }).done(function () {
+                location.reload();
+            });
+        } else {
+            console.log("pending delete");
+            $.ajax({
+                method: "POST",
+                url: "/prints/requestwaive",
+                data: {
+                    "submissionID": submissionID
+                },
+                dataType: "json"
+            }).done(function () {
+                location.reload();
+            });
+        }
     });
 });

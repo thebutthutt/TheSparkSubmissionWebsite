@@ -18,3 +18,16 @@
     border-top: none;
     margin-top: -1px;
 }
+
+.table {
+    margin-bottom: 0px;
+}
+
+.none {
+    text-align: center;
+}
+
+.icon-btn {
+    display: inline;
+    cursor: pointer;
+}

@@ -46,7 +46,7 @@
                                     <% item.files.forEach(function (file) {%>
                                     <tr>
                                         <td style="width:99%">
-                                            <%=file.fileName.substring(file.fileName.lastIndexOf("%$%$%") + 5)%>
+                                            <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
                                         </td>
                                         <td style="white-space: nowrap;">
                                             <button type="button" class="btn btn-success download-btn"

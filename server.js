@@ -17,14 +17,12 @@ var path = require('path');
 var constants = require('./config/constants.js');
 var printRequestModel = require('./app/models/printRequest');
 var cleRequestModel = require('./app/models/cleRequest');
-var adminRequestModel = require('./app/models/adminRequest');
 var userModel = require('./app/models/user');
 var payment = require('./config/payment.js');
 
 var printHandler = require('./app/printHandler.js');
 var cleHandler = require('./app/cleHandler.js');
 var adminRequestHandler = require('./app/adminRequestHandler.js');
-
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
@@ -44,6 +42,8 @@ app.use(bodyParser.json()); // get information from html forms
 
 app.set('view engine', 'ejs'); // set up ejs for templating
 app.use('/public', express.static(path.join(__dirname + '/public'))); //allow us to grab local files in the public directory
+app.use('/three', express.static(__dirname + '/node_modules/three/')); //allow website to access the three.js library
+app.use('/uploads', express.static(__dirname + '/app/uploads/')); //allow website to access the uploaded STLs (for in site display)
 
 // required for passport
 app.use(session({
@@ -58,7 +58,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 // routes ======================================================================
 require('./app/routes.js')(app, printHandler, cleHandler); // load our routes and pass in our app and fully configured passport
 require('./app/printRoutes.js')(app, passport, userModel, adminRequestHandler, printHandler, printRequestModel, payment); // load our routes and pass in our app and fully configured passport
-require('./app/userRoutes.js')(app, passport, userModel, adminRequestHandler, adminRequestModel, printRequestModel, cleRequestModel); // load our routes and pass in our app and fully configured passport
+require('./app/userRoutes.js')(app, passport, userModel, adminRequestHandler, printRequestModel, cleRequestModel); // load our routes and pass in our app and fully configured passport
 require('./app/cleRoutes.js')(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================

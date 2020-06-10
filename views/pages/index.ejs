@@ -6,7 +6,7 @@
     <%- include ("../partials/head") %>
     <style>
         .container {
-            padding-top: 80px;
+            padding-bottom: 80px;
         }
     </style>
     
@@ -14,15 +14,79 @@
 
 <body>
     <%- include ("../partials/header") %>
+    <div class="jumbotron text-center">
+        <h1><span class="fas fa-exclamation-triangle"></span> Under Construction! <span class="fas fa-exclamation-triangle"></span></h1>
+
+        <p>Just like Willis...</p>
+
+        <p>RIP to the OG Factory Makerspace location 2014-2020</p>
+    </div>
     <div class="container">
-        <div class="jumbotron text-center">
-            <h1><span class="fas fa-exclamation-triangle"></span> Under Construction! <span class="fas fa-exclamation-triangle"></span></h1>
-
-            <p>Just like Willis...</p>
-
-            <p>RIP to the OG Factory Makerspace location 2014-2020</p>
+        
+        <div class="row">
+            <div class="col-lg" style="padding-bottom: 40px;">
+                <h2>3D Printing</h2>
+                &nbsp;
+                <a href="/submit" class="btn btn-primary btn-lg btn-block" role="button">Submit Prints Here!</a>
+                &nbsp;
+                <p>The Spark Makerspace has an army of 3D printers in both locations to print models for our patrons! Just submit your models through this website, and pick up your models in 5 to 7 business days. Prints for classes are completely free, just make sure to tell us the class and professor in the notes when you submit your files. Otherwise, we only charge $1 per hour of print time.</p>
+                <p>We offer prints in PLA and ABS in a wide variety of colors, just let us know what you would like in the submission form.</p>
+                &nbsp;
+                <ol class="list-group">
+                    <li class="list-group-item">
+                        <h5>Prepare Your <code>stl</code> File</h5>
+                        <p>An <code>stl</code> file is a common format for the exchange of 3d models. Most modeling software should support this export format.</p>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>Upload Your File</h5>
+                        <p>Fill out the form on the <a href="/submit">submit</a> page and upload your model! For other options not listed in the form, please use the notes field. Our technicians will contact you if we need anything.</p>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>Wait For Evaluation</h5>
+                        <p>Our technicians will review your model for printing on our machines, and contact you through your submitted email when we finish.</p>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>Submit Payment</h5>
+                        <p>If we can print your models, you'll be emailed a link to pay for your 3D prints. Follow this link to pay, and our technicians will begin printing your models as they come through the queue.</p>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>Pick Up Your Model</h5>
+                        <p>Once your models have finished printing, our technicians will email you, and you can come by The Spark Makerspace whenever we are open to pick up your models!</p>
+                    </li>
+                </ol>
+            </div>
+            <div class="col-lg">
+                <h2>Work Orders</h2>
+                &nbsp;
+                <p>Work orders at The Spark Makerspace are for projects requiring machines we can't let patrons use on their own, or services you would prefer a tained technician provide. This includes laser cutting and engraving, CNC milling, our embroidery machine, and the EinScan machine. If you would like some other service, please feel free to tell us in the notes!</p>
+                <p>Work orders are completely free, you only need to bring in the material you would like worked on. We highly encourage you to bring a few sample pieces as well for testing purposes.</p>
+                &nbsp;
+                <ol class="list-group">
+                    <li class="list-group-item">
+                        <h5>Fill Out the Form</h5>
+                        <p>Fill out the form on the <a href="/submit">submit</a> page and select the type of work order you would llike. Upload any files associated with your work order so we can access them.</p>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>Drop Off Your Materials</h5>
+                        <p>Come by The Spark Makerspace any time we are open to drop off the materials for your work order.</p>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>We Assign a Technician</h5>
+                        <p>The Spark Makerspace will choose the most qualified technician to complete your work order, and email you when your order has been assigned.</p>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>Schedule With your Technician</h5>
+                        <p>Your assigned technician will reach out to you to schedule a time to work on your peoject with you. If you don't need to be in space for the project, let your technician know and they will start work as soon as possible.</p>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>Pick Up Your Finished Project</h5>
+                        <p>Your technician will email you when they have completed your work order, and you can come by The Spark Makerspace any time we are open to pick up your project!</p>
+                    </li>
+                </ol>
+            </div>
         </div>
     </div>
+    
 </body>
 
 </html>

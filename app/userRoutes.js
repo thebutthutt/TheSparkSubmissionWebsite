@@ -1,4 +1,4 @@
-module.exports = function (app, passport, userModel, adminRequestHandler, adminRequestModel, printRequestModel, cleRequestModel) {
+module.exports = function (app, passport, userModel, adminRequestHandler, printRequestModel, cleRequestModel) {
     // =====================================
     // LOGIN ===============================
     // =====================================
@@ -67,11 +67,13 @@ module.exports = function (app, passport, userModel, adminRequestHandler, adminR
         res.redirect('/logout');
     });
 
-    app.get('/pendingDelete', function (req, res) {
+
+    //Display the files pending delete to go into the full action queue
+    app.get('/printsPendingDelete', function (req, res) {
         var filenames = [],
             fileIDs = [];
         printRequestModel.find({
-            'files.isPendingDelete': true
+            "files.isPendingDelete": true
         }, function (err, data) {
             data.forEach(element => {
                 element.files.forEach(file => {
@@ -82,16 +84,11 @@ module.exports = function (app, passport, userModel, adminRequestHandler, adminR
                 })
             });
 
-            res.render('partials/actionQueue', {
+            res.render('partials/printsPendingDelete', {
                 filenames: filenames,
                 fileIDs: fileIDs
             }); //render the html
         });
-
-        console.log(filenames);
-
-
-
     }, function (err, html) {
         res.send(html); //send it to the webapp
     });

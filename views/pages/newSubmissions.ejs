@@ -12,61 +12,64 @@
   <div class="container ">
     <%- include ("../partials/printNav") %>
     <div class="fake-tab">
+
       <table class="table table-striped">
         <thead>
           <tr>
             <th scope="col">Name</th>
-            <th scope="col">Finalize</th>
             <th scope="col">Submitted</th>
+            <th scope="col">Complete</th>
             <th scope="col">Files</th>
             <th scope="col" style="text-align: end;">Actions</th>
           </tr>
         </thead>
         <tbody>
+          <% if (dbdata.length == 0) { %>
+            <tr>
+              <td colspan="5" class="none">No new submissions!</td>
+            </tr>
+          <% } %>
           <%dbdata.slice().reverse().forEach(function (item) {%>
           <tr>
             <td>
               <%= item.patron.fname %> <%= item.patron.lname %> <br>
             </td>
+            <td><%=item.dateSubmitted%></td>
             <td>
-              <button type="button" class="btn btn-primary submit-btn" id='<%= item._id%>'
-                <% if (!item.allFilesReviewed) { %> disabled <%}%> >Send</button>
+              <% console.log(item.allFilesReviewed) %>
+              <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="top"
+                title='<% if (!item.allFilesReviewed) { %> Please review all files first! <%} else {%>Send to Patron<% } %>'>
+                <button type="button" class="btn btn-primary submit-btn" id='<%= item._id%>'
+                  <% if (!item.allFilesReviewed) { %> disabled style="pointer-events: none;" <%}%> >
+                  Complete
+                </button>
+              </span>
             </td>
-            <td><%=item.dateSubmitted%></td> <td colspan="2" class="no-padding">
-                <table class="plain" style="width:100%">
-                  <% item.files.forEach(function (file) {%>
-                  <tr>
-                    <td style="width:99%">
-                      <%=file.fileName.substring(file.fileName.lastIndexOf("%$%$%") + 5)%>
-                      &nbsp;
-                      <% if (file.isReviewed) { %>
-                      <% if (file.isRejected) { %>
-                      <span class="badge badge-danger">Rejected</span>
-                      <% } else { %>
-                      <span class="badge badge-success">Accepted</span>
-                      <% } %>
-                      <% } else { %>
-                      <span class="badge badge-primary">Unreviewed</span>
-                      <% } %>
-                      <% if (file.isPendingDelete) { %>
-                        <span class="badge badge-danger">Pending Delete</span>
-                      <% } %>
-                    </td>
-                    <td style="white-space: nowrap;">
-                      <button type="button" class="btn btn-success download-btn" id='<%= file.fileName%>'>D</button>
-                      <button type="button" class="btn btn-primary preview-btn" id='<%= file._id%>'>P</button>
-                      <button type="button" class="btn btn-danger delete-btn" id='<%= file._id%>' isSuperAdmin='<%= isSuperAdmin%>'>Delete</button>
-                    </td>
-                  </tr>
-                  <%})%>
-                </table>
+            <td colspan="2" class="no-padding">
+            <table class="plain" style="width:100%">
+            <% item.files.forEach(function (file) {%> <tr>
+            <td style="width:99%">
+              <%- include ("../partials/downloadbutton", {file:file}) %>
+              &nbsp;
+              <%- include ("../partials/previewbutton", {file:file}) %>
+              &nbsp;
+              <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
+              &nbsp;
+              <%- include ("../partials/flags", {file:file}) %>
+            </td>
+            <td style="white-space: nowrap; text-align: right;">
+              <%- include ("../partials/deletebuttons", {file:file}) %>
             </td>
           </tr>
           <%})%>
-        </tbody>
       </table>
-    </div>
+      </td>
+      </tr>
+      <%})%>
+      </tbody>
+      </table>
 
+    </div>
   </div>
 </body>
 

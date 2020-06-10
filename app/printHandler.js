@@ -32,6 +32,7 @@ module.exports = {
         request.hasReadyForPickup = false;
         request.hasStaleOnPayment = false;
         request.hasStaleOnPickup = false;
+        request.isPendingDelete = false;
 
         //loop through the arrays of file details possibly more than one file
         for (let i = 0; i < prints[0].length; i++) {
@@ -54,7 +55,8 @@ module.exports = {
                 datePaid: "Never",
                 datePrinted: "Never",
                 datePickedUp: "Never",
-                isPendingDelete: false
+                isPendingDelete: false,
+                canBeReviewed: true
             });
         }
 
@@ -116,7 +118,7 @@ module.exports = {
             })
             .on('fileBegin', (name, file) => { //when a new file comes through
                 file.name = file.name.split(" ").join(""); //remove spaces from file names
-                file.name = time.unix() + unique + "%$%$%" + file.name; //add special separater so we can get just the filename later
+                file.name = time.unix() + unique + constants.delim + file.name; //add special separater so we can get just the filename later
                 //yes this is a dumb way to keep track of the original filename but I dont care
                 unique += 1; //increment unique so every file is not the same name
                 file.path = __dirname + '/uploads/' + file.name;
@@ -153,6 +155,7 @@ module.exports = {
                 });
                 //update the low level print according to the form data
                 if (fields.decision == 'accepted') { //if the technician accepted the print, update accordingly
+                    console.log("accepted file")
                     printRequestModel.findOneAndUpdate({
                         'files._id': fields.fileID
                     }, {
@@ -214,7 +217,7 @@ module.exports = {
             })
             .on('fileBegin', (name, file) => { //handle uploading a file if needed
                 if (shouldUpload) {
-                    file.name = time.unix() + "%$%$%" + file.name; //add special separater so we can get just the filename later
+                    file.name = time.unix() + constants.delim + file.name; //add special separater so we can get just the filename later
                     file.path = __dirname + '/uploads/gcode/' + file.name;
                     console.log('uploaded gcode');
                 } else {
@@ -251,6 +254,7 @@ module.exports = {
                 //calculate paumet amount
                 var amount = 0.0;
                 for (var i = 0; i < result.files.length; i++) {
+                    result.files[i].canBeReviewed = false;
                     if (result.files[i].isRejected == false && result.files[i].isReviewed == true) { //print is accepted
                         if (result.files[i].timeHours <= 0) { //if its less than an hour, just charge one dollar
                             amount += 1;
@@ -258,10 +262,10 @@ module.exports = {
                             amount += result.files[i].timeHours;
                             amount += (result.files[i].timeMinutes / 60);
                         }
-                        acceptedFiles.push(result.files[i].fileName.substring(result.files[i].fileName.lastIndexOf("%$%$%") + 5));
+                        acceptedFiles.push(result.files[i].fileName.substring(result.files[i].fileName.lastIndexOf(constants.delim) + 10));
                         acceptedMessages.push(result.files[i].patronNotes);
                     } else {
-                        rejectedFiles.push(result.files[i].fileName.substring(result.files[i].fileName.lastIndexOf("%$%$%") + 5));
+                        rejectedFiles.push(result.files[i].fileName.substring(result.files[i].fileName.lastIndexOf(constants.delim) + 10));
                         rejectedMessages.push(result.files[i].patronNotes);
                     }
                 }
@@ -285,7 +289,7 @@ module.exports = {
                     //none of the prints were accepted
                     result.hasNew = false; //submission not in new queue
                     result.datePaymentRequested = time.format(constants.format); //still capture review time
-                    email.fullyRejected(email, rejectedFiles, rejectedMessages); //send a completely rejected email
+                    emailer.fullyRejected(email, rejectedFiles, rejectedMessages); //send a completely rejected email
                 }
 
                 //save result to the database with updated flags
@@ -304,7 +308,7 @@ module.exports = {
     recievePayment: function (submissionID, callback) {
         var time = moment();
         printRequestModel.findOne({
-            "_id": submissionID
+            "files._id": submissionID
         }, function (err, result) {
             if (err) {
                 console.log(err);

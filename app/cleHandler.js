@@ -14,7 +14,7 @@ module.exports = {
             additional.push(time.format(constants.format), filenames);
             module.exports.addEntry(fields, additional);
         }).on('fileBegin', (name, file) => { //when a new file comes through
-            file.name = time.unix() + unique + "%$%$%" + file.name; //add special separater so we can get just the filename later
+            file.name = time.unix() + unique + constants.delim + file.name; //add special separater so we can get just the filename later
             //yes this is a dumb way to keep track of the original filename but I dont care
             unique += 1; //increment unique so every file is not the same name
             file.path = __dirname + '/uploads/clefiles/' + file.name;
@@ -44,7 +44,5 @@ module.exports = {
                 return console.error(err);
             }
         });
-
-        console.log(request);
     }
 }
