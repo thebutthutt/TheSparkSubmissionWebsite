@@ -6,6 +6,7 @@ var cleRequestModel = require('./models/cleRequest');
 
 module.exports = {
     handleSubmission: function (req) {
+        console.log("start");
         var time = moment(),
             unique = 1,
             filenames = [],
@@ -24,6 +25,7 @@ module.exports = {
     },
 
     addEntry: function (fields, additional) {
+        console.log("start");
         var request = new cleRequestModel(); //new instance of a request
         request.type = fields.requestType;
         request.patron = {
@@ -33,15 +35,30 @@ module.exports = {
             euid: fields.euid,
         }
         request.notes = fields.notes;
-        request.submissionDate = additional[0];
+        request.dateSubmitted = additional[0];
         request.files = additional[1];
         request.maker = "Unassigned";
-        request.completed = false;
-        request.completedDate = "Uncompleted";
+        request.isCompleted = false;
+        request.isAssigned = false;
+        request.dateCompleted = "Uncompleted";
+        request.dateAssigned = "Unassigned";
+        request.isPendingDelete = false;
+        request.isPendingAssignment = true;
+        request.requestingMaker = "Unassigned";
 
         request.save(function (err, document) {
             if (err) {
-                return console.error(err);
+                console.error(err);
+            }
+        });
+    },
+    
+    deleteSubmission: function(submissionID) {
+        cleRequestModel.deleteOne({
+            "_id": submissionID
+        }, function (err) {
+            if (err) {
+                console.log(err);
             }
         });
     }

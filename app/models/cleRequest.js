@@ -14,6 +14,9 @@ var cleSubmissionSchema = mongoose.Schema({
     dateAssigned: String,
     dateCompleted: String,
     techNotes: String,
+    isPendingDelete: Boolean,
+    isPendingAssignment: Boolean,
+    requestingMaker: String
 });
 
 // create the model for a print submission and expose it to our app

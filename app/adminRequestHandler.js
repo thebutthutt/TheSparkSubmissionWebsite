@@ -16,6 +16,15 @@ module.exports = {
                     result.save(); //save the entry in the database
                 }
             });
+        } else if (itemType == "cle") {
+            cleRequestModel.findById(itemID, function(err, result) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    result.isPendingDelete = true; //mark that the file is pending delete
+                    result.save(); //save the entry in the database
+                }
+            });
         }
 
     },
