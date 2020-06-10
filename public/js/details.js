@@ -2,7 +2,9 @@ $(document).ready(function () {
     //initial form to show is an accepted ptint
     $(".accepted-controls").show();
     $(".accepted-controls input").prop('required', true);
+    $('[data-toggle="tooltip"]').tooltip();
 
+    
 
     //setting up the download button to woro
     $('.download-btn').on('click', function () {
@@ -30,7 +32,7 @@ $(document).ready(function () {
     });
 
     $('.change-btn').on('click', function () {
-        let fileID = $(this).attr('fileID');
+        let fileID = $(this).attr('fileid');
         $.ajax({
             type: 'POST',
             url: '/prints/changeLocation',
@@ -41,5 +43,6 @@ $(document).ready(function () {
         }).done(function () {
             location.reload();
         });
-    })
+    });
 });
+

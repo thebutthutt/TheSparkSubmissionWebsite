@@ -23,6 +23,11 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <% if (dbdata.length == 0) { %>
+                    <tr>
+                        <td colspan="5" class="none">No submissions ready to print!</td>
+                    </tr>
+                    <% } %>
                     <%dbdata.slice().reverse().forEach(function (item) {%>
                     <tr>
                         <td>
@@ -35,33 +40,35 @@
                             <table class="plain">
                                 <% item.files.forEach(function (file) {%>
                                 <% if (file.isRejected == false) { %>
-                                    <% if (location != "all") { %>
-                                        <% if (file.printLocation == location) { %>
-                                            <tr>
-                                                <td>
-                                                    <%=file.fileName.substring(file.fileName.lastIndexOf("%$%$%") + 5)%>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-danger delete-btn"
-                                                        id='<%= file._id%>'>D</button>
-                                                    <button type="button" class="btn btn-primary preview-btn"
-                                                        id='<%= file._id%>'>P</button>
-                                                </td>
-                                            </tr>
-                                        <% } %>
-                                    <%} else { %>
-                                        <tr>
-                                            <td>
-                                                <%=file.fileName.substring(file.fileName.lastIndexOf("%$%$%") + 5)%>
-                                            </td>
-                                            <td>
-                                                <button type="button" class="btn btn-danger delete-btn"
-                                                    id='<%= file._id%>' isSuperAdmin='<%= isSuperAdmin%>'>Delete</button>
-                                                <button type="button" class="btn btn-primary preview-btn"
-                                                    id='<%= file._id%>'>P</button>
-                                            </td>
-                                        </tr>
-                                    <%} %>
+                                <% if (location != "all") { %>
+                                <% if (file.printLocation == location) { %>
+                                <tr>
+                                    <td>
+                                        <%- include ("../partials/downloadbutton", {file:file}) %>
+                                        &nbsp;
+                                        <%- include ("../partials/previewbutton", {file:file}) %>
+                                        &nbsp;
+                                        <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
+                                    </td>
+                                    <td>
+                                        <%- include ("../partials/deletebuttons", {file:file}) %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                                <%} else { %>
+                                <tr>
+                                    <td>
+                                        <%- include ("../partials/downloadbutton", {file:file}) %>
+                                        &nbsp;
+                                        <%- include ("../partials/previewbutton", {file:file}) %>
+                                        &nbsp;
+                                        <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
+                                    </td>
+                                    <td style="white-space: nowrap; text-align: right;">
+                                        <%- include ("../partials/deletebuttons", {file:file}) %>
+                                    </td>
+                                </tr>
+                                <%} %>
                                 <%} %>
                                 <%})%>
                             </table>

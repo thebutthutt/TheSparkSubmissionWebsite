@@ -167,6 +167,35 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         res.json(['done']); //tell the front end the request is done
     });
 
+    app.post('/prints/undodelete', function (req, res, next) {
+        var fileID = req.body.fileID || req.query.fileID;
+        adminRequestHandler.undoDelete(fileID, "print");
+        res.json(['done']); //tell the front end the request is done
+    });
+
+
+
+    app.post('/prints/waive', function (req, res, next) {
+        var submissionID = req.body.submissionID || req.query.submissionID;
+        printHandler.recievePayment(submissionID, function callback() {
+            res.json(['done']); //tell the front end the request is done
+        });
+    });
+
+    app.post('/prints/requestwaive', function (req, res, next) {
+        var submissionID = req.body.submissionID || req.query.submissionID;
+        adminRequestHandler.addWaive(submissionID, "print");
+        res.json(['done']); //tell the front end the request is done
+    });
+
+    app.post('/prints/undowaive', function (req, res, next) {
+        var submissionID = req.body.submissionID || req.query.submissionID;
+        adminRequestHandler.undoWaive(submissionID, "print");
+        res.json(['done']); //tell the front end the request is done
+    });
+
+
+
     //downloads file specified in the parameter
     app.get('/prints/download', function(req, res){
         var fileLocation = req.body.fileID || req.query.fileID;
