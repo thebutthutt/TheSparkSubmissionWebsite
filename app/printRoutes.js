@@ -9,7 +9,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
             "hasNew": true
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/newSubmissions', {
-                pgnum: 6, //tells the navbar what page to highlight
+                pgnum: 4, //prints
                 dbdata: data,
                 printPage: "newSub",
                 isAdmin: true,
@@ -26,7 +26,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
             'files._id': fileID
         }, function (err, result) {
             res.render('pages/previewPrint', { //render the review page
-                pgnum: 7,
+                pgnum: 4, //prints
                 isAdmin: true,
                 timestamp: fileID.dateSubmitted,
                 isSuperAdmin: req.user.isSuperAdmin,
@@ -42,7 +42,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
             "hasPendingPayment": true
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/pendingPayment', {
-                pgnum: 6, //tells the navbar what page to highlight
+                pgnum: 4, //prints
                 dbdata: data,
                 printPage: "pendpay",
                 isAdmin: true,
@@ -59,7 +59,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
             "hasReadyToPrint": true
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/ready', {
-                pgnum: 6, //tells the navbar what page to highlight
+                pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "ready",
                 location: "all",
@@ -78,7 +78,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
             "files.printLocation": "Willis Library"
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/ready', {
-                pgnum: 6, //tells the navbar what page to highlight
+                pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "ready",
                 location: "Willis Library",
@@ -97,7 +97,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
             "files.printLocation": "Discovery Park"
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/ready', {
-                pgnum: 6, //tells the navbar what page to highlight
+                pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "ready",
                 location: "Discovery Park",
@@ -116,7 +116,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
             "hasRejected": true,
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/rejected', {
-                pgnum: 6, //tells the navbar what page to highlight
+                pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "rejected",
                 location: "willis",
@@ -143,7 +143,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                 });
                 res.render('pages/paymentComplete', { //render the success page
                     data: req.query,
-                    pgnum: 6,
+                    pgnum: 0,
                     isAdmin: admin,
                     isSuperAdmin: superAdmin
                 });

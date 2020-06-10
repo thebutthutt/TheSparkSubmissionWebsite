@@ -27,7 +27,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
         // render the page and pass in any flash data if it exists
         res.render('pages/signup', {
             message: req.flash('signupMessage'),
-            pgnum: 4, //tells the navbar what page to highlight
+            pgnum: 3, //tells the navbar what page to highlight
             isAdmin: false
         });
     });
@@ -47,7 +47,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
     app.get('/profile', isLoggedIn, function (req, res) {
         res.render('pages/profile', {
             message: req.flash('logoutMessage'),
-            pgnum: 5, //tells the navbar what page to highlight
+            pgnum: 3, //tells the navbar what page to highlight
             user: req.user, // get the user out of session and pass to template
             isAdmin: true,
             isSuperAdmin: req.user.isSuperAdmin
