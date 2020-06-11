@@ -5,6 +5,9 @@ import {
 import {
     STLLoader
 } from '/three/examples/jsm/loaders/STLLoader.js';
+import {
+    GUI
+} from '/gui/build/dat.gui.module.js';
 
 function STLViewer(model, elementID) {
     var elem = document.getElementById(elementID);
@@ -22,6 +25,10 @@ function STLViewer(model, elementID) {
             var percentComplete = xhr.loaded / xhr.total * 100;
             $(".progress-bar").attr('aria-valuenow', Math.round(percentComplete, 2));
             $(".progress-bar").attr('style', "width: " + Math.round(percentComplete, 2) + "%");
+            if (percentComplete = 100) {
+                console.log('completed')
+                $(".progress").remove();
+            }
         }
     };
 
@@ -43,6 +50,7 @@ function STLViewer(model, elementID) {
     controls.autoRotateSpeed = 2;
 
     var scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xeeeeee);
 
     const planeSize = 229;
 
@@ -63,7 +71,13 @@ function STLViewer(model, elementID) {
     mesh.rotation.x = Math.PI * -.5;
     scene.add(mesh);
 
-    scene.add(new THREE.HemisphereLight(0xffffff, 1.5));
+    const light = new THREE.HemisphereLight(0xffffff, 0x4a4a4a, 1.2)
+    scene.add(light);
+
+    const gui  = new GUI({autoPlace: false, width: 150});
+    var customContainer = document.getElementById('gui-container');
+    customContainer.appendChild(gui.domElement);
+    gui.add(controls, 'autoRotate');
 
     (new STLLoader()).load(model, function (geometry) {
         var material = new THREE.MeshPhongMaterial({
@@ -97,6 +111,8 @@ function STLViewer(model, elementID) {
         animate();
 
     }, onProgress);
+
+    
 }
 
 $(document).ready(function () {

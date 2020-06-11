@@ -43,6 +43,7 @@ app.use(bodyParser.json()); // get information from html forms
 app.set('view engine', 'ejs'); // set up ejs for templating
 app.use('/public', express.static(path.join(__dirname + '/public'))); //allow us to grab local files in the public directory
 app.use('/three', express.static(__dirname + '/node_modules/three/')); //allow website to access the three.js library
+app.use('/gui', express.static(__dirname + '/node_modules/dat.gui/')); //allow website to access the uploaded STLs (for in site display)
 app.use('/uploads', express.static(__dirname + '/app/uploads/')); //allow website to access the uploaded STLs (for in site display)
 
 // required for passport
