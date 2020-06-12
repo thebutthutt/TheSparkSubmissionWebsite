@@ -1,0 +1,8 @@
+{
+    "uid": "sparkorders",
+    "append": true,
+    "watch": true,
+    "script": "server.js",
+    "sourceDir": "/home/hcf0018/webserver/TheSparkSubmissionWebsite/",
+    "command": "/usr/bin/node"
+}
