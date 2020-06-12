@@ -12,6 +12,9 @@ import {
 function STLViewer(model, elementID) {
     var elem = document.getElementById(elementID);
 
+    //----------------------------------------------//
+    //--------------------CAMERA--------------------//
+    //----------------------------------------------//
     var camera = new THREE.PerspectiveCamera(70,
         elem.clientWidth / elem.clientHeight, 1, 1000);
 
@@ -20,18 +23,23 @@ function STLViewer(model, elementID) {
         alpha: true
     });
 
+
+    //--------------display progress bar
     var onProgress = function (xhr) {
         if (xhr.lengthComputable) {
             var percentComplete = xhr.loaded / xhr.total * 100;
             $(".progress-bar").attr('aria-valuenow', Math.round(percentComplete, 2));
             $(".progress-bar").attr('style', "width: " + Math.round(percentComplete, 2) + "%");
-            if (percentComplete = 100) {
+            console.log(Math.round(percentComplete, 2) + "%")
+            if (Math.round(percentComplete, 2) == 100) {
                 console.log('completed')
                 $(".progress").remove();
             }
         }
     };
 
+
+    //-------Resize on window resize-----------------//
     renderer.setSize(elem.clientWidth, elem.clientHeight);
     elem.appendChild(renderer.domElement);
 
@@ -41,67 +49,98 @@ function STLViewer(model, elementID) {
         camera.updateProjectionMatrix();
     }, false);
 
+
+    //----------------------------------------------//
+    //-------------------CONTROLS-------------------//
+    //----------------------------------------------//
+
     var controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.rotateSpeed = 2;
     controls.dampingFactor = 0.1;
     controls.enableZoom = true;
-    controls.autoRotate = true;
+    controls.autoRotate = false;
     controls.autoRotateSpeed = 2;
 
     var scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xeeeeee);
+    scene.background = new THREE.Color(0xf7f7f7);
 
-    const planeSize = 229;
 
-    const loader = new THREE.TextureLoader();
-    const texture = loader.load('/public/checker.png');
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.magFilter = THREE.NearestFilter;
-    const repeats = planeSize / 20;
-    texture.repeat.set(repeats, repeats);
 
-    const planeGeo = new THREE.PlaneBufferGeometry(planeSize, planeSize);
-    const planeMat = new THREE.MeshPhongMaterial({
-        map: texture,
-        side: THREE.DoubleSide,
+
+    //----------------------------------------------//
+    //-----------------BOTTOM PLANE-----------------//
+    //----------------------------------------------//
+    var size = 230;
+    var divisions = 23;
+    var centerColor = 0xff0000;
+    var gridColor = 0xbbbbbb;
+    var gridHelper = new THREE.GridHelper(size, divisions, centerColor, gridColor);
+    scene.add(gridHelper);
+
+
+
+    //----------------------------------------------//
+    //-----------------BUILD VOLUME-----------------//
+    //----------------------------------------------//
+    const cubeSize = 230;
+    const cubeGeo = new THREE.BoxBufferGeometry(cubeSize, cubeSize, cubeSize);
+    const wireframeGeo = new THREE.EdgesGeometry(cubeGeo);
+    const cubeMat = new THREE.LineBasicMaterial({
+        color: gridColor,
+        linewidth: 2
     });
-    const mesh = new THREE.Mesh(planeGeo, planeMat);
-    mesh.rotation.x = Math.PI * -.5;
-    scene.add(mesh);
+    const box = new THREE.LineSegments(wireframeGeo, cubeMat);
+    box.position.set(0, cubeSize / 2, 0);
+    scene.add(box);
 
-    const light = new THREE.HemisphereLight(0xffffff, 0x4a4a4a, 1.2)
+
+
+    //----------------------------------------------//
+    //--------------------LIGHTS--------------------//
+    //----------------------------------------------//
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x7a7a7a, 0.87));
+
+    const color = 0xffe6ee;
+    const intensity = 0.3;
+    const light = new THREE.PointLight(color, intensity);
+    light.position.set(100, 150, 200);
     scene.add(light);
 
-    const gui  = new GUI({autoPlace: false, width: 150});
-    var customContainer = document.getElementById('gui-container');
-    customContainer.appendChild(gui.domElement);
-    gui.add(controls, 'autoRotate');
-
+    //----------------------------------------------//
+    //------------------STL LOADER------------------//
+    //----------------------------------------------//
     (new STLLoader()).load(model, function (geometry) {
+
+        //-----------MATERIAL-------------//
         var material = new THREE.MeshPhongMaterial({
-            color: 0x33ccff,
-            specular: 100,
+            color: 0xffb3cc,
+            //color: 0xffffff,
+            specular: 0x5b1307,
             shininess: 100
         });
+
+        //-------------MESH---------------//
         var mesh = new THREE.Mesh(geometry, material);
         mesh.rotation.x = -Math.PI / 2;
         scene.add(mesh);
 
+
+        //----------POSITIONING-----------//
         var middle = new THREE.Vector3();
         geometry.computeBoundingBox();
-
-        var size = new THREE.Vector3;
-        geometry.boundingBox.getSize(size);
 
         geometry.boundingBox.getCenter(middle);
         mesh.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(
             -middle.x, -middle.y, 0));
 
-        camera.position.z = 120;
+
+        //-------------CAMERA-------------//
+        camera.position.z = 150;
         camera.position.y = 250;
 
+
+        //------------ANIMATION-----------//
         var animate = function () {
             requestAnimationFrame(animate);
             controls.update();
@@ -112,7 +151,16 @@ function STLViewer(model, elementID) {
 
     }, onProgress);
 
-    
+    //----------------------------------------------//
+    //---------------------GUI----------------------//
+    //----------------------------------------------//
+    const gui = new GUI({
+        autoPlace: false,
+        width: 90
+    });
+    var customContainer = document.getElementById('gui-container');
+    customContainer.appendChild(gui.domElement);
+    gui.add(controls, 'autoRotate').name('Auto Rotate');
 }
 
 $(document).ready(function () {
