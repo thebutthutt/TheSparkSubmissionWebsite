@@ -44,6 +44,7 @@ module.exports = {
                 isReviewed: false,
                 isRejected: false,
                 isPendingPayment: false,
+                isPendingWaive: false,
                 isPaid: false,
                 isReadyToPrint: false,
                 isPrinted: false,
@@ -224,8 +225,7 @@ module.exports = {
             if (shouldUpload) {
                 file.name = time.unix() + constants.delim + file.name; //add special separater so we can get just the filename later
                 file.path = path.join(__dirname, '../app/uploads/gcode/', file.name);
-            } else {
-            }
+            } else {}
         });
         form.on('file', (name, file) => { //when a file finishes coming through
             if (shouldUpload) {
@@ -233,6 +233,24 @@ module.exports = {
             }
         });
 
+    },
+
+    appendNotes: function (req) {
+        printRequestModel.findOne({
+            'files._id': req.body.fileID
+        }, function (err, result) {
+            if (err) {
+                console.log(err)
+            } else {
+                if (req.body.newNotes != '') {
+                    result.files.id(req.body.fileID).techNotes += '\n';
+                    result.files.id(req.body.fileID).techNotes += req.body.euid;
+                    result.files.id(req.body.fileID).techNotes += ': ';
+                    result.files.id(req.body.fileID).techNotes += req.body.newNotes;
+                    result.save();
+                }
+            }
+        });
     },
 
     //this function fires when a tech says a submission is ready to be sent to the pendpay queue
@@ -257,7 +275,7 @@ module.exports = {
                 //calculate paumet amount
                 var amount = 0.0;
                 for (var i = 0; i < result.files.length; i++) {
-                    
+
                     result.files[i].canBeReviewed = false;
                     result.files[i].isNewSubmission = false;
                     result.files[i].isPendingPayment = true;
@@ -322,6 +340,7 @@ module.exports = {
                     if (result.files[i].isRejected == false) {
                         result.files[i].isPaid = true;
                         result.files[i].isReadyToPrint = true;
+                        result.files[i].isPendingWaive = false;
                     }
                 }
                 result.datePaid = time.format(constants.format);
