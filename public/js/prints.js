@@ -5,7 +5,6 @@ $(document).ready(function () {
         var isSuperAdmin = $(this).attr('issuperadmin');
 
         if (isSuperAdmin == "true") { //attributes come over as strings not booleans!!
-            console.log("fully delete");
             $.ajax({
                 method: "POST",
                 url: "/prints/delete",
@@ -17,7 +16,6 @@ $(document).ready(function () {
                 location.reload();
             });
         } else {
-            console.log("pending delete");
             $.ajax({
                 method: "POST",
                 url: "/prints/requestdelete",
@@ -57,7 +55,6 @@ $(document).ready(function () {
     });
 
     $('.submit-btn').on('click', function () {
-        console.log("yes?");
         let submissionID = $(this).attr('id');
         $.ajax({
             type: 'POST',
@@ -76,7 +73,6 @@ $(document).ready(function () {
         var isSuperAdmin = $(this).attr('issuperadmin');
 
         if (isSuperAdmin == "true") { //attributes come over as strings not booleans!!
-            console.log("fully delete");
             $.ajax({
                 method: "POST",
                 url: "/prints/waive",
@@ -88,7 +84,6 @@ $(document).ready(function () {
                 location.reload();
             });
         } else {
-            console.log("pending delete");
             $.ajax({
                 method: "POST",
                 url: "/prints/requestwaive",
@@ -100,5 +95,19 @@ $(document).ready(function () {
                 location.reload();
             });
         }
+    });
+
+    $('.finish-printing').on('click', function () {
+        let fileID = $(this).attr('id');
+        $.ajax({
+            type: 'POST',
+            url: '/prints/finishPrinting',
+            data: {
+                "fileID": fileID
+            },
+            dataType: 'json'
+        }).done(function () {
+            location.reload();
+        });
     });
 });

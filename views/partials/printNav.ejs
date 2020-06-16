@@ -1,26 +1,41 @@
 <ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class='nav-link <% if (printPage == "newSub") { %> active <%}%>' href="/prints/new">New Submissions</a>
+  <li class="nav-item">
+    <a class='nav-link <% if (printPage == "newSub") { %> active <%}%>' href="/prints/new">New Submissions</a>
     </li>
     <li class='nav-item'>
       <a class='nav-link <% if (printPage == "pendpay") { %> active <%}%>' href="/prints/pendpay">Pending Payment</a>
     </li>
     <li class="nav-item dropdown">
-        <a class='nav-link <% if (printPage == "ready") { %> active <%}%> dropdown-toggle' data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            Ready to Print
-            <% if (printPage == "ready") { %>
+      <a class='nav-link <% if (printPage == "ready") { %> active <%}%> dropdown-toggle' data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          Ready to Print
+          <% if (printPage == "ready") { %>
             <% if (location == "all") { %> (all) <%}%>
             <% if (location == "willis") { %> (Willis) <%}%>
             <% if (location == "dp") { %> (DP) <%}%>
-            <% } %>
-        </a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="/prints/ready">All</a>
-          <a class="dropdown-item" href="/prints/readywillis">Willis Library</a>
-          <a class="dropdown-item" href="/prints/readydp">Discovery Park</a>
-        </div>
-      </li>
-      <li class='nav-item'>
-        <a class='nav-link <% if (printPage == "rejected") { %> active <%}%>' href="/prints/rejected">Rejected</a>
-      </li>
+          <% } %>
+      </a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="/prints/ready">All</a>
+        <a class="dropdown-item" href="/prints/readywillis">Willis Library</a>
+        <a class="dropdown-item" href="/prints/readydp">Discovery Park</a>
+      </div>
+    </li>
+    <li class="nav-item dropdown">
+      <a class='nav-link <% if (printPage == "pickup") { %> active <%}%> dropdown-toggle' data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          Ready for Pickup
+          <% if (printPage == "pickup") { %>
+            <% if (location == "all") { %> (all) <%}%>
+            <% if (location == "willis") { %> (Willis) <%}%>
+            <% if (location == "dp") { %> (DP) <%}%>
+          <% } %>
+      </a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="/prints/pickup">All</a>
+        <a class="dropdown-item" href="/prints/pickupwillis">Willis Library</a>
+        <a class="dropdown-item" href="/prints/pickupdp">Discovery Park</a>
+      </div>
+    </li>
+    <li class=' nav-item'>
+      <a class='nav-link <% if (printPage == "rejected") { %> active <%}%>' href="/prints/rejected">Rejected</a>
+    </li>
   </ul>

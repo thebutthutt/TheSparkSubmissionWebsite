@@ -55,7 +55,6 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
     });
 
     app.get('/accounts/delete', function (req, res) {
-        console.log('here');
         var userID = req.body.userID || req.query.userID;
         userModel.deleteOne({
             "_id": userID

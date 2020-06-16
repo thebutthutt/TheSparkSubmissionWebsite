@@ -1,12 +1,10 @@
 module.exports = function (app, passport, userModel, adminRequestHandler, printHandler, printRequestModel, payment) {
-        // =====================================
-    // PRINTS ===============================
-    // =====================================
+    //-----------------------NEW PRINTS-----------------------
     // show the new prints queue
     app.get('/prints/new', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
-            "hasNew": true
+            "files.isNewSubmission": true
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/newSubmissions', {
                 pgnum: 4, //prints
@@ -18,6 +16,12 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         });
 
     });
+
+
+
+
+
+    //-----------------------REVIEW FILE----------------------------
 
     //send technician to reveiw page for a specific low level print file
     app.get('/prints/preview', isLoggedIn, function(req, res){
@@ -35,11 +39,16 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         });
     });
 
+
+
+
+    //-----------------------PENDING PAYMENT-----------------------
+
     //show pending payment prints
     app.get('/prints/pendpay', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
-            "hasPendingPayment": true
+            "files.isPendingPayment": true
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/pendingPayment', {
                 pgnum: 4, //prints
@@ -52,12 +61,17 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
 
     });
 
+
+
+    //-------------READY TO PRINT------------------------
+
     //show pready to print all locations
     app.get('/prints/ready', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
-            "hasReadyToPrint": true
+            "files.isReadyToPrint": true
         }, function (err, data) { //loading every single top level request FOR NOW
+            console.log(data)
             res.render('pages/ready', {
                 pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
@@ -74,7 +88,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     app.get('/prints/readywillis', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
-            "hasReadyToPrint": true,
+            "files.isPaid": true,
             "files.printLocation": "Willis Library"
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/ready', {
@@ -93,7 +107,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     app.get('/prints/readydp', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
-            "hasReadyToPrint": true,
+            "files.isPaid": true,
             "files.printLocation": "Discovery Park"
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/ready', {
@@ -108,12 +122,78 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
 
     });
 
-    //show rejected files
+
+
+
+    //---------------PICKUP-----------------------------------
+
+    //show pickup all locations
+    app.get('/prints/pickup', isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printRequestModel.find({
+            "files.isPrinted": true
+        }, function (err, data) { //loading every single top level request FOR NOW
+            res.render('pages/pickup', {
+                pgnum: 4, //tells the navbar what page to highlight
+                dbdata: data,
+                printPage: "pickup",
+                location: "all",
+                isAdmin: true,
+                isSuperAdmin: req.user.isSuperAdmin
+            });
+        });
+
+    });
+
+    //show pickup at willis
+    app.get('/prints/pickupwillis', isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printRequestModel.find({
+            "files.isPrinted": true,
+            "files.pickupLocation": "Willis Library"
+        }, function (err, data) { //loading every single top level request FOR NOW
+            res.render('pages/pickup', {
+                pgnum: 4, //tells the navbar what page to highlight
+                dbdata: data,
+                printPage: "pickup",
+                location: "Willis Library",
+                isAdmin: true,
+                isSuperAdmin: req.user.isSuperAdmin
+            });
+        });
+
+    });
+
+    //show pickip at dp
+    app.get('/prints/pickupdp', isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printRequestModel.find({
+            "files.isPrinted": true,
+            "files.pickupLocation": "Discovery Park"
+        }, function (err, data) { //loading every single top level request FOR NOW
+            res.render('pages/pickup', {
+                pgnum: 4, //tells the navbar what page to highlight
+                dbdata: data,
+                printPage: "pickup",
+                location: "Discovery Park",
+                isAdmin: true,
+                isSuperAdmin: req.user.isSuperAdmin
+            });
+        });
+
+    });
+
+
+
+
+
+
+    //-----------------------REJECTED-----------------------
     app.get('/prints/rejected', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
-            "hasNew": false,
-            "hasRejected": true,
+            "files.isNewSubmission": false,
+            "files.isRejected": true,
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/rejected', {
                 pgnum: 4, //tells the navbar what page to highlight
@@ -127,6 +207,8 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
 
     });
 
+
+    //-----------------------LANDING AFTER PAYMENT-----------------------
     //displays to the user once they sucesfully submit payment through 3rd party service
     app.get('/payment/complete', function (req, res) {
         var admin = false, superAdmin = false;
@@ -138,8 +220,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         }
         payment.handlePaymentComplete(req, function (success, submissionID) {//tell the payment handler to update our databases
             if (success == true) {
-                printHandler.recievePayment(submissionID, function callback() {
-                    console.log('updated database hopefully');
+                printHandler.recievePayment(submissionID, false, function callback() {
                 });
                 res.render('pages/paymentComplete', { //render the success page
                     data: req.query,
@@ -154,6 +235,10 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         
     });
 
+
+
+
+    //-----------------------DELETE FILE-----------------------
     //deletes a database entry and asscoiated files
     app.post('/prints/delete', function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
@@ -175,9 +260,10 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
 
 
 
+    //-----------------------WAIVE PAYMENT-----------------------
     app.post('/prints/waive', function (req, res, next) {
         var submissionID = req.body.submissionID || req.query.submissionID;
-        printHandler.recievePayment(submissionID, function callback() {
+        printHandler.recievePayment(submissionID, true, function callback() {
             res.json(['done']); //tell the front end the request is done
         });
     });
@@ -196,12 +282,28 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
 
 
 
+
+    //-----------------------MARK COMPLETED-----------------------
+    app.post('/prints/finishPrinting', function (req, res) {
+        var fileID = req.body.fileID || req.query.fileID;
+        printHandler.markCompleted(fileID);
+        res.json(['done']);
+    });
+
+
+
+
+
+    //-----------------------DOWNLOAD-----------------------
     //downloads file specified in the parameter
     app.get('/prints/download', function(req, res){
         var fileLocation = req.body.fileID || req.query.fileID;
         res.download(fileLocation); //send the download
     });
 
+
+
+    //-----------------------PUSH REVIEW-----------------------
     //handle technician updating file by reviewing print file
     app.post('/prints/singleReview', function(req, res) {
         printHandler.updateSingle(req, function callBack() { //send all the stuff to the submission handler
@@ -209,6 +311,8 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         });
     });
 
+
+    //-----------------------CHANGE LOCATION-----------------------
     //simple change location without reviewing
     app.post('/prints/changeLocation', function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
@@ -229,6 +333,8 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         res.json(['done']);
     });
 
+
+    //-----------------------SEND PAYMENT EMAIL-----------------------
     app.post('/prints/requestPayment', function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         printHandler.requestPayment(submissionID, function callback() {
@@ -236,6 +342,8 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         });
     });
 
+
+    //-----------------------HANDLE PAYMENT INCOME-----------------------
     app.post('/prints/recievePayment', function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         printHandler.recievePayment(submissionID, function callback() {

@@ -36,40 +36,44 @@
                         <td><%=item.dateSubmitted%></td>
                         <td><%=item.datePaymentRequested%></td>
                         <td><%=item.datePaid%></td>
-                        <td class="no-padding">
-                            <table class="plain">
+                        <td class="no-padding" >
+                            <table class="plain" style="width: 100%;">
                                 <% item.files.forEach(function (file) {%>
-                                <% if (file.isRejected == false) { %>
-                                <% if (location != "all") { %>
-                                <% if (file.printLocation == location) { %>
-                                <tr>
-                                    <td>
-                                        <%- include ("../partials/downloadbutton", {file:file}) %>
-                                        &nbsp;
-                                        <%- include ("../partials/previewbutton", {file:file}) %>
-                                        &nbsp;
-                                        <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
-                                    </td>
-                                    <td>
-                                        <%- include ("../partials/deletebuttons", {file:file}) %>
-                                    </td>
-                                </tr>
-                                <% } %>
-                                <%} else { %>
-                                <tr>
-                                    <td>
-                                        <%- include ("../partials/downloadbutton", {file:file}) %>
-                                        &nbsp;
-                                        <%- include ("../partials/previewbutton", {file:file}) %>
-                                        &nbsp;
-                                        <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
-                                    </td>
-                                    <td style="white-space: nowrap; text-align: right;">
-                                        <%- include ("../partials/deletebuttons", {file:file}) %>
-                                    </td>
-                                </tr>
-                                <%} %>
-                                <%} %>
+                                    <% if (file.isRejected == false && file.isPaid == true && file.isPrinted == false) { %>
+                                        <% if (location != "all") { %>
+                                            <% if (file.printLocation == location) { %>
+                                                <tr>
+                                                    <td>
+                                                        <%- include ("../partials/downloadbutton", {file:file}) %>
+                                                        &nbsp;
+                                                        <%- include ("../partials/previewbutton", {file:file}) %>
+                                                        &nbsp;
+                                                        <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
+                                                    </td>
+                                                    <td style="white-space: nowrap; text-align: right;">
+                                                        <%- include ("../partials/finish-printing", {file:file}) %>
+                                                        <%- include ("../partials/deletebuttons", {file:file}) %>
+                                                    </td>
+                                                </tr>
+                                            <% } %>
+                                        <%} else { %>
+                                            <tr>
+                                                <td>
+                                                    <%- include ("../partials/downloadbutton", {file:file}) %>
+                                                    &nbsp;
+                                                    <%- include ("../partials/previewbutton", {file:file}) %>
+                                                    &nbsp;
+                                                    <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
+                                                    &nbsp;
+                                                    <%- include ("../partials/locationFlags", {file:file}) %>
+                                                </td>
+                                                <td style="white-space: nowrap; text-align: right;">
+                                                    <%- include ("../partials/finish-printing", {file:file}) %>
+                                                    <%- include ("../partials/deletebuttons", {file:file}) %>
+                                                </td>
+                                            </tr>
+                                        <%} %>
+                                    <%} %>
                                 <%})%>
                             </table>
                         </td>

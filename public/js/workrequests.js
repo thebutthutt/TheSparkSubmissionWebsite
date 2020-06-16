@@ -33,12 +33,12 @@ $(document).ready(function () {
     });
 
     $('.delete-file-btn').on('click', function () {
-        let fileID = $(this).attr('id');
+        let fileName = $(this).attr('id');
         $.ajax({
             type: 'POST',
             url: '/workrequests/deletefile',
             data: {
-                "fileID": fileID
+                "fileName": fileName
             },
             dataType: 'json'
         }).done(function () {

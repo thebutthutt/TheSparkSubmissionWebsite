@@ -39,6 +39,12 @@ module.exports = function (app, passport, userModel, cleHandler, cleRequestModel
         res.json(['done']); //tell the front end the request is done
     });
 
+    app.post('/workrequests/deletefile', function (req, res) {
+        var fileName = req.body.fileName || req.query.fileName;
+        cleHandler.deleteFile(fileName);
+        res.json(['done']); //tell the front end the request is done
+    });
+
 
 }
 

@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+
+<head>
+    <%- include ("../partials/head") %>
+    <link type="text/css" rel="stylesheet" href="../../public/css/prints.css">
+    <script src="../public/js/prints.js"></script>
+</head>
+
+<body>
+    <%- include ("../partials/header") %>
+    <div class="container ">
+        <%- include ("../partials/printNav") %>
+        <div class="fake-tab">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Submitted</th>
+                        <th scope="col">Reviewed</th>
+                        <th scope="col">Paid</th>
+                        <th scope="col">Printed</th>
+                        <th scope="col">Files</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (dbdata.length == 0) { %>
+                    <tr>
+                        <td colspan="6" class="none">No submissions ready for pickup!</td>
+                    </tr>
+                    <% } %>
+                    <%dbdata.slice().reverse().forEach(function (item) {%>
+                    <tr>
+                        <td>
+                            <%= item.patron.fname %> <%= item.patron.lname %> <br>
+                        </td>
+                        <td><%=item.dateSubmitted%></td>
+                        <td><%=item.datePaymentRequested%></td>
+                        <td><%=item.datePaid%></td>
+                        <td colspan="2" class="no-padding" >
+                            <table class="plain" style="width: 100%;">
+                                <% item.files.forEach(function (file) {%>
+                                    <% if (file.isRejected == false && file.isPrinted) { %>
+                                        <% if (location != "all") { %>
+                                            <% if (file.pickupLocation == location) { %>
+                                                <tr>
+                                                    <td><%=file.datePrinted%></td>
+                                                    <td>
+                                                        <%- include ("../partials/downloadbutton", {file:file}) %>
+                                                        &nbsp;
+                                                        <%- include ("../partials/previewbutton", {file:file}) %>
+                                                        &nbsp;
+                                                        <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
+                                                    </td>
+                                                    <td style="white-space: nowrap; text-align: right;">
+                                                        <%- include ("../partials/deletebuttons", {file:file}) %>
+                                                    </td>
+                                                </tr>
+                                            <% } %>
+                                        <%} else { %>
+                                            <tr>
+                                                <td><%=file.datePrinted%></td>
+                                                <td>
+                                                    <%- include ("../partials/downloadbutton", {file:file}) %>
+                                                    &nbsp;
+                                                    <%- include ("../partials/previewbutton", {file:file}) %>
+                                                    &nbsp;
+                                                    <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
+                                                    &nbsp;
+                                                    <%- include ("../partials/pickupLocationFlags", {file:file}) %>
+                                                </td>
+                                                <td style="white-space: nowrap; text-align: right;">
+                                                    <%- include ("../partials/deletebuttons", {file:file}) %>
+                                                </td>
+                                            </tr>
+                                        <%} %>
+                                    <%} %>
+                                <%})%>
+                            </table>
+                        </td>
+                    </tr>
+                    <%})%>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</body>
+
+</html>

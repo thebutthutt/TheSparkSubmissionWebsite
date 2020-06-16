@@ -3,6 +3,23 @@
     margin-bottom: 80px;
 }
 
+.table-striped {margin-bottom: 0px;}
+
+.table-striped>tbody>tr:nth-child(1)>td, 
+.table-striped>tbody>tr:nth-child(1)>th {
+  border-top: none;
+}
+
+.table-striped>tbody>tr:nth-child(odd)>td, 
+.table-striped>tbody>tr:nth-child(odd)>th {
+  background-color: white;
+}
+
+.table-striped>tbody>tr:nth-child(even)>td, 
+.table-striped>tbody>tr:nth-child(even)>th {
+    background-color: rgba(0,0,0,.05);
+}
+
 #loading-image {
     background-image: url('/public/images/loader.gif');
     background-position: center;
