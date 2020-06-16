@@ -47,12 +47,14 @@ module.exports = {
     addWaive: function (itemID, itemType) {
         if (itemType == "print") {
             printRequestModel.findOne({ //find top level print request by single file ID
-                'files._id': itemID
+                '_id': itemID
             }, function (err, result) {
                 if (err) {
                     console.log(err)
                 } else {
-                    result.isPendingWaive = false; //mark that the file is NOT pending delete
+                    for (var i = 0; i < result.files.length; i++) {
+                        result.files[i].isPendingWaive = true;
+                    }
                     result.save(); //save the entry in the database
                 }
             });
@@ -67,8 +69,11 @@ module.exports = {
                 if (err) {
                     console.log(err)
                 } else {
-                    result.isPendingWaive = true; //mark that the file is NOT pending delete
+                    for (var i = 0; i < result.files.length; i++) {
+                        result.files[i].isPendingWaive = false;
+                    }
                     result.save(); //save the entry in the database
+                    console.log(result)
                 }
             });
         }

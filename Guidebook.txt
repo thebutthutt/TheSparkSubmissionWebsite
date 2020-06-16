@@ -45,7 +45,7 @@ Setup
     2. Navigate to the webserver directory /tbd/TheSparkSubmissionWebsite/
     3. Verify that Mongo is running: `sudo service mongod status`
         3a. if mongo is not running: `sudo mongod`
-    4. Start the webserver: `sudo node server.js`
+    4. Start the webserver: `sudo forever start ./forever.json`
 
 
 Project Structure

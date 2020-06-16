@@ -28,6 +28,26 @@
                     <div >
                         <% if (print.canBeReviewed) { %>
                             <%- include ("../partials/printDetails", {print:print}) %>
+                        <% } else { %>
+                            <div class="card-body">
+                                <h6>Notes to Patron</h6>
+                                <p><%=print.patronNotes%></p>
+                                <hr>
+                                <h6>Technician Notes</h6>
+                                <p style="white-space: pre-wrap;"><%=print.techNotes%></p>
+                                <form action="/prints/appendNotes" method="post">
+                                    <div class="hiddenExtras" style="display: none;">
+                                        <input type="text" name="fileID" value='<%= print._id%>'>
+                                        <input type="text" name="euid" value='<%= euid%>'>
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea class="form-control" name="newNotes" rows="3" placeholder="Add new technician notes here"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-success">Append</button>
+                                    </div>
+                                </form>
+                            </div>
                         <% } %>
                     </div>
                 </div>

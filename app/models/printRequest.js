@@ -14,6 +14,7 @@ var singlePrintSchema = mongoose.Schema({
     isReviewed: Boolean,
     isRejected: Boolean,
     isPendingPayment: Boolean,
+    isPendingWaive: Boolean,
     isPaid: Boolean,
     isReadyToPrint: Boolean,
     isPrinted: Boolean,

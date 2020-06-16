@@ -97,6 +97,20 @@ $(document).ready(function () {
         }
     });
 
+    $(".undo-waive-btn").on('click', function () {
+        let submissionID = $(this).attr('id');
+        $.ajax({
+            method: "POST",
+            url: "/prints/undowaive",
+            data: {
+                "submissionID": submissionID
+            },
+            dataType: "json"
+        }).done(function () {
+            location.reload();
+        });
+    });
+
     $('.finish-printing').on('click', function () {
         let fileID = $(this).attr('id');
         $.ajax({

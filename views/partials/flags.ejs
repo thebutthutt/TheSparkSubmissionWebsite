@@ -1,11 +1,13 @@
-<% if (file.isReviewed) { %>
-<% if (file.isRejected) { %>
-<span class="badge badge-danger">Rejected</span>
-<% } else { %>
-<span class="badge badge-success">Accepted</span>
-<% } %>
-<% } else { %>
-<span class="badge badge-primary">Unreviewed</span>
+<% if (file.isNewSubmission) { %>
+    <% if (file.isReviewed) { %>
+        <% if (file.isRejected) { %>
+            <span class="badge badge-danger">Rejected</span>
+        <% } else { %>
+            <span class="badge badge-success">Accepted</span>
+        <% } %>
+    <% } else { %>
+        <span class="badge badge-primary">Unreviewed</span>
+    <% } %>
 <% } %>
 
 <% if (file.printLocation == "Willis Library") { %>
@@ -16,4 +18,8 @@
 
 <% if (file.isPendingDelete) { %>
 <span class="badge badge-danger">Pending Delete</span>
+<% } %>
+
+<% if (file.isPendingWaive) { %>
+<span class="badge badge-warning">Pending Waive</span>
 <% } %>

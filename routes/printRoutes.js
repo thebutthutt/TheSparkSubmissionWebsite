@@ -34,6 +34,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                 isAdmin: true,
                 timestamp: fileID.dateSubmitted,
                 isSuperAdmin: req.user.isSuperAdmin,
+                euid: req.user.local.euid,
                 print: result.files.id(fileID) //send the review page the file to review
             });
         });
@@ -309,6 +310,11 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         printHandler.updateSingle(req, function callBack() { //send all the stuff to the submission handler
             res.redirect('/prints/new'); //when we are done tell the review page it's okay to reload now
         });
+    });
+
+    app.post('/prints/appendNotes', function (req, res) {
+        printHandler.appendNotes(req);
+        res.redirect('back');
     });
 
 

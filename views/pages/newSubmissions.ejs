@@ -45,28 +45,24 @@
               </span>
             </td>
             <td colspan="2" class="no-padding">
-            <table class="plain" style="width:100%">
-            <% item.files.forEach(function (file) {%> <tr>
-            <td style="width:99%">
-              <%- include ("../partials/downloadbutton", {file:file}) %>
-              &nbsp;
-              <%- include ("../partials/previewbutton", {file:file}) %>
-              &nbsp;
-              <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
-              &nbsp;
-              <%- include ("../partials/flags", {file:file}) %>
-            </td>
-            <td style="white-space: nowrap; text-align: right;">
-              <%- include ("../partials/deletebuttons", {file:file}) %>
-              <%- include ("../partials/fileBurger", {file:file}) %>
+              <table class="plain" style="width:100%">
+                <% item.files.forEach(function (file) {%> 
+                <tr>
+                  <td style="width:99%">
+                    <a class="preview-btn" id='<%= file._id%>' href="#"><%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%></a>
+                    &nbsp;
+                    <%- include ("../partials/flags", {file:file}) %>
+                  </td>
+                  <td style="white-space: nowrap; text-align: right;">
+                    <%- include ("../partials/fileBurger", {file:file}) %>
+                  </td>
+                </tr>
+                <%})%>
+              </table>
             </td>
           </tr>
           <%})%>
-      </table>
-      </td>
-      </tr>
-      <%})%>
-      </tbody>
+        </tbody>
       </table>
 
     </div>
