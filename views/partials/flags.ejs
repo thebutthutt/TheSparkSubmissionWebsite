@@ -8,6 +8,12 @@
 <span class="badge badge-primary">Unreviewed</span>
 <% } %>
 
+<% if (file.printLocation == "Willis Library") { %>
+<span class="badge badge-info">Willis</span>
+<% } else { %>
+<span class="badge badge-info">DP</span>
+<% } %>
+
 <% if (file.isPendingDelete) { %>
 <span class="badge badge-danger">Pending Delete</span>
 <% } %>

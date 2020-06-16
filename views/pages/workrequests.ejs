@@ -3,7 +3,7 @@
 
 <head>
     <%- include ("../partials/head") %>
-    <link type="text/css" rel="stylesheet" href="../../public/css/prints.css">
+    <link type="text/css" rel="stylesheet" href="/public/css/prints.css">
     <script src="../public/js/workrequests.js"></script>
 </head>
 
@@ -38,7 +38,7 @@
                         </td>
                         <td><%=item.submissionDate%></td>
                         
-                        <td colspan="2" <% if (item.files.length != 0) {%></td>class="no-padding"<% } %>>
+                        <td colspan="2" class='<% if (item.files.length != 0) {%>no-padding<%}%>'>
                             <% if (item.files.length == 0) {%>
                                 No files were uploaded.
                             <% } else { %>
@@ -46,13 +46,13 @@
                                     <% item.files.forEach(function (file) {%>
                                     <tr>
                                         <td style="width:99%">
-                                            <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
+                                            <%=file.substring(file.lastIndexOf("sparkdelim") + 10)%>
                                         </td>
                                         <td style="white-space: nowrap;">
                                             <button type="button" class="btn btn-success download-btn"
                                                 id='<%= file.fileName%>'>Download</button>
-                                            <button type="button" class="btn btn-danger delete-btn"
-                                                id='<%= file._id%>'>Delete</button>
+                                            <button type="button" class="btn btn-danger delete-file-btn"
+                                                id='<%= file%>'>Delete</button>
                                         </td>
                                     </tr>
                                     <%})%>

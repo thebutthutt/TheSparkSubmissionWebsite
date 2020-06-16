@@ -86,6 +86,49 @@ module.exports = {
             html: fullEmail
         });
     },
+
+    paymentWaived: async function(email) {
+        var fullEmail = `Thank you for your 3D print request with The Spark Makerspace.
+            <br><br>
+            We have waived the payment for your models and they are now in our printing queue! You will recieve an email when your models are sucessfully printed.`
+
+        var transporter = nodemailer.createTransport({
+            host: smtpserver,
+            port: portNum,
+            secure: false,
+            tls: {
+                rejectUnauthorized: false
+            }
+        });
+
+        var email = await transporter.sendMail({
+            from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
+            to: email,
+            subject: 'Your Payment Has Been Waived',
+            html: fullEmail
+        });
+    },
+    readyToPrint: async function (email) {
+        var fullEmail = `Thank you for your 3D print request with The Spark Makerspace.
+            <br><br>
+            We have recieved the payment for your models and they are now in our printing queue! You will recieve an email when your models are sucessfully printed.`
+
+        var transporter = nodemailer.createTransport({
+            host: smtpserver,
+            port: portNum,
+            secure: false,
+            tls: {
+                rejectUnauthorized: false
+            }
+        });
+
+        var email = await transporter.sendMail({
+            from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
+            to: email,
+            subject: 'Your Payment Has Been Recieved',
+            html: fullEmail
+        });
+    },
     readyForPickup: async function () {},
     stillWaiting: async function () {},
     repoPrint: async function () {}

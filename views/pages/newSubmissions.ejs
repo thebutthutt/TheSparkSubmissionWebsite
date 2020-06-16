@@ -36,7 +36,6 @@
             </td>
             <td><%=item.dateSubmitted%></td>
             <td>
-              <% console.log(item.allFilesReviewed) %>
               <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="top"
                 title='<% if (!item.allFilesReviewed) { %> Please review all files first! <%} else {%>Send to Patron<% } %>'>
                 <button type="button" class="btn btn-primary submit-btn" id='<%= item._id%>'
@@ -59,6 +58,7 @@
             </td>
             <td style="white-space: nowrap; text-align: right;">
               <%- include ("../partials/deletebuttons", {file:file}) %>
+              <%- include ("../partials/fileBurger", {file:file}) %>
             </td>
           </tr>
           <%})%>
