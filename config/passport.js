@@ -69,17 +69,12 @@ module.exports = function (passport) {
                             newUser.isSuperAdmin = false;
                         }  
 
-                        console.log(newUser.isSuperAdmin);
-                        console.log(newUser.email);
-
                         // save the user
                         newUser.save(function (err) {
                             if (err)
                                 throw err;
                             return done(null, newUser);
                         });
-
-                        console.log(newUser);
                     } else {
                         //incorrect magic words means no sign up
                         return done(null, false, req.flash('signupMessage', 'Your magic words have no power here.'));

@@ -72,7 +72,6 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         printRequestModel.find({
             "files.isReadyToPrint": true
         }, function (err, data) { //loading every single top level request FOR NOW
-            console.log(data)
             res.render('pages/ready', {
                 pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
@@ -89,8 +88,10 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     app.get('/prints/readywillis', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
-            "files.isPaid": true,
-            "files.printLocation": "Willis Library"
+            "files": {$elemMatch: {
+                "isReadyToPrint": true,
+                "printLocation": "Willis Library"
+            }}
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/ready', {
                 pgnum: 4, //tells the navbar what page to highlight
@@ -108,8 +109,10 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     app.get('/prints/readydp', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
-            "files.isPaid": true,
-            "files.printLocation": "Discovery Park"
+            "files": {$elemMatch: {
+                "isReadyToPrint": true,
+                "printLocation": "Discovery Park"
+            }}
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/ready', {
                 pgnum: 4, //tells the navbar what page to highlight
@@ -150,8 +153,10 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     app.get('/prints/pickupwillis', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
-            "files.isPrinted": true,
-            "files.pickupLocation": "Willis Library"
+            "files": {$elemMatch: {
+                "isPrinted": true,
+                "pickupLocation": "Willis Library"
+            }}
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/pickup', {
                 pgnum: 4, //tells the navbar what page to highlight
@@ -169,8 +174,10 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     app.get('/prints/pickupdp', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
-            "files.isPrinted": true,
-            "files.pickupLocation": "Discovery Park"
+            "files": {$elemMatch: {
+                "isPrinted": true,
+                "pickupLocation": "Discovery Park"
+            }}
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/pickup', {
                 pgnum: 4, //tells the navbar what page to highlight
@@ -193,8 +200,10 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     app.get('/prints/rejected', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
-            "files.isNewSubmission": false,
-            "files.isRejected": true,
+            "files": {$elemMatch: {
+                "isNewSubmission": false,
+                "isRejected": true
+            }}
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/rejected', {
                 pgnum: 4, //tells the navbar what page to highlight

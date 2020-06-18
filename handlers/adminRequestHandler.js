@@ -73,7 +73,6 @@ module.exports = {
                         result.files[i].isPendingWaive = false;
                     }
                     result.save(); //save the entry in the database
-                    console.log(result)
                 }
             });
         }

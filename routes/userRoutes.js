@@ -54,16 +54,47 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
         });
     });
 
-    app.get('/accounts/delete', function (req, res) {
-        var userID = req.body.userID || req.query.userID;
+    app.post('/users/delete', function (req, res) {
+        var euid = req.body.euid || req.query.euid;
         userModel.deleteOne({
-            "_id": userID
+            "local.euid": euid
         }, function (err) {
             if (err) {
                 console.log(err);
+            } else {
             }
         });
-        res.redirect('/logout');
+        res.json(['done']);
+    });
+
+    app.post('/users/promote', function (req, res) {
+        var euid = req.body.euid || req.query.euid;
+        userModel.findOne({
+            "local.euid": euid
+        }, function (err, result) {
+            if (err) {
+                console.log(err)
+            } else {
+                result.isSuperAdmin = true;
+                result.save();
+            }
+        });
+        res.json(['done']);
+    });
+
+    app.post('/users/demote', function (req, res) {
+        var euid = req.body.euid || req.query.euid;
+        userModel.findOne({
+            "local.euid": euid
+        }, function (err, result) {
+            if (err) {
+                console.log(err)
+            } else {
+                result.isSuperAdmin = false;
+                result.save();
+            }
+        });
+        res.json(['done']);
     });
 
 
@@ -91,6 +122,66 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
     }, function (err, html) {
         res.send(html); //send it to the webapp
     });
+
+
+
+
+    //Display the files pending waive to go into the full action queue
+    app.get('/printsPendingWaive', function (req, res) {
+        var submissions = [],
+            singleSubmission = [],
+            filenames = [];
+        printRequestModel.find({
+            "files": {$elemMatch: {
+                "isPendingWaive": true,
+                "isRejected": false
+            }}
+        }, function (err, data) {
+            data.forEach(submission => {
+                singleSubmission = []; //clear submission array
+                filenames = []; //clear filenames array
+                singleSubmission.push(submission._id); //submission[i][0] = itemID
+                submission.files.forEach(file => {
+                    if (file.isPendingWaive == true && file.isRejected == false) {
+                        filenames.push(file.fileName);
+                    }
+                });
+                singleSubmission.push(filenames); //submission[i][j] = filenames
+                submissions.push(singleSubmission);
+            });
+            res.render('partials/printsPendingWaive', {
+                submissions: submissions
+            }); //render the html
+        });
+    }, function (err, html) {
+        res.send(html); //send it to the webapp
+    });
+
+
+
+    //Display the files pending waive to go into the full action queue
+    app.get('/allUsers', function (req, res) {
+        var euids = [],
+            statuses = [],
+            myeuid = req.body.myeuid || req.query.myeuid;
+        userModel.find({
+        }, function (err, data) {
+            data.forEach(element => {
+                euids.push(element.local.euid);
+                    statuses.push(element.isSuperAdmin);
+            });
+
+            res.render('partials/allUsers', {
+                euids: euids,
+                statuses: statuses,
+                myeuid: myeuid
+            }); //render the html
+        });
+    }, function (err, html) {
+        res.send(html); //send it to the webapp
+    });
+
+
 
     // =====================================
     // LOGOUT ==============================

@@ -51,6 +51,8 @@ module.exports = {
             subject: 'Your order has been accepted!',
             html: fullEmail
         });
+        console.log('emailSend');
+
     },
 
     fullyRejected: async function (email, rejectedFiles, rejectedMessages) {
@@ -85,6 +87,8 @@ module.exports = {
             subject: 'We could not print your order',
             html: fullEmail
         });
+        console.log('emailSend');
+
     },
 
     paymentWaived: async function(email) {
@@ -107,6 +111,8 @@ module.exports = {
             subject: 'Your Payment Has Been Waived',
             html: fullEmail
         });
+        console.log('emailSend');
+
     },
     readyToPrint: async function (email) {
         var fullEmail = `Thank you for your 3D print request with The Spark Makerspace.
@@ -128,8 +134,33 @@ module.exports = {
             subject: 'Your Payment Has Been Recieved',
             html: fullEmail
         });
+        console.log('emailSend');
+
     },
-    readyForPickup: async function () {},
+    readyForPickup: async function (email, fileName) {
+        var fullEmail = `Thank you for your 3D print request with The Spark Makerspace.
+            <br><br>
+            Your file has finished printing and is now ready for you to pick up! Come by The Spark Makerspace any time we are open to pick up your print. Please note that we may not have completed every file in your submission yet, but you will recieve an email every time a file has completed with the name of the file that was completed. The file we have just finished printing is `;
+        fullEmail += fileName;
+
+        var transporter = nodemailer.createTransport({
+            host: smtpserver,
+            port: portNum,
+            secure: false,
+            tls: {
+                rejectUnauthorized: false
+            }
+        });
+
+        var email = await transporter.sendMail({
+            from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
+            to: email,
+            subject: 'Your Print Is Complete!',
+            html: fullEmail
+        });
+
+        console.log('emailSend');
+    },
     stillWaiting: async function () {},
     repoPrint: async function () {}
 }

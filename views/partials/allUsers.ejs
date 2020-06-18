@@ -1,0 +1,11 @@
+<% for (var i = 0; i < euids.length; i++) { %>
+    <% if (euids[i] != myeuid) {%>
+        <li class="list-group-item">
+            <%= euids[i]%>
+            <%= statuses[i]%>
+            <button class="btn btn-danger btn-user-delete" euid='<%=euids[i]%>'>Delete</button>
+            <button class="btn btn-success btn-user-promote" euid='<%=euids[i]%>'>Promote</button>
+            <button class="btn btn-success btn-user-demote" euid='<%=euids[i]%>'>Demote</button>
+        </li>
+    <% } %>
+<% } %>

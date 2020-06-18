@@ -15,10 +15,11 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th scope="col">Name</th>
+            <th scope="col" style="width:18%">Name</th>
             <th scope="col">Submitted</th>
             <th scope="col">Reviewed</th>
-            <th scope="col">Files</th>
+            <th scope="col" style="width:30%">Files</th>
+            <th scope="col" style=" width:15%; text-align: end;">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -32,8 +33,8 @@
             <td><%= item.patron.fname %> <%= item.patron.lname %></td>
             <td><%=item.dateSubmitted%></td>
             <td><%=item.datePaymentRequested%></td>
-            <td class="no-padding">
-              <table class="plain">
+            <td colspan="2" class="no-padding">
+              <table class="plain" style="width: 100%;">
                 <% item.files.forEach(function (file) {%>
                 <% if (file.isRejected == false) { %>
                 <tr>

@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
     <%- include ("../partials/head") %>
     <style>
@@ -7,43 +8,61 @@
             padding-top: 80px;
         }
     </style>
-  <script src="../public/js/myAccount.js"></script>
+    <script src="../public/js/myAccount.js"></script>
 </head>
+
 <body>
     <%- include ("../partials/header") %>
-<div class="container">
-    <!-- show any messages that come back with authentication -->
-    <% if (message.length > 0) { %>
+    <div style="display: none;" class="hidden-extras" myeuid='<%=user.local.euid%>' isSuperAdmin='<%= isSuperAdmin%>'>
+    </div>
+    <div class="container">
+        <!-- show any messages that come back with authentication -->
+        <% if (message.length > 0) { %>
         <div class="alert alert-warning"><%= message %></div>
         <% } %>
-    <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
-        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
-    </div>
-
-    <div class="row">
-
-        <!-- LOCAL INFORMATION -->
-        <div class="col-sm-6">
-            <div class="well">
-                <h3><span class="fa fa-user"></span> Local</h3>
-
-                    <p>
-                        <strong>id</strong>: <%= user._id %><br>
-                        <strong>euid</strong>: <%= user.local.euid %><br>
-                        <strong>password</strong>: <%= user.local.password %>
-                        <strong>Email</strong>: <%= user.email %><br>
-                        <strong>Super Admin?</strong>: <%= user.isSuperAdmin %><br>
-                    </p>
-
-            </div>
-            <button class="btn btn-danger delete-account" userID='<%= user._id %>' isSuperAdmin='<%= isSuperAdmin%>'>Delete account</button>
-            <div id="actionQueue">
-            </div>
+        <div class="page-header text-center">
+            <h1><span class="fa fa-anchor"></span> Profile Page</h1>
+            <a href="/logout" class="btn btn-default btn-sm">Logout</a>
         </div>
 
-    </div>
+        <% if (isSuperAdmin == true) { %>
+        <div class="row">
+            <div class="col">
+                <div id="actionQueue">
+                    <div class="card mb-4">
+                        <div class="card-body border-bottom">
+                            <h4>Files Pending Delete</h4>
+                        </div>
+                        <ul class="list-group list-group-flush appendDeleteHere">
+                            <li class="list-group-item">No files pending delete</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="card-body border-bottom">
+                            <h4>Files Pending Payment Waive</h4>
+                        </div>
+                        <ul class="list-group list-group-flush appendWaiveHere">
+                            <li class="list-group-item">No files pending waive</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div id="allUsers">
+                    <div class="card">
+                        <div class="card-body border-bottom">
+                            <h4>All Users</h4>
+                        </div>
+                        <ul class="list-group list-group-flush appendUsersHere">
 
-</div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%}%>
+
+    </div>
 </body>
+
 </html>
