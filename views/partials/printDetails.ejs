@@ -113,7 +113,8 @@
                 <td>
                     
                     <%if (print.isReviewed) {%>
-                <%- include ("../partials/downloadbutton", {file:print}) %>
+                        
+                    <%- include ("../partials/downloadbutton", {file:print}) %>
                 &nbsp;
                 <%=print.gcodeName.substring(print.gcodeName.lastIndexOf("sparkdelim") + 10)%>
 

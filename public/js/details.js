@@ -8,7 +8,7 @@ $(document).ready(function () {
 
     //setting up the download button to woro
     $('.download-btn').on('click', function () {
-        var fileLocation = $(this).attr('location');
+        var fileLocation = $(this).attr('id');
         window.location = '/prints/download?fileID=' + fileLocation;
     });
 

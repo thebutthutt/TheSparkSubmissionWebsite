@@ -18,13 +18,14 @@
             <th scope="col">Name</th>
             <th scope="col">Submitted</th>
             <th scope="col">Reviewed</th>
-            <th scope="col">Files</th>
+            <th scope="col" style="width:30%">Files</th>
+            <th scope="col" style=" width:15%; text-align: end;">Actions</th>
           </tr>
         </thead>
         <tbody>
           <% if (dbdata.length == 0) { %>
           <tr>
-            <td colspan="5" class="none">No rejected submissions!</td>
+            <td colspan="6" class="none">No rejected submissions!</td>
           </tr>
           <% } %>
           <%dbdata.slice().reverse().forEach(function (item) {%>
@@ -34,20 +35,19 @@
             </td>
             <td><%=item.dateSubmitted%></td>
             <td><%=item.datePaymentRequested%></td>
-            <td class="no-padding">
-              <table class="plain">
+            <td colspan="2" class="no-padding">
+              <table style="width:100%" class="plain">
                 <% item.files.forEach(function (file) {%>
                 <% if (file.isRejected == true) { %>
                 <tr>
-                  <td>
-                    <%- include ("../partials/downloadbutton", {file:file}) %>
+                  <td style="width:99%">
+                    <a class="preview-btn" id='<%= file._id%>'
+                      href="#"><%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%></a>
                     &nbsp;
-                    <%- include ("../partials/previewbutton", {file:file}) %>
-                    &nbsp;
-                    <%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%>
+                    <%- include ("../partials/flags", {file:file}) %>
                   </td>
                   <td style="white-space: nowrap; text-align: right;">
-                    <%- include ("../partials/deletebuttons", {file:file}) %>
+                    <%- include ("../partials/fileBurger", {file:file, item:item}) %>
                   </td>
                 </tr>
                 <% } %>

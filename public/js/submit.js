@@ -69,4 +69,9 @@ $(document).ready(function () {
         $(".single-file:last").remove();
     });
 
+    //removes the last 3d print file segment when the remove one button is clicked
+    $("#remove").click(function () {
+        $(".single-print:last").remove();
+    });
+
 });

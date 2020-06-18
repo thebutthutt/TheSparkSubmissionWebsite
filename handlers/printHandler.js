@@ -69,6 +69,9 @@ module.exports = {
 
     },
 
+
+
+
     //handles the data for a new top level print request with possibly multiple low level file submissions
     handleSubmission: function (req) {
         const form = formidable({
@@ -132,6 +135,9 @@ module.exports = {
         });
     },
 
+
+
+
     //this function handles when a technician is reviewing a print file within a top level submission
     updateSingle: function (req, callback) {
         const form = formidable({
@@ -192,6 +198,7 @@ module.exports = {
                     "$set": {
                         "files.$.isReviewed": true,
                         "files.$.isRejected": true,
+                        "files.$.isPendingPayment": false,
                         "files.$.dateReviewed": time.format(constants.format),
                         "files.$.patronNotes": fields.patronNotes,
                     }
@@ -235,6 +242,11 @@ module.exports = {
 
     },
 
+
+
+
+
+    //------------------------Add new technician notes without a full file review------------------------
     appendNotes: function (req) {
         printRequestModel.findOne({
             'files._id': req.body.fileID
@@ -252,6 +264,10 @@ module.exports = {
             }
         });
     },
+
+
+
+
 
     //this function fires when a tech says a submission is ready to be sent to the pendpay queue
     requestPayment: function (submissionID, callback) {
@@ -278,9 +294,9 @@ module.exports = {
 
                     result.files[i].canBeReviewed = false;
                     result.files[i].isNewSubmission = false;
-                    result.files[i].isPendingPayment = true;
-
+                    
                     if (result.files[i].isRejected == false && result.files[i].isReviewed == true) { //print is accepted
+                        result.files[i].isPendingPayment = true;
                         if (result.files[i].timeHours <= 0) { //if its less than an hour, just charge one dollar
                             amount += 1;
                         } else { //charge hours plus minutes out of 60 in cents
@@ -324,6 +340,10 @@ module.exports = {
         });
 
     },
+
+
+
+
 
     //should fire when a user pays for a submission
     //pushes print from the pendpy queue to the paid and ready queue
@@ -376,8 +396,13 @@ module.exports = {
                 console.log(err);
             }
             module.exports.setFlags(fileID);
+            emailer.readyForPickup(result.patron.email, result.files.id(fileID).fileName.substring( result.files.id(fileID).fileName.lastIndexOf(constants.delim) + 10));
         });
     },
+
+
+
+
 
     //set appropriate flags for top level submission
     setFlags: function (submissionID) {
@@ -403,10 +428,13 @@ module.exports = {
                 }
 
                 result.save();
-                console.log(result);
             }
         });
     },
+
+
+
+
 
     deleteFile: function (fileID) {
         printRequestModel.findOne({ //find top level print request by single file ID

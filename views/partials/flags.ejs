@@ -1,19 +1,27 @@
 <% if (file.isNewSubmission) { %>
-    <% if (file.isReviewed) { %>
-        <% if (file.isRejected) { %>
-            <span class="badge badge-danger">Rejected</span>
-        <% } else { %>
-            <span class="badge badge-success">Accepted</span>
-        <% } %>
-    <% } else { %>
-        <span class="badge badge-primary">Unreviewed</span>
-    <% } %>
+<% if (file.isReviewed) { %>
+<% if (file.isRejected) { %>
+<span class="badge badge-danger">Rejected</span>
+<% } else { %>
+<span class="badge badge-success">Accepted</span>
+<% } %>
+<% } else { %>
+<span class="badge badge-primary">Unreviewed</span>
+<% } %>
 <% } %>
 
+<% if (file.isPrinted) { %>
+<% if (file.pickupLocation == "Willis Library") { %>
+<span class="badge badge-info">Willis</span>
+<% } else { %>
+<span class="badge badge-info">DP</span>
+<% } %>
+<% } else { %>
 <% if (file.printLocation == "Willis Library") { %>
 <span class="badge badge-info">Willis</span>
 <% } else { %>
 <span class="badge badge-info">DP</span>
+<% } %>
 <% } %>
 
 <% if (file.isPendingDelete) { %>
