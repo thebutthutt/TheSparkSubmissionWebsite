@@ -146,6 +146,7 @@ module.exports = {
         var gcode;
         var time = moment();
         var shouldUpload = true;
+        var maker = req.user.name;
         //get the incoming form data
         form.parse(req, function (err, fields, files) {
             printRequestModel.findOne({
@@ -179,6 +180,7 @@ module.exports = {
                         "files.$.grams": fields.grams,
                         "files.$.patronNotes": fields.patronNotes,
                         "files.$.techNotes": fields.technotes,
+                        "files.$.approvedBy": maker,
                         "files.$.printLocation": fields.printLocation,
                         "files.$.isReviewed": true,
                         "files.$.isRejected": false,

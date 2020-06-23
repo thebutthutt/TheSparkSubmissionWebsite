@@ -4,32 +4,36 @@
     </div>
 
     <div class="form-group">
-        <label>Decision</label>
-        <select class="form-control" id="decision" name="decision" required>
-            <option value="accepted">Accepted</option>
-            <option value="rejected">Rejected</option>
-        </select>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">Decision</div>
+              </div>
+              <select class="form-control" id="decision" name="decision" required>
+                <option value="accepted">Accepted</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
     </div>
 
     <div class="accepted-controls">
         <div class="form-group">
             <div class="form-row">
-                <div class="col-3">
-                    <label class="col-form-label">Est. time</label>
+                <div class="col-7 pr-0">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Est. time</div>
+                        </div>
+                        <input type="number" class="form-control" name="hours" required>
+                        <div class="input-group-append " >
+                            <div class="input-group-text border-right-0" style="border-bottom-right-radius: 0px; border-top-right-radius: 0px;">hours</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-9">
-                    <div class="form-row">
-                        <div class="col-4">
-                            <input type="number" class="form-control" name="hours" required>
-                        </div>
-                        <div class="col-2">
-                            <input type="text" readonly class="form-control-plaintext" value="hrs">
-                        </div>
-                        <div class="col-4">
-                            <input type="number" class="form-control" name="minutes" required>
-                        </div>
-                        <div class="col-2">
-                            <input type="text" readonly class="form-control-plaintext" value="mins">
+                <div class="col pl-0">
+                    <div class="input-group">
+                        <input type="number" style="border-bottom-left-radius: 0px; border-top-left-radius: 0px;" class="form-control" name="minutes" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text">minutes</div>
                         </div>
                     </div>
                 </div>
@@ -37,31 +41,43 @@
         </div>
 
         <div class="form-group">
-            <div class="form-row">
-                <div class="col-3">
-                    <label class="col-form-label">Est. material</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">Est. weight</div>
                 </div>
-                <div class="col-9">
-                    <div class="form-row">
-                        <div class="col-10">
-                            <input type="number" class="form-control" name="grams" required>
-                        </div>
-                        <div class="col-2">
-                            <div class="col">
-                                <input type="text" readonly class="form-control-plaintext" value="g">
-                            </div>
-                        </div>
-                    </div>
+                <input type="number" class="form-control" name="grams" required>
+                <div class="input-group-append">
+                    <div class="input-group-text">grams</div>
                 </div>
             </div>
-
         </div>
+
         <div class="form-group">
-            <label>Print Location</label>
-            <select class="form-control" id="locationSelector" name="printLocation" required>
-                <option value="Willis Library">Willis Library</option>
-                <option value="Discovery Park">Discovery Park</option>
-            </select>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">Print Location</div>
+                  </div>
+                  <select class="form-control" id="locationSelector" name="printLocation" required>
+                    <% if (print.isReviewed) { %>
+                        <% if (print.printLocation == "Willis Library") { %>
+                            <option value="Willis Library">Willis Library</option>
+                            <option value="Discovery Park">Discovery Park</option>
+                        <%} else {%>
+                            <option value="Discovery Park">Discovery Park</option>
+                            <option value="Willis Library">Willis Library</option>
+                        <%}%>
+                    <% } else {%>
+                        <% if (print.pickupLocation == "Willis Library") { %>
+                            <option value="Willis Library">Willis Library</option>
+                            <option value="Discovery Park">Discovery Park</option>
+                        <%} else {%>
+                            <option value="Discovery Park">Discovery Park</option>
+                            <option value="Willis Library">Willis Library</option>
+                        <%}%>
+                    <% } %>
+                    
+                </select>
+            </div>
         </div>
 
         <div class="form-group no-bottom">

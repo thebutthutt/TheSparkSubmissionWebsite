@@ -4,15 +4,12 @@ $(document).ready(function () {
     $(".accepted-controls input").prop('required', true);
     $('[data-toggle="tooltip"]').tooltip();
 
-    
-
-    //setting up the download button to woro
+    //setting up the download button to work
     $('.download-btn').on('click', function () {
         var fileLocation = $(this).attr('id');
         window.location = '/prints/download?fileID=' + fileLocation;
     });
-
-
+    
     //which set of form items to show based on accepted or rejected print
     $("#decision").change(function () {
         var requestType = $(this).children("option:selected").val();

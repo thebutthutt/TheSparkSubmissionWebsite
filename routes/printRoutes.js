@@ -35,7 +35,8 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                 timestamp: fileID.dateSubmitted,
                 isSuperAdmin: req.user.isSuperAdmin,
                 euid: req.user.local.euid,
-                print: result.files.id(fileID) //send the review page the file to review
+                print: result.files.id(fileID), //send the review page the file to review
+                patron: result.patron
             });
         });
     });
