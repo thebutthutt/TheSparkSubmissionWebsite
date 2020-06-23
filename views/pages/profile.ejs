@@ -22,16 +22,14 @@
         <% } %>
         <div class="page-header text-center">
             <h1><span class="fa fa-anchor"></span> Profile Page</h1>
-            <a href="/logout" class="btn btn-default btn-sm">Logout</a>
         </div>
 
-        <% if (isSuperAdmin == true) { %>
         <div class="row">
             <div class="col">
                 <div id="actionQueue">
                     <div class="card mb-4">
                         <div class="card-body border-bottom">
-                            <h4>Files Pending Delete</h4>
+                            <h4 class="mb-0">Files Pending Delete</h4>
                         </div>
                         <ul class="list-group list-group-flush appendDeleteHere">
                             <li class="list-group-item">No files pending delete</li>
@@ -39,7 +37,7 @@
                     </div>
                     <div class="card">
                         <div class="card-body border-bottom">
-                            <h4>Files Pending Payment Waive</h4>
+                            <h4 class="mb-0">Files Pending Payment Waive</h4>
                         </div>
                         <ul class="list-group list-group-flush appendWaiveHere">
                             <li class="list-group-item">No files pending waive</li>
@@ -48,10 +46,55 @@
                 </div>
             </div>
             <div class="col">
+                <div class="card mb-4">
+                    <div class="card-body border-bottom">
+                        <h4 class="mb-0">My Account</h4>
+                    </div>
+                    <div class="d-flex border-bottom">
+                        <ul class="list-group list-group-flush ">
+                            <li class="list-group-item list-group-item-light">
+                                EUID
+                            </li>
+                            <li class="list-group-item list-group-item-light">
+                                Name
+                            </li>
+                            <li class="list-group-item list-group-item-light">
+                                Email
+                            </li>
+                            <li class="list-group-item list-group-item-light border-bottom-0">
+                                Account Type
+                            </li>
+                        </ul>
+                        <ul class="list-group list-group-flush flex-grow-1">
+                            <li class="list-group-item">
+                                <%=user.local.euid%>
+                            </li>
+                            <li class="list-group-item">
+                                <%=user.name%>
+                            </li>
+                            <li class="list-group-item">
+                                <%=user.email%>
+                            </li>
+                            <li class="list-group-item">
+                                <%if(user.isSuperAdmin) {%> 
+                                    Super Admin
+                                <% } else { %> 
+                                    Technician 
+                                <% } %>
+                            </li>
+                        </ul>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item clearfix">
+                            <a type="button" href="#" class="float-left" data-toggle="modal" data-target="#staticBackdrop">Edit Account Info</a>
+                            <a class="float-right" href="/logout">Logout</a>
+                        </li>
+                    </ul>
+                </div>
                 <div id="allUsers">
                     <div class="card">
                         <div class="card-body border-bottom">
-                            <h4>All Users</h4>
+                            <h4 class="mb-0">All Users</h4>
                         </div>
                         <ul class="list-group list-group-flush appendUsersHere">
 
@@ -60,7 +103,60 @@
                 </div>
             </div>
         </div>
-        <%}%>
+
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop"data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Edit Account</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/changeName?euid=<%=user.local.euid%>" method="post">
+                        <div class="form-group">
+                          <label>Change your screen name</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="newName" placeholder="New screen name" aria-label="New screen name" aria-describedby="changeNameButton">
+                                <div class="input-group-append">
+                                  <button class="btn btn-outline-primary" type="submit" id="changeNameButton">Change Name</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                    <form action="/changeEmail?euid=<%=user.local.euid%>" method="post">
+                        <div class="form-group">
+                          <label>Change your email</label>
+                            <div class="input-group mb-3">
+                                <input type="email" class="form-control" placeholder="New email" aria-label="New email" aria-describedby="button-addon2">
+                                <div class="input-group-append">
+                                  <button class="btn btn-outline-primary" type="submit" id="button-addon2">Change Email</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                    <form action="/changePassword?euid=<%=user.local.euid%>" method="post">
+                        <div class="form-group">
+                          <label>Change your password</label>
+                          <input type="password" class="form-control" id="oldPassword" placeholder="Old password">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="newPassword" placeholder="New password">
+                          </div>
+                          <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                          </div>
+                    </form>
+                    <hr>
+                    <a type="button" class="btn btn-danger" href="/deleteme">Delete Account</a>
+                </div>
+            </div>
+            </div>
+        </div>
 
     </div>
 </body>

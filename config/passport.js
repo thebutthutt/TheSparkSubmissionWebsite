@@ -63,6 +63,7 @@ module.exports = function (passport) {
                         newUser.local.euid = euid;
                         newUser.local.password = newUser.generateHash(password);
                         newUser.email = req.body.email;
+                        newUser.name = req.body.name;
                         if (req.body.superAdmin) {
                             newUser.isSuperAdmin = true;
                         } else {
