@@ -50,37 +50,55 @@
                     <div class="card-body border-bottom">
                         <h4 class="mb-0">My Account</h4>
                     </div>
-                    <div class="d-flex border-bottom">
+                    <div class="border-bottom">
                         <ul class="list-group list-group-flush ">
-                            <li class="list-group-item list-group-item-light">
-                                EUID
-                            </li>
-                            <li class="list-group-item list-group-item-light">
-                                Name
-                            </li>
-                            <li class="list-group-item list-group-item-light">
-                                Email
-                            </li>
-                            <li class="list-group-item list-group-item-light border-bottom-0">
-                                Account Type
-                            </li>
-                        </ul>
-                        <ul class="list-group list-group-flush flex-grow-1">
                             <li class="list-group-item">
-                                <%=user.local.euid%>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <strong>EUID</strong>
+                                    </div>
+                                    <div class="col">
+                                        <%=user.local.euid%>
+                                    </div>
+                                </div>
+                                
                             </li>
                             <li class="list-group-item">
-                                <%=user.name%>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <strong>Name</strong>
+                                    </div>
+                                    <div class="col">
+                                        <%=user.name%>
+                                    </div>
+                                </div>
+                                
                             </li>
                             <li class="list-group-item">
-                                <%=user.email%>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <strong>Email</strong>
+                                    </div>
+                                    <div class="col">
+                                        <%=user.email%>
+                                    </div>
+                                </div>
+                                
                             </li>
                             <li class="list-group-item">
-                                <%if(user.isSuperAdmin) {%> 
-                                    Super Admin
-                                <% } else { %> 
-                                    Technician 
-                                <% } %>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <strong>User Type</strong>
+                                    </div>
+                                    <div class="col">
+                                        <%if(user.isSuperAdmin) {%> 
+                                            Super Admin
+                                        <% } else { %> 
+                                            Technician 
+                                        <% } %>
+                                    </div>
+                                </div>
+                                
                             </li>
                         </ul>
                     </div>

@@ -10,6 +10,8 @@ var singlePrintSchema = mongoose.Schema({
     notes: String,
     printLocation: String,
     pickupLocation: String,
+
+
     isNewSubmission: Boolean,
     isReviewed: Boolean,
     isRejected: Boolean,
@@ -19,21 +21,30 @@ var singlePrintSchema = mongoose.Schema({
     isReadyToPrint: Boolean,
     isPrinted: Boolean,
     isPickedUp: Boolean,
+    isPendingDelete: Boolean,
+    canBeReviewed: Boolean,
+    isStarted: Boolean,
+
+
     dateSubmitted: String,
     dateReviewed: String,
     datePaid: String,
     datePrinted: String,
     datePickedUp: String,
+
+
     gcodeName: String,
     slicedPrinter: String,
     slicedMaterial: String,
     timeHours: Number,
     timeMinutes: Number,
     grams: Number,
+
     techNotes: String,
     patronNotes: String,
-    isPendingDelete: Boolean,
-    canBeReviewed: Boolean
+
+    approvedBy: String,
+    startedBy: String
 });
 
 // define the schema for a single patron submission

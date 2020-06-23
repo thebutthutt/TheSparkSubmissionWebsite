@@ -6,14 +6,20 @@
     <script src="/public/js/details.js"></script>
     <script type="module" src='/public/js/stldisplay.js'></script>
     <link type="text/css" rel="stylesheet" href="/public/css/details.css">
+    <style>
+        p strong {
+            display: inline-block;
+            width: 200px;
+        }
+    </style>
 </head>
 
 <body>
     <%- include ("../partials/header") %>
-    <div class="container">
+    <div class="container my-5">
         <div class="row">
             <div class="col">
-                <div class="card">
+                <div class="card mb-3">
                     <div class="card-img-top">
                         <div class="progress">
                             <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
@@ -25,11 +31,26 @@
                             <div id="model" filename='<%=print.fileName%>' style="width: 100%; height: 500px"></div>
                         </div>
                     </div>
-                    <div >
                         <% if (print.canBeReviewed) { %>
+                            <div class="card-body">
+                                <h6>Notes from Patron</h6>
+                                <%if (print.notes == "") { %>
+                                    <p class="mb-0">Patron left no notes</p>
+                                <% }  else { %>
+                                    <p class="mb-0"><%=print.notes%></p>
+                                <%}%>
+                            </div>
+                </div>
                             <%- include ("../partials/printDetails", {print:print}) %>
                         <% } else { %>
                             <div class="card-body">
+                                <h6>Notes from Patron</h6>
+                                <%if (print.notes == "") { %>
+                                    <p>Patron left no notes</p>
+                                <% }  else { %>
+                                    <p><%=print.notes%></p>
+                                <%}%>
+                                <hr>
                                 <h6>Notes to Patron</h6>
                                 <p><%=print.patronNotes%></p>
                                 <hr>
@@ -48,21 +69,48 @@
                                     </div>
                                 </form>
                             </div>
+                        </div>
                         <% } %>
-                    </div>
-                </div>
+                
                 
             </div>
 
             <div class="col">
-                <div class="card">
                     <% if (print.canBeReviewed) { %>
-                        <div class="card-body">
-                            <%- include ("../partials/printReviewForm", {print:print}) %>
+                        <div class="card">
+                            <div class="card-body">
+                                <h4>Review Print</h4>
+                                <hr>
+                                <%- include ("../partials/printReviewForm", {print:print}) %>
+                            </div>
                         </div>
                     <% } else { %>
                         <%- include ("../partials/printDetails", {print:print}) %>
                     <% } %>
+                
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col">
+                <div class="info-mockup">
+                    <div class="row">
+                        <div class="col">
+                            
+                        </div>
+                        <div class="col-5">
+                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            
+                        </div>
+                        <div class="col-4">
+                            
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>

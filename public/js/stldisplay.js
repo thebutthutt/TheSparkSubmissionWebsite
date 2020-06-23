@@ -118,6 +118,8 @@ function STLViewer(model, elementID) {
             shininess: 100
         });
 
+        
+
         //-------------MESH---------------//
         var mesh = new THREE.Mesh(geometry, material);
         mesh.rotation.x = -Math.PI / 2;
@@ -127,6 +129,7 @@ function STLViewer(model, elementID) {
         //----------POSITIONING-----------//
         var middle = new THREE.Vector3();
         geometry.computeBoundingBox();
+        
 
         geometry.boundingBox.getCenter(middle);
         mesh.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(

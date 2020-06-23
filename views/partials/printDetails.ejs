@@ -1,159 +1,78 @@
-<table class="table table-striped table-sm">
-    <thead>
-    </thead>
-    <tbody>
-        <tr>
-            <td>File name</td>
-            <td>
-                <%- include ("../partials/downloadbutton", {file:print}) %>
-                &nbsp;
-                <%=print.fileName.substring(print.fileName.lastIndexOf("sparkdelim") + 10)%>
-            </td>
-        </tr>
-        <tr>
-            <td>Submitted on</td>
-            <td><%=print.dateSubmitted%></td>
-        </tr>
-        <tr>
-            <td>Material</td>
-            <td><%=print.material%></td>
-        </tr>
-        <tr>
-            <td>Infill</td>
-            <td><%=print.infill%></td>
-        </tr>
-        <tr>
-            <td>Color</td>
-            <td><%=print.color%></td>
-        </tr>
-        <tr>
-            <td>Copies</td>
-            <td><%=print.copies%></td>
-        </tr>
-        <tr>
-            <td>Notes</td>
-            <td><%=print.notes%></td>
-        </tr>
-        <tr>
-            <td>Print location</td>
-            <td>
-                <%=print.printLocation%>
-                &nbsp;
-                <div class="icon-btn" data-toggle="tooltip" data-placement="top"
-                    title="Change Location">
-                    <svg class="bi bi-arrow-left-right change-btn" fileID='<%=print._id%>'
-                        width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                            d="M10.146 7.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L12.793 11l-2.647-2.646a.5.5 0 0 1 0-.708z" />
-                        <path fill-rule="evenodd"
-                            d="M2 11a.5.5 0 0 1 .5-.5H13a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 11zm3.854-9.354a.5.5 0 0 1 0 .708L3.207 5l2.647 2.646a.5.5 0 1 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z" />
-                        <path fill-rule="evenodd"
-                            d="M2.5 5a.5.5 0 0 1 .5-.5h10.5a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
-                    </svg>
-                </div>
-
-            </td>
-        </tr>
-        <tr>
-            <td>Pickup location</td>
-            <td><%=print.pickupLocation%></td>
-        </tr>
-        <tr>
-            <td>Reviewed on</td>
-            <td>
-                <%if (print.isReviewed) {%>
-                <%=print.dateReviewed%>
-                <%} else {%>
-                Not reviewed
-                <%}%>
-                </td>
-            </tr>
-
-
-            <% if(print.isReviewed) {%>
-        <tr>
-            <td>Status</td>
-            <td>
-                <%if (print.isReviewed) {%>
-                <% if (print.isRejected) {%>
-                Rejected
-                <%} else { %>
-                Accepted
-                <%}%>
-                    <%} else {%>
-                Not reviewed
-                <%}%>
-                </td>
-            </tr>
-            <%}%>
-                <% if (print.isReviewed && !print.isRejected) {%>
-        <tr>
-            <td>Print time estimate</td>
-            <td>
-                <%if (print.isReviewed) {%>
-                <%= print.timeHours%> hours, <%= print.timeMinutes%> minutes
-                <%} else {%>
-                Not reviewed
-                <%}%>
-                </td>
-            </tr>
-            <tr>
-                <td>Print weight estimate</td>
-                <td>
-                    <%if (print.isReviewed) {%>
-                <%= print.grams%> grams
-                <%} else {%>
-                Not reviewed
-                <%}%>
-                </td>
-            </tr>
-            <tr>
-                <td>GCODE file</td>
-                <td>
-                    
-                    <%if (print.isReviewed) {%>
-                        
-                    <%- include ("../partials/downloadbutton", {file:print}) %>
-                &nbsp;
-                <%=print.gcodeName.substring(print.gcodeName.lastIndexOf("sparkdelim") + 10)%>
-
-                <%} else {%>
-                Not reviewed
-                <%}%>
-                </td>
-            </tr>
-            <tr>
-                <td>Sliced for printer</td>
-                <td><%=print.slicedPrinter%></td>
-        </tr>
-        <tr>
-            <td>Sliced for material</td>
-            <td><%=print.slicedMaterial%></td>
-        </tr>
-        <%}%>
+<div class="alert alert-success">
+    <h4>Patron Details</h4>
+    <p class="mb-0">
+        <strong>Name:</strong> <%=patron.fname%> <%=patron.lname%> <br>
+        <strong>Date submitted:</strong> <%=print.dateSubmitted%> <br>
+        <strong>Email:</strong> <%=patron.email%>
+    </p>
+</div>
+<div class="alert alert-info">
+    <h4>Request Details</h4>
+    <p class="mb-0">
+        <strong>Filename:</strong> <a href="#" class="download-btn" id='<%= print.fileName%>'><%=print.fileName.substring(print.fileName.lastIndexOf("sparkdelim") + 10)%></a> <br>
+        <strong>Requested material:</strong> <%=print.material%> <br>
+        <strong>Requested infill:</strong> <%=print.infill%> <br>
+        <strong>Requested color:</strong> <%=print.color%> <br>
+        <strong>Requested copies:</strong> <%=print.copies%> <br>
+        <strong>Pickup location:</strong> <%=print.pickupLocation%> <br>
+    </p>
+</div>
+<% if (print.isReviewed) {%>
+    <div class="alert alert-primary">
+        <h4>Review Details</h4>
+        <p>
             
+            <% if (print.isReviewed) {%>
+            <% }%>
+            <strong>Reviewed by:</strong> <%=print.approvedBy%> <br>
+            <strong>Reviewed on:</strong> <%=print.dateReviewed%> <br>
+            <%if (print.wasStarted) { %>
+                <strong>Started by:</strong> <%=print.startedBy%>
+            <%}%>
+        </p>
+        <hr>
+        <p>
+            <strong>GCODE Filename:</strong> <a href="#" class="download-btn" id='<%= print.gcodeName%>'><%=print.gcodeName.substring(print.gcodeName.lastIndexOf("sparkdelim") + 10)%></a> <br>
+            <strong>Sliced for printer:</strong> <%=print.slicedPrinter%> <br>
+            <strong>Sliced for material:</strong> <%=print.slicedMaterial%> <br>
+            <strong>Print Location: </strong> <%=print.printLocation%> &nbsp;
+            <span class="icon-btn" data-toggle="tooltip" data-placement="top"
+                title="Change Location">
+                <svg class="bi bi-arrow-left-right change-btn" fileID='<%=print._id%>'
+                    width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M10.146 7.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L12.793 11l-2.647-2.646a.5.5 0 0 1 0-.708z" />
+                    <path fill-rule="evenodd"
+                        d="M2 11a.5.5 0 0 1 .5-.5H13a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 11zm3.854-9.354a.5.5 0 0 1 0 .708L3.207 5l2.647 2.646a.5.5 0 1 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z" />
+                    <path fill-rule="evenodd"
+                        d="M2.5 5a.5.5 0 0 1 .5-.5h10.5a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                </svg>
+            </span>
+        </p>
+        <hr>
+        <p class="mb-0">
+            <strong>Print time estimate: </strong> <%= print.timeHours%> hours, <%= print.timeMinutes%> minutes <br>
+            <strong>Print weight estimate: </strong> <%= print.grams%> grams
+        </p>
+    </div>
 
-
-            <tr>
-                <td>Paid on</td>
-                <td>
-                    <%if (print.isPaid) {%>
-                        <%=print.datePaid%>
-                    <%} else {%>
-                        Not paid
-                    <%}%>
-                </td>
-            </tr>
-            <tr>
-                <td>Picked up on</td>
-                <td>
-                    <%if (print.isPickedUp) {%>
-                        <%=print.datePickedUp%>
-                    <%} else {%>
-                        Not picked up
-                    <%}%>
-                </td>
-            </tr>
-    </tbody>
-</table>
+    <div class="alert alert-warning">
+        <h4>Status</h4>
+        <p>
+            
+        </p>
+        Time Started: ______________________________ <br>
+        Time Ended: ________________________________ <br>
+        Current attempt number: ___<br>
+        Ready for pickup [ ] Date: ________________  <br>
+        Picked Up [ ] Date: ________________ <br>
+    </div>
+    
+    <div class="alert alert-danger">
+        <h4>Contact Record</h4>
+        1st contact: ______________________________ <br>
+        2nd contact: ______________________________ <br>
+        Final: ____________________________________ <br>
+    </div>
+<% } %>

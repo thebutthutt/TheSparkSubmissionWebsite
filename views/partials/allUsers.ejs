@@ -2,7 +2,7 @@
     <% if (euids[i] != myeuid) {%>
         <li class="list-group-item">
             <div class="row">
-                <div class="col-2">
+                <div class="col-3">
                     <strong><%=names[i]%></strong>
                     <%if (statuses[i]==true){%>
                         <svg class="bi bi-star-fill" width="0.75em" height="0.75em" viewBox="0 0 16 16" fill="#ffc107" xmlns="http://www.w3.org/2000/svg" style="vertical-align: baseline">
@@ -10,10 +10,10 @@
                         </svg>
                     <%}%>
                 </div>
-                <div class="col-2">
+                <div class="col-3">
                     <%=euids[i]%>
                 </div>
-                <div class="col-8">
+                <div class="col text-right">
                     <% if (statuses[i] == true) {%>
                         <button class="btn btn-sm btn-outline-warning btn-user-demote" euid='<%=euids[i]%>'>Demote</button>
                     <%} else {%>
