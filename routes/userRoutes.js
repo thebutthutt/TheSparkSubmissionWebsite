@@ -97,6 +97,24 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
         res.json(['done']);
     });
 
+    app.post('/changeName', function (req, res) {
+        console.log('maybe')
+        var euid = req.body.euid || req.query.euid;
+        userModel.findOne({
+            "local.euid": euid
+        }, function (err, result) {
+            if (err) {
+                console.log(err)
+            } else {
+                if (req.body.newName != "") {
+                    result.name = req.body.newName;
+                    result.save();
+                }
+            }
+        });
+        res.redirect('back');
+    });
+
 
     //Display the files pending delete to go into the full action queue
     app.get('/printsPendingDelete', function (req, res) {
@@ -163,16 +181,19 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
     app.get('/allUsers', function (req, res) {
         var euids = [],
             statuses = [],
+            names = [],
             myeuid = req.body.myeuid || req.query.myeuid;
         userModel.find({
         }, function (err, data) {
             data.forEach(element => {
                 euids.push(element.local.euid);
-                    statuses.push(element.isSuperAdmin);
+                names.push(element.name);
+                statuses.push(element.isSuperAdmin);
             });
 
             res.render('partials/allUsers', {
                 euids: euids,
+                names: names,
                 statuses: statuses,
                 myeuid: myeuid
             }); //render the html
@@ -189,6 +210,19 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
     app.get('/logout', function (req, res) {
         req.logout();
         res.redirect('/');
+    });
+
+    app.get('/deleteme', function(req, res) {
+        userModel.deleteOne({
+            "local.euid": req.user.local.euid
+        }, function (err) {
+            if (err) {
+                console.log(err);
+            } else {
+                req.logout();
+                res.redirect('/');
+            }
+        });
     });
 }
 

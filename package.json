@@ -26,5 +26,11 @@
         "passport-local": "^1.0.0",
         "three": "^0.117.1",
         "url-parse": "^1.4.7"
+    },
+    "scripts": {
+        "killserver": "sudo systemctl stop sparkorders",
+        "startserver": "sudo systemctl start sparkorders",
+        "checkrunning": "ps -ax | grep server.js",
+        "debugging": "sudo nodemon server.js"
     }
 }
