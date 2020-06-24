@@ -202,6 +202,7 @@ module.exports = {
                         "files.$.isRejected": true,
                         "files.$.isPendingPayment": false,
                         "files.$.dateReviewed": time.format(constants.format),
+                        "files.$.approvedBy": maker,
                         "files.$.patronNotes": fields.patronNotes,
                     }
                 }, {

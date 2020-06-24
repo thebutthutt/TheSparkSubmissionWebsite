@@ -1,4 +1,4 @@
-<div class="alert alert-primary">
+<div class="alert <%if (!print.isRejected) {%>alert-primary<%} else {%> alert-danger<%}%>">
     <h4>Review Details</h4>
     <p>
         <strong>Reviewed by:</strong> <%=print.approvedBy%> <br>
@@ -7,6 +7,7 @@
             <strong>Started by:</strong> <%=print.startedBy%>
         <%}%>
     </p>
+    <%if (!print.isRejected) {%>
     <hr>
     <p>
         <strong>GCODE Filename:</strong> <a href="#" class="download-btn" id='<%= print.gcodeName%>'><%=print.gcodeName.substring(print.gcodeName.lastIndexOf("sparkdelim") + 10)%></a> <br>
@@ -32,4 +33,9 @@
         <strong>Print time estimate: </strong> <%= print.timeHours%> hours, <%= print.timeMinutes%> minutes <br>
         <strong>Print weight estimate: </strong> <%= print.grams%> grams
     </p>
+    <%} else {%>
+        <p class="mb-0">
+            <strong>Status: </strong> Rejected<br>
+        </p>
+    <%}%>
 </div>

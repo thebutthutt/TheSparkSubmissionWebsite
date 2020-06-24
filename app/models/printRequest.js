@@ -24,6 +24,9 @@ var singlePrintSchema = mongoose.Schema({
     isPendingDelete: Boolean,
     canBeReviewed: Boolean,
     isStarted: Boolean,
+    needsSecondContact: Boolean,
+    needsFinalContact: Boolean,
+    isStaleOnPickup: Boolean,
 
 
     dateSubmitted: String,
@@ -31,6 +34,9 @@ var singlePrintSchema = mongoose.Schema({
     datePaid: String,
     datePrinted: String,
     datePickedUp: String,
+    dateOfFirstWarning: String,
+    dateOfSecondWarning: String,
+    dateOfConfiscation: String,
 
 
     gcodeName: String,
@@ -55,8 +61,6 @@ var printSubmissionSchema = mongoose.Schema({
     datePaid: String,
     numFiles: Number,
     allFilesReviewed: Boolean,
-    hasStaleOnPayment: Boolean,
-    hasStaleOnPickup: Boolean,
     isPendingWaive: Boolean,
     files: [singlePrintSchema], //array of actual print files
 });

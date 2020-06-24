@@ -65,6 +65,10 @@ require('./routes/printRoutes.js')(app, passport, userModel, adminRequestHandler
 require('./routes/userRoutes.js')(app, passport, userModel, adminRequestHandler, printRequestModel, cleRequestModel); // load our routes and pass in our app and fully configured passport
 require('./routes/cleRoutes.js')(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
 
+// Job Scheduler ======================================================================
+require('./config/jobs.js')(printRequestModel, constants); //make the job scheduler go
+
+
 // launch ======================================================================
 https.createServer({
     key: fs.readFileSync('./npserver2048.key'),

@@ -161,6 +161,7 @@ module.exports = {
 
         console.log('emailSend');
     },
-    stillWaiting: async function () {},
-    repoPrint: async function () {}
+    stillWaiting: async function (email, fileNames) {console.log('emailSend');},
+    finalWarning: async function (email, fileNames) {console.log('emailSend');},
+    repoPrint: async function (email, fileNames) {console.log('emailSend');}
 }
