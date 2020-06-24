@@ -136,7 +136,10 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     app.get('/prints/pickup', isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
         printRequestModel.find({
-            "files.isPrinted": true
+            "files": {$elemMatch: {
+                "isPrinted": true,
+                "isStaleOnPickup": false
+            }}
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/pickup', {
                 pgnum: 4, //tells the navbar what page to highlight
@@ -156,7 +159,8 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         printRequestModel.find({
             "files": {$elemMatch: {
                 "isPrinted": true,
-                "pickupLocation": "Willis Library"
+                "pickupLocation": "Willis Library",
+                "isStaleOnPickup": false
             }}
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/pickup', {
@@ -177,7 +181,8 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         printRequestModel.find({
             "files": {$elemMatch: {
                 "isPrinted": true,
-                "pickupLocation": "Discovery Park"
+                "pickupLocation": "Discovery Park",
+                "isStaleOnPickup": false
             }}
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/pickup', {

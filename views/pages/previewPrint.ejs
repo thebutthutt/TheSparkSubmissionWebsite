@@ -95,7 +95,9 @@
                         <%- include ("../partials/PrintDetails/patron", {print:print}) %>
                         <%- include ("../partials/PrintDetails/request", {print:print}) %>
                         <%- include ("../partials/PrintDetails/review", {print:print}) %>
-                        <%- include ("../partials/PrintDetails/status", {print:print}) %>
+                        <%if (!print.isRejected && !print.isPrinted) {%>
+                            <%- include ("../partials/PrintDetails/status", {print:print}) %>
+                        <%}%>
                     <% } %>
                 
             </div>
