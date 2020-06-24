@@ -41,7 +41,8 @@
                                 <%}%>
                             </div>
                 </div>
-                            <%- include ("../partials/printDetails", {print:print}) %>
+                            <%- include ("../partials/PrintDetails/patron", {print:print}) %>
+                            <%- include ("../partials/PrintDetails/request", {print:print}) %>
                         <% } else { %>
                             <div class="card-body">
                                 <h6>Notes from Patron</h6>
@@ -77,15 +78,24 @@
 
             <div class="col">
                     <% if (print.canBeReviewed) { %>
+                        <%if (print.isReviewed) {%>
+                            <%- include ("../partials/PrintDetails/review", {print:print}) %>
+                        <%}%>
                         <div class="card">
                             <div class="card-body">
                                 <h4>Review Print</h4>
                                 <hr>
-                                <%- include ("../partials/printReviewForm", {print:print}) %>
+                                <%- include ("../partials/PrintDetails/printReviewForm", {print:print}) %>
                             </div>
                         </div>
                     <% } else { %>
-                        <%- include ("../partials/printDetails", {print:print}) %>
+                        <%if (print.isPrinted) {%>
+                            <%- include ("../partials/PrintDetails/contact", {print:print}) %>
+                        <%}%>
+                        <%- include ("../partials/PrintDetails/patron", {print:print}) %>
+                        <%- include ("../partials/PrintDetails/request", {print:print}) %>
+                        <%- include ("../partials/PrintDetails/review", {print:print}) %>
+                        <%- include ("../partials/PrintDetails/status", {print:print}) %>
                     <% } %>
                 
             </div>
