@@ -1,3 +1,7 @@
+<div id="imagebg">
+    hello
+</div>
+
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #00853E;">
 
     <a class="navbar-brand" href="/">The Spark Makerspace</a>
@@ -17,16 +21,20 @@
             </li>
             <% if (isAdmin == false) { %>
                 <li class=' nav-item <% if (pgnum == 3) { %> active <%}%>'>
-                    <a class="nav-link" href="/login">Admin Login </a>
+                    <a class="nav-link" href="/login">Admin Login</a>
                 </li>
-            <% } else { %> <li class='nav-item <% if (pgnum == 3) { %> active <%}%>'>
-                    <a class="nav-link" href="/profile">Profile </a>
+            <% } else { %> 
+                <li class='nav-item <% if (pgnum == 3) { %> active <%}%>'>
+                    <a class="nav-link" href="/profile">Profile</a>
                 </li>
                 <li class='nav-item <% if (pgnum == 4) { %> active <%}%>'>
-                    <a class="nav-link" href="/prints/new">Prints </a>
+                    <a class="nav-link" href="/prints/new">Prints</a>
                 </li>
                 <li class='nav-item <% if (pgnum == 5) { %> active <%}%>'>
-                    <a class="nav-link" href="/workrequests/all">Work Requests </a>
+                    <a class="nav-link" href="/workrequests/all">Work Requests</a>
+                </li>
+                <li class='nav-item <% if (pgnum == 6) { %> active <%}%>'>
+                    <a class="nav-link" href="/cameras">Cameras</a>
                 </li>
             <% } %>
         </ul>
