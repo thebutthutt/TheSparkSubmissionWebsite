@@ -26,7 +26,7 @@
                 <tbody>
                     <% if (dbdata.length == 0) { %>
                     <tr>
-                        <td colspan="6" class="none">No submissions ready to print!</td>
+                        <td colspan="6" class="none">No submissions at all!</td>
                     </tr>
                     <% } %>
                     <%dbdata.slice().reverse().forEach(function (item) {%>
@@ -40,38 +40,18 @@
                         <td colspan="2" class="no-padding">
                             <table class="plain" style="width: 100%;">
                                 <% item.files.forEach(function (file) {%>
-                                <% if (file.isRejected == false && file.isPrinted == false) { %>
-                                <% if (location != "all") { %>
-                                <% if (file.printLocation == location) { %>
                                 <tr>
                                     <td>
                                         <a class="preview-btn" id='<%= file._id%>'
                                             href="#"><%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%></a>
                                         &nbsp;
-                                        <%- include ("../partials/flags", {file:file, isAll: false}) %>
+                                        <%- include ("../partials/flags", {file:file, isAll: true}) %>
                                     </td>
                                     <td style="white-space: nowrap; text-align: right;">
-                                        <%- include ("../partials/finish-printing", {file:file}) %>
                                         <%- include ("../partials/fileBurger", {file:file, item:item}) %>
                                     </td>
                                 </tr>
-                                <% } %>
-                                <%} else { %>
-                                <tr>
-                                    <td>
-                                        <a class="preview-btn" id='<%= file._id%>'
-                                            href="#"><%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%></a>
-                                        &nbsp;
-                                        <%- include ("../partials/flags", {file:file, isAll: false}) %>
-                                    </td>
-                                    <td style="white-space: nowrap; text-align: right;">
-                                        <%- include ("../partials/finish-printing", {file:file}) %>
-                                        <%- include ("../partials/fileBurger", {file:file, item:item}) %>
-                                    </td>
-                                </tr>
-                                <%} %>
-                                <%} %>
-                                <%})%>
+                                <% }) %>
                             </table>
                         </td>
                     </tr>

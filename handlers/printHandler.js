@@ -40,6 +40,8 @@ module.exports = {
                 notes: prints[6][i],
                 printLocation: prints[5][i],
                 pickupLocation: prints[5][i],
+
+
                 isNewSubmission: true,
                 isReviewed: false,
                 isRejected: false,
@@ -49,13 +51,23 @@ module.exports = {
                 isReadyToPrint: false,
                 isPrinted: false,
                 isPickedUp: false,
+                isPendingDelete: false,
+                canBeReviewed: true,
+                isStarted: false,
+                isStaleOnPickup: false,
+
                 dateSubmitted: prints[7], //always holds the date submitted
                 dateReviewed: "Never",
                 datePaid: "Never",
                 datePrinted: "Never",
                 datePickedUp: "Never",
-                isPendingDelete: false,
-                canBeReviewed: true
+                dateOfFirstWarning: "Not yet sent",
+                dateOfSecondWarning: "Not yet sent",
+                dateOfConfiscation: "Not yet sent",
+
+                numAttempts: 0,
+                numFailedAttempts: 0
+                
             });
         }
 

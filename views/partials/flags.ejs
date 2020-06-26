@@ -1,33 +1,33 @@
-<% if (file.isNewSubmission) { %>
-<% if (file.isReviewed) { %>
-<% if (file.isRejected) { %>
-<span class="badge badge-danger">Rejected</span>
-<% } else { %>
-<span class="badge badge-success">Accepted</span>
-<% } %>
-<% } else { %>
-<span class="badge badge-primary">Unreviewed</span>
-<% } %>
+<% if (file.isNewSubmission || isAll) { %>
+    <% if (file.isReviewed) { %>
+        <% if (file.isRejected) { %>
+            <span class="badge badge-danger">Rejected</span>
+        <% } else { %>
+            <span class="badge badge-success">Accepted</span>
+        <% } %>
+    <% } else { %>
+        <span class="badge badge-primary">Unreviewed</span>
+    <% } %>
 <% } %>
 
-<% if (file.isPrinted) { %>
-<% if (file.pickupLocation == "Willis Library") { %>
-<span class="badge badge-info">Willis</span>
+<% if (file.isPrinted || isAll) { %>
+    <% if (file.pickupLocation == "Willis Library") { %>
+        <span class="badge badge-info">Willis</span>
+    <% } else { %>
+        <span class="badge badge-info">DP</span>
+    <% } %>
 <% } else { %>
-<span class="badge badge-info">DP</span>
-<% } %>
-<% } else { %>
-<% if (file.printLocation == "Willis Library") { %>
-<span class="badge badge-info">Willis</span>
-<% } else { %>
-<span class="badge badge-info">DP</span>
-<% } %>
+    <% if (file.printLocation == "Willis Library") { %>
+        <span class="badge badge-info">Willis</span>
+    <% } else { %>
+        <span class="badge badge-info">DP</span>
+    <% } %>
 <% } %>
 
 <% if (file.isPendingDelete) { %>
-<span class="badge badge-danger">Pending Delete</span>
+    <span class="badge badge-danger">Pending Delete</span>
 <% } %>
 
 <% if (file.isPendingWaive) { %>
-<span class="badge badge-warning">Pending Waive</span>
+    <span class="badge badge-warning">Pending Waive</span>
 <% } %>
