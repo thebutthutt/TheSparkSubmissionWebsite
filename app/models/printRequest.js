@@ -45,6 +45,8 @@ var singlePrintSchema = mongoose.Schema({
     timeHours: Number,
     timeMinutes: Number,
     grams: Number,
+    numAttempts: Number,
+    numFailedAttempts: Number,
 
     techNotes: String,
     patronNotes: String,

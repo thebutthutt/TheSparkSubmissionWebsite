@@ -403,6 +403,67 @@ module.exports = {
         });
     },
 
+    startPrint: function(fileID, callback) {
+        printRequestModel.findOne({
+            'files._id': fileID
+        }, function(err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                result.files.id(fileID).isStarted = true;
+                if (result.files.id(fileID).numAttempts == null) {
+                    result.files.id(fileID).numAttempts = 0;
+                }
+                result.files.id(fileID).numAttempts += 1;
+                result.save();
+                if (typeof callback == 'function') {
+                    callback();
+                }
+            }
+        });
+    },
+
+
+
+    printSuccess: function(fileID, callback) {
+        printRequestModel.findOne({
+            'files._id': fileID
+        }, function(err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                result.files.id(fileID).isStarted = false;
+                result.save();
+                module.exports.markCompleted(fileID);
+                if (typeof callback == 'function') {
+                    callback();
+                }
+            }
+        });
+    },
+
+
+
+    printFail: function(fileID, callback) {
+        printRequestModel.findOne({
+            'files._id': fileID
+        }, function(err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                result.files.id(fileID).isStarted = false;
+                if (result.files.id(fileID).numFailedAttempts == null) {
+                    result.files.id(fileID).numFailedAttempts = 0;
+                }
+                result.files.id(fileID).numFailedAttempts += 1;
+                result.save();
+                if (typeof callback == 'function') {
+                    callback();
+                }
+            }
+        });
+    },
+
 
 
 

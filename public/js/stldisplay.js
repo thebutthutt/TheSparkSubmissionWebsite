@@ -112,7 +112,7 @@ function STLViewer(model, elementID) {
 
         //-----------MATERIAL-------------//
         var material = new THREE.MeshPhongMaterial({
-            color: 0xffb3cc,
+            color: 0x85e085,
             //color: 0xffffff,
             specular: 0x5b1307,
             shininess: 100
