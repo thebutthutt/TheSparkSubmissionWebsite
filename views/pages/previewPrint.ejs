@@ -91,12 +91,22 @@
                     <% } else { %>
                         <%if (print.isPrinted) {%>
                             <%- include ("../partials/PrintDetails/contact", {print:print}) %>
-                        <%}%>
-                        <%- include ("../partials/PrintDetails/patron", {print:print}) %>
-                        <%- include ("../partials/PrintDetails/request", {print:print}) %>
-                        <%- include ("../partials/PrintDetails/review", {print:print}) %>
-                        <%if (!print.isRejected && !print.isPrinted) {%>
-                            <%- include ("../partials/PrintDetails/status", {print:print}) %>
+                            <%- include ("../partials/PrintDetails/patron", {print:print}) %>
+                            <%- include ("../partials/PrintDetails/request", {print:print}) %>
+                            <%- include ("../partials/PrintDetails/review", {print:print}) %>
+                        <%} else { %>
+                            <%if (!print.isRejected) {%>
+                                <% if (print.isPaid) {%>
+                                    <%- include ("../partials/PrintDetails/status", {print:print}) %>
+                                <%}%>
+                                <%- include ("../partials/PrintDetails/review", {print:print}) %>
+                                <%- include ("../partials/PrintDetails/patron", {print:print}) %>
+                                <%- include ("../partials/PrintDetails/request", {print:print}) %>
+                            <%} else {%>
+                                <%- include ("../partials/PrintDetails/review", {print:print}) %>
+                                <%- include ("../partials/PrintDetails/patron", {print:print}) %>
+                                <%- include ("../partials/PrintDetails/request", {print:print}) %>
+                            <%}%>
                         <%}%>
                     <% } %>
                 

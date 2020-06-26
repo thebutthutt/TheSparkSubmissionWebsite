@@ -41,5 +41,49 @@ $(document).ready(function () {
             location.reload();
         });
     });
+
+    $('.start-print').on('click', function () {
+        let fileID = $(this).attr('fileid');
+        console.log('here');
+        $.ajax({
+            type: 'POST',
+            url: '/prints/startprint',
+            data: {
+                "fileID": fileID
+            },
+            dataType: 'json'
+        }).done(function () {
+            location.reload();
+        });
+    });
+
+    $('.print-success').on('click', function () {
+        let fileID = $(this).attr('fileid');
+        $.ajax({
+            type: 'POST',
+            url: '/prints/printsuccess',
+            data: {
+                "fileID": fileID
+            },
+            dataType: 'json'
+        }).done(function () {
+            location.reload();
+        });
+    });
+
+    $('.print-fail').on('click', function () {
+        let fileID = $(this).attr('fileid');
+        $.ajax({
+            type: 'POST',
+            url: '/prints/printfail',
+            data: {
+                "fileID": fileID
+            },
+            dataType: 'json'
+        }).done(function () {
+            location.reload();
+        });
+    });
+
 });
 

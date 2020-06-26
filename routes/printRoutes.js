@@ -137,8 +137,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         //load the submission page and flash any messages
         printRequestModel.find({
             "files": {$elemMatch: {
-                "isPrinted": true,
-                "isStaleOnPickup": false
+                "isPrinted": true
             }}
         }, function (err, data) { //loading every single top level request FOR NOW
             res.render('pages/pickup', {
@@ -371,6 +370,35 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
             res.json(['done']); //tell the front end the request is done
         });
     });
+
+    //-----------------------START PRINT-----------------------
+    app.post('/prints/startprint', function (req, res) {
+        var fileID = req.body.fileID || req.query.fileID;
+        printHandler.startPrint(fileID, function callback () {
+            res.json(['done']);
+        });
+    });
+
+
+
+    //-----------------------PRINT SUCCESS-----------------------
+    app.post('/prints/printsuccess', function (req, res) {
+        var fileID = req.body.fileID || req.query.fileID;
+        printHandler.printSuccess(fileID, function callback () {
+            res.json(['done']);
+        });
+    });
+
+
+
+    //-----------------------PRINT FAIL-----------------------
+    app.post('/prints/printfail', function (req, res) {
+        var fileID = req.body.fileID || req.query.fileID;
+        printHandler.printFail(fileID, function callback () {
+            res.json(['done']);
+        });
+    });
+
 }
 
 // route middleware to make sure a user is logged in

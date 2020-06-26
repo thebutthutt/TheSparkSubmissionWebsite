@@ -40,7 +40,7 @@
                         <td colspan="2" class="no-padding">
                             <table class="plain" style="width: 100%;">
                                 <% item.files.forEach(function (file) {%>
-                                <% if (file.isRejected == false && file.isPaid == true && file.isPrinted == false) { %>
+                                <% if (file.isRejected == false && file.isPrinted == true) { %>
                                 <% if (location != "all") { %>
                                 <% if (file.printLocation == location) { %>
                                 <tr>

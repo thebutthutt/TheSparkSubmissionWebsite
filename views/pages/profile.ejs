@@ -25,27 +25,8 @@
         </div>
 
         <div class="row">
-            <div class="col">
-                <div id="actionQueue">
-                    <div class="card mb-4">
-                        <div class="card-body border-bottom">
-                            <h4 class="mb-0">Files Pending Delete</h4>
-                        </div>
-                        <ul class="list-group list-group-flush appendDeleteHere">
-                            <li class="list-group-item">No files pending delete</li>
-                        </ul>
-                    </div>
-                    <div class="card">
-                        <div class="card-body border-bottom">
-                            <h4 class="mb-0">Files Pending Payment Waive</h4>
-                        </div>
-                        <ul class="list-group list-group-flush appendWaiveHere">
-                            <li class="list-group-item">No files pending waive</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
+            
+            <div class="<%if (isSuperAdmin) {%>col<%} else {%>col-6<%}%>" style="<%if(isSuperAdmin == false){%>margin: auto; <%}%>" >
                 <div class="card mb-4">
                     <div class="card-body border-bottom">
                         <h4 class="mb-0">My Account</h4>
@@ -120,6 +101,30 @@
                     </div>
                 </div>
             </div>
+
+            <%if (isSuperAdmin) {%>
+                <div class="col">
+                    <div id="actionQueue">
+                        <div class="card mb-4">
+                            <div class="card-body border-bottom">
+                                <h4 class="mb-0">Files Pending Delete</h4>
+                            </div>
+                            <ul class="list-group list-group-flush appendDeleteHere">
+                                <li class="list-group-item">No files pending delete</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <div class="card-body border-bottom">
+                                <h4 class="mb-0">Files Pending Payment Waive</h4>
+                            </div>
+                            <ul class="list-group list-group-flush appendWaiveHere">
+                                <li class="list-group-item">No files pending waive</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <%}%>
+            
         </div>
 
         <!-- Modal -->
