@@ -24,8 +24,6 @@ var singlePrintSchema = mongoose.Schema({
     isPendingDelete: Boolean,
     canBeReviewed: Boolean,
     isStarted: Boolean,
-    needsSecondContact: Boolean,
-    needsFinalContact: Boolean,
     isStaleOnPickup: Boolean,
 
 

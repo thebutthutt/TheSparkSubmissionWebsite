@@ -222,6 +222,22 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
 
     });
 
+    //-----------------------ALL-----------------------
+    app.get('/prints/all', isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printRequestModel.find({
+            
+        }, function (err, data) { //loading every single top level request FOR NOW
+            res.render('pages/allPrints', {
+                pgnum: 4, //tells the navbar what page to highlight
+                dbdata: data,
+                printPage: "all",
+                isAdmin: true,
+                isSuperAdmin: req.user.isSuperAdmin
+            });
+        });
+    });
+
 
     //-----------------------LANDING AFTER PAYMENT-----------------------
     //displays to the user once they sucesfully submit payment through 3rd party service
