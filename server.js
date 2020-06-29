@@ -46,6 +46,7 @@ app.use(bodyParser.json({
 app.set('view engine', 'ejs'); // set up ejs for templating
 app.use('/public', express.static(path.join(__dirname + '/public'))); //allow us to grab local files in the public directory
 app.use('/three', express.static(__dirname + '/node_modules/three/')); //allow website to access the three.js library
+app.use('/fullcalendar', express.static(__dirname + '/node_modules/fullcalendar/')); //allow website to access the three.js library
 app.use('/gui', express.static(__dirname + '/node_modules/dat.gui/')); //allow website to access the uploaded STLs (for in site display)
 app.use('/uploads', express.static(__dirname + '/app/uploads/')); //allow website to access the uploaded STLs (for in site display)
 
@@ -64,6 +65,7 @@ require('./routes/routes.js')(app, printHandler, cleHandler); // load our routes
 require('./routes/printRoutes.js')(app, passport, userModel, adminRequestHandler, printHandler, printRequestModel, payment); // load our routes and pass in our app and fully configured passport
 require('./routes/userRoutes.js')(app, passport, userModel, adminRequestHandler, printRequestModel, cleRequestModel); // load our routes and pass in our app and fully configured passport
 require('./routes/cleRoutes.js')(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
+require('./routes/cameraRoutes.js')(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
 
 // Job Scheduler ======================================================================
 require('./config/jobs.js')(printRequestModel, constants); //make the job scheduler go
