@@ -136,7 +136,7 @@ module.exports = {
         });
         form.on('fileBegin', (name, file) => { //when a new file comes through
             file.name = file.name.split(" ").join(""); //remove spaces from file names
-            file.name = time.unix() + unique + constants.delim + file.name; //add special separater so we can get just the filename later
+            file.name = (time.unix() + unique) + file.name; //add special separater so we can get just the filename later
             //yes this is a dumb way to keep track of the original filename but I dont care
             unique += 1; //increment unique so every file is not the same name
             file.path = path.join(__dirname, '../app/uploads/', file.name);
@@ -245,7 +245,7 @@ module.exports = {
         });
         form.on('fileBegin', (name, file) => { //handle uploading a file if needed
             if (shouldUpload) {
-                file.name = time.unix() + constants.delim + file.name; //add special separater so we can get just the filename later
+                file.name = time.unix() + file.name; //add special separater so we can get just the filename later
                 file.path = path.join(__dirname, '../app/uploads/gcode/', file.name);
             } else {}
         });
@@ -318,10 +318,10 @@ module.exports = {
                             amount += result.files[i].timeHours;
                             amount += (result.files[i].timeMinutes / 60);
                         }
-                        acceptedFiles.push(result.files[i].fileName.substring(result.files[i].fileName.lastIndexOf(constants.delim) + 10));
+                        acceptedFiles.push(result.files[i].fileName.substring(72));
                         acceptedMessages.push(result.files[i].patronNotes);
                     } else {
-                        rejectedFiles.push(result.files[i].fileName.substring(result.files[i].fileName.lastIndexOf(constants.delim) + 10));
+                        rejectedFiles.push(result.files[i].fileName.substring(72));
                         rejectedMessages.push(result.files[i].patronNotes);
                     }
                 }
@@ -411,7 +411,7 @@ module.exports = {
                 console.log(err);
             }
             module.exports.setFlags(fileID);
-            emailer.readyForPickup(result.patron.email, result.files.id(fileID).fileName.substring( result.files.id(fileID).fileName.lastIndexOf(constants.delim) + 10));
+            emailer.readyForPickup(result.patron.email, result.files.id(fileID).fileName.substring(72));
         });
     },
 

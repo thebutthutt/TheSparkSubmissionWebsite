@@ -1,6 +1,6 @@
 <% for (var i = 0; i < filenames.length; i++) { %>
     <li class="list-group-item">
-        <%= filenames[i].split('sparkdelim').pop();%>
+        <%= filenames[i].substring(72);%>
         <button type="button" class="btn btn-danger btn-sm float-right btn-delete"  fileID='<%=fileIDs[i]%>'>Delete</button>
     </li>
 <% } %>

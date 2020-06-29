@@ -53,7 +53,7 @@
                 <% item.files.forEach(function (file) {%> <tr>
             <td style="width:99%">
               <a class="preview-btn" id='<%= file._id%>'
-                href="#"><%=file.fileName.substring(file.fileName.lastIndexOf("sparkdelim") + 10)%></a>
+                href="#"><%=file.fileName.substring(72)%></a>
               &nbsp;
               <%- include ("../partials/flags", {file:file, isAll: false}) %>
             </td>

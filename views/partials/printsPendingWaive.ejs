@@ -3,7 +3,7 @@
     <button type="button" class="btn btn-warning btn-sm float-right btn-waive" itemID='<%=submissions[i][0]%>'>Waive</button>
     <div>
         <% for (var j = 0; j < submissions[i][1].length; j++) { %>
-            <%= submissions[i][1][j].split('sparkdelim').pop();%><br>
+            <%= submissions[i][1][j].substring(72);%><br>
         <% } %>
     </div>
 </li>

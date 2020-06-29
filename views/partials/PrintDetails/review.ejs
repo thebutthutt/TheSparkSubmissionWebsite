@@ -10,7 +10,7 @@
     <%if (!print.isRejected) {%>
     <hr>
     <p>
-        <strong>GCODE Filename:</strong> <a href="#" class="download-btn" id='<%= print.gcodeName%>'><%=print.gcodeName.substring(print.gcodeName.lastIndexOf("sparkdelim") + 10)%></a> <br>
+        <strong>GCODE Filename:</strong> <a href="#" class="download-btn" id='<%= print.gcodeName%>'><%=print.gcodeName.substring(72)%></a> <br>
         <strong>Sliced for printer:</strong> <%=print.slicedPrinter%> <br>
         <strong>Sliced for material:</strong> <%=print.slicedMaterial%> <br>
         <strong>Print Location: </strong> <%=print.printLocation%> &nbsp;
