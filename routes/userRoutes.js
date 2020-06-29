@@ -132,7 +132,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
                 })
             });
 
-            res.render('partials/printsPendingDelete', {
+            res.render('partials/adminParts/printsPendingDelete', {
                 filenames: filenames,
                 fileIDs: fileIDs
             }); //render the html
@@ -167,7 +167,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
                 singleSubmission.push(filenames); //submission[i][j] = filenames
                 submissions.push(singleSubmission);
             });
-            res.render('partials/printsPendingWaive', {
+            res.render('partials/adminParts/printsPendingWaive', {
                 submissions: submissions
             }); //render the html
         });
@@ -191,7 +191,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
                 statuses.push(element.isSuperAdmin);
             });
 
-            res.render('partials/allUsers', {
+            res.render('partials/adminParts/allUsers', {
                 euids: euids,
                 names: names,
                 statuses: statuses,

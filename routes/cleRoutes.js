@@ -21,6 +21,34 @@ module.exports = function (app, passport, userModel, cleHandler, cleRequestModel
         });
     });
 
+    app.get('/unassignedWorkOrders', function (req, res) {
+        cleRequestModel.find({
+            'isAssigned': false
+        }, function (err, data) {
+            if (err) {
+                console.log(err);
+            } else {
+                submissions = data;
+                userModel.find({
+                }, function (err, data2) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        users = data2;
+                        res.render('partials/adminParts/unassignedWorkOrders', {
+                            submissions: data,
+                            users: data2
+                        }); //render the html
+                    }
+                });
+            }
+        });
+
+        
+
+        
+    });
+
     app.post('/workrequests/delete', function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         cleHandler.deleteSubmission(submissionID);

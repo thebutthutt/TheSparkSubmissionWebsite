@@ -159,6 +159,7 @@ module.exports = {
         var time = moment();
         var shouldUpload = true;
         var maker = req.user.name;
+        var id;
         //get the incoming form data
         form.parse(req, function (err, fields, files) {
             printRequestModel.findOne({
@@ -167,6 +168,7 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
+                    id = fields.fileID;
                     if (result.files.id(fields.fileID).gcodeName != null) {
                         //delete gcode from disk if it exists
                         console.log("Submission had old GCODE file! deleting...");
@@ -204,6 +206,8 @@ module.exports = {
                     if (err) {
                         console.log(err);
                     }
+                    //now find the fully updated top level submission so we can check if all the files have been reviewed
+                    module.exports.setFlags(id);
                 });
             } else { //the tecnicican rejected the print, so update differently
                 printRequestModel.findOneAndUpdate({
@@ -223,12 +227,10 @@ module.exports = {
                     if (err) {
                         console.log(err);
                     }
+                    //now find the fully updated top level submission so we can check if all the files have been reviewed
+                    module.exports.setFlags(id);
                 });
             }
-
-            //now find the fully updated top level submission so we can check if all the files have been reviewed
-            module.exports.setFlags(fields.fileID);
-
             if (typeof callback == 'function') {
                 callback(); //running the callback specified in calling function (in routes.js)
             }
@@ -254,6 +256,8 @@ module.exports = {
                 gcode = file.path;
             }
         });
+
+        
 
     },
 

@@ -54,6 +54,17 @@ var showActionQueue = function () {
             }
         }
     });
+
+    $.ajax({
+        type: 'GET',
+        url: '/unassignedWorkOrders',
+        dataType: 'html',
+        success: function (data) {
+            if (data.length != 0) {
+                $('.appendUnassignedHere').empty().append(data);
+            }
+        }
+    });
 }
 
 var showUsers = function () {
