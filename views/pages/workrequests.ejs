@@ -15,6 +15,7 @@
                 <thead>
                     <tr>
                         <th scope="col">Name</th>
+                        <th scope="col">Type</th>
                         <th scope="col">Maker</th>
                         <th scope="col">Actions</th>
                         <th scope="col">Submitted</th>
@@ -23,41 +24,32 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <%dbdata.slice().reverse().forEach(function (item) {%>
+                    <%dbdata.slice().reverse().forEach(function (item, i) {%>
                     <tr>
                         <td>
                             <%= item.patron.fname %> <%= item.patron.lname %> <br>
                         </td>
+                        <td><%=item.type%></td>
                         <td>
                             <%= item.maker %>
                         </td>
                         <td>
-                            <button class="claim-btn" id='<%= item._id%>'>Claim</button>
-                            <button class="complete-btn" id='<%= item._id%>'>Complete</button>
-                            <button class="remove-btn" id='<%= item._id%>'>Delete</button>
+                            <button class="btn btn-primary claim-btn" id='<%= item._id%>'>Claim</button>
+                            <button class="btn btn-success complete-btn" id='<%= item._id%>'>Complete</button>
+                            <button class="btn btn-danger remove-btn" id='<%= item._id%>'>Delete</button>
                         </td>
-                        <td><%=item.submissionDate%></td>
-                        
-                        <td colspan="2" class='<% if (item.files.length != 0) {%>no-padding<%}%>'>
-                            <% if (item.files.length == 0) {%>
-                                No files were uploaded.
-                            <% } else { %>
-                                <table class="plain" style="width:100%">
-                                    <% item.files.forEach(function (file) {%>
-                                    <tr>
-                                        <td style="width:99%">
-                                            <%=file.substring(72)%>
-                                        </td>
-                                        <td style="white-space: nowrap;">
-                                            <button type="button" class="btn btn-success download-btn"
-                                                id='<%= file.fileName%>'>Download</button>
-                                            <button type="button" class="btn btn-danger delete-file-btn"
-                                                id='<%= file%>'>Delete</button>
-                                        </td>
-                                    </tr>
-                                    <%})%>
-                                </table>
-                            <% } %>
+                        <td><%=item.dateSubmitted%></td>
+                        <td>
+                            <a class="btn btn-primary" data-toggle="collapse" href="#request<%= i + 1%>" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                Link with href
+                              </a>
+                        </td>
+                    </tr>
+                    <tr class="collapse" id="<%=request<%= i+1%>">
+                        <td colspan="7">
+                            <div class="card card-body">
+                                <%=item.notes%>
+                            </div>
                         </td>
                     </tr>
                     <%})%>
