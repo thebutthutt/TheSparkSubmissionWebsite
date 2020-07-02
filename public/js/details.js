@@ -44,7 +44,6 @@ $(document).ready(function () {
 
     $('.start-print').on('click', function () {
         let fileID = $(this).attr('fileid');
-        console.log('here');
         $.ajax({
             type: 'POST',
             url: '/prints/startprint',

@@ -17,12 +17,14 @@ var path = require('path');
 var constants = require('./config/constants.js');
 var printRequestModel = require('./app/models/printRequest');
 var cleRequestModel = require('./app/models/cleRequest');
+var bookingModel = require('./app/models/booking');
 var userModel = require('./app/models/user');
 var payment = require('./config/payment.js');
 
 var printHandler = require('./handlers/printHandler.js');
 var cleHandler = require('./handlers/cleHandler.js');
 var adminRequestHandler = require('./handlers/adminRequestHandler.js');
+var cameraHandler = require('./handlers/cameraHandler.js');
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
@@ -65,12 +67,11 @@ require('./routes/routes.js')(app, printHandler, cleHandler); // load our routes
 require('./routes/printRoutes.js')(app, passport, userModel, adminRequestHandler, printHandler, printRequestModel, payment); // load our routes and pass in our app and fully configured passport
 require('./routes/userRoutes.js')(app, passport, userModel, adminRequestHandler, printRequestModel, cleRequestModel); // load our routes and pass in our app and fully configured passport
 require('./routes/cleRoutes.js')(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
-require('./routes/cameraRoutes.js')(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
+require('./routes/cameraRoutes.js')(app, bookingModel, cameraHandler); // load our routes and pass in our app and fully configured passport
 
 // Job Scheduler ======================================================================
 require('./config/jobs.js')(printRequestModel, constants); //make the job scheduler go
-
-
+//bookingModel.remove({}, function(){})
 // launch ======================================================================
 https.createServer({
     key: fs.readFileSync('./npserver2048.key'),

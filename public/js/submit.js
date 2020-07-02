@@ -75,3 +75,7 @@ $(document).ready(function () {
     });
 
 });
+
+$(document).on('submit','#submission-form',function(){
+    $('.modal').modal('show');
+ });

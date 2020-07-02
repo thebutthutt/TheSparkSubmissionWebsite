@@ -43,10 +43,28 @@ module.exports = function (app, passport, userModel, cleHandler, cleRequestModel
                 });
             }
         });
+    });
 
-        
+    app.get('/workorders/details', function (req, res) {
+        var id = req.body.id || req.query.id;
+        cleRequestModel.find({
+            '_id': id
+        }, function (err, data) {
+            if (err) {
+                console.log(err)
+            } else {
+                res.render('pages/workRequestDetail', {
+                    request: data,
+                    pgnum: 5,
+                    isAdmin: true
+                });
+            }
+        });
+    });
 
-        
+    app.get('/workrequests/download', function (req, res) {
+        var fileName = req.body.fileName || req.query.fileName;
+        res.download(fileName);
     });
 
     app.post('/workrequests/delete', function (req, res) {
@@ -71,6 +89,31 @@ module.exports = function (app, passport, userModel, cleHandler, cleRequestModel
         var fileName = req.body.fileName || req.query.fileName;
         cleHandler.deleteFile(fileName);
         res.json(['done']); //tell the front end the request is done
+    });
+
+    app.post('/assignWorkOrder', function (req, res) {
+        var submissionID = req.body.submissionID;
+        var makerID = req.body.makerID;
+        cleRequestModel.findOne({
+            "_id": submissionID
+        }, function(err, result) {
+            if (err) {
+                console.log(err)
+            } else {
+                userModel.findOne({
+                    "_id": makerID
+                }, function(err, result2) {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        result.maker = result2.local.euid;
+                        result.isAssigned = true;
+                        result.save();
+                    }
+                });
+            }
+        });
+        res.redirect('back')
     });
 
 

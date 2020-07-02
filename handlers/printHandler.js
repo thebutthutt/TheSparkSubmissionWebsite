@@ -322,10 +322,10 @@ module.exports = {
                             amount += result.files[i].timeHours;
                             amount += (result.files[i].timeMinutes / 60);
                         }
-                        acceptedFiles.push(result.files[i].fileName.substring(72));
+                        acceptedFiles.push(result.files[i].fileName.substring(result.files[i].fileName.indexOf('/15') + 11));
                         acceptedMessages.push(result.files[i].patronNotes);
                     } else {
-                        rejectedFiles.push(result.files[i].fileName.substring(72));
+                        rejectedFiles.push(result.files[i].fileName.substring(result.files[i].fileName.indexOf('/15') + 11));
                         rejectedMessages.push(result.files[i].patronNotes);
                     }
                 }
@@ -415,7 +415,7 @@ module.exports = {
                 console.log(err);
             }
             module.exports.setFlags(fileID);
-            emailer.readyForPickup(result.patron.email, result.files.id(fileID).fileName.substring(72));
+            emailer.readyForPickup(result.patron.email, result.files.id(fileID).fileName.substring(result.files.id(fileID).fileName.indexOf('/15') + 11));
         });
     },
 

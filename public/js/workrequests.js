@@ -13,9 +13,9 @@ $(document).ready(function () {
         });
     });
 
-    $('.download-btn').on('click', function () {
-        var fileID = $(this).attr('id');
-        window.location = '/workrequests/download?fileID=' + fileID;
+    $('.download-by-name').on('click', function () {
+        var fileName = $(this).attr('filename');
+        window.location = '/workrequests/download?fileName=' + fileName;
     });
 
     $('.claim-btn').on('click', function () {

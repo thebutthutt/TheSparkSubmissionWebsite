@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <%- include ("../partials/head") %>
+    <%- include ("../../partials/head") %>
     <script src="/public/js/details.js"></script>
     <script type="module" src='/public/js/stldisplay.js'></script>
     <link type="text/css" rel="stylesheet" href="/public/css/details.css">
@@ -15,7 +15,7 @@
 </head>
 
 <body>
-    <%- include ("../partials/header") %>
+    <%- include ("../../partials/header") %>
     <div class="container my-5">
         <div class="row">
             <div class="col">
@@ -41,8 +41,8 @@
                                 <%}%>
                             </div>
                 </div>
-                            <%- include ("../partials/PrintDetails/patron", {print:print}) %>
-                            <%- include ("../partials/PrintDetails/request", {print:print}) %>
+                            <%- include ("../../partials/PrintDetails/patron", {print:print}) %>
+                            <%- include ("../../partials/PrintDetails/request", {print:print}) %>
                         <% } else { %>
                             <div class="card-body">
                                 <h6>Notes from Patron</h6>
@@ -79,33 +79,33 @@
             <div class="col">
                     <% if (print.canBeReviewed) { %>
                         <%if (print.isReviewed) {%>
-                            <%- include ("../partials/PrintDetails/review", {print:print}) %>
+                            <%- include ("../../partials/PrintDetails/review", {print:print}) %>
                         <%}%>
                         <div class="card">
                             <div class="card-body">
                                 <h4>Review Print</h4>
                                 <hr>
-                                <%- include ("../partials/PrintDetails/printReviewForm", {print:print}) %>
+                                <%- include ("../../partials/PrintDetails/printReviewForm", {print:print}) %>
                             </div>
                         </div>
                     <% } else { %>
                         <%if (print.isPrinted) {%>
-                            <%- include ("../partials/PrintDetails/contact", {print:print}) %>
-                            <%- include ("../partials/PrintDetails/patron", {print:print}) %>
-                            <%- include ("../partials/PrintDetails/request", {print:print}) %>
-                            <%- include ("../partials/PrintDetails/review", {print:print}) %>
+                            <%- include ("../../partials/PrintDetails/contact", {print:print}) %>
+                            <%- include ("../../partials/PrintDetails/patron", {print:print}) %>
+                            <%- include ("../../partials/PrintDetails/request", {print:print}) %>
+                            <%- include ("../../partials/PrintDetails/review", {print:print}) %>
                         <%} else { %>
                             <%if (!print.isRejected) {%>
                                 <% if (print.isPaid) {%>
-                                    <%- include ("../partials/PrintDetails/status", {print:print}) %>
+                                    <%- include ("../../partials/PrintDetails/status", {print:print}) %>
                                 <%}%>
-                                <%- include ("../partials/PrintDetails/review", {print:print}) %>
-                                <%- include ("../partials/PrintDetails/patron", {print:print}) %>
-                                <%- include ("../partials/PrintDetails/request", {print:print}) %>
+                                <%- include ("../../partials/PrintDetails/review", {print:print}) %>
+                                <%- include ("../../partials/PrintDetails/patron", {print:print}) %>
+                                <%- include ("../../partials/PrintDetails/request", {print:print}) %>
                             <%} else {%>
-                                <%- include ("../partials/PrintDetails/review", {print:print}) %>
-                                <%- include ("../partials/PrintDetails/patron", {print:print}) %>
-                                <%- include ("../partials/PrintDetails/request", {print:print}) %>
+                                <%- include ("../../partials/PrintDetails/review", {print:print}) %>
+                                <%- include ("../../partials/PrintDetails/patron", {print:print}) %>
+                                <%- include ("../../partials/PrintDetails/request", {print:print}) %>
                             <%}%>
                         <%}%>
                     <% } %>

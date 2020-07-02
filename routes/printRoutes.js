@@ -6,7 +6,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         printRequestModel.find({
             "files.isNewSubmission": true
         }, function (err, data) { //loading every single top level request FOR NOW
-            res.render('pages/newSubmissions', {
+            res.render('pages/prints/newSubmissions', {
                 pgnum: 4, //prints
                 dbdata: data,
                 printPage: "newSub",
@@ -29,7 +29,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         printRequestModel.findOne({ //find the top level submission from the low level file id
             'files._id': fileID
         }, function (err, result) {
-            res.render('pages/previewPrint', { //render the review page
+            res.render('pages/prints/previewPrint', { //render the review page
                 pgnum: 4, //prints
                 isAdmin: true,
                 timestamp: fileID.dateSubmitted,
@@ -52,7 +52,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         printRequestModel.find({
             "files.isPendingPayment": true
         }, function (err, data) { //loading every single top level request FOR NOW
-            res.render('pages/pendingPayment', {
+            res.render('pages/prints/pendingPayment', {
                 pgnum: 4, //prints
                 dbdata: data,
                 printPage: "pendpay",
@@ -73,7 +73,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         printRequestModel.find({
             "files.isReadyToPrint": true
         }, function (err, data) { //loading every single top level request FOR NOW
-            res.render('pages/ready', {
+            res.render('pages/prints/ready', {
                 pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "ready",
@@ -94,7 +94,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                 "printLocation": "Willis Library"
             }}
         }, function (err, data) { //loading every single top level request FOR NOW
-            res.render('pages/ready', {
+            res.render('pages/prints/ready', {
                 pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "ready",
@@ -115,7 +115,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                 "printLocation": "Discovery Park"
             }}
         }, function (err, data) { //loading every single top level request FOR NOW
-            res.render('pages/ready', {
+            res.render('pages/prints/ready', {
                 pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "ready",
@@ -140,7 +140,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                 "isPrinted": true
             }}
         }, function (err, data) { //loading every single top level request FOR NOW
-            res.render('pages/pickup', {
+            res.render('pages/prints/pickup', {
                 pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "pickup",
@@ -162,7 +162,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                 "isStaleOnPickup": false
             }}
         }, function (err, data) { //loading every single top level request FOR NOW
-            res.render('pages/pickup', {
+            res.render('pages/prints/pickup', {
                 pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "pickup",
@@ -184,7 +184,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                 "isStaleOnPickup": false
             }}
         }, function (err, data) { //loading every single top level request FOR NOW
-            res.render('pages/pickup', {
+            res.render('pages/prints/pickup', {
                 pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "pickup",
@@ -210,7 +210,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                 "isRejected": true
             }}
         }, function (err, data) { //loading every single top level request FOR NOW
-            res.render('pages/rejected', {
+            res.render('pages/prints/rejected', {
                 pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "rejected",
@@ -228,7 +228,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         printRequestModel.find({
             
         }, function (err, data) { //loading every single top level request FOR NOW
-            res.render('pages/allPrints', {
+            res.render('pages/prints/allPrints', {
                 pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "all",
