@@ -1,0 +1,11 @@
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class='nav-link <% if (camPage == "newSub") { %> active <%}%>' href="/bookings/new">New Booking Requests</a>
+    </li>
+    <li class='nav-item'>
+        <a class='nav-link <% if (camPage == "accepted") { %> active <%}%>' href="/bookings/accepted">Accepted Requests</a>
+    </li>
+    <li class='nav-item'>
+        <a class='nav-link <% if (camPage == "rejected") { %> active <%}%>' href="/bookings/rejected">Rejected Requests</a>
+    </li>
+</ul>

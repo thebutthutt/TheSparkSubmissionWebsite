@@ -2,15 +2,15 @@
 <html>
 
 <head>
-    <%- include ("../partials/head") %>
+    <%- include ("../../partials/head") %>
     <link type="text/css" rel="stylesheet" href="../../public/css/prints.css">
     <script src="../public/js/prints.js"></script>
 </head>
 
 <body>
-    <%- include ("../partials/header") %>
+    <%- include ("../../partials/header") %>
     <div class="container ">
-        <%- include ("../partials/printNav") %>
+        <%- include ("../../partials/printNav") %>
         <div class="fake-tab">
             <table class="table table-striped">
                 <thead>
@@ -43,12 +43,12 @@
                                 <tr>
                                     <td>
                                         <a class="preview-btn" id='<%= file._id%>'
-                                            href="#"><%=file.fileName.substring(72)%></a>
+                                            href="#"><%=file.fileName.substring(file.fileName.indexOf('/15') + 11)%></a>
                                         &nbsp;
-                                        <%- include ("../partials/flags", {file:file, isAll: true}) %>
+                                        <%- include ("../../partials/flags", {file:file, isAll: true}) %>
                                     </td>
                                     <td style="white-space: nowrap; text-align: right;">
-                                        <%- include ("../partials/fileBurger", {file:file, item:item}) %>
+                                        <%- include ("../../partials/fileBurger", {file:file, item:item}) %>
                                     </td>
                                 </tr>
                                 <% }) %>

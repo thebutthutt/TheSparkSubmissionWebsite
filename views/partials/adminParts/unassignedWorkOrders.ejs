@@ -7,16 +7,17 @@
         <div class="collapse" id='submission<%=i%>'>
             <p class="mt-3 text-muted font-italic"><%=submissions[i].notes%></p>
             <form action="/assignWorkOrder" method="POST">
+                <input type="text" name="submissionID" style="display: none;" value="<%=submissions[i]._id%>"></input>
                 <div class="form-group">
                       <div class="input-group mb-3">
-                        <select class="form-control" id="exampleFormControlSelect1">
+                        <select name="makerID" class="form-control" id="exampleFormControlSelect1">
                             <option>Unassigned</option>
                             <%for (var j = 0; j < users.length; j++) {%>
-                                <option><%=users[j].name%></option>
+                                <option value="<%=users[j]._id%>"><%=users[j].name%></option>
                             <%}%>
                           </select>
                           <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="submit" id="changeNameButton">Assign</button>
+                            <button class="btn btn-outline-secondary assign-btn" type="submit" id="changeNameButton">Assign</button>
                           </div>
                       </div>
                   </div>

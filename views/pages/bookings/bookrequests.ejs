@@ -1,0 +1,63 @@
+<!-- views/index.ejs -->
+<!doctype html>
+<html>
+
+<head>
+    <%- include ("../../partials/head") %>
+    <link type="text/css" rel="stylesheet" href="../../public/css/submit.css">
+    <script src="/public/js/booking.js"></script>
+</head>
+
+<body>
+    <%- include ("../../partials/header") %>
+    
+    <div class="container">
+        <%- include ("../../partials/cameraNav") %>
+        <div class="fake-tab">
+            <ol class="list-group">
+                <li class="list-group-item rounded-0 border-top-0">
+                    <div class="row">  
+                        <div class="col"><strong>Patron</strong></div>
+                        <div class="col"><strong>Submitted On</strong></div>
+                        <div class="col"><strong>Booking Dates</strong></div>
+                        <div class="col"><strong>Camera</strong></div>
+                        <div class="col"><strong>Lens 1</strong></div>
+                        <div class="col"><strong>Lens 2</strong></div>
+                        <div class="col text-right"><strong>Actions</strong></div>
+                    </div>
+                </li>
+                <%bookings.forEach(function (booking) {%>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col"> 
+                                <%=booking.patron.fname%> <%=booking.patron.lname%>
+                            </div>
+                            <div class="col"> 
+                                <%=booking.dateSubmitted%>
+                            </div>
+                            <div class="col"> 
+                                <%=booking.calendarEvent.start%> - <%=booking.calendarEvent.end%>
+                            </div>
+                            <div class="col"> 
+                                <%=booking.camera%>
+                            </div>
+                            <div class="col"> 
+                                <%=booking.lens1%>
+                            </div>
+                            <div class="col"> 
+                                <%=booking.lens2%>
+                            </div>
+                            <div class="col text-right"> 
+                                <button class="btn btn-success btn-accept">Accept</button>
+                                <button class="btn btn-danger btn-delete">Reject</button>
+                            </div>
+                        </div>
+                    </li>
+                <%})%>
+            </ol>
+        </div>
+        
+    </div>
+</body>
+
+</html>

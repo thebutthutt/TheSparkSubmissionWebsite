@@ -9,7 +9,7 @@
 <div class="alert alert-info">
     <h4>Request Details</h4>
     <p class="mb-0">
-        <strong>Filename:</strong> <a href="#" class="download-btn" id='<%= print.fileName%>'><%=print.fileName.substring(72)%></a> <br>
+        <strong>Filename:</strong> <a href="#" class="download-btn" id='<%= print.fileName%>'><%=print.fileName.substring(print.fileName.indexOf('/15') + 11)%></a> <br>
         <strong>Requested material:</strong> <%=print.material%> <br>
         <strong>Requested infill:</strong> <%=print.infill%> <br>
         <strong>Requested color:</strong> <%=print.color%> <br>
@@ -32,7 +32,7 @@
         </p>
         <hr>
         <p>
-            <strong>GCODE Filename:</strong> <a href="#" class="download-btn" id='<%= print.gcodeName%>'><%=print.gcodeName.substring(72)%></a> <br>
+            <strong>GCODE Filename:</strong> <a href="#" class="download-btn" id='<%= print.gcodeName%>'><%=print.gcodeName.substring(print.gcodeName.indexOf('/15') + 11)%></a> <br>
             <strong>Sliced for printer:</strong> <%=print.slicedPrinter%> <br>
             <strong>Sliced for material:</strong> <%=print.slicedMaterial%> <br>
             <strong>Print Location: </strong> <%=print.printLocation%> &nbsp;
