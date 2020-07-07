@@ -1,3 +1,6 @@
+const moment = require("moment");
+const constants = require('../config/constants');
+
 module.exports = function (app, passport, userModel, cleHandler, cleRequestModel) {
     // =====================================
     // CLE REQUESTS ========================
@@ -114,6 +117,26 @@ module.exports = function (app, passport, userModel, cleHandler, cleRequestModel
             }
         });
         res.redirect('back')
+    });
+
+    app.post('/workrequests/materialintake', function (req, res) {
+        var submissionID = req.query.submissionID;
+        cleRequestModel.findOne({
+            '_id': submissionID
+        }, function (err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                var time = moment().format(constants.format);
+                result.materialDescriptions.push(req.body.materials);
+                result.materialLocations.push(req.body.location);
+                result.intakeDates.push(time);
+                result.hasMaterials = true;
+                result.save();
+                console.log(result);
+                res.redirect('back')
+            }
+        });
     });
 
 

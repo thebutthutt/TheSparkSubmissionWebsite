@@ -24,6 +24,14 @@
     <% } %>
 <% } %>
 
+<% if (file.dateOfConfiscation != 'Not yet sent') {%>
+    <span class="badge badge-danger">Reposessed</span>
+<% } else if (file.dateOfSecondWarning != 'Not yet sent') { %>
+    <span class="badge badge-warning">Final Warning</span>
+<% } else if (file.dateOfFirstWarning != 'Not yet sent') {%>
+    <span class="badge badge-warning">First Warning</span>
+<% } %>
+
 <% if (file.isPendingDelete) { %>
     <span class="badge badge-danger">Pending Delete</span>
 <% } %>

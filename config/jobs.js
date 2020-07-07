@@ -1,7 +1,6 @@
 var schedule = require('node-schedule');
 const moment = require('moment');
 var emailer = require('../config/email.js');
-const email = require('../config/email.js');
 
 module.exports = function (printRequestModel, constants) {
     var staleOnPickup = function () {
@@ -23,7 +22,7 @@ module.exports = function (printRequestModel, constants) {
                 submission.files.forEach(file => {
                     if (moment(file.datePrinted, "M-D-YY").isBefore(moment(threeWeeks, "M-D-YY"))) {
                         //file is 3 weeks old, we keep it
-                        if (file.dateOfConfiscation) { //third contact has not been sent
+                        if (file.dateOfConfiscation == 'Not yet sent') { //third contact has not been sent
                             file.dateOfConfiscation = today;
                             file.isStaleOnPickup = true;
                             submission.save();
@@ -32,7 +31,7 @@ module.exports = function (printRequestModel, constants) {
                         }
                     } else if (moment(file.datePrinted, "M-D-YY").isBefore(moment(twoWeeks, "M-D-YY"))) {
                         //file is 2 weeks old, another contact
-                        if (file.dateOfSecondWarning == null) { //second contact has not been sent
+                        if (file.dateOfSecondWarning == 'Not yet sent') { //second contact has not been sent
                             file.dateOfSecondWarning = today;
                             submission.save();
                             filenames.push(file.fileName);
@@ -40,7 +39,7 @@ module.exports = function (printRequestModel, constants) {
                         }
                     } else if (moment(file.datePrinted, "M-D-YY").isBefore(moment(oneWeek, "M-D-YY"))) {
                         //file is one week old, send a contact
-                        if (file.dateOfFirstWarning == null) { //first contact has not been sent
+                        if (file.dateOfFirstWarning == 'Not yet sent') { //first contact has not been sent
                             file.dateOfFirstWarning = today;
                             submission.save();
                             filenames.push(file.fileName);
@@ -65,8 +64,12 @@ module.exports = function (printRequestModel, constants) {
 
     schedule.scheduleJob('1 0 * * *', () => { 
         //run once every day at midnight and one minute just in case idk im nervous
+        console.log('testing all prnts');
         staleOnPickup();
     });
+
+
+    console.log('running late on pickup tester now');
     staleOnPickup();
 }
 
