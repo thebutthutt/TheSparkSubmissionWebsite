@@ -14,6 +14,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var path = require('path');
+var favicon = require('serve-favicon');
+
 var constants = require('./config/constants.js');
 var printRequestModel = require('./app/models/printRequest');
 var cleRequestModel = require('./app/models/cleRequest');
@@ -51,6 +53,8 @@ app.use('/three', express.static(__dirname + '/node_modules/three/')); //allow w
 app.use('/fullcalendar', express.static(__dirname + '/node_modules/fullcalendar/')); //allow website to access the three.js library
 app.use('/gui', express.static(__dirname + '/node_modules/dat.gui/')); //allow website to access the uploaded STLs (for in site display)
 app.use('/uploads', express.static(__dirname + '/app/uploads/')); //allow website to access the uploaded STLs (for in site display)
+
+app.use(favicon(path.join(__dirname,'public','images','favicon.ico')));
 
 // required for passport
 app.use(session({
