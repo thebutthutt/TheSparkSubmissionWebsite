@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    $('[data-toggle="tooltip"]').tooltip()
     $('.remove-btn').on('click', function () {
         var submissionID = $(this).attr('id');
         $.ajax({

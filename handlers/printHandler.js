@@ -458,6 +458,21 @@ module.exports = {
         });
     },
 
+    markPickedUp: function(fileID) {
+        var time = moment().format(constants.format);
+        printRequestModel.findOne({
+            'files._id': fileID
+        }, function(err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                result.files.id(fileID).isPickedUp = true;
+                result.files.id(fileID).datePickedUp = time;
+                result.save();
+            }
+        });
+    },
+
 
 
     printFail: function(fileID, callback) {

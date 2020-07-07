@@ -5,16 +5,18 @@
 <head>
     <%- include ("../../partials/head") %>
     <link type="text/css" rel="stylesheet" href="../../public/css/submit.css">
-    <script src="/public/js/booking.js"></script>
+    <script src="/public/js/bookingrequests.js"></script>
 </head>
 
 <body>
     <%- include ("../../partials/header") %>
     
     <div class="container">
-        <%- include ("../../partials/cameraNav") %>
-        <div class="fake-tab">
-            <ol class="list-group">
+        <div class="shadow card">
+            <div class="card-header">
+                <%- include ("../../partials/cameras/cameraNav") %>
+            </div>
+            <ol class="list-group list-group-flush">
                 <li class="list-group-item rounded-0 border-top-0">
                     <div class="row">  
                         <div class="col"><strong>Patron</strong></div>
@@ -36,7 +38,9 @@
                                 <%=booking.dateSubmitted%>
                             </div>
                             <div class="col"> 
-                                <%=booking.calendarEvent.start%> - <%=booking.calendarEvent.end%>
+                                <%if(booking.calendarEvent.start.substring(5,6) == "0") {%><%=booking.calendarEvent.start.substring(6,7)%><%} else {%><%=booking.calendarEvent.start.substring(5,7)%><%}%>/<%=booking.calendarEvent.start.substring(8,10)%>
+                                -
+                                <%if(booking.calendarEvent.end.substring(5,6) == "0") {%><%=booking.calendarEvent.end.substring(6,7)%><%} else {%><%=booking.calendarEvent.end.substring(5,7)%><%}%>/<%=booking.calendarEvent.end.substring(8,10)%>
                             </div>
                             <div class="col"> 
                                 <%=booking.camera%>
@@ -48,7 +52,7 @@
                                 <%=booking.lens2%>
                             </div>
                             <div class="col text-right"> 
-                                <button class="btn btn-success btn-accept">Accept</button>
+                                <button class="btn btn-success btn-accept" submissionID="<%=booking._id%>" data-toggle="modal" data-target=".modal">Accept</button>
                                 <button class="btn btn-danger btn-delete">Reject</button>
                             </div>
                         </div>
@@ -57,6 +61,26 @@
             </ol>
         </div>
         
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Booking Request Confirm</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-success booking-confirm">Confirm</button>
+            </div>
+          </div>
+        </div>
     </div>
 </body>
 

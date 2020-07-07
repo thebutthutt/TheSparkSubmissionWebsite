@@ -1,4 +1,4 @@
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs card-header-tabs">
   <li class="nav-item">
     <a class='nav-link <% if (printPage == "newSub") { %> active <%}%>' href="/prints/new">New Submissions</a>
     </li>
@@ -36,10 +36,10 @@
       </div>
     </li>
     <li class=' nav-item'>
-      <a class='nav-link <% if (printPage == "rejected") { %> active <%}%>' href="/prints/rejected">Rejected</a>
+      <a class='nav-link <% if (printPage == "completed") { %> active <%}%>' href="/prints/completed">Completed</a>
     </li>
     <li class=' nav-item'>
-      <a class='nav-link <% if (printPage == "completed") { %> active <%}%>' href="/prints/completed">Completed</a>
+      <a class='nav-link <% if (printPage == "rejected") { %> active <%}%>' href="/prints/rejected">Rejected</a>
     </li>
     <li class=' nav-item'>
       <a class='nav-link <% if (printPage == "all") { %> active <%}%>' href="/prints/all">All</a>

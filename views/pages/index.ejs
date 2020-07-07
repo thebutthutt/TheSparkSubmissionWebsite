@@ -8,21 +8,97 @@
         .container {
             padding-bottom: 80px;
         }
+
+        .img-container {
+            max-height: 200px;
+            overflow: hidden;
+        }
+
+        .print-image {
+            margin-top: -100px;
+        }
     </style>
     
 </head>
 
 <body>
     <%- include ("../partials/header") %>
+    <!--
     <div class="jumbotron text-center">
         <h1><span class="fas fa-exclamation-triangle"></span> Under Construction! <span class="fas fa-exclamation-triangle"></span></h1>
 
         <p>Just like Willis...</p>
 
         <p>RIP to the OG Factory Makerspace location 2014-2020</p>
-    </div>
-    <div class="container">
-        
+    </div>-->
+    <div class="container-fluid mt-5 px-5">
+        <div class="row mb-4">
+            <div class="col">
+                <div class="shadow card">
+                    <div class="img-container rounded-top">
+                        <img src="/public/images/spark-place_3d-printer_03-670x447.jpg" class="card-img-top print-image" alt="...">
+                    </div>
+                    
+                    <div class="card-body">
+                        <h2>3D Printing</h2>
+                        <p>Several 3D printers are available to members of the UNT Community.  Requests are fulfilled on a first come, first served basis. Typically, your job will be started anywhere between three business days to one week after your request is paid.  Please take this into account when requesting print jobs.</p>
+                        <h6>Please keep in mind:</h6>
+                        <ul class=mt-2>
+                            <li>
+                                All prints cost $1.00 per hour of operational time (to recoup the cost of filament)
+                            </li>
+                            <li>
+                                Print charges are assessed to you regardless of your satisfaction with the end product.  We simply print the files you provide.  It is your responsibility to ensure that files are sized appropriately and are structurally sound.
+                            </li>
+                            <li>
+                                We offer Spark Resources Consultation to help you plan print jobs, coordinate larger projects, etc.  If you are inexperienced we suggest you contact us to discuss your project.
+                            </li>
+                        </ul>
+                        <p><a href="">3D Printing Submission Process</a></p>
+                        <button class="btn btn-primary">Submit 3D Prints</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="shadow card">
+                    <div class="img-container">
+                        <img src="/public/images/FACT Mailchimp Photos_S18-12.jpg" class="card-img-top" alt="...">
+                    </div>
+                    
+                    <div class="card-body">
+                        <h2>Work Orders</h2>
+                        <p>
+                            The Spark Makerspace provides free work orders for machines we cannot let patrons use on their own. Our most common work orders are for the laser cutting machine, the CNC machines, and the embroidery machine, but we will happily take work requests for any machine or service in the space.
+                        </p>
+                        <button class="btn btn-primary">Submit Work Order</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="shadow card">
+                    <div class="img-container">
+                        <img src="/public/images/camerabodywlens.jpg" class="card-img-top" alt="...">
+                    </div>
+                    
+                    <div class="card-body">
+                        <h2>Cameras</h2>
+                        <p>
+                            We offer several Canon DSLR cameras and a variety of lenses, all of which are in high demand and often have multiple holds during the long semesters. <strong>Loan periods are 4 days and there is a 1 camera, 2 lens maximum.</strong> Plan your projects accordingly, and please respect the equipment and other users. 
+                        </p>
+                        <p>
+                            Please use responsibly. Cameras and lenses are fragile and you are responsible for the items checked out to you. High fines, rates, and replacement costs apply. 
+                        </p>
+                        <p><a href="">Check camera availability</a></p>
+                        <button class="btn btn-primary">Request Camera Booking</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            
+            
+        </div>
+        <!--
         <div class="row">
             <div class="col-lg" style="padding-bottom: 40px;">
                 <h2>3D Printing</h2>
@@ -34,23 +110,23 @@
                 &nbsp;
                 <ol class="list-group">
                     <li class="list-group-item">
-                        <h5>Prepare Your <code>stl</code> File</h5>
+                        <h2>Prepare Your <code>stl</code> File</h2>
                         <p>An <code>stl</code> file is a common format for the exchange of 3d models. Most modeling software should support this export format.</p>
                     </li>
                     <li class="list-group-item">
-                        <h5>Upload Your File</h5>
+                        <h2>Upload Your File</h2>
                         <p>Fill out the form on the <a href="/submit">submit</a> page and upload your model! For other options not listed in the form, please use the notes field. Our technicians will contact you if we need anything.</p>
                     </li>
                     <li class="list-group-item">
-                        <h5>Wait For Evaluation</h5>
+                        <h2>Wait For Evaluation</h2>
                         <p>Our technicians will review your model for printing on our machines, and contact you through your submitted email when we finish.</p>
                     </li>
                     <li class="list-group-item">
-                        <h5>Submit Payment</h5>
+                        <h2>Submit Payment</h2>
                         <p>If we can print your models, you'll be emailed a link to pay for your 3D prints. Follow this link to pay, and our technicians will begin printing your models as they come through the queue.</p>
                     </li>
                     <li class="list-group-item">
-                        <h5>Pick Up Your Model</h5>
+                        <h2>Pick Up Your Model</h2>
                         <p>Once your models have finished printing, our technicians will email you, and you can come by The Spark Makerspace whenever we are open to pick up your models!</p>
                     </li>
                 </ol>
@@ -63,28 +139,29 @@
                 &nbsp;
                 <ol class="list-group">
                     <li class="list-group-item">
-                        <h5>Fill Out the Form</h5>
+                        <h2>Fill Out the Form</h2>
                         <p>Fill out the form on the <a href="/submit">submit</a> page and select the type of work order you would llike. Upload any files associated with your work order so we can access them.</p>
                     </li>
                     <li class="list-group-item">
-                        <h5>Drop Off Your Materials</h5>
+                        <h2>Drop Off Your Materials</h2>
                         <p>Come by The Spark Makerspace any time we are open to drop off the materials for your work order.</p>
                     </li>
                     <li class="list-group-item">
-                        <h5>We Assign a Technician</h5>
+                        <h2>We Assign a Technician</h2>
                         <p>The Spark Makerspace will choose the most qualified technician to complete your work order, and email you when your order has been assigned.</p>
                     </li>
                     <li class="list-group-item">
-                        <h5>Schedule With your Technician</h5>
+                        <h2>Schedule With your Technician</h2>
                         <p>Your assigned technician will reach out to you to schedule a time to work on your peoject with you. If you don't need to be in space for the project, let your technician know and they will start work as soon as possible.</p>
                     </li>
                     <li class="list-group-item">
-                        <h5>Pick Up Your Finished Project</h5>
+                        <h2>Pick Up Your Finished Project</h2>
                         <p>Your technician will email you when they have completed your work order, and you can come by The Spark Makerspace any time we are open to pick up your project!</p>
                     </li>
                 </ol>
             </div>
         </div>
+        -->
     </div>
     
 </body>

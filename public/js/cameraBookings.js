@@ -7,15 +7,17 @@ var getBookingInfo = function (event) {
       "start": event.start,
       "end": event.end
     },
-    dataType: 'json',
-    success: function(res) {
-      console.log(res)
-      $('.modal-body > p').html(res);
+    dataType: 'html',
+    success: function(data) {
+      console.log(data)
+      $('.modal-body > p').append(data)
     }
   })
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+
+  //setup the calendar
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
@@ -42,12 +44,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     calendar.render();
 
+
+    //manual event entry end date default setter
     $("#startDate").change(function () {
         var endDate = new Date($("#startDate").val());
         endDate.setDate(endDate.getDate() + 3);
         $("#endDate").val(endDate.toISOString().substring(0, 10));
     });
 
+
+
+    //switching between filters and manual event entry
     $('#editor').on('click', function () {
       $('#filter-list').hide();
       $('#editor-controls').show();
@@ -58,6 +65,20 @@ document.addEventListener('DOMContentLoaded', function() {
       $('#filter-list').show();
     });
 
+
+
+    //resets filters to all on month changes
+    $('.fc-next-button').on('click', function() {
+      $('.nav-link-all').click();
+    })
+
+    $('.fc-prev-button').on('click', function() {
+      $('.nav-link-all').click();
+    });
+
+
+
+    //fades out calendar events that dont contain the item selected
     $('.filter-item').on('click', function () {
       if (this.innerHTML == "All") {
         $('.fc-daygrid-event').fadeTo("fast", 1);

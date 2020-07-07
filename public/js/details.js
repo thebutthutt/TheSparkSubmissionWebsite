@@ -9,6 +9,21 @@ $(document).ready(function () {
         var fileLocation = $(this).attr('id');
         window.location = '/prints/download?fileID=' + fileLocation;
     });
+
+    $('.pickup-btn').on('click', function () {
+        console.log('hello')
+        let fileID = $(this).attr('fileid');
+        $.ajax({
+            type: 'POST',
+            url: '/prints/markPickedUp',
+            data: {
+                "fileID": fileID
+            },
+            dataType: 'json'
+        }).done(function () {
+            location.reload();
+        });
+    });
     
     //which set of form items to show based on accepted or rejected print
     $("#decision").change(function () {
@@ -24,8 +39,18 @@ $(document).ready(function () {
     });
 
     $('.custom-file-input').on('change', function () {
-        let fileName = $(this).val().split('\\').pop();
-        $(this).siblings('.custom-file-label').addClass("selected").html(fileName);
+        if ($(this).val().substring($(this).val().length - 4) != '.gcode' || $(this).val().substring($(this).val().length - 4) != '.GCODE' ) {
+            $(this).attr('type', 'text')
+            $(this).attr('type', 'file')
+            $(this).popover({
+                trigger: 'focus'
+            })
+            $(this).popover('show');
+        } else {
+            $(this).popover('hide');
+            let fileName = $(this).val().split('\\').pop();
+            $(this).siblings('.custom-file-label').addClass("selected").html(fileName);
+        }
     });
 
     $('.change-btn').on('click', function () {
@@ -40,6 +65,10 @@ $(document).ready(function () {
         }).done(function () {
             location.reload();
         });
+    });
+
+    $('.modal').on('shown.bs.modal', function() {
+        $('#patronSwipe').focus();
     });
 
     $('.start-print').on('click', function () {
@@ -83,6 +112,8 @@ $(document).ready(function () {
             location.reload();
         });
     });
+
+    
 
 });
 
