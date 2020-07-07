@@ -17,6 +17,14 @@
         .print-image {
             margin-top: -100px;
         }
+
+        .laser-image {
+            margin-top: -50px;
+        }
+
+        .camera-image {
+            margin-top: -50px;
+        }
     </style>
     
 </head>
@@ -33,7 +41,7 @@
     </div>-->
     <div class="container-fluid mt-5 px-5">
         <div class="row mb-4">
-            <div class="col">
+            <div class="col-lg mb-5">
                 <div class="shadow card">
                     <div class="img-container rounded-top">
                         <img src="/public/images/spark-place_3d-printer_03-670x447.jpg" class="card-img-top print-image" alt="...">
@@ -55,14 +63,14 @@
                             </li>
                         </ul>
                         <p><a href="">3D Printing Submission Process</a></p>
-                        <button class="btn btn-primary">Submit 3D Prints</button>
+                        <a role="button" class="btn btn-primary" href="/submit">Submit 3D Print</a>
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-lg mb-5">
                 <div class="shadow card">
-                    <div class="img-container">
-                        <img src="/public/images/FACT Mailchimp Photos_S18-12.jpg" class="card-img-top" alt="...">
+                    <div class="img-container rounded-top">
+                        <img src="/public/images/FACT Mailchimp Photos_S18-12.jpg" class="card-img-top laser-image" alt="...">
                     </div>
                     
                     <div class="card-body">
@@ -70,14 +78,14 @@
                         <p>
                             The Spark Makerspace provides free work orders for machines we cannot let patrons use on their own. Our most common work orders are for the laser cutting machine, the CNC machines, and the embroidery machine, but we will happily take work requests for any machine or service in the space.
                         </p>
-                        <button class="btn btn-primary">Submit Work Order</button>
+                        <a role="button" class="btn btn-primary" href="/submit">Submit Work Order</a>
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-lg mb-5">
                 <div class="shadow card">
-                    <div class="img-container">
-                        <img src="/public/images/camerabodywlens.jpg" class="card-img-top" alt="...">
+                    <div class="img-container rounded-top">
+                        <img src="/public/images/camerabodywlens.jpg" class="card-img-top camera-image" alt="...">
                     </div>
                     
                     <div class="card-body">
@@ -88,8 +96,8 @@
                         <p>
                             Please use responsibly. Cameras and lenses are fragile and you are responsible for the items checked out to you. High fines, rates, and replacement costs apply. 
                         </p>
-                        <p><a href="">Check camera availability</a></p>
-                        <button class="btn btn-primary">Request Camera Booking</button>
+                        <p><a href="/cameras">Check camera availability</a></p>
+                        <a role="button" class="btn btn-primary" href="/book">Request Camera Booking</a>
                     </div>
                 </div>
             </div>

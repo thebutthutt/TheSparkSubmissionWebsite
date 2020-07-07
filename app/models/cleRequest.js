@@ -7,15 +7,22 @@ var cleSubmissionSchema = mongoose.Schema({
     type: String,
     files: [String],
     notes: String,
+    techNotes: String,
+
     isAssigned: Boolean,
     isCompleted: Boolean,
     hasMaterials: Boolean,
+    isPendingDelete: Boolean,
+    isPendingAssignment: Boolean,
+
+    materialDescriptions: [String],
+    materialLocations: [String],
+    intakeDates: [String],
+
     dateSubmitted: String,
     dateAssigned: String,
     dateCompleted: String,
-    techNotes: String,
-    isPendingDelete: Boolean,
-    isPendingAssignment: Boolean,
+
     requestingMaker: String
 });
 

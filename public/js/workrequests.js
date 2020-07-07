@@ -46,4 +46,10 @@ $(document).ready(function () {
             location.reload();
         });
     });
+
+    $('.material-intake-btn').on('click', function () {
+        let submissionID = $(this).attr('submissionID');
+        $('.modal').modal('show');
+        $('.modal form').attr('action', '/workrequests/materialintake?submissionID=' + submissionID);
+    })
 });
