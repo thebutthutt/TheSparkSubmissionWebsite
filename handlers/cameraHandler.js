@@ -1,31 +1,15 @@
 const moment = require('moment');
 const constants = require('../config/constants');
 var bookingModel = require('../app/models/booking');
+const { compareSync } = require('bcrypt-nodejs');
 
 module.exports = {
     findAvailableItems: function(startDate, endDate, callback) {
         var removeCameras = [];
         var removeLenses = [];
         var availableItems = [];
-        var allCameras = [
-            "Canon EOS 5D Mark IV",
-            "Canon EOS 7D Mark II",
-            "Canon EOS 80D",
-            "Canon EOS Rebel T6 (Unit 1)",
-            "Canon EOS Rebel T6 (Unit 2)",
-            "Canon Rebel SL1"
-        ];
-        var allLenses = [
-            "AT-X 116 PRO DX-II 11-16mm f/2.8",
-            "Rokinon 14mm f/2.8",
-            "Rokinon Tilt-Shift ​24mm f/3.5",
-            "EF-S ​17-55mm f/2.8 IS USM",
-            "EF ​50mm f/1.8 STM",
-            "EF ​85mm f/1.8 USM",
-            "EF ​100mm f/2.8 Macro USM",
-            "EF-S ​55-250mm f/4-5.6 IS II",
-            "EF ​75-300mm f/4-5.6 III",
-        ];
+        var allCameras = constands.cameras;
+        var allLenses = constants.lenses;
 
         bookingModel.find({
             "isAccepted": true
@@ -98,5 +82,20 @@ module.exports = {
             classNames: classes
         }
         newBooking.save();
+    },
+
+    confirmBooking: function (submissionID) {
+        bookingModel.findOne({
+            '_id': submissionID
+        }, function (err, result) {
+            if (err) {
+                console.log(err)
+            } else {
+                var time = moment().format(constants.format);
+                result.isAccepted = true;
+                result.dateProcessed = time;
+                result.save();
+            }
+        });
     }
 }

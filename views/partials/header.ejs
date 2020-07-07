@@ -32,16 +32,12 @@
                 <li class='nav-item <% if (pgnum == 7) { %> active <%}%>'>
                     <a class="nav-link" href="/bookings/new">Booking Requests</a>
                 </li>
-            <% } %>
-        </ul>
-        <ul class="navbar-nav">
-            <% if (isAdmin == false) { %>
-                <li class=' nav-item <% if (pgnum == 3) { %> active <%}%>'>
-                    <a class="nav-link" href="/login">Admin Login</a>
-                </li>
-            <% } else { %>
                 <li class='nav-item <% if (pgnum == 3) { %> active <%}%>'>
                     <a class="nav-link" href="/profile">Profile</a>
+                </li>
+            <% } else { %>
+                <li class=' nav-item <% if (pgnum == 3) { %> active <%}%>'>
+                    <a class="nav-link" href="/login">Admin Login</a>
                 </li>
             <% } %>
         </ul>

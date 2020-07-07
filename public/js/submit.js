@@ -6,8 +6,18 @@ var addOne = function () {
         success: function (data) {
             $('#files-list').append(data);
             $('.custom-file-input').on('change', function () {
-                let fileName = $(this).val().split('\\').pop();
-                $(this).siblings('.custom-file-label').addClass("selected").html(fileName);
+                if ($(this).val().substring($(this).val().length - 4) != '.stl') {
+                    $(this).attr('type', 'text')
+                    $(this).attr('type', 'file')
+                    $(this).popover({
+                        trigger: 'focus'
+                    })
+                    $(this).popover('show');
+                } else {
+                    $(this).popover('hide');
+                    let fileName = $(this).val().split('\\').pop();
+                    $(this).siblings('.custom-file-label').addClass("selected").html(fileName);
+                }
             });
         }
     });

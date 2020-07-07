@@ -9,57 +9,138 @@
 
 <body>
     <%- include ("../../partials/header") %>
+    <% if (printPage == 'all') {var isall = true} else {var isall = false}%>
     <div class="container ">
-        <%- include ("../../partials/printNav") %>
-        <div class="fake-tab">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col" style="width:18%">Name</th>
-                        <th scope="col">Submitted</th>
-                        <th scope="col">Reviewed</th>
-                        <th scope="col">Paid</th>
-                        <th scope="col" style="width:30%">Files</th>
-                        <th scope="col" style=" width:15%; text-align: end;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (dbdata.length == 0) { %>
-                    <tr>
-                        <td colspan="6" class="none">No submissions at all!</td>
-                    </tr>
-                    <% } %>
-                    <%dbdata.slice().reverse().forEach(function (item) {%>
-                    <tr>
-                        <td>
-                            <%= item.patron.fname %> <%= item.patron.lname %> <br>
-                        </td>
-                        <td><%=item.dateSubmitted%></td>
-                        <td><%=item.datePaymentRequested%></td>
-                        <td><%=item.datePaid%></td>
-                        <td colspan="2" class="no-padding">
-                            <table class="plain" style="width: 100%;">
-                                <% item.files.forEach(function (file) {%>
-                                <tr>
-                                    <td>
-                                        <a class="preview-btn" id='<%= file._id%>'
-                                            href="#"><%=file.fileName.substring(file.fileName.indexOf('/15') + 11)%></a>
-                                        &nbsp;
-                                        <%- include ("../../partials/flags", {file:file, isAll: true}) %>
-                                    </td>
-                                    <td style="white-space: nowrap; text-align: right;">
-                                        <%- include ("../../partials/fileBurger", {file:file, item:item}) %>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            </table>
-                        </td>
-                    </tr>
-                    <%})%>
-                </tbody>
-            </table>
-        </div>
+        <div class="shadow card">
+            <div class="card-header">
+                <%- include ("../../partials/PrintDetails/printNav") %>
+            </div>
+            <ol class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-2"><strong>Name</strong></div>
+                        <div class="col"><strong>Submitted</strong></div>
 
+                        <%if (printPage == 'newSub') { %>
+                            <div class="col"><strong>Complete</strong></div>
+                        <%}%>
+
+                        <%if (printPage != 'newSub') {%>
+                            <div class="col"><strong>Reviewed</strong></div>
+                            <% if (printPage != 'pendpay' && printPage != 'rejected') {%>
+                                <div class="col"><strong>Paid</strong></div>
+                            <%}%>
+                        <%}%>
+                        
+                        
+                        <div class="col-7">
+                            <div class="row">
+                                <%if (printPage != 'newSub' && printPage != 'pendpay' && printPage != 'ready' && printPage != 'rejected') {%>
+                                    <div class="col"><strong>Printed</strong></div>
+                                    <% if (printPage != 'pickup') {%>
+                                        <div class="col"><strong>Picked Up</strong></div>
+                                    <%}%>
+                                <%}%>
+                                <div class="col-6"><strong>Filename</strong></div>
+                                <div class="col text-right"><strong></strong></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </li>
+                <%dbdata.slice().reverse().forEach(function (item) {%>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-2"><%= item.patron.fname %> <%= item.patron.lname %></div>
+                            <div class="col"><%=item.dateSubmitted%></div>
+
+                            <% if (printPage == 'newSub') {%>
+                                <div class="col"><span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="top"
+                                    title='<% if (!item.allFilesReviewed) { %> Please review all files first! <%} else {%>Send to Patron<% } %>'>
+                                    <button type="button" style="border: none; background: transparent;" class="submit-btn" id='<%= item._id%>'
+                                      <% if (!item.allFilesReviewed) { %> disabled style="pointer-events: none;" <%}%> >
+                                      <svg class="bi bi-person-check" width="25px" height="25px" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z"/>
+                                        <rect width="3" height="3" x="2" y="9" rx="1"/>
+                                        <path d="M1 5h14v2H1z"/>
+                                      </svg>
+                                    </button>
+                                  </span></div>
+                            <%}%>
+
+                            <%if (printPage != 'newSub') {%>
+                                <div class="col"><%=item.datePaymentRequested%></div>
+                                <% if (printPage != 'pendpay' && printPage != 'rejected') {%>
+                                    <div class="col"><%=item.datePaid%></div>
+                                <%}%>
+                            <%}%>
+                            
+                            
+                            <div class="col-7">
+                                <% item.files.forEach(function (file) {%>
+                                    <%if ( 
+                                        (printPage == 'newSub' || (printPage == 'pendpay' && file.isRejected == false) || printPage == 'all')
+                                        ||
+                                        (
+                                            (printPage == 'ready' && file.isRejected == false && file.isPrinted == false) 
+                                            && 
+                                            (
+                                                (location != "all" && file.printLocation == location) 
+                                                || 
+                                                (location == 'all')
+                                            )
+                                        )
+                                        ||
+                                        (
+                                            (printPage == 'pickup' && file.isRejected == false && file.isPrinted == true && file.isPickedUp == false) 
+                                            && 
+                                            (
+                                                (location != "all" && file.pickupLocation == location) 
+                                                || 
+                                                (location == 'all')
+                                            )
+                                        )
+                                        ||
+                                        (printPage == 'completed' && file.isPickedUp)
+                                        ||
+                                        (printPage == 'rejected' && file.isRejected)
+                                        ) { %>
+                                        <div class="row">
+                                            <%if (printPage != 'newSub' && printPage != 'pendpay' && printPage != 'ready' && printPage != 'rejected') {%>
+                                                <div class="col">
+                                                    <%if (file.datePrinted != "Never") {%>
+                                                        <%=file.datePrinted%>
+                                                    <%}%>
+                                                </div>
+                                                <% if (printPage != 'pendpay' && printPage != 'pickup') {%>
+                                                    <div class="col">
+                                                        <%if (file.datePickedUp != "Never") {%>
+                                                            <%=file.datePickedUp%>
+                                                        <%}%>
+                                                    </div>
+                                                <%}%>
+                                            <%}%>
+
+                                            <div class="col-6">
+                                                <a class="preview-btn" id='<%= file._id%>'
+                                                    href="#"><%=file.fileName.substring(file.fileName.indexOf('/15') + 11)%></a>
+                                                &nbsp;
+                                                <%- include ("../../partials/flags", {file:file, isAll: isall}) %>
+                                            </div>
+                                            <div class="col text-right">
+                                                <%- include ("../../partials/fileBurger", {file:file, item:item}) %>
+                                            </div>
+                                        </div>
+                                    <%}%>
+                                <%})%>
+                            </div>
+                        </div>
+                    </li>
+                <%})%>
+            </ol>
+        </div>
+        
+            
     </div>
 </body>
 

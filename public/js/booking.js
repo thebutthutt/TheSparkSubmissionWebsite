@@ -53,5 +53,4 @@ $(document).ready(function () {
         $("#endDate").val(endDate.toISOString().substring(0, 10));
         getAvailableCameras(startDate.toISOString().substring(0, 10), endDate.toISOString().substring(0, 10));
     });
-
 });

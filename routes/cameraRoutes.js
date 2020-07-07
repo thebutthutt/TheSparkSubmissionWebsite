@@ -1,3 +1,6 @@
+const constants = require('../config/constants');
+
+
 module.exports = function (app, bookingModel, cameraHandler) {
     // =====================================
     // CAMERAS ========================
@@ -99,11 +102,28 @@ module.exports = function (app, bookingModel, cameraHandler) {
                 console.log(err)
             } else {
                 if (req.isAuthenticated()) {
-                    res.send(result);
-                } else {
-                    res.send('done');
+                    res.render('partials/cameras/detailsModal', {
+                        booking: result
+                    });
                 }
             }
+        });
+    });
+
+    app.get('/barcodes', function (req, res) {
+        var submissionID = req.body.submissionID || req.query.submissionID;
+        console.log('here')
+        bookingModel.findOne({
+            "_id": submissionID
+        }, function (err, result) {
+            var data = {
+                camera: constants.barcodes.cameras[result.camera],
+                lens1: constants.barcodes.lenses[result.lens1],
+                lens2: constants.barcodes.lenses[result.lens2],
+            }
+            res.render('partials/cameras/barcodeList.ejs', {
+                data: data
+            });
         });
     });
 
@@ -146,6 +166,12 @@ module.exports = function (app, bookingModel, cameraHandler) {
     app.post('/manualbooking', isLoggedIn, function (req, res) {
         cameraHandler.submitBooking(req)
         res.redirect('back');
+    });
+
+    app.post('/confirmbooking', function (req, res) {
+        var submissionID = req.body.submissionID || req.query.submissionID;
+        cameraHandler.confirmBooking(submissionID);
+        res.json('done');
     });
 
 }

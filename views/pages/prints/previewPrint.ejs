@@ -17,9 +17,18 @@
 <body>
     <%- include ("../../partials/header") %>
     <div class="container my-5">
+        <%if (print.isPrinted) {%>
+            <div class="row mb-3">
+                <div class="col">
+                    <button data-toggle="modal" data-target=".modal" class="btn btn-lg btn-primary btn-block">Picking Up</button>
+                </div>
+                
+            </div>
+        <%}%>
         <div class="row">
+            
             <div class="col">
-                <div class="card mb-3">
+                <div class="shadow card mb-3">
                     <div class="card-img-top">
                         <div class="progress">
                             <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
@@ -81,7 +90,7 @@
                         <%if (print.isReviewed) {%>
                             <%- include ("../../partials/PrintDetails/review", {print:print}) %>
                         <%}%>
-                        <div class="card">
+                        <div class="shadow card">
                             <div class="card-body">
                                 <h4>Review Print</h4>
                                 <hr>
@@ -109,32 +118,47 @@
                             <%}%>
                         <%}%>
                     <% } %>
-                
             </div>
         </div>
+    </div>
 
-        <div class="row mt-5">
-            <div class="col">
-                <div class="info-mockup">
-                    <div class="row">
-                        <div class="col">
-                            
-                        </div>
-                        <div class="col-5">
-                            
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            
-                        </div>
-                        <div class="col-4">
-                            
-                        </div>
-                    </div>
-                    
-                </div>
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Confirm ID and Digital Signature</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <p class="lead">
+                            Say:
+                        </p>
+                        <blockquote class="blockquote">
+                            <p class="mb-0 font-italic">Please swipe your ID on the scanner. This represents your digital signature and confirms that the model you are picking up is the model you requested to be printed, and that it has been printed as you requested it.</p>
+                        </blockquote>
+
+                        <p class="lead">
+                            Record Swipe:
+                        </p>
+                        <form>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="patronSwipe" name="patronSwipe">
+                            </div>
+                            <button type="button" class="btn btn-success pickup-btn" fileID="<%=print._id%>">Confirm</button>
+                        </form>
+
+                    </div>
+                    <div class="col">
+                        <img src="/public/images/mclovin-license.jpg" class="img-fluid rounded float-right" alt="Responsive image">
+                    </div>
+                </div>
+                
+            </div>
+          </div>
         </div>
     </div>
 </body>
