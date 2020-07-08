@@ -27,6 +27,7 @@ var printHandler = require('./handlers/printHandler.js');
 var cleHandler = require('./handlers/cleHandler.js');
 var adminRequestHandler = require('./handlers/adminRequestHandler.js');
 var cameraHandler = require('./handlers/cameraHandler.js');
+const { ESPIPE } = require('constants');
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
@@ -54,6 +55,7 @@ app.use('/fullcalendar', express.static(__dirname + '/node_modules/fullcalendar/
 app.use('/gui', express.static(__dirname + '/node_modules/dat.gui/')); //allow website to access the uploaded STLs (for in site display)
 app.use('/uploads', express.static(__dirname + '/app/uploads/')); //allow website to access the uploaded STLs (for in site display)
 app.use('/qrcode', express.static(__dirname + '/node_modules/qrcode-generator/')); //allow website to access the uploaded STLs (for in site display)
+app.use('/datepicker', express.static(__dirname + '/node_modules/js-datepicker/dist/'));
 
 app.use(favicon(path.join(__dirname,'public','images','favicon.ico')));
 
