@@ -5,7 +5,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
     // show the login form
     app.get('/login', isLoggedOut, function (req, res) {
         // render the page and pass in any flash data if it exists
-        res.render('pages/login', {
+        res.render('pages/users/login', {
             message: req.flash('loginMessage'),
             pgnum: 3, //tells the navbar what page to highlight
             isAdmin: false
@@ -25,7 +25,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
     // show the signup form
     app.get('/signup', function (req, res) {
         // render the page and pass in any flash data if it exists
-        res.render('pages/signup', {
+        res.render('pages/users/signup', {
             message: req.flash('signupMessage'),
             pgnum: 3, //tells the navbar what page to highlight
             isAdmin: false
@@ -45,7 +45,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printR
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get('/profile', isLoggedIn, function (req, res) {
-        res.render('pages/profile', {
+        res.render('pages/users/profile', {
             message: req.flash('logoutMessage'),
             pgnum: 3, //tells the navbar what page to highlight
             user: req.user, // get the user out of session and pass to template

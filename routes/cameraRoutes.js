@@ -110,7 +110,7 @@ module.exports = function (app, bookingModel, cameraHandler) {
         });
     });
 
-    app.get('/barcodes', function (req, res) {
+    app.get('/bookings/barcodes', function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         console.log('here')
         bookingModel.findOne({
@@ -127,7 +127,7 @@ module.exports = function (app, bookingModel, cameraHandler) {
         });
     });
 
-    app.post('/availableon', function (req, res) {
+    app.post('/bookings/availableon', function (req, res) {
         var startDate = req.body.startDate || req.query.startDate;
         var endDate = req.body.endDate || req.query.endDate;
         cameraHandler.findAvailableItems(startDate, endDate, function(data) {
@@ -158,17 +158,17 @@ module.exports = function (app, bookingModel, cameraHandler) {
         });
     });
 
-    app.post('/submitbooking', function (req, res) {
+    app.post('/bookings/submitbooking', function (req, res) {
         cameraHandler.submitBooking(req);
         res.redirect('back');
     });
 
-    app.post('/manualbooking', isLoggedIn, function (req, res) {
+    app.post('/bookings/manualbooking', isLoggedIn, function (req, res) {
         cameraHandler.submitBooking(req)
         res.redirect('back');
     });
 
-    app.post('/confirmbooking', function (req, res) {
+    app.post('/bookings/confirmbooking', function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         cameraHandler.confirmBooking(submissionID);
         res.json('done');

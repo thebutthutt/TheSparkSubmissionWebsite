@@ -6,7 +6,7 @@ $(document).ready(function () {
         $('.modal').modal('show')
         $.ajax({
             type: 'GET',
-            url: '/barcodes',
+            url: '/bookings/barcodes',
             data: {
                 "submissionID": submissionID
             },
@@ -16,13 +16,27 @@ $(document).ready(function () {
             $('.modal-body').empty()
             $('.modal-body').append(data)
         });
+    });
+
+    $('.btn-delete').on('click', function () {
+        var submissionID = $(this).attr('submissionID');
+        $.ajax({
+            type: 'POST',
+            url: '/bookings/deletebooking',
+            data: {
+                "submissionID": submissionID
+            },
+            dataType: 'json'
+        }).done(function () {
+            location.reload();
+        });
     })
 
     $('.booking-confirm').on('click', function() {
         let submissionID = currentSubmissionID;
         $.ajax({
             type: 'POST',
-            url: '/confirmbooking',
+            url: '/bookings/confirmbooking',
             data: {
                 "submissionID": submissionID
             },
