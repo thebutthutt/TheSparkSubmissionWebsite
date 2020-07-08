@@ -5,6 +5,7 @@
     <%- include ("../../partials/head") %>
     <script src="/public/js/details.js"></script>
     <script type="module" src='/public/js/stldisplay.js'></script>
+    <script type="text/javascript" src="/qrcode/qrcode.js"></script>
     <link type="text/css" rel="stylesheet" href="/public/css/details.css">
     <style>
         p strong {
@@ -20,7 +21,7 @@
         <%if (print.isPrinted && !print.isPickedUp) {%>
             <div class="row mb-3">
                 <div class="col">
-                    <button data-toggle="modal" data-target=".modal" class="shadow btn btn-lg btn-primary btn-block">Picking Up</button>
+                    <button data-toggle="modal" data-target=".modal" class="shadow btn btn-lg btn-primary btn-block modal-button">Picking Up</button>
                 </div>
                 
             </div>
@@ -134,23 +135,8 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col">
-                        <p class="lead">
-                            Say:
-                        </p>
-                        <blockquote class="blockquote">
-                            <p class="mb-0 font-italic">Please swipe your ID on the scanner. This represents your digital signature and confirms that the model you are picking up is the model you requested to be printed, and that it has been printed as you requested it.</p>
-                        </blockquote>
-
-                        <p class="lead">
-                            Record Swipe:
-                        </p>
-                        <form>
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="patronSwipe" name="patronSwipe">
-                            </div>
-                            <button type="button" class="btn btn-success pickup-btn" fileID="<%=print._id%>">Confirm</button>
-                        </form>
-
+                        <p>Scan this QR code on an iPad, then hand the iPad to the patron for their signature. You may close this window after the patron has submitted their signature.</p>
+                        <div id="qrcode"></div>
                     </div>
                     <div class="col">
                         <img src="/public/images/mclovin-license.jpg" class="img-fluid rounded float-right" alt="Responsive image">

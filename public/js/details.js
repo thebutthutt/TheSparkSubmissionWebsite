@@ -1,3 +1,18 @@
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+    }
+};
+
 $(document).ready(function () {
     //initial form to show is an accepted ptint
     $(".accepted-controls").show();
@@ -9,6 +24,17 @@ $(document).ready(function () {
         var fileLocation = $(this).attr('id');
         window.location = '/prints/download?fileID=' + fileLocation;
     });
+
+    $('.modal-button').on('click', function () {
+        var typeNumber = 0;
+        var errorCorrectionLevel = 'L';
+        var qr = qrcode(typeNumber, errorCorrectionLevel);
+        var url = 'https://sparkorders.library.unt.edu/signature?uniqueID=' + getUrlParameter('fileID');
+        qr.addData(url);
+        qr.make();
+        document.getElementById('qrcode').innerHTML = qr.createImgTag();
+        $('#qrcode img').width('300px').height('300px')
+    })
 
     $('.pickup-btn').on('click', function () {
         console.log('hello')

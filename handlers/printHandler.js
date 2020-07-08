@@ -458,6 +458,21 @@ module.exports = {
         });
     },
 
+    acceptSignature: function(fileID, fileName) {
+        printRequestModel.findOne({
+            'files._id': fileID
+        }, function (err, result) {
+            if (err) {
+                console.log(err)
+            } else {
+                result.files.id(fileID).isSigned = true;
+                result.files.id(fileID).signaturePath = fileName;
+                result.save();
+                module.exports.markPickedUp(fileID)
+            }
+        });
+    },
+
     markPickedUp: function(fileID) {
         var time = moment().format(constants.format);
         printRequestModel.findOne({

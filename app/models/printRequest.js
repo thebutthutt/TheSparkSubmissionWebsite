@@ -25,6 +25,8 @@ var singlePrintSchema = mongoose.Schema({
     canBeReviewed: Boolean,
     isStarted: Boolean,
     isStaleOnPickup: Boolean,
+    isSigned: Boolean,
+    signaturePath: String,
 
 
     dateSubmitted: String,

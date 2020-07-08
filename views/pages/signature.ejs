@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+
+<head>
+    <%- include ("../partials/head") %>
+    <script src="../public/js/signature.js"></script>
+    <style>
+        html, body {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        canvas {
+            margin-top: 10px;
+            margin-left: 25px;
+            margin-bottom: 20px;;
+        }
+
+        .box {
+            width: calc(100vw - 50px);
+            margin-left: 25px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <h1>Print Pickup Signature</h1>
+        <p>
+            By signing below you agree that the print you are picking up has been printed to the specifications you requested.
+        </p>
+    </div>
+    <canvas id="drawing-area" class="drawing-area rounded shadow border" ></canvas>
+    <div class="container-fluid">
+        <div class="col">
+            <button id="clear-button" class="clear-button shadow btn btn-lg btn-danger float-left" type="button">Clear</button>
+            <button id="submit-button" class="submit-button shadow btn btn-lg btn-success float-right" type="button">Submit</button>
+        </div>
+    </div>
+    
+</body>
+
+</html>
