@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <%- include ("../partials/head") %>
+    <%- include ("../../partials/head") %>
     <style>
         .container {
             padding-top: 80px;
@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <%- include ("../partials/header") %>
+    <%- include ("../../partials/header") %>
     <div style="display: none;" class="hidden-extras" myeuid='<%=user.local.euid%>' isSuperAdmin='<%= isSuperAdmin%>'>
     </div>
     <div class="container">
@@ -23,7 +23,7 @@
 
         <div class="row">
             
-            <div class="<%if (isSuperAdmin) {%>col<%} else {%>col-6<%}%>" style="<%if(isSuperAdmin == false){%>margin: auto; <%}%>" >
+            <div class="<%if (isSuperAdmin) {%>col<%} else {%>col-6<%}%>" style="<%if (isSuperAdmin) {%>margin: auto<%}%>" >
                 <div class="shadow card mb-4">
                     <div class="card-header border-bottom">
                         <h4 class="mb-0">My Account</h4>

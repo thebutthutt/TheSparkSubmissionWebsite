@@ -15,7 +15,7 @@ module.exports = function (app, passport, userModel, cleHandler, cleRequestModel
             if (err) {
                 console.log(err);
             }
-            res.render('pages/workrequests', {
+            res.render('pages/workrequests/workrequests', {
                 pgnum: 5, //workrequests
                 dbdata: data,
                 isAdmin: true,
@@ -56,7 +56,7 @@ module.exports = function (app, passport, userModel, cleHandler, cleRequestModel
             if (err) {
                 console.log(err)
             } else {
-                res.render('pages/workRequestDetail', {
+                res.render('pages/workrequests/workRequestDetail', {
                     request: data,
                     pgnum: 5,
                     isAdmin: true

@@ -162,10 +162,10 @@
                                                 <a class="preview-btn" id='<%= file._id%>'
                                                     href="#"><%=file.fileName.substring(file.fileName.indexOf('/15') + 11)%></a>
                                                 &nbsp;
-                                                <%- include ("../../partials/flags", {file:file, isAll: isall}) %>
+                                                <%- include ("../../partials/PrintDetails/flags", {file:file, isAll: isall}) %>
                                             </div>
                                             <div class="col-1 text-right">
-                                                <%- include ("../../partials/fileBurger", {file:file, item:item}) %>
+                                                <%- include ("../../partials/PrintDetails/fileBurger", {file:file, item:item}) %>
                                             </div>
                                         </div>
                                     <%}%>

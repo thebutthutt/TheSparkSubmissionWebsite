@@ -278,7 +278,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
             if (success == true) {
                 printHandler.recievePayment(submissionID, false, function callback() {
                 });
-                res.render('pages/paymentComplete', { //render the success page
+                res.render('pages/prints/paymentComplete', { //render the success page
                     data: req.query,
                     pgnum: 0,
                     isAdmin: admin,

@@ -45,7 +45,7 @@ module.exports = function (app, printHandler, cleHandler) {
     //send the HTML from the single print submission segment to the browser
     //used for adding more than one 3d print in a single submission form
     app.get('/oneprint', function (req, res) {
-        res.render('partials/oneprint'); //render the html
+        res.render('partials/submit/oneprint'); //render the html
     }, function (err, html) {
         res.send(html); //send it to the webapp
     });
@@ -53,7 +53,7 @@ module.exports = function (app, printHandler, cleHandler) {
     //send the HTML from the single print submission segment to the browser
     //used for adding more than one file in a single submission form
     app.get('/onefile', function (req, res) {
-        res.render('partials/onefile'); //render the html
+        res.render('partials/submit/onefile'); //render the html
     }, function (err, html) {
         res.send(html); //send it to the webapp
     });
@@ -66,7 +66,7 @@ module.exports = function (app, printHandler, cleHandler) {
                 isSuperAdmin = true;
             }
         }
-        res.render('pages/signature', {
+        res.render('pages/prints/signature', {
             pgnum: 2, //tells the navbar what page to highlight
             isAdmin: admin,
             isSuperAdmin: superAdmin

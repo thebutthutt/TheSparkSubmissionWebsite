@@ -1,7 +1,7 @@
 var getAvailableCameras = function(startDate, endDate) {
     $.ajax({
         type: 'POST',
-        url: '/availableon',
+        url: '/bookings/availableon',
         data: {
             "startDate": startDate,
             "endDate": endDate,
