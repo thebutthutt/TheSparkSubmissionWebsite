@@ -127,6 +127,9 @@ module.exports = function (app, bookingModel, cameraHandler) {
         });
     });
 
+
+
+
     app.post('/bookings/availableon', function (req, res) {
         var startDate = req.body.startDate || req.query.startDate;
         var endDate = req.body.endDate || req.query.endDate;
@@ -173,6 +176,12 @@ module.exports = function (app, bookingModel, cameraHandler) {
         cameraHandler.confirmBooking(submissionID);
         res.json('done');
     });
+
+    app.post('/bookings/deletebooking', function (req, res) {
+        var submissionID = req.body.submissionID || req.query.submissionID;
+        cameraHandler.deleteBooking(submissionID);
+        res.json('done');
+    })
 
 }
 
