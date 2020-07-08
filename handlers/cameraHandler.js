@@ -97,5 +97,15 @@ module.exports = {
                 result.save();
             }
         });
+    },
+
+    deleteBooking: function (submissionID) {
+        bookingModel.findOneAndDelete({
+            '_id': submissionID
+        }, function (err, result) {
+            if (err) {
+                console.log(err)
+            }
+        });
     }
 }
