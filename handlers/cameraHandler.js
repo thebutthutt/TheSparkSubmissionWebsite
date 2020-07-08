@@ -8,7 +8,7 @@ module.exports = {
         var removeCameras = [];
         var removeLenses = [];
         var availableItems = [];
-        var allCameras = constands.cameras;
+        var allCameras = constants.cameras;
         var allLenses = constants.lenses;
 
         bookingModel.find({

@@ -26,6 +26,7 @@
         "nodemailer": "^6.4.6",
         "passport": "^0.4.1",
         "passport-local": "^1.0.0",
+        "qrcode-generator": "^1.4.4",
         "serve-favicon": "^2.5.0",
         "three": "^0.117.1",
         "url-parse": "^1.4.7"

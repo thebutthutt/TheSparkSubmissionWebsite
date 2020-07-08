@@ -53,6 +53,7 @@ app.use('/three', express.static(__dirname + '/node_modules/three/')); //allow w
 app.use('/fullcalendar', express.static(__dirname + '/node_modules/fullcalendar/')); //allow website to access the three.js library
 app.use('/gui', express.static(__dirname + '/node_modules/dat.gui/')); //allow website to access the uploaded STLs (for in site display)
 app.use('/uploads', express.static(__dirname + '/app/uploads/')); //allow website to access the uploaded STLs (for in site display)
+app.use('/qrcode', express.static(__dirname + '/node_modules/qrcode-generator/')); //allow website to access the uploaded STLs (for in site display)
 
 app.use(favicon(path.join(__dirname,'public','images','favicon.ico')));
 

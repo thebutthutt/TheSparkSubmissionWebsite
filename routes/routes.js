@@ -1,3 +1,7 @@
+var fs = require('fs');
+var path = require('path');
+var moment = require('moment');
+
 module.exports = function (app, printHandler, cleHandler) {
 
     // =====================================
@@ -52,6 +56,37 @@ module.exports = function (app, printHandler, cleHandler) {
         res.render('partials/onefile'); //render the html
     }, function (err, html) {
         res.send(html); //send it to the webapp
+    });
+
+    app.get('/signature', function (req, res) {
+        var admin = false, superAdmin = false;
+        if (req.isAuthenticated()) {
+            admin = true;
+            if (req.user.isSuperAdmin == true) {
+                isSuperAdmin = true;
+            }
+        }
+        res.render('pages/signature', {
+            pgnum: 2, //tells the navbar what page to highlight
+            isAdmin: admin,
+            isSuperAdmin: superAdmin
+        });
+    });
+
+    app.post('/recievesignature', function (req, res) {
+        var time = moment()
+        let base64Image = req.body.dataURL.split(';base64,').pop();
+        var fileName = req.body.uniqueID + "_" + time + ".jpg"
+        var newPath = path.join(__dirname, '../app/uploads/signatures/', fileName)
+        
+        fs.writeFile(newPath, base64Image, {encoding: 'base64'}, function(err) {
+            console.log('File created');
+        });
+
+        console.log(req.body.uniqueID)
+        printHandler.acceptSignature(req.body.uniqueID, newPath);
+
+        res.json('done')
     });
 
     //what do do when the user hits submit
