@@ -21,7 +21,7 @@
         <%if (print.isPrinted && !print.isPickedUp) {%>
             <div class="row mb-3">
                 <div class="col">
-                    <button data-toggle="modal" data-target=".modal" class="shadow btn btn-lg btn-primary btn-block modal-button">Picking Up</button>
+                    <button data-toggle="modal" data-target=".modal" fileName="<%=print.fileName.substring(print.fileName.indexOf('/15') + 11)%>" fileID="<%=print._id%>" class="shadow btn btn-lg btn-primary btn-block modal-button">Picking Up</button>
                 </div>
                 
             </div>

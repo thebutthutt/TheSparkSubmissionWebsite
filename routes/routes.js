@@ -73,6 +73,12 @@ module.exports = function (app, printHandler, cleHandler) {
         });
     });
 
+    app.get('/signaturepad', function (req, res) {
+        res.render('partials/signaturePad');
+    }, function (err, html) {
+        res.send(html);
+    });
+
     app.post('/recievesignature', function (req, res) {
         var time = moment()
         let base64Image = req.body.dataURL.split(';base64,').pop();
