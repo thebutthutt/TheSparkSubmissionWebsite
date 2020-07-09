@@ -46,24 +46,11 @@ var getAvailableCameras = function(startDate, endDate) {
 
 $(document).ready(function () {
     var startDate, endDate;
-    /*
-    var dtToday = new Date();
-
-    var month = dtToday.getMonth() + 1;
-    var day = dtToday.getDate();
-    var year = dtToday.getFullYear();
-
-    if(month < 10)
-        month = '0' + month.toString();
-    if(day < 10)
-        day = '0' + day.toString();
-
-    var minDate = year + '-' + month + '-' + day;    
-    $('#startDate').attr('min', minDate);*/
 
     const endInput = datepicker('#endDate');
     const startInput = datepicker('#startDate', { 
         noWeekends: true,
+        showAllDates: true,
         onHide: instance => {
             console.log('changed')
             endDate = new Date(instance.dateSelected);

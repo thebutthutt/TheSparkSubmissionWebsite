@@ -1,3 +1,5 @@
+const channel = new BroadcastChannel('signature');
+
 var getUrlParameter = function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1),
         sURLVariables = sPageURL.split('&'),
@@ -14,6 +16,11 @@ var getUrlParameter = function getUrlParameter(sParam) {
 };
 
 $(document).ready(function () {
+    channel.addEventListener('message', function (event) {
+        if (event.data == 'Signature sent') {
+            location.reload();
+        }
+    });
     //initial form to show is an accepted ptint
     $(".accepted-controls").show();
     $(".accepted-controls input").prop('required', true);
@@ -33,7 +40,14 @@ $(document).ready(function () {
         qr.addData(url);
         qr.make();
         document.getElementById('qrcode').innerHTML = qr.createImgTag();
-        $('#qrcode img').width('300px').height('300px')
+        $('#qrcode img').width('300px').height('300px');
+
+        var printData = {
+            'fileName': $(this).attr('fileName'),
+            'fileID': $(this).attr('fileID')
+        }
+
+        channel.postMessage(printData);
     })
 
     $('.pickup-btn').on('click', function () {
@@ -50,7 +64,7 @@ $(document).ready(function () {
             location.reload();
         });
     });
-    
+
     //which set of form items to show based on accepted or rejected print
     $("#decision").change(function () {
         var requestType = $(this).children("option:selected").val();
@@ -65,7 +79,7 @@ $(document).ready(function () {
     });
 
     $('.custom-file-input').on('change', function () {
-        if ($(this).val().substring($(this).val().length - 4) != '.gcode' || $(this).val().substring($(this).val().length - 4) != '.GCODE' ) {
+        if ($(this).val().substring($(this).val().length - 6) != '.gcode' && $(this).val().substring($(this).val().length - 6) != '.GCODE') {
             $(this).attr('type', 'text')
             $(this).attr('type', 'file')
             $(this).popover({
@@ -91,10 +105,6 @@ $(document).ready(function () {
         }).done(function () {
             location.reload();
         });
-    });
-
-    $('.modal').on('shown.bs.modal', function() {
-        $('#patronSwipe').focus();
     });
 
     $('.start-print').on('click', function () {
@@ -139,7 +149,6 @@ $(document).ready(function () {
         });
     });
 
-    
+
 
 });
-
