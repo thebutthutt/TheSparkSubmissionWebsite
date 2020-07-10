@@ -1,192 +1,284 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+    <head>
+        <%- include ("../../partials/head") %>
+        <style>
+            .container {
+                padding-top: 80px;
+            }
+        </style>
+        <script src="../public/js/myAccount.js"></script>
+    </head>
 
-<head>
-    <%- include ("../../partials/head") %>
-    <style>
-        .container {
-            padding-top: 80px;
-        }
-    </style>
-    <script src="../public/js/myAccount.js"></script>
-</head>
+    <body>
+        <%- include ("../../partials/header") %>
+        <div
+            style="display: none;"
+            class="hidden-extras"
+            myeuid="<%=user.local.euid%>"
+            isSuperAdmin="<%= isSuperAdmin%>"
+        ></div>
+        <div class="container">
+            <!-- show any messages that come back with authentication -->
+            <% if (message.length > 0) { %>
+            <div class="alert alert-warning"><%= message %></div>
+            <% } %>
 
-<body>
-    <%- include ("../../partials/header") %>
-    <div style="display: none;" class="hidden-extras" myeuid='<%=user.local.euid%>' isSuperAdmin='<%= isSuperAdmin%>'>
-    </div>
-    <div class="container">
-        <!-- show any messages that come back with authentication -->
-        <% if (message.length > 0) { %>
-        <div class="alert alert-warning"><%= message %></div>
-        <% } %>
-
-        <div class="row">
-            
-            <div class="<%if (isSuperAdmin) {%>col<%} else {%>col-6<%}%>" style="<%if (isSuperAdmin) {%>margin: auto<%}%>" >
-                <div class="shadow card mb-4">
-                    <div class="card-header border-bottom">
-                        <h4 class="mb-0">My Account</h4>
-                    </div>
-                    <div class="border-bottom">
-                        <ul class="list-group list-group-flush ">
-                            <li class="list-group-item">
-                                <div class="row">
-                                    <div class="col-3">
-                                        <strong>EUID</strong>
-                                    </div>
-                                    <div class="col">
-                                        <%=user.local.euid%>
-                                    </div>
-                                </div>
-                                
-                            </li>
-                            <li class="list-group-item">
-                                <div class="row">
-                                    <div class="col-3">
-                                        <strong>Name</strong>
-                                    </div>
-                                    <div class="col">
-                                        <%=user.name%>
-                                    </div>
-                                </div>
-                                
-                            </li>
-                            <li class="list-group-item">
-                                <div class="row">
-                                    <div class="col-3">
-                                        <strong>Email</strong>
-                                    </div>
-                                    <div class="col">
-                                        <%=user.email%>
-                                    </div>
-                                </div>
-                                
-                            </li>
-                            <li class="list-group-item">
-                                <div class="row">
-                                    <div class="col-3">
-                                        <strong>User Type</strong>
-                                    </div>
-                                    <div class="col">
-                                        <%if(user.isSuperAdmin) {%> 
-                                            Super Admin
-                                        <% } else { %> 
-                                            Technician 
-                                        <% } %>
-                                    </div>
-                                </div>
-                                
-                            </li>
-                        </ul>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item clearfix">
-                            <a type="button" href="#" class="float-left" data-toggle="modal" data-target="#staticBackdrop">Edit Account Info</a>
-                            <a class="float-right" href="/logout">Logout</a>
-                        </li>
-                    </ul>
-                </div>
-                <div id="allUsers">
-                    <div class="shadow card">
+            <div class="row">
+                <div
+                    class="<%if (isSuperAdmin) {%>col<%} else {%>col-6<%}%>"
+                    style="<%if (isSuperAdmin) {%>margin: auto<%}%>"
+                >
+                    <div class="shadow card mb-4">
                         <div class="card-header border-bottom">
-                            <h4 class="mb-0">All Users</h4>
+                            <h4 class="mb-0">My Account</h4>
                         </div>
-                        <ul class="list-group list-group-flush appendUsersHere">
-
+                        <div class="border-bottom">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <strong>EUID</strong>
+                                        </div>
+                                        <div class="col">
+                                            <%=user.local.euid%>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <strong>Name</strong>
+                                        </div>
+                                        <div class="col">
+                                            <%=user.name%>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <strong>Email</strong>
+                                        </div>
+                                        <div class="col">
+                                            <%=user.email%>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <strong>User Type</strong>
+                                        </div>
+                                        <div class="col">
+                                            <%if(user.isSuperAdmin) {%> Super
+                                            Admin <% } else { %> Technician <% }
+                                            %>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item clearfix">
+                                <a
+                                    type="button"
+                                    href="#"
+                                    class="float-left"
+                                    data-toggle="modal"
+                                    data-target="#staticBackdrop"
+                                    >Edit Account Info</a
+                                >
+                                <a class="float-right" href="/logout">Logout</a>
+                            </li>
                         </ul>
                     </div>
+                    <div id="allUsers">
+                        <div class="shadow card">
+                            <div class="card-header border-bottom">
+                                <h4 class="mb-0">All Users</h4>
+                            </div>
+                            <ul
+                                class="list-group list-group-flush appendUsersHere"
+                            ></ul>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <%if (isSuperAdmin) {%>
+                <%if (isSuperAdmin) {%>
                 <div class="col">
                     <div id="actionQueue">
+                        <div class="shadow card mb-4">
+                            <div class="card-header">
+                                <h4 class="mb-0">Disk Usage</h4>
+                            </div>
+                            <div class="card-body append-disk-here"></div>
+                        </div>
                         <div class="shadow card mb-4">
                             <div class="card-header border-bottom">
                                 <h4 class="mb-0">Files Pending Delete</h4>
                             </div>
-                            <ul class="list-group list-group-flush appendDeleteHere">
-                                <li class="list-group-item">No files pending delete</li>
+                            <ul
+                                class="list-group list-group-flush appendDeleteHere"
+                            >
+                                <li class="list-group-item">
+                                    No files pending delete
+                                </li>
                             </ul>
                         </div>
                         <div class="shadow card mb-4">
                             <div class="card-header border-bottom">
-                                <h4 class="mb-0">Files Pending Payment Waive</h4>
+                                <h4 class="mb-0">
+                                    Files Pending Payment Waive
+                                </h4>
                             </div>
-                            <ul class="list-group list-group-flush appendWaiveHere">
-                                <li class="list-group-item">No files pending waive</li>
+                            <ul
+                                class="list-group list-group-flush appendWaiveHere"
+                            >
+                                <li class="list-group-item">
+                                    No files pending waive
+                                </li>
                             </ul>
                         </div>
                         <div class="shadow card">
                             <div class="card-header border-bottom">
                                 <h4 class="mb-0">Unassigned Work Orders</h4>
                             </div>
-                            <ul class="list-group list-group-flush appendUnassignedHere">
-                                <li class="list-group-item">No unassigned work orders</li>
+                            <ul
+                                class="list-group list-group-flush appendUnassignedHere"
+                            >
+                                <li class="list-group-item">
+                                    No unassigned work orders
+                                </li>
                             </ul>
                         </div>
                     </div>
                 </div>
-            <%}%>
-            
-        </div>
+                <%}%>
+            </div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="staticBackdrop"data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Edit Account</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-                <div class="modal-body">
-                    <form action="/changeName?euid=<%=user.local.euid%>" method="post">
-                        <div class="form-group">
-                          <label>Change your screen name</label>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="newName" placeholder="New screen name" aria-label="New screen name" aria-describedby="changeNameButton">
-                                <div class="input-group-append">
-                                  <button class="btn btn-outline-primary" type="submit" id="changeNameButton">Change Name</button>
+            <!-- Modal -->
+            <div
+                class="modal fade"
+                id="staticBackdrop"
+                data-keyboard="false"
+                tabindex="-1"
+                role="dialog"
+                aria-labelledby="staticBackdropLabel"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">
+                                Edit Account
+                            </h5>
+                            <button
+                                type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form
+                                action="/changeName?euid=<%=user.local.euid%>"
+                                method="post"
+                            >
+                                <div class="form-group">
+                                    <label>Change your screen name</label>
+                                    <div class="input-group mb-3">
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            name="newName"
+                                            placeholder="New screen name"
+                                            aria-label="New screen name"
+                                            aria-describedby="changeNameButton"
+                                        />
+                                        <div class="input-group-append">
+                                            <button
+                                                class="btn btn-outline-primary"
+                                                type="submit"
+                                                id="changeNameButton"
+                                            >
+                                                Change Name
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </form>
-                    <hr>
-                    <form action="/changeEmail?euid=<%=user.local.euid%>" method="post">
-                        <div class="form-group">
-                          <label>Change your email</label>
-                            <div class="input-group mb-3">
-                                <input type="email" class="form-control" placeholder="New email" aria-label="New email" aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                  <button class="btn btn-outline-primary" type="submit" id="button-addon2">Change Email</button>
+                            </form>
+                            <hr />
+                            <form
+                                action="/changeEmail?euid=<%=user.local.euid%>"
+                                method="post"
+                            >
+                                <div class="form-group">
+                                    <label>Change your email</label>
+                                    <div class="input-group mb-3">
+                                        <input
+                                            type="email"
+                                            class="form-control"
+                                            placeholder="New email"
+                                            aria-label="New email"
+                                            aria-describedby="button-addon2"
+                                        />
+                                        <div class="input-group-append">
+                                            <button
+                                                class="btn btn-outline-primary"
+                                                type="submit"
+                                                id="button-addon2"
+                                            >
+                                                Change Email
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
+                            <hr />
+                            <form
+                                action="/changePassword?euid=<%=user.local.euid%>"
+                                method="post"
+                            >
+                                <div class="form-group">
+                                    <label>Change your password</label>
+                                    <input
+                                        type="password"
+                                        class="form-control"
+                                        id="oldPassword"
+                                        placeholder="Old password"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <input
+                                        type="password"
+                                        class="form-control"
+                                        id="newPassword"
+                                        placeholder="New password"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                    >
+                                        Submit
+                                    </button>
+                                </div>
+                            </form>
+                            <hr />
+                            <a
+                                type="button"
+                                class="btn btn-danger"
+                                href="/deleteme"
+                                >Delete Account</a
+                            >
                         </div>
-                    </form>
-                    <hr>
-                    <form action="/changePassword?euid=<%=user.local.euid%>" method="post">
-                        <div class="form-group">
-                          <label>Change your password</label>
-                          <input type="password" class="form-control" id="oldPassword" placeholder="Old password">
-                        </div>
-                        <div class="form-group">
-                            <input type="password" class="form-control" id="newPassword" placeholder="New password">
-                          </div>
-                          <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                          </div>
-                    </form>
-                    <hr>
-                    <a type="button" class="btn btn-danger" href="/deleteme">Delete Account</a>
+                    </div>
                 </div>
             </div>
-            </div>
         </div>
-
-    </div>
-</body>
-
+    </body>
 </html>
