@@ -124,5 +124,25 @@ $(document).ready(function () {
             location.reload();
         });
     });
+
+    $('.clear-btn').on('click', function () {
+        $.ajax({
+            type: 'POST',
+            url: '/prints/clearAllCompleted',
+            dataType: 'json'
+        }).done(function () {
+            location.reload();
+        });
+    });
+
+    $('.clear-rejected-btn').on('click', function () {
+        $.ajax({
+            type: 'POST',
+            url: '/prints/clearAllRejected',
+            dataType: 'json'
+        }).done(function () {
+            location.reload();
+        });
+    });
 });
 

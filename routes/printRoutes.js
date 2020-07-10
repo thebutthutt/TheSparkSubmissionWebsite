@@ -448,6 +448,21 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         });
     });
 
+
+    //-----------------------CLEAR ALL COMPLETED PRINTS-----------------------
+    app.post('/prints/clearAllCompleted', function (req, res) {
+        printHandler.clearAllCompleted(function callback() {
+            res.json('done');
+        });
+    });
+
+    //-----------------------CLEAR ALL REJECTED PRINTS-----------------------
+    app.post('/prints/clearAllRejected', function (req, res) {
+        printHandler.clearAllRejected(function callback() {
+            res.json('done');
+        });
+    });
+
 }
 
 // route middleware to make sure a user is logged in
