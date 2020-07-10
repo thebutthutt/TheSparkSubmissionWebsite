@@ -57,6 +57,18 @@
                                 <%}%>
 
                                 <div class="col"><strong>File</strong></div>
+
+                                <%if (printPage == 'completed') {%>
+                                    <div class="col text-right"><a class="clear-btn" href="">
+                                        Clear All
+                                    </a></div>
+                                <%}%>
+
+                                <%if (printPage == 'rejected') {%>
+                                    <div class="col text-right"><a class="clear-rejected-btn" href="">
+                                        Clear All
+                                    </a></div>
+                                <%}%>
                             </div>
                         </div>
                         

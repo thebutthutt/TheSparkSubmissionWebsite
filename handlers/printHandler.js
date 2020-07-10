@@ -458,6 +458,7 @@ module.exports = {
         });
     },
 
+    //accept the signature from the patron
     acceptSignature: function(fileID, fileName) {
         printRequestModel.findOne({
             'files._id': fileID
@@ -465,14 +466,23 @@ module.exports = {
             if (err) {
                 console.log(err)
             } else {
+                //no more than one signature file for a print
+                if (result.files.id(fileID).isSigned == true && result.files.id(fileID).signaturePath != '') { //already had a signature, usually on when debugging
+                    fs.unlink(result.files.id(fileID).signaturePath, function (err) {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
+                }
                 result.files.id(fileID).isSigned = true;
                 result.files.id(fileID).signaturePath = fileName;
                 result.save();
-                module.exports.markPickedUp(fileID)
+                module.exports.markPickedUp(fileID) //also mark it picked up
             }
         });
     },
 
+    //the print has been picked up by the patron
     markPickedUp: function(fileID) {
         var time = moment().format(constants.format);
         printRequestModel.findOne({
@@ -489,7 +499,7 @@ module.exports = {
     },
 
 
-
+    //notify that a print attempt has failed
     printFail: function(fileID, callback) {
         printRequestModel.findOne({
             'files._id': fileID
@@ -497,17 +507,69 @@ module.exports = {
             if (err) {
                 console.log(err);
             } else {
-                result.files.id(fileID).isStarted = false;
+                result.files.id(fileID).isStarted = false; //not started anymore
                 if (result.files.id(fileID).numFailedAttempts == null) {
                     result.files.id(fileID).numFailedAttempts = 0;
                 }
-                result.files.id(fileID).numFailedAttempts += 1;
+                result.files.id(fileID).numFailedAttempts += 1; //add a failed attempt
                 result.save();
                 if (typeof callback == 'function') {
                     callback();
                 }
             }
         });
+    },
+
+
+    //remove all the completed files from the disk
+    clearAllCompleted: function (callback) {
+        printRequestModel.find({
+            'files.isPickedUp': true
+        }, function (err, result) {
+            if (err) {
+                console.log(err)
+            } else {
+                //find every completed file in every submission containing one
+                result.forEach(submission => {
+                    submission.files.forEach(file => {
+                        if (file.isPickedUp == true) {
+                            module.exports.deleteFile(file._id); //and tell the delete method about it
+                        }
+                    });
+                });
+            }
+        });
+
+        //tell the calling function when we finish
+        if (typeof callback == 'function') {
+            callback();
+        }
+    },
+
+
+    //clear all rejected files
+    clearAllRejected: function (callback) {
+        printRequestModel.find({
+            'files.isRejected': true
+        }, function (err, result) {
+            if (err) {
+                console.log(err)
+            } else {
+                //find every rejected file in every submission containing one
+                result.forEach(submission => {
+                    submission.files.forEach(file => {
+                        if (file.isRejected == true) {
+                            module.exports.deleteFile(file._id); //and tell the delete method about it
+                        }
+                    });
+                });
+            }
+        });
+
+        //tell the calling function when we finish
+        if (typeof callback == 'function') {
+            callback();
+        }
     },
 
 
@@ -556,16 +618,25 @@ module.exports = {
                     console.log(err);
                 }
             });
-            if (result.files.id(fileID).isRejected == false) {
-                //delete gcode from disk if it exists
-                if (result.files.id(fileID).gcodeName != null) {
-                    fs.unlink(result.files.id(fileID).gcodeName, function (err) {
-                        if (err) {
-                            console.log("gcode delete error:", err);
-                        }
-                    });
-                }
+
+            //delete gcode from disk if it exists
+            if (result.files.id(fileID).gcodeName != null && result.files.id(fileID).gcodeName != '') {
+                fs.unlink(result.files.id(fileID).gcodeName, function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
             }
+
+            //delete signature if it exists
+            if (result.files.id(fileID).signaturePath != null && result.files.id(fileID).signaturePath != '') {
+                fs.unlink(result.files.id(fileID).signaturePath, function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
             result.files.id(fileID).remove(); //remove the single file from the top level print submission
             result.numFiles -= 1; //decrement number of files associated with this print request
             if (result.numFiles < 1) { //if no more files in this request delete the request itself
