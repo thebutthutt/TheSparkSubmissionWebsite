@@ -65,6 +65,7 @@ var showActionQueue = function () {
             }
         }
     });
+    
 }
 
 var showUsers = function () {
