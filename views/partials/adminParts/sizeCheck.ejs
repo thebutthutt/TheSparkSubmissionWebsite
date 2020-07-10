@@ -1,0 +1,13 @@
+<p><%=bytes%> bytes</p>
+<p><%=human%> human</p>
+
+<div class="progress">
+    <div
+        class="progress-bar"
+        role="progressbar"
+        style="width: <%=bytes/1000000%>%;"
+        aria-valuenow="<%=bytes%>"
+        aria-valuemin="0"
+        aria-valuemax="1000000"
+    ></div>
+</div>
