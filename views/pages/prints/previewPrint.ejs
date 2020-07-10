@@ -18,6 +18,7 @@
 <body>
     <%- include ("../../partials/header") %>
     <div class="container my-5">
+        <button data-toggle="modal" data-target=".modal" fileName="<%=print.fileName.substring(print.fileName.indexOf('/15') + 11)%>" fileID="<%=print._id%>" class="shadow btn btn-lg btn-primary btn-block modal-button">Picking Up</button>
         <%if (print.isPrinted && !print.isPickedUp) {%>
             <div class="row mb-3">
                 <div class="col">
@@ -134,7 +135,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col">
+                    <div class="col text-area">
                         <p>Scan this QR code on an iPad, then hand the iPad to the patron for their signature. You may close this window after the patron has submitted their signature.</p>
                         <div id="qrcode"></div>
                     </div>

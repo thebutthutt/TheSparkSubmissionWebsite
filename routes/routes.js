@@ -74,7 +74,10 @@ module.exports = function (app, printHandler, cleHandler) {
     });
 
     app.get('/signaturepad', function (req, res) {
-        res.render('partials/signaturePad');
+        console.log(req.body)
+        res.render('partials/PrintDetails/signaturePad', {
+            fileName: req.body.fileName
+        });
     }, function (err, html) {
         res.send(html);
     });
@@ -109,3 +112,14 @@ module.exports = function (app, printHandler, cleHandler) {
         res.redirect('/submit');
     });
 };
+// route middleware to make sure a user is logged in
+function isLoggedIn(req, res, next) {
+
+    // if user is authenticated in the session, carry on 
+    if (req.isAuthenticated())
+        return next();
+
+    // if they aren't redirect them to the home page
+    req.flash('loginMessage', 'Please log in');
+    res.redirect('/login');
+}

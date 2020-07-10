@@ -1,5 +1,3 @@
-const channel = new BroadcastChannel('signature');
-
 var getUrlParameter = function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1),
         sURLVariables = sPageURL.split('&'),
@@ -16,11 +14,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
 };
 
 $(document).ready(function () {
-    channel.addEventListener('message', function (event) {
-        if (event.data == 'Signature sent') {
-            location.reload();
-        }
-    });
+    
     //initial form to show is an accepted ptint
     $(".accepted-controls").show();
     $(".accepted-controls input").prop('required', true);
@@ -33,21 +27,33 @@ $(document).ready(function () {
     });
 
     $('.modal-button').on('click', function () {
-        var typeNumber = 0;
-        var errorCorrectionLevel = 'L';
-        var qr = qrcode(typeNumber, errorCorrectionLevel);
-        var url = 'https://sparkorders.library.unt.edu/signature?uniqueID=' + getUrlParameter('fileID');
-        qr.addData(url);
-        qr.make();
-        document.getElementById('qrcode').innerHTML = qr.createImgTag();
-        $('#qrcode img').width('300px').height('300px');
+        const ws = new WebSocket('wss://sparkorders.library.unt.edu');
 
         var printData = {
+            'sender': 'tech',
             'fileName': $(this).attr('fileName'),
             'fileID': $(this).attr('fileID')
         }
 
-        channel.postMessage(printData);
+        ws.onopen = () => {
+            console.log('Now connected');
+
+            ws.addEventListener('message', function (message) {
+                if (message.data == 'success') {
+                    ws.close();
+                    location.reload();
+                } else {
+                    var obj = JSON.parse(message.data)
+                    if (obj.messiahID == -1) {
+                        $('.text-area').html('Please connect a signature pad first!');
+                    } else if (obj.messiahID != -1) {
+                        ws.send(JSON.stringify(printData));
+                    }
+                }
+            });
+            
+        };
+        
     })
 
     $('.pickup-btn').on('click', function () {
