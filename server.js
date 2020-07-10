@@ -4,6 +4,7 @@ var express = require('express');
 var https = require('https');
 var http = require('http');
 var fs = require('fs');
+const WebSocket = require('ws')
 var app = express();
 var port = 443;
 
@@ -27,7 +28,6 @@ var printHandler = require('./handlers/printHandler.js');
 var cleHandler = require('./handlers/cleHandler.js');
 var adminRequestHandler = require('./handlers/adminRequestHandler.js');
 var cameraHandler = require('./handlers/cameraHandler.js');
-const { ESPIPE } = require('constants');
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
@@ -57,7 +57,7 @@ app.use('/uploads', express.static(__dirname + '/app/uploads/')); //allow websit
 app.use('/qrcode', express.static(__dirname + '/node_modules/qrcode-generator/')); //allow website to access the uploaded STLs (for in site display)
 app.use('/datepicker', express.static(__dirname + '/node_modules/js-datepicker/dist/'));
 
-app.use(favicon(path.join(__dirname,'public','images','favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 // required for passport
 app.use(session({
@@ -80,18 +80,91 @@ require('./routes/cameraRoutes.js')(app, bookingModel, cameraHandler); // load o
 require('./config/jobs.js')(printRequestModel, constants); //make the job scheduler go
 //bookingModel.remove({}, function(){})
 // launch ======================================================================
-https.createServer({
+
+var server = https.createServer({
     key: fs.readFileSync('./npserver2048.key'),
     cert: fs.readFileSync('./sparkorders_library_unt_edu_cert.cer'),
     passphrase: 'THEsparkMakerSPACE'
-},app).listen(port, '0.0.0.0');
+}, app);
+
+const wss = new WebSocket.Server({
+    server
+});
+
+var CLIENTS=[];
+var messiah = -1;
+var currentRequestingID;
+var currentRequestingIndex;
+
+wss.on('connection', function connection(ws) {
+    var iamthemessiah = false;
+    CLIENTS.push(ws);
+
+    var clientData = {
+        'yourID': CLIENTS.length - 1,
+        'messiahID': messiah
+    }
+
+    console.log('There are', CLIENTS.length, 'clients')
+    console.log('The messiah is index', messiah)
+
+    ws.send(JSON.stringify(clientData));
+
+    ws.on('message', function incoming(data) {
+        console.log('received: %s', data);
+        //make sure every connected client knows who the messiah is
+        if (data == 'I am the messiah') {
+            messiah = clientData.yourID; //this is the ID of the messiah
+            iamthemessiah = true;
+            for (var i=0; i<CLIENTS.length; i++) {
+                var newData = {
+                    'yourID': i,
+                    'messiahID': messiah
+                }
+                CLIENTS[i].send(JSON.stringify(newData));
+            }
+            console.log('There are', CLIENTS.length, 'clients')
+            console.log('The messiah is index', messiah)
+        } else { //this is not the notification that the messiah has returned
+            var obj = JSON.parse(data)
+            if (obj.sender == 'messiah') { //the messiah is sending a signature
+                console.log('recieving signature')
+                console.log(currentRequestingID)
+                console.log(obj.fileID)
+                if (obj.fileID == currentRequestingID) {
+                    console.log('authentic signature')
+                    CLIENTS[currentRequestingIndex].send('success');
+                }
+            } else { //a technician is requesting a signature
+                var obj = JSON.parse(data)
+                currentRequestingID = obj.fileID;
+                currentRequestingIndex = clientData.yourID;
+                if (messiah != -1) {
+                    CLIENTS[messiah].send(data); //pass the data to the messiah
+                }
+            }
+        }
+    });
+
+    ws.on('close', function () {
+        if (iamthemessiah) {
+            messiah = -1;
+        }
+    });
+    
+});
+
+server.listen(port, '0.0.0.0');
 
 //http server to redirect to https
-var http_server = http.createServer(function(req,res){    
+var http_server = http.createServer(function (req, res) {
     // 301 redirect (reclassifies google listings)
-    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+    res.writeHead(301, {
+        "Location": "https://" + req.headers['host'] + req.url
+    });
     res.end();
 }).listen(80, '0.0.0.0');
 
-console.log('The magic happens on port ' + port);
 
+
+console.log('The magic happens on port ' + port);
