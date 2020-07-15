@@ -1,7 +1,6 @@
 var fillSuper = function () {
     showActionQueue();
     showUsers();
-    checkSpace();
 };
 
 var checkSpace = function () {
@@ -145,4 +144,6 @@ $(document).ready(function () {
         fillSuper();
     } else {
     }
+
+    checkSpace();
 });

@@ -1,112 +1,180 @@
 <!-- views/index.ejs -->
-<!doctype html>
+<!DOCTYPE html>
 <html>
+    <head>
+        <%- include ("../partials/head") %>
+        <style>
+            .container {
+                padding-bottom: 80px;
+            }
 
-<head>
-    <%- include ("../partials/head") %>
-    <style>
-        .container {
-            padding-bottom: 80px;
-        }
+            .img-container {
+                max-height: 200px;
+                overflow: hidden;
+            }
 
-        .img-container {
-            max-height: 200px;
-            overflow: hidden;
-        }
+            .print-image {
+                margin-top: -100px;
+            }
 
-        .print-image {
-            margin-top: -100px;
-        }
+            .laser-image {
+                margin-top: -50px;
+            }
 
-        .laser-image {
-            margin-top: -50px;
-        }
+            .camera-image {
+                margin-top: -50px;
+            }
+        </style>
+    </head>
 
-        .camera-image {
-            margin-top: -50px;
-        }
-    </style>
-    
-</head>
-
-<body>
-    <%- include ("../partials/header") %>
-    <!--
-    <div class="jumbotron text-center">
-        <h1><span class="fas fa-exclamation-triangle"></span> Under Construction! <span class="fas fa-exclamation-triangle"></span></h1>
-
-        <p>Just like Willis...</p>
-
-        <p>RIP to the OG Factory Makerspace location 2014-2020</p>
-    </div>-->
-    <div class="container-fluid mt-5 px-5">
-        <div class="row mb-4">
-            <div class="col-lg mb-5">
-                <div class="shadow card">
-                    <div class="img-container rounded-top">
-                        <img src="/public/images/spark-place_3d-printer_03-670x447.jpg" class="card-img-top print-image" alt="...">
-                    </div>
-                    
-                    <div class="card-body">
-                        <h2>3D Printing</h2>
-                        <p>Several 3D printers are available to members of the UNT Community.  Requests are fulfilled on a first come, first served basis. Typically, your job will be started anywhere between three business days to one week after your request is paid.  Please take this into account when requesting print jobs.</p>
-                        <h6>Please keep in mind:</h6>
-                        <ul class=mt-2>
-                            <li>
-                                All prints cost $1.00 per hour of operational time (to recoup the cost of filament)
-                            </li>
-                            <li>
-                                Print charges are assessed to you regardless of your satisfaction with the end product.  We simply print the files you provide.  It is your responsibility to ensure that files are sized appropriately and are structurally sound.
-                            </li>
-                            <li>
-                                We offer Spark Resources Consultation to help you plan print jobs, coordinate larger projects, etc.  If you are inexperienced we suggest you contact us to discuss your project.
-                            </li>
-                        </ul>
-                        <p><a href="">3D Printing Submission Process</a></p>
-                        <a role="button" class="btn btn-primary" href="/submit">Submit 3D Print</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg mb-5">
-                <div class="shadow card">
-                    <div class="img-container rounded-top">
-                        <img src="/public/images/FACT Mailchimp Photos_S18-12.jpg" class="card-img-top laser-image" alt="...">
-                    </div>
-                    
-                    <div class="card-body">
-                        <h2>Work Orders</h2>
-                        <p>
-                            The Spark Makerspace provides free work orders for machines we cannot let patrons use on their own. Our most common work orders are for the laser cutting machine, the CNC machines, and the embroidery machine, but we will happily take work requests for any machine or service in the space.
-                        </p>
-                        <a role="button" class="btn btn-primary" href="/submit">Submit Work Order</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg mb-5">
-                <div class="shadow card">
-                    <div class="img-container rounded-top">
-                        <img src="/public/images/camerabodywlens.jpg" class="card-img-top camera-image" alt="...">
-                    </div>
-                    
-                    <div class="card-body">
-                        <h2>Cameras</h2>
-                        <p>
-                            We offer several Canon DSLR cameras and a variety of lenses, all of which are in high demand and often have multiple holds during the long semesters. <strong>Loan periods are 4 days and there is a 1 camera, 2 lens maximum.</strong> Plan your projects accordingly, and please respect the equipment and other users. 
-                        </p>
-                        <p>
-                            Please use responsibly. Cameras and lenses are fragile and you are responsible for the items checked out to you. High fines, rates, and replacement costs apply. 
-                        </p>
-                        <p><a href="/cameras">Check camera availability</a></p>
-                        <a role="button" class="btn btn-primary" href="/book">Request Camera Booking</a>
-                    </div>
-                </div>
-            </div>
+    <body>
+        <%- include ("../partials/header") %>
+        <div class="jumbotron">
+            <h1 class="display-4">This Website is in Beta!</h1>
+            <p class="lead">
+                That means its very new and most likely very buggy...
+            </p>
+            <hr class="my-4" />
+            <p>
+                If you encounter problems, <strong>please</strong> email
+                <a href="mailto:hanna.flores@unt.edu">hanna.flores@unt.edu</a>
+                or fill out <a href="/bugreport">this form</a>
+                with what happened, what you were doing when it happened, and
+                what time it happened at. Thank you very much!
+            </p>
+            <a class="btn btn-primary btn-lg" href="/bugreport" role="button"
+                >Submit a bug report?</a
+            >
+            <a
+                class="btn btn-primary btn-lg"
+                href="mailto:hanna.flores@unt.edu"
+                role="button"
+                >Or send me an email?</a
+            >
         </div>
-        <div class="row">
-            
-            
-        </div>
-        <!--
+        <div class="container-fluid mt-5 px-5">
+            <div class="row mb-4">
+                <div class="col-lg mb-5">
+                    <div class="shadow card">
+                        <div class="img-container rounded-top">
+                            <img
+                                src="/public/images/spark-place_3d-printer_03-670x447.jpg"
+                                class="card-img-top print-image"
+                                alt="..."
+                            />
+                        </div>
+
+                        <div class="card-body">
+                            <h2>3D Printing</h2>
+                            <p>
+                                The Spark Makerspace has an army of 3D printers
+                                in both locations to print models for our
+                                patrons! Just submit your models through this
+                                website, and pick up your models in 5 to 7
+                                business days. Prints for classes are completely
+                                free, just make sure to tell us the class and
+                                professor in the notes when you submit your
+                                files. Otherwise, we only charge $1 per hour of
+                                print time.
+                            </p>
+                            <p>
+                                We offer prints in PLA and ABS in a wide variety
+                                of colors, just let us know what you would like
+                                in the submission form.
+                            </p>
+
+                            <p><a href="">3D Printing Submission Process</a></p>
+                            <a
+                                role="button"
+                                class="btn btn-primary"
+                                href="/submit"
+                                >Submit 3D Print</a
+                            >
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg mb-5">
+                    <div class="shadow card">
+                        <div class="img-container rounded-top">
+                            <img
+                                src="/public/images/FACT Mailchimp Photos_S18-12.jpg"
+                                class="card-img-top laser-image"
+                                alt="..."
+                            />
+                        </div>
+
+                        <div class="card-body">
+                            <h2>Work Orders</h2>
+                            <p>
+                                Work orders at The Spark Makerspace are for
+                                projects requiring machines we can't let patrons
+                                use on their own, or services you would prefer a
+                                tained technician provide. This includes laser
+                                cutting and engraving, CNC milling, our
+                                embroidery machine, and the EinScan machine. If
+                                you would like some other service, please feel
+                                free to tell us in the notes!
+                            </p>
+                            <p>
+                                Work orders are completely free, you only need
+                                to bring in the material you would like worked
+                                on. We highly encourage you to bring a few
+                                sample pieces as well for testing purposes.
+                            </p>
+                            <a
+                                role="button"
+                                class="btn btn-primary"
+                                href="/submit"
+                                >Submit Work Order</a
+                            >
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg mb-5">
+                    <div class="shadow card">
+                        <div class="img-container rounded-top">
+                            <img
+                                src="/public/images/camerabodywlens.jpg"
+                                class="card-img-top camera-image"
+                                alt="..."
+                            />
+                        </div>
+
+                        <div class="card-body">
+                            <h2>Cameras</h2>
+                            <p>
+                                We offer several Canon DSLR cameras and a
+                                variety of lenses, all of which are in high
+                                demand and often have multiple holds during the
+                                long semesters.
+                                <strong
+                                    >Loan periods are 4 days and there is a 1
+                                    camera, 2 lens maximum.</strong
+                                >
+                                Plan your projects accordingly, and please
+                                respect the equipment and other users.
+                            </p>
+                            <p>
+                                Please use responsibly. Cameras and lenses are
+                                fragile and you are responsible for the items
+                                checked out to you. High fines, rates, and
+                                replacement costs apply.
+                            </p>
+                            <p>
+                                <a href="/cameras">Check camera availability</a>
+                            </p>
+                            <a
+                                role="button"
+                                class="btn btn-primary"
+                                href="/book"
+                                >Request Camera Booking</a
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row"></div>
+            <!--
         <div class="row">
             <div class="col-lg" style="padding-bottom: 40px;">
                 <h2>3D Printing</h2>
@@ -169,9 +237,8 @@
                 </ol>
             </div>
         </div>
-        -->
-    </div>
-    
-</body>
-
+		-->
+            <%- include ("../partials/footer") %>
+        </div>
+    </body>
 </html>

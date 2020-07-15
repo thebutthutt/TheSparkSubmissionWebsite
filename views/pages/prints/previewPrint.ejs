@@ -18,7 +18,7 @@
 <body>
     <%- include ("../../partials/header") %>
     <div class="container my-5">
-        <button data-toggle="modal" data-target=".modal" fileName="<%=print.fileName.substring(print.fileName.indexOf('/15') + 11)%>" fileID="<%=print._id%>" class="shadow btn btn-lg btn-primary btn-block modal-button">Picking Up</button>
+        
         <%if (print.isPrinted && !print.isPickedUp) {%>
             <div class="row mb-3">
                 <div class="col">
@@ -121,7 +121,8 @@
                         <%}%>
                     <% } %>
             </div>
-        </div>
+		</div>
+		<%- include ("../../partials/footer") %>
     </div>
 
     <div class="modal fade" tabindex="-1" role="dialog">
@@ -146,7 +147,8 @@
                 
             </div>
           </div>
-        </div>
+		</div>
+		
     </div>
 </body>
 

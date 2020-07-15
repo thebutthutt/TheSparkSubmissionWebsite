@@ -1,20 +1,21 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-    <%- include ("../../partials/head") %>
-    <style>
-        .container {
-            padding-top: 80px;
-        }
-    </style>
-</head>
-<body>
-    <%- include ("../../partials/header") %>
-<div class="container">
-    <div>
-        Payment recieved thanks
-    </div>
-    <%- data.request_contents %>
-</div>
-</body>
+    <head>
+        <%- include ("../../partials/head") %>
+        <style>
+            .container {
+                padding-top: 80px;
+            }
+        </style>
+    </head>
+    <body>
+        <%- include ("../../partials/header") %>
+        <div class="container">
+            <div>
+                Payment recieved thanks
+            </div>
+            <%- data.request_contents %> <%- include ("../../partials/footer")
+            %>
+        </div>
+    </body>
 </html>
