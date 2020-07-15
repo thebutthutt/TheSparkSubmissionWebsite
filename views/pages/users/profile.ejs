@@ -25,10 +25,7 @@
             <% } %>
 
             <div class="row">
-                <div
-                    class="<%if (isSuperAdmin) {%>col<%} else {%>col-6<%}%>"
-                    style="<%if (isSuperAdmin) {%>margin: auto<%}%>"
-                >
+                <div class="col">
                     <div class="shadow card mb-4">
                         <div class="card-header border-bottom">
                             <h4 class="mb-0">My Account</h4>
@@ -93,6 +90,7 @@
                             </li>
                         </ul>
                     </div>
+                    <%if (isSuperAdmin) {%>
                     <div id="allUsers">
                         <div class="shadow card">
                             <div class="card-header border-bottom">
@@ -103,17 +101,12 @@
                             ></ul>
                         </div>
                     </div>
+                    <%}%>
                 </div>
 
-                <%if (isSuperAdmin) {%>
                 <div class="col">
+                    <%if (isSuperAdmin) {%>
                     <div id="actionQueue">
-                        <div class="shadow card mb-4">
-                            <div class="card-header">
-                                <h4 class="mb-0">Disk Usage</h4>
-                            </div>
-                            <div class="card-body append-disk-here"></div>
-                        </div>
                         <div class="shadow card mb-4">
                             <div class="card-header border-bottom">
                                 <h4 class="mb-0">Files Pending Delete</h4>
@@ -140,7 +133,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="shadow card">
+                        <div class="shadow card mb-4">
                             <div class="card-header border-bottom">
                                 <h4 class="mb-0">Unassigned Work Orders</h4>
                             </div>
@@ -152,9 +145,15 @@
                                 </li>
                             </ul>
                         </div>
+                        <%}%>
+                        <div class="shadow card mb-4">
+                            <div class="card-header">
+                                <h4 class="mb-0">Disk Usage</h4>
+                            </div>
+                            <div class="card-body append-disk-here"></div>
+                        </div>
                     </div>
                 </div>
-                <%}%>
             </div>
 
             <!-- Modal -->
@@ -279,6 +278,7 @@
                     </div>
                 </div>
             </div>
+            <%- include ("../../partials/footer") %>
         </div>
     </body>
 </html>

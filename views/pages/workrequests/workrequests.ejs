@@ -1,116 +1,218 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+    <head>
+        <%- include ("../../partials/head") %>
+        <link type="text/css" rel="stylesheet" href="/public/css/prints.css" />
+        <script src="../public/js/workrequests.js"></script>
+    </head>
 
-<head>
-    <%- include ("../../partials/head") %>
-    <link type="text/css" rel="stylesheet" href="/public/css/prints.css">
-    <script src="../public/js/workrequests.js"></script>
-</head>
-
-<body>
-    <%- include ("../../partials/header") %>
-    <div class="container ">
-        <div class="shadow card">
-            <ol class="list-group list-group-flush">
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col"><strong>Name</strong></div>
-                        <div class="col"><strong>Type</strong></div>
-                        <div class="col"><strong>Maker</strong></div>
-                        <div class="col"><strong>Submitted</strong></div>
-                        <div class="col-5"><strong>Notes</strong></div>
-                        <div class="col text-right"><strong>Actions</strong></div>
-                    </div>
-                </li>
-
-                <%dbdata.slice().reverse().forEach(function (item, i) {%>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col"><%= item.patron.fname %> <%= item.patron.lname %></div>
-                        <div class="col"><%=item.type%></div>
-                        <div class="col"><%=item.maker%></div>
-                        <div class="col"><%=item.dateSubmitted%></div>
-                        <div class="col-5">
-                            <p class="text-muted font-italic">
-                                <%=item.notes%>
-                            </p>
-                            <%if (item.files.length > 0) {%>
-                            <%item.files.forEach(function (fileName) {%>
-                            <a href="#" class="download-by-name"
-                                filename="<%=fileName%>"><%=fileName.substring(fileName.indexOf('/15') + 11)%></a> <br>
-                            <%})%>
-                            <%}%>
+    <body>
+        <%- include ("../../partials/header") %>
+        <div class="container mt-5">
+            <div class="shadow card">
+                <ol class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-2"><strong>Name</strong></div>
+                            <div class="col"><strong>Type</strong></div>
+                            <div class="col"><strong>Maker</strong></div>
+                            <div class="col"><strong>Submitted</strong></div>
+                            <div class="col-4"><strong>Notes</strong></div>
+                            <div class="col-2 text-right">
+                                <strong>Actions</strong>
+                            </div>
                         </div>
-                        <div class="col-2 text-right">
+                    </li>
 
-                            <div class="button-holder mr-2" style=" position:absolute; width: 5em; height: 2.5em; top: 50%; right: 0px; margin-top: -1.25em;">
-                                <span style="font-size: 2em; vertical-align: top;" class="icon-btn material-intake-btn mr-3" submissionID="<%=item._id%>"
-                                    data-toggle="tooltip" data-placement="top" title="Material Intake">
-                                    <svg style="vertical-align: baseline;"
-                                        xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="feather feather-package">
-                                        <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
-                                        <path
-                                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                                        </path>
-                                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                                    </svg>
+                    <%dbdata.slice().reverse().forEach(function (item, i) {%>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-2">
+                                <%= item.patron.fname %> <%= item.patron.lname
+                                %>
+                            </div>
+                            <div class="col"><%=item.type%></div>
+                            <div class="col"><%=item.maker%></div>
+                            <div class="col"><%=item.dateSubmitted%></div>
+                            <div class="col-4">
+                                <p class="text-muted font-italic">
+                                    <%=item.notes%>
+                                </p>
+                                <%if (item.files.length > 0) {%>
+                                <%item.files.forEach(function (fileName) {%>
+                                <a
+                                    href="#"
+                                    class="download-by-name"
+                                    filename="<%=fileName%>"
+                                    ><%=fileName.substring(fileName.indexOf('/15')
+                                    + 11)%></a
+                                >
+                                <br />
+                                <%})%> <%}%>
+                            </div>
+                            <div class="col-2 text-right">
+                                <div
+                                    class="button-holder mr-2"
+                                    style="
+                                        position: absolute;
+                                        width: 5em;
+                                        height: 2.5em;
+                                        top: 50%;
+                                        right: 0px;
+                                        margin-top: -1.25em;
+                                    "
+                                >
+                                    <span
+                                        style="
+                                            font-size: 2em;
+                                            vertical-align: top;
+                                        "
+                                        class="icon-btn material-intake-btn mr-3"
+                                        submissionID="<%=item._id%>"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="Material Intake"
+                                    >
+                                        <svg
+                                            style="vertical-align: baseline;"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="1em"
+                                            height="1em"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            class="feather feather-package"
+                                        >
+                                            <line
+                                                x1="16.5"
+                                                y1="9.4"
+                                                x2="7.5"
+                                                y2="4.21"
+                                            ></line>
+                                            <path
+                                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                                            ></path>
+                                            <polyline
+                                                points="3.27 6.96 12 12.01 20.73 6.96"
+                                            ></polyline>
+                                            <line
+                                                x1="12"
+                                                y1="22.08"
+                                                x2="12"
+                                                y2="12"
+                                            ></line>
+                                        </svg>
                                     </span>
-        
-                                    <span class="dropright icon-btn" style="vertical-align: middle;">
-                                        <svg style="vertical-align: -webkit-baseline-middle;"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                            class="bi bi-three-dots-vertical" width="1em" height="1em" viewBox="0 0 16 16"
-                                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd"
-                                                d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+
+                                    <span
+                                        class="dropright icon-btn"
+                                        style="vertical-align: middle;"
+                                    >
+                                        <svg
+                                            style="
+                                                vertical-align: -webkit-baseline-middle;
+                                            "
+                                            data-toggle="dropdown"
+                                            aria-haspopup="true"
+                                            aria-expanded="false"
+                                            class="bi bi-three-dots-vertical"
+                                            width="1em"
+                                            height="1em"
+                                            viewBox="0 0 16 16"
+                                            fill="currentColor"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"
+                                            />
                                         </svg>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="/workorders/details?id=<%=item._id%>">Details</a>
-                                            <a class="dropdown-item claim-btn" id='<%= item._id%>' href="#">Claim</a>
-                                            <a class="dropdown-item complete-btn" id='<%= item._id%>' href="#">Complete</a>
-                                            <a class="dropdown-item remove-btn" id='<%= item._id%>' href="#">Delete</a>
+                                            <a
+                                                class="dropdown-item"
+                                                href="/workorders/details?id=<%=item._id%>"
+                                                >Details</a
+                                            >
+                                            <a
+                                                class="dropdown-item claim-btn"
+                                                id="<%= item._id%>"
+                                                href="#"
+                                                >Claim</a
+                                            >
+                                            <a
+                                                class="dropdown-item complete-btn"
+                                                id="<%= item._id%>"
+                                                href="#"
+                                                >Complete</a
+                                            >
+                                            <a
+                                                class="dropdown-item remove-btn"
+                                                id="<%= item._id%>"
+                                                href="#"
+                                                >Delete</a
+                                            >
                                         </div>
                                     </span>
+                                </div>
                             </div>
-                            
                         </div>
-                    </div>
-                </li>
-                <%});%>
-            </ol>
+                    </li>
+                    <%});%>
+                </ol>
+            </div>
+            <%- include ("../../partials/footer") %>
         </div>
-    </div>
 
-    <div class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Material Intake Form</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="" method="POST">
-                        <div class="form-group">
-                            <label for="materials">What materials are you taking in?</label>
-                            <textarea class="form-control" id="materials" rows="3" name="materials"></textarea>
-                        </div>
+        <div class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Material Intake Form</h5>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="" method="POST">
+                            <div class="form-group">
+                                <label for="materials"
+                                    >What materials are you taking in?</label
+                                >
+                                <textarea
+                                    class="form-control"
+                                    id="materials"
+                                    rows="3"
+                                    name="materials"
+                                ></textarea>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="location">Where are you putting them?</label>
-                            <textarea class="form-control" id="location" rows="3" name="location"></textarea>
-                        </div>
+                            <div class="form-group">
+                                <label for="location"
+                                    >Where are you putting them?</label
+                                >
+                                <textarea
+                                    class="form-control"
+                                    id="location"
+                                    rows="3"
+                                    name="location"
+                                ></textarea>
+                            </div>
 
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
+                            <button type="submit" class="btn btn-primary">
+                                Submit
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</body>
-
+    </body>
 </html>

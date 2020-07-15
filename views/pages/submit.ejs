@@ -1,110 +1,190 @@
 <!-- views/signup.ejs -->
-<!doctype html>
+<!DOCTYPE html>
 <html>
+    <head>
+        <%- include ("../partials/head") %>
+        <link
+            type="text/css"
+            rel="stylesheet"
+            href="../../public/css/submit.css"
+        />
+        <script src="/public/js/submit.js"></script>
+    </head>
 
-<head>
-    <%- include ("../partials/head") %>
-    <link type="text/css" rel="stylesheet" href="../../public/css/submit.css">
-    <script src="/public/js/submit.js"></script>
-</head>
+    <body>
+        <%- include ("../partials/header") %>
+        <div class="container-xl my-5">
+            <div class="col-8 offset-2">
+                <div class="shadow card">
+                    <div class="card-header">
+                        <h1>New Submission</h1>
+                    </div>
+                    <div class="card-body">
+                        <!-- show any messages that come back with authentication -->
+                        <% if (message.length > 0) { %>
+                        <div class="alert alert-success"><%= message %></div>
+                        <% } %>
 
-<body>
-    <%- include ("../partials/header") %>
-    <div class="container-xl">
-        <div class="col-8 offset-2">
-            <div class="shadow card">
-                <div class="card-header">
-                    <h1>New Submission</h1>
+                        <!-- SUBMISSION FORM -->
+                        <form
+                            id="submission-form"
+                            action="/submitprint"
+                            method="post"
+                            enctype="multipart/form-data"
+                        >
+                            <div class="form-group no-margin">
+                                <label>Patron Info</label>
+                                <div class="input-group">
+                                    <input
+                                        type="text"
+                                        class="form-control top"
+                                        name="first"
+                                        placeholder="First name"
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        class="form-control top"
+                                        name="last"
+                                        placeholder="Last name"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div class="form-group no-margin">
+                                <input
+                                    type="email"
+                                    class="form-control inner"
+                                    name="email"
+                                    placeholder="Email"
+                                    required
+                                />
+                            </div>
+                            <div class="form-group">
+                                <input
+                                    type="text"
+                                    class="form-control euid bottom"
+                                    name="euid"
+                                    placeholder="EUID"
+                                    required
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Request Type</label>
+                                <select
+                                    class="form-control"
+                                    id="requestTypeSelector"
+                                    name="requestType"
+                                    required
+                                >
+                                    <option value="print">3D Print</option>
+                                    <option value="CNC">CNC Work Order</option>
+                                    <option value="Laser"
+                                        >Laser Cut/Engrave Work Order</option
+                                    >
+                                    <option value="Embroidery"
+                                        >Embroidery Machine Work Order</option
+                                    >
+                                    <option value="Other"
+                                        >Other (please specify in the
+                                        notes)</option
+                                    >
+                                </select>
+                            </div>
+
+                            <div class="print-only form-group">
+                                <hr />
+                                <div id="files-list"></div>
+                                <div class="clearfix">
+                                    <button
+                                        type="button"
+                                        id="change"
+                                        class="btn btn-outline-primary btn-sm float-left"
+                                    >
+                                        Add a file
+                                    </button>
+                                    <button
+                                        type="button"
+                                        id="remove"
+                                        class="btn btn-outline-danger btn-sm float-right"
+                                    >
+                                        Remove last file
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="non-print form-group">
+                                <hr />
+                                <p>
+                                    Please provide details on what you would
+                                    like us to do, what material(s) you plan to
+                                    bring in to space, and any other information
+                                    about this project
+                                </p>
+                                <textarea
+                                    name="notes"
+                                    class="form-control"
+                                    rows="6"
+                                    placeholder="What can we help you with?"
+                                ></textarea>
+                                <div id="files-list-other"></div>
+                                <div class="clearfix">
+                                    <button
+                                        type="button"
+                                        id="change-other"
+                                        class="btn btn-outline-primary btn-sm float-left"
+                                    >
+                                        Add a file
+                                    </button>
+                                    <button
+                                        type="button"
+                                        id="remove-other"
+                                        class="btn btn-outline-danger btn-sm float-right"
+                                    >
+                                        Remove last file
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="btn btn-lg btn-primary btn-block submit-form"
+                            >
+                                Submit
+                            </button>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        <p>Go <a href="/">home</a>?</p>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <!-- show any messages that come back with authentication -->
-                    <% if (message.length > 0) { %>
-                    <div class="alert alert-success"><%= message %></div>
-                    <% } %>
-            
-                    <!-- SUBMISSION FORM -->
-                    <form id="submission-form" action="/submitprint" method="post" enctype="multipart/form-data">
-            
-                        <div class="form-group no-margin">
-                            <label>Patron Info</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control top" name="first" placeholder="First name" required>
-                                <input type="text" class="form-control top" name="last" placeholder="Last name" required>
-                            </div>
-                        </div>
-                        <div class="form-group no-margin">
-                            <input type="email" class="form-control inner" name="email" placeholder="Email" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control euid bottom" name="euid" placeholder="EUID" required>
-                        </div>
-            
-            
-                        <div class="form-group">
-                            <label>Request Type</label>
-                            <select class="form-control" id="requestTypeSelector" name="requestType" required>
-                                <option value="print">3D Print</option>
-                                <option value="CNC">CNC Work Order</option>
-                                <option value="Laser">Laser Cut/Engrave Work Order</option>
-                                <option value="Embroidery">Embroidery Machine Work Order</option>
-                                <option value="Other">Other (please specify in the notes)</option>
-                            </select>
-                        </div>
-            
-            
-                        <div class="print-only form-group">
-                            <hr>
-                            <div id="files-list"></div>
-                            <div class="clearfix">
-                                <button type="button" id="change" class="btn btn-outline-primary btn-sm float-left">Add
-                                    a file</button>
-                                <button type="button" id="remove" class="btn btn-outline-danger btn-sm float-right">Remove
-                                    last file</button>
-                            </div>
-                        </div>
-            
-                        <div class="non-print form-group">
-                            <hr>
-                            <p>Please provide details on what you would like us to do, what material(s) you plan to bring in to space, and any other information about this project</p>
-                            <textarea name="notes" class="form-control" rows="6" placeholder="What can we help you with?"></textarea>
-                            <div id="files-list-other"></div>
-                            <div class="clearfix">
-                                <button type="button" id="change-other" class="btn btn-outline-primary btn-sm float-left">Add
-                                    a file</button>
-                                <button type="button" id="remove-other" class="btn btn-outline-danger btn-sm float-right">Remove
-                                    last file</button>
-                            </div>
-                        </div>
-            
-                        <button type="submit" class="btn btn-lg btn-primary btn-block submit-form">Submit</button>
-                    </form>
-                </div>
-                <div class="card-footer">
-                    <p>Go <a href="/">home</a>?</p>
+            </div>
+            <%- include ("../partials/footer") %>
+        </div>
+
+        <div class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Uploading Your FIles</h5>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Please be patient, large files may take a moment to
+                            upload
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        
-
-    </div>
-
-    <div class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Uploading Your FIles</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p>Please be patient, large files may take a moment to upload</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-</body>
-
+    </body>
 </html>

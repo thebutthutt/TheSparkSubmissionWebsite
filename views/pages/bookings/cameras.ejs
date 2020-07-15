@@ -1,83 +1,230 @@
 <!-- views/index.ejs -->
-<!doctype html>
+<!DOCTYPE html>
 <html>
+    <head>
+        <%- include ("../../partials/head") %>
+        <link href="fullcalendar/main.css" rel="stylesheet" />
+        <script src="fullcalendar/main.js"></script>
+        <script src="/public/js/cameraBookings.js"></script>
+    </head>
 
-<head>
-    <%- include ("../../partials/head") %>
-    <link href='fullcalendar/main.css' rel='stylesheet' />
-    <script src='fullcalendar/main.js'></script>
-    <script src='/public/js/cameraBookings.js'></script>
-
-</head>
-
-<body>
-    <%- include ("../../partials/header") %>
-    <div class="container mt-4">
-        <div class="row ">
-            <div class="col-3">
-                <div class="shadow card list-card">
-                    <%if (isAdmin) {%>
-                        <div class="btn-group btn-group-toggle m-2" data-toggle="buttons">
+    <body>
+        <%- include ("../../partials/header") %>
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-3">
+                    <div class="shadow card list-card">
+                        <%if (isAdmin) {%>
+                        <div
+                            class="btn-group btn-group-toggle m-2"
+                            data-toggle="buttons"
+                        >
                             <label class="btn btn-outline-primary active">
-                                <input type="radio" name="options" id="filters" checked> Filters
+                                <input
+                                    type="radio"
+                                    name="options"
+                                    id="filters"
+                                    checked
+                                />
+                                Filters
                             </label>
                             <label class="btn btn-outline-primary">
-                                <input type="radio" name="options" id="editor"> Editor
+                                <input
+                                    type="radio"
+                                    name="options"
+                                    id="editor"
+                                />
+                                Editor
                             </label>
                         </div>
-                    <%}%>
-                        <div class="nav flex-column nav-pills " id="filter-list" role="tablist" aria-orientation="vertical">
-                            <a class="nav-link filter-item" id="v-pills-home-tab" data-toggle="pill" role="tab" aria-controls="v-pills-home" aria-selected="false">Canon EOS 5D Mark IV</a>
-                            <a class="nav-link filter-item" id="v-pills-profile-tab" data-toggle="pill" role="tab" aria-controls="v-pills-profile" aria-selected="false">Canon EOS 7D Mark II</a>
-                            <a class="nav-link filter-item" id="v-pills-messages-tab" data-toggle="pill"role="tab" aria-controls="v-pills-messages" aria-selected="false">Canon EOS 80D</a>
-                            <a class="nav-link filter-item" id="v-pills-settings-tab" data-toggle="pill" role="tab" aria-controls="v-pills-settings" aria-selected="false">Canon EOS Rebel T6 (Unit 1)</a>
-                            <a class="nav-link filter-item" id="v-pills-settings-tab" data-toggle="pill" role="tab" aria-controls="v-pills-settings" aria-selected="false">Canon EOS Rebel T6 (Unit 2)</a>
-                            <a class="nav-link filter-item" id="v-pills-settings-tab" data-toggle="pill" role="tab" aria-controls="v-pills-settings" aria-selected="false">Canon Rebel SL1</a>
-                            <hr>
-                            <a class="nav-link filter-item" id="v-pills-home-tab" data-toggle="pill" role="tab" aria-controls="v-pills-home" aria-selected="false">AT-X 116 PRO DX-II 11-16mm f/2.8</a>
-                            <a class="nav-link filter-item" id="v-pills-profile-tab" data-toggle="pill" role="tab" aria-controls="v-pills-profile" aria-selected="false">Rokinon 14mm f/2.8</a>
-                            <a class="nav-link filter-item" id="v-pills-messages-tab" data-toggle="pill"role="tab" aria-controls="v-pills-messages" aria-selected="false">Rokinon Tilt-Shift ​24mm f/3.5</a>
-                            <a class="nav-link filter-item" id="v-pills-settings-tab" data-toggle="pill" role="tab" aria-controls="v-pills-settings" aria-selected="false">EF-S ​17-55mm f/2.8 IS USM</a>
-                            <a class="nav-link filter-item" id="v-pills-settings-tab" data-toggle="pill" role="tab" aria-controls="v-pills-settings" aria-selected="false">EF ​50mm f/1.8 STM</a>
-                            <a class="nav-link filter-item" id="v-pills-settings-tab" data-toggle="pill"role="tab" aria-controls="v-pills-settings" aria-selected="false">EF ​85mm f/1.8 USM</a>
-                            <a class="nav-link filter-item" id="v-pills-settings-tab" data-toggle="pill" role="tab" aria-controls="v-pills-settings" aria-selected="false">EF ​100mm f/2.8 Macro USM</a>
-                            <a class="nav-link filter-item" id="v-pills-settings-tab" data-toggle="pill" role="tab" aria-controls="v-pills-settings" aria-selected="false">EF-S ​55-250mm f/4-5.6 IS II</a>
-                            <a class="nav-link filter-item" id="v-pills-settings-tab" data-toggle="pill" role="tab" aria-controls="v-pills-settings" aria-selected="false">EF ​75-300mm f/4-5.6 III</a>
-                            <hr class="mb-0">
-                            <a class="nav-link active filter-item nav-link-all" id="v-pills-home-tab" data-toggle="pill" role="tab" aria-controls="v-pills-home" aria-selected="true">All</a>
+                        <%}%>
+                        <div
+                            class="nav flex-column nav-pills"
+                            id="filter-list"
+                            role="tablist"
+                            aria-orientation="vertical"
+                        >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-home-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-home"
+                                aria-selected="false"
+                                >Canon EOS 5D Mark IV</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-profile-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-profile"
+                                aria-selected="false"
+                                >Canon EOS 7D Mark II</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-messages-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-messages"
+                                aria-selected="false"
+                                >Canon EOS 80D</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-settings-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-settings"
+                                aria-selected="false"
+                                >Canon EOS Rebel T6 (Unit 1)</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-settings-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-settings"
+                                aria-selected="false"
+                                >Canon EOS Rebel T6 (Unit 2)</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-settings-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-settings"
+                                aria-selected="false"
+                                >Canon Rebel SL1</a
+                            >
+                            <hr />
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-home-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-home"
+                                aria-selected="false"
+                                >AT-X 116 PRO DX-II 11-16mm f/2.8</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-profile-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-profile"
+                                aria-selected="false"
+                                >Rokinon 14mm f/2.8</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-messages-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-messages"
+                                aria-selected="false"
+                                >Rokinon Tilt-Shift ​24mm f/3.5</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-settings-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-settings"
+                                aria-selected="false"
+                                >EF-S ​17-55mm f/2.8 IS USM</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-settings-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-settings"
+                                aria-selected="false"
+                                >EF ​50mm f/1.8 STM</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-settings-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-settings"
+                                aria-selected="false"
+                                >EF ​85mm f/1.8 USM</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-settings-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-settings"
+                                aria-selected="false"
+                                >EF ​100mm f/2.8 Macro USM</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-settings-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-settings"
+                                aria-selected="false"
+                                >EF-S ​55-250mm f/4-5.6 IS II</a
+                            >
+                            <a
+                                class="nav-link filter-item"
+                                id="v-pills-settings-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-settings"
+                                aria-selected="false"
+                                >EF ​75-300mm f/4-5.6 III</a
+                            >
+                            <hr class="mb-0" />
+                            <a
+                                class="nav-link active filter-item nav-link-all"
+                                id="v-pills-home-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-home"
+                                aria-selected="true"
+                                >All</a
+                            >
                         </div>
-                        <%if (isAdmin) { %>
-                    <%- include ("../../partials/cameras/bookingEditor") %>
-                    <%}%>
+                        <%if (isAdmin) { %> <%- include
+                        ("../../partials/cameras/bookingEditor") %> <%}%>
                     </div>
-                    
                 </div>
                 <div class="col">
                     <div class="shadow card calendar-card">
-                        <div class="card-body" id='calendar'></div>
+                        <div class="card-body" id="calendar"></div>
                     </div>
                 </div>
             </div>
-    </div>
+            <%- include ("../../partials/footer") %>
+        </div>
 
-<% if (isAdmin) {%>
-<div class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Modal body text goes here.</p>
+        <% if (isAdmin) {%>
+        <div class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-<%}%>
-    
-</body>
-
+        <%}%>
+    </body>
 </html>

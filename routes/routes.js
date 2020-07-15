@@ -96,6 +96,22 @@ module.exports = function (app, printHandler, cleHandler) {
         }
     );
 
+    app.get("/bugreport", function (req, res) {
+        var admin = false,
+            superAdmin = false;
+        if (req.isAuthenticated()) {
+            admin = true;
+            if (req.user.isSuperAdmin == true) {
+                isSuperAdmin = true;
+            }
+        }
+        res.render("pages/bugreport", {
+            pgnum: -1, //tells the navbar what page to highlight
+            isAdmin: admin,
+            isSuperAdmin: superAdmin,
+        });
+    });
+
     app.post("/recievesignature", function (req, res) {
         var time = moment();
         let base64Image = req.body.dataURL.split(";base64,").pop();
