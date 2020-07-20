@@ -49,6 +49,7 @@ module.exports = {
                     availableItems.push(availableLenses);
 
                     if (typeof callback == "function") {
+                        console.log(availableItems);
                         callback(availableItems);
                     }
                 }
@@ -56,7 +57,7 @@ module.exports = {
         );
     },
 
-    submitBooking: function (req) {
+    submitBooking: function (req, isForced) {
         var newBooking = new bookingModel();
         var time = new moment();
         var classes = [
@@ -91,6 +92,11 @@ module.exports = {
             allDay: true,
             classNames: classes,
         };
+
+        if (isForced) {
+            newBooking.isAccepted = true;
+            newBooking.dateProcessed = time;
+        }
         newBooking.save();
     },
 
@@ -107,6 +113,7 @@ module.exports = {
                     result.isAccepted = true;
                     result.dateProcessed = time;
                     result.save();
+                    console.log(result);
                 }
             }
         );
@@ -123,5 +130,77 @@ module.exports = {
                 }
             }
         );
+    },
+
+    verifyAvailable: function (submissionID, callback) {
+        bookingModel.findById(submissionID, function (err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                var bookedCameras = [];
+                var bookedLenses = [];
+                var bookingStart, bookingEnd, requestStart, requestEnd;
+                requestStart = new Date(result.calendarEvent.start);
+                requestEnd = new Date(result.calendarEvent.end);
+                var report = {
+                    isCameraFree: true,
+                    isLens1Free: true,
+                    isLens2Free: true,
+                    isBookable: true,
+                };
+
+                bookingModel.find(
+                    {
+                        isAccepted: true,
+                    },
+                    function (err, data) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            data.forEach(function (booking) {
+                                bookingStart = new Date(
+                                    booking.calendarEvent.start
+                                );
+                                bookingEnd = new Date(
+                                    booking.calendarEvent.end
+                                );
+                                if (
+                                    (bookingStart >= requestStart &&
+                                        bookingStart <= requestEnd) ||
+                                    (bookingEnd >= requestStart &&
+                                        bookingEnd <= requestEnd)
+                                ) {
+                                    bookedCameras.push(booking.camera);
+                                    bookedLenses.push(booking.lens1);
+                                    bookedLenses.push(booking.lens2);
+                                }
+                            });
+
+                            if (bookedCameras.includes(result.camera)) {
+                                report.isCameraFree = false;
+                            }
+                            if (bookedLenses.includes(result.lens1)) {
+                                report.isLens1Free = false;
+                            }
+                            if (bookedLenses.includes(result.lens2)) {
+                                report.isLens2Free = false;
+                            }
+                            if (
+                                report.isCameraFree == false ||
+                                report.isLens1Free == false ||
+                                report.isLens2Free == false
+                            ) {
+                                report.isBookable = false;
+                            }
+
+                            if (typeof callback == "function") {
+                                console.log(report);
+                                callback(report);
+                            }
+                        }
+                    }
+                );
+            }
+        });
     },
 };

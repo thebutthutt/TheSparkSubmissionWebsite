@@ -1,46 +1,45 @@
 $(document).ready(function () {
     var currentSubmissionID;
-    $('.btn-accept').on('click', function () {
-        let submissionID = $(this).attr('submissionID');
+    $(".btn-accept").on("click", function () {
+        let submissionID = $(this).attr("submissionID");
         currentSubmissionID = submissionID;
-        $('.modal').modal('show')
+        $(".modal").modal("show");
         $.ajax({
-            type: 'GET',
-            url: '/bookings/barcodes',
+            type: "POST",
+            url: "/bookings/verifyavailable",
             data: {
-                "submissionID": submissionID
+                submissionID: submissionID,
             },
-            dataType: 'html'
+            dataType: "json",
         }).done(function (data) {
-            console.log('done')
-            $('.modal-body').empty()
-            $('.modal-body').append(data)
+            console.log(data);
+            $(".modal-body").html(data);
         });
     });
 
-    $('.btn-delete').on('click', function () {
-        var submissionID = $(this).attr('submissionID');
+    $(".btn-delete").on("click", function () {
+        var submissionID = $(this).attr("submissionID");
         $.ajax({
-            type: 'POST',
-            url: '/bookings/deletebooking',
+            type: "POST",
+            url: "/bookings/deletebooking",
             data: {
-                "submissionID": submissionID
+                submissionID: submissionID,
             },
-            dataType: 'json'
+            dataType: "json",
         }).done(function () {
             location.reload();
         });
-    })
+    });
 
-    $('.booking-confirm').on('click', function() {
+    $(".booking-confirm").on("click", function () {
         let submissionID = currentSubmissionID;
         $.ajax({
-            type: 'POST',
-            url: '/bookings/confirmbooking',
+            type: "POST",
+            url: "/bookings/confirmbooking",
             data: {
-                "submissionID": submissionID
+                submissionID: submissionID,
             },
-            dataType: 'json'
+            dataType: "json",
         }).done(function () {
             location.reload();
         });

@@ -5,30 +5,20 @@
                 Camera
             </label>
             <select class="form-control" id="availableCameras" name="camera">
-                <option>Canon EOS 5D Mark IV</option>
-                <option>Canon EOS 7D Mark II</option>
-                <option>Canon EOS 80D</option>
-                <option>Canon EOS Rebel T6</option>
-                <option>Canon Rebel SL1 (Unit 1)</option>
-                <option>Canon Rebel SL1 (Unit 2)</option>
+                <%cameras.forEach(function (camera) { %>
+                <option><%=camera%></option>
+                <%})%>
             </select>
-            
         </div>
-        
+
         <div class="form-group">
             <label for="availableCameras">
                 Lens 1
             </label>
             <select class="form-control" id="availableLenses1" name="lens1">
-                <option>AT-X 116 PRO DX-II 11-16mm f/2.8</option>
-                <option>Rokinon 14mm f/2.8</option>
-                <option>Rokinon Tilt-Shift ​24mm f/3.5</option>
-                <option>EF-S ​17-55mm f/2.8 IS USM</option>
-                <option>EF ​50mm f/1.8 STM</option>
-                <option>EF ​85mm f/1.8 USM</option>
-                <option>EF ​100mm f/2.8 Macro USM</option>
-                <option>EF-S ​55-250mm f/4-5.6 IS II</option>
-                <option>EF ​75-300mm f/4-5.6 III</option>
+                <%lenses.forEach(function (lens) { %>
+                <option><%=lens%></option>
+                <%})%>
             </select>
         </div>
 
@@ -37,27 +27,31 @@
                 Lens 2
             </label>
             <select class="form-control" id="availableLenses2" name="lens2">
-                <option>AT-X 116 PRO DX-II 11-16mm f/2.8</option>
-                <option>Rokinon 14mm f/2.8</option>
-                <option>Rokinon Tilt-Shift ​24mm f/3.5</option>
-                <option>EF-S ​17-55mm f/2.8 IS USM</option>
-                <option>EF ​50mm f/1.8 STM</option>
-                <option>EF ​85mm f/1.8 USM</option>
-                <option>EF ​100mm f/2.8 Macro USM</option>
-                <option>EF-S ​55-250mm f/4-5.6 IS II</option>
-                <option>EF ​75-300mm f/4-5.6 III</option>
+                <%lenses.forEach(function (lens) { %>
+                <option><%=lens%></option>
+                <%})%>
                 <option>None</option>
             </select>
         </div>
 
         <div class="form-group">
             <label>Start Date</label>
-            <input type="date" id="startDate" name="startDate" class="form-control">
+            <input
+                type="date"
+                id="startDate"
+                name="startDate"
+                class="form-control"
+            />
         </div>
 
         <div class="form-group">
             <label>End Date</label>
-            <input type="date" id="endDate" name="endDate" class="form-control">
+            <input
+                type="date"
+                id="endDate"
+                name="endDate"
+                class="form-control"
+            />
         </div>
 
         <button class="btn btn-block btn-success" type="submit">Submit</button>
