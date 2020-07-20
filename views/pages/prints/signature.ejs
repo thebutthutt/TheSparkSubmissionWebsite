@@ -1,37 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+    <head>
+        <%- include ("../../partials/head") %>
+        <script src="../public/js/signature.js"></script>
+        <style>
+            html,
+            body {
+                margin: 0px;
+                padding: 0px;
+            }
 
-<head>
-    <%- include ("../../partials/head") %>
-    <script src="../public/js/signature.js"></script>
-    <style>
-        html,
-        body {
-            margin: 0px;
-            padding: 0px;
-        }
+            canvas {
+                margin-top: 10px;
+                margin-left: 25px;
+                margin-bottom: 20px;
+            }
 
-        canvas {
-            margin-top: 10px;
-            margin-left: 25px;
-            margin-bottom: 20px;
-            
-        }
+            .box {
+                width: calc(100vw - 50px);
+                margin-left: 25px;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
 
-        .box {
-            width: calc(100vw - 50px);
-            margin-left: 25px;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="signature-pad" style="width: 100%;">
-        
-    </div>
-
-
-</body>
-
+    <body>
+        <div class="signature-pad" style="width: 100%;"></div>
+    </body>
 </html>

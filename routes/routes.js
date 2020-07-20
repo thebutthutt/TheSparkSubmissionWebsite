@@ -67,6 +67,7 @@ module.exports = function (app, printHandler, cleHandler) {
         }
     );
 
+    //main signature page
     app.get("/signature", function (req, res) {
         var admin = false,
             superAdmin = false;
@@ -83,6 +84,7 @@ module.exports = function (app, printHandler, cleHandler) {
         });
     });
 
+    //patrial containing signature canvas
     app.get(
         "/signaturepad",
         function (req, res) {
@@ -112,25 +114,24 @@ module.exports = function (app, printHandler, cleHandler) {
         });
     });
 
-    app.post("/recievesignature", function (req, res) {
-        var time = moment();
-        let base64Image = req.body.dataURL.split(";base64,").pop();
-        var fileName = req.body.uniqueID + "_" + time + ".jpg";
-        var newPath = path.join(
-            __dirname,
-            "../app/uploads/signatures/",
-            fileName
-        );
-
-        fs.writeFile(newPath, base64Image, { encoding: "base64" }, function (
-            err
-        ) {
-            console.log("File created");
+    app.get("/prints/thankyou", function (req, res) {
+        var admin = false,
+            superAdmin = false;
+        if (req.isAuthenticated()) {
+            admin = true;
+            if (req.user.isSuperAdmin == true) {
+                isSuperAdmin = true;
+            }
+        }
+        res.render("pages/prints/thankyousubmit", {
+            pgnum: -1, //tells the navbar what page to highlight
+            isAdmin: admin,
+            isSuperAdmin: superAdmin,
         });
+    });
 
-        console.log(req.body.uniqueID);
-        printHandler.acceptSignature(req.body.uniqueID, newPath);
-
+    app.post("/recievesignature", function (req, res) {
+        //printHandler.acceptSignature(req.body.uniqueID, newPath);
         res.json("done");
     });
 
@@ -138,7 +139,7 @@ module.exports = function (app, printHandler, cleHandler) {
     app.post("/submitprint", function (req, res) {
         printHandler.handleSubmission(req); //pass the stuff to the print handler
         req.flash("submitMessage", "Submitted the print!");
-        res.redirect("/submit");
+        res.redirect("/prints/thankyou");
     });
 
     //what do do when the user hits submit

@@ -22,7 +22,7 @@
         <%if (print.isPrinted && !print.isPickedUp) {%>
             <div class="row mb-3">
                 <div class="col">
-                    <button data-toggle="modal" data-target=".modal" fileName="<%=print.fileName.substring(print.fileName.indexOf('/15') + 11)%>" fileID="<%=print._id%>" class="shadow btn btn-lg btn-primary btn-block modal-button">Picking Up</button>
+                    <button data-toggle="modal" data-target=".modal" data-backdrop="static" data-keyboard="false" fileName="<%=print.fileName.substring(print.fileName.indexOf('/15') + 11)%>" fileID="<%=print._id%>" class="shadow btn btn-lg btn-primary btn-block modal-button">Picking Up</button>
                 </div>
                 
             </div>
@@ -129,23 +129,42 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title">Confirm ID and Digital Signature</h4>
+              <h4 class="modal-title display-4 text-center">Please do not close this window!</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col text-area">
-                        <p>Scan this QR code on an iPad, then hand the iPad to the patron for their signature. You may close this window after the patron has submitted their signature.</p>
-                        <div id="qrcode"></div>
-                    </div>
-                    <div class="col">
-                        <img src="/public/images/mclovin-license.jpg" class="img-fluid rounded float-right" alt="Responsive image">
-                    </div>
-                </div>
-                
-            </div>
+				<h3 class="instructions">Ask the patron to sign on the iPad in front of them.</h3>
+				<p class="subtext">You will then be asked to verify your password on this computer as a witness that the patron has signed and picked up their print.</p>
+				<form class="verification" style="display: none;">
+					<div class="form-group">
+                            <label class="sr-only">EUID</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="euid"
+                                placeholder="EUID"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only">Password</label>
+                            <input
+                                type="password"
+                                class="form-control"
+                                name="password"
+                                placeholder="Password"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-lg btn-primary btn-block verification-button"
+                        >
+                            Submit
+                        </button>
+				</form>
+			</div>
           </div>
 		</div>
 		

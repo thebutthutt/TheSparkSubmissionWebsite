@@ -12,7 +12,6 @@ $(document).ready(function () {
             },
             dataType: "json",
         }).done(function (data) {
-            console.log(data);
             $(".modal-body").html(data);
         });
     });

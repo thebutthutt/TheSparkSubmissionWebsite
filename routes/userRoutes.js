@@ -33,6 +33,23 @@ module.exports = function (
         })
     );
 
+    app.post("/verify", function (req, res, next) {
+        passport.authenticate("local-login", function (err, user, info) {
+            if (err) {
+                return res.send("no");
+            }
+            if (!user) {
+                return res.send("no");
+            }
+            req.logIn(user, function (err) {
+                if (err) {
+                    return res.send("no");
+                }
+                return res.send("yes");
+            });
+        })(req, res, next);
+    });
+
     // =====================================
     // SIGNUP ==============================
     // =====================================
@@ -124,7 +141,6 @@ module.exports = function (
     });
 
     app.post("/changeName", function (req, res) {
-        console.log("maybe");
         var euid = req.body.euid || req.query.euid;
         userModel.findOne(
             {
