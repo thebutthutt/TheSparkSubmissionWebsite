@@ -60,7 +60,6 @@ $(document).ready(function () {
         noWeekends: true,
         showAllDates: true,
         onHide: (instance) => {
-            console.log("changed");
             startDate = instance.dateSelected;
             endDate = new Date(instance.dateSelected);
             endDate.setDate(endDate.getDate() + 3);

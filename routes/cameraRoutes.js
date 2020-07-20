@@ -125,6 +125,22 @@ module.exports = function (app, bookingModel, cameraHandler) {
         );
     });
 
+    app.get("/bookings/thankyou", function (req, res) {
+        var admin = false,
+            superAdmin = false;
+        if (req.isAuthenticated()) {
+            admin = true;
+            if (req.user.isSuperAdmin == true) {
+                isSuperAdmin = true;
+            }
+        }
+        res.render("pages/bookings/thankyou", {
+            pgnum: 6, //camera
+            isAdmin: admin,
+            isSuperAdmin: superAdmin,
+        });
+    });
+
     app.post("/bookings/availableon", function (req, res) {
         var startDate = req.body.startDate || req.query.startDate;
         var endDate = req.body.endDate || req.query.endDate;
@@ -177,7 +193,7 @@ module.exports = function (app, bookingModel, cameraHandler) {
 
     app.post("/bookings/submitbooking", function (req, res) {
         cameraHandler.submitBooking(req);
-        res.redirect("back");
+        res.redirect("/bookings/thankyou");
     });
 
     app.post("/bookings/manualbooking", isLoggedIn, function (req, res) {

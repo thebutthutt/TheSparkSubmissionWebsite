@@ -49,7 +49,6 @@ module.exports = {
                     availableItems.push(availableLenses);
 
                     if (typeof callback == "function") {
-                        console.log(availableItems);
                         callback(availableItems);
                     }
                 }
@@ -60,24 +59,39 @@ module.exports = {
     submitBooking: function (req, isForced) {
         var newBooking = new bookingModel();
         var time = new moment();
+
+        //classes dont like to be nonalphanumeric values
         var classes = [
             req.body.camera.replace(/\W/g, ""),
             req.body.lens1.replace(/\W/g, ""),
             req.body.lens2.replace(/\W/g, ""),
         ];
+
+        //make the title of the calendar event descriptive (and long)
         var titleName = req.body.camera + ", " + req.body.lens1;
         if (req.body.lens1 != req.body.lens2) {
             titleName =
                 req.body.camera + ", " + req.body.lens1 + ", " + req.body.lens2;
         }
 
-        newBooking.patron = {
-            fname: req.body.first,
-            lname: req.body.last,
-            email: req.body.email,
-            euid: req.body.euid,
-        };
+        //placeholder information if this booking was created by superadmin
+        if (isForced) {
+            newBooking.patron = {
+                fname: "The",
+                lname: "Spark",
+                email: "thespark.unt.edu",
+                euid: "unt1890",
+            };
+        } else {
+            newBooking.patron = {
+                fname: req.body.first,
+                lname: req.body.last,
+                email: req.body.email,
+                euid: req.body.euid,
+            };
+        }
 
+        //papaerwork
         newBooking.camera = req.body.camera;
         newBooking.lens1 = req.body.lens1;
         newBooking.lens2 = req.body.lens2;
@@ -85,6 +99,7 @@ module.exports = {
         newBooking.isAccepted = false;
         newBooking.isRejected = false;
 
+        //make the calendar event for fullCalendar to display
         newBooking.calendarEvent = {
             title: titleName,
             start: req.body.startDate,
@@ -93,6 +108,7 @@ module.exports = {
             classNames: classes,
         };
 
+        //if this was a superadmin backfill just accept it immediately
         if (isForced) {
             newBooking.isAccepted = true;
             newBooking.dateProcessed = time;
@@ -109,16 +125,17 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
+                    //set confirmed time and that it is confirmed, then save
                     var time = moment().format(constants.format);
                     result.isAccepted = true;
                     result.dateProcessed = time;
                     result.save();
-                    console.log(result);
                 }
             }
         );
     },
 
+    //just fricking delete it
     deleteBooking: function (submissionID) {
         bookingModel.findOneAndDelete(
             {
@@ -132,7 +149,10 @@ module.exports = {
         );
     },
 
+    //secondary check to make sure a request is still bookable at the time of review
+    //necessary if two requests are made on the same free item, the second one reviewed will then be invalid
     verifyAvailable: function (submissionID, callback) {
+        //find the booking we are verifying
         bookingModel.findById(submissionID, function (err, result) {
             if (err) {
                 console.log(err);
@@ -149,6 +169,7 @@ module.exports = {
                     isBookable: true,
                 };
 
+                //find all the other APPROVED bookings
                 bookingModel.find(
                     {
                         isAccepted: true,
@@ -157,6 +178,7 @@ module.exports = {
                         if (err) {
                             console.log(err);
                         } else {
+                            //make list of all booked cameras and lenses in the time period we want
                             data.forEach(function (booking) {
                                 bookingStart = new Date(
                                     booking.calendarEvent.start
@@ -172,10 +194,16 @@ module.exports = {
                                 ) {
                                     bookedCameras.push(booking.camera);
                                     bookedLenses.push(booking.lens1);
-                                    bookedLenses.push(booking.lens2);
+                                    if (
+                                        booking.lens2 != "none" &&
+                                        booking.lens2 != "None"
+                                    ) {
+                                        bookedLenses.push(booking.lens2); //only add lens2 if it isnt null
+                                    }
                                 }
                             });
 
+                            //mark any items that are found in the list already booked
                             if (bookedCameras.includes(result.camera)) {
                                 report.isCameraFree = false;
                             }
@@ -190,11 +218,10 @@ module.exports = {
                                 report.isLens1Free == false ||
                                 report.isLens2Free == false
                             ) {
-                                report.isBookable = false;
+                                report.isBookable = false; //is only bookable if no components are booked
                             }
 
                             if (typeof callback == "function") {
-                                console.log(report);
                                 callback(report);
                             }
                         }

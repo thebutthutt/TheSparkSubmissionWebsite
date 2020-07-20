@@ -319,7 +319,7 @@ module.exports = function (
                     false,
                     function callback() {}
                 );
-                res.render("pages/prints/paymentComplete", {
+                res.render("pages/prints/thankyoupayment", {
                     //render the success page
                     data: req.query,
                     pgnum: 0,
@@ -340,12 +340,14 @@ module.exports = function (
         res.json(["done"]); //tell the front end the request is done
     });
 
+    //request superadmin to delete
     app.post("/prints/requestdelete", function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
         adminRequestHandler.addDelete(fileID, "print");
         res.json(["done"]); //tell the front end the request is done
     });
 
+    //undo request SU delete
     app.post("/prints/undodelete", function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
         adminRequestHandler.undoDelete(fileID, "print");
