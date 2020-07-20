@@ -18,7 +18,7 @@
             myeuid="<%=user.local.euid%>"
             isSuperAdmin="<%= isSuperAdmin%>"
         ></div>
-        <div class="container">
+        <div class="container" style="margin-bottom: 100px;">
             <!-- show any messages that come back with authentication -->
             <% if (message.length > 0) { %>
             <div class="alert alert-warning"><%= message %></div>
@@ -105,6 +105,25 @@
                 </div>
 
                 <div class="col">
+                    <div class="card shadow mb-4">
+                        <div class="card-header">
+                            <h4>Queue Statuses</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <h5>4 New Submissions</h5>
+                                    <p class="mb-0">3 at Willis, 1 at DP</p>
+                                </div>
+                                <div class="col border-right"></div>
+                                <div class="col"></div>
+                                <div class="col-auto">
+                                    <h5>6 Ready for Printing</h5>
+                                    <p class="mb-0">4 at Willis, 2 at DP</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <%if (isSuperAdmin) {%>
                     <div id="actionQueue">
                         <div class="shadow card mb-4">

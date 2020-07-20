@@ -10,7 +10,7 @@
 
     <body>
         <%- include ("../../partials/header") %>
-        <div class="container mt-4">
+        <div class="container mt-5" style="margin-bottom: 100px;">
             <div class="row">
                 <div class="col-3">
                     <div class="shadow card list-card">
@@ -44,6 +44,7 @@
                             role="tablist"
                             aria-orientation="vertical"
                         >
+                            <%cameras.forEach(function (camera) { %>
                             <a
                                 class="nav-link filter-item"
                                 id="v-pills-home-tab"
@@ -51,54 +52,11 @@
                                 role="tab"
                                 aria-controls="v-pills-home"
                                 aria-selected="false"
-                                >Canon EOS 5D Mark IV</a
+                                ><%=camera%></a
                             >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-profile-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-profile"
-                                aria-selected="false"
-                                >Canon EOS 7D Mark II</a
-                            >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-messages-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-messages"
-                                aria-selected="false"
-                                >Canon EOS 80D</a
-                            >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-settings-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-settings"
-                                aria-selected="false"
-                                >Canon EOS Rebel T6 (Unit 1)</a
-                            >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-settings-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-settings"
-                                aria-selected="false"
-                                >Canon EOS Rebel T6 (Unit 2)</a
-                            >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-settings-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-settings"
-                                aria-selected="false"
-                                >Canon Rebel SL1</a
-                            >
+                            <%})%>
                             <hr />
+                            <%lenses.forEach(function (lens) { %>
                             <a
                                 class="nav-link filter-item"
                                 id="v-pills-home-tab"
@@ -106,80 +64,9 @@
                                 role="tab"
                                 aria-controls="v-pills-home"
                                 aria-selected="false"
-                                >AT-X 116 PRO DX-II 11-16mm f/2.8</a
+                                ><%=lens%></a
                             >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-profile-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-profile"
-                                aria-selected="false"
-                                >Rokinon 14mm f/2.8</a
-                            >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-messages-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-messages"
-                                aria-selected="false"
-                                >Rokinon Tilt-Shift ​24mm f/3.5</a
-                            >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-settings-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-settings"
-                                aria-selected="false"
-                                >EF-S ​17-55mm f/2.8 IS USM</a
-                            >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-settings-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-settings"
-                                aria-selected="false"
-                                >EF ​50mm f/1.8 STM</a
-                            >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-settings-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-settings"
-                                aria-selected="false"
-                                >EF ​85mm f/1.8 USM</a
-                            >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-settings-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-settings"
-                                aria-selected="false"
-                                >EF ​100mm f/2.8 Macro USM</a
-                            >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-settings-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-settings"
-                                aria-selected="false"
-                                >EF-S ​55-250mm f/4-5.6 IS II</a
-                            >
-                            <a
-                                class="nav-link filter-item"
-                                id="v-pills-settings-tab"
-                                data-toggle="pill"
-                                role="tab"
-                                aria-controls="v-pills-settings"
-                                aria-selected="false"
-                                >EF ​75-300mm f/4-5.6 III</a
-                            >
+                            <%})%>
                             <hr class="mb-0" />
                             <a
                                 class="nav-link active filter-item nav-link-all"
@@ -192,7 +79,8 @@
                             >
                         </div>
                         <%if (isAdmin) { %> <%- include
-                        ("../../partials/cameras/bookingEditor") %> <%}%>
+                        ("../../partials/cameras/bookingEditor"), {cameras:
+                        cameras, lenses: lenses} %> <%}%>
                     </div>
                 </div>
                 <div class="col">

@@ -20,6 +20,8 @@ module.exports = function (app, bookingModel, cameraHandler) {
             pgnum: 6, //cameras
             isAdmin: admin,
             isSuperAdmin: superAdmin,
+            cameras: constants.cameras,
+            lenses: constants.lenses,
         });
     });
 
@@ -123,30 +125,17 @@ module.exports = function (app, bookingModel, cameraHandler) {
         );
     });
 
-    app.get("/bookings/barcodes", function (req, res) {
-        var submissionID = req.body.submissionID || req.query.submissionID;
-        console.log("here");
-        bookingModel.findOne(
-            {
-                _id: submissionID,
-            },
-            function (err, result) {
-                var data = {
-                    camera: constants.barcodes.cameras[result.camera],
-                    lens1: constants.barcodes.lenses[result.lens1],
-                    lens2: constants.barcodes.lenses[result.lens2],
-                };
-                res.render("partials/cameras/barcodeList.ejs", {
-                    data: data,
-                });
-            }
-        );
-    });
-
     app.post("/bookings/availableon", function (req, res) {
         var startDate = req.body.startDate || req.query.startDate;
         var endDate = req.body.endDate || req.query.endDate;
         cameraHandler.findAvailableItems(startDate, endDate, function (data) {
+            res.send(data);
+        });
+    });
+
+    app.post("/bookings/verifyavailable", function (req, res) {
+        var submissionID = req.body.submissionID || req.query.submissionID;
+        cameraHandler.verifyAvailable(submissionID, function (data) {
             res.send(data);
         });
     });
@@ -165,13 +154,21 @@ module.exports = function (app, bookingModel, cameraHandler) {
                 } else {
                     result.forEach((request) => {
                         currentEvent = request.calendarEvent;
+
+                        //This section makes sure dates are in a format that the calendar can parse
                         tempDate = new Date(currentEvent.end);
                         tempDate.setDate(tempDate.getDate() + 1);
                         currentEvent.end = tempDate
                             .toISOString()
                             .substring(0, 10);
+                        tempDate = new Date(currentEvent.start);
+                        currentEvent.start = tempDate
+                            .toISOString()
+                            .substring(0, 10);
+
                         calendarEvents.push(request.calendarEvent);
                     });
+                    console.log(calendarEvents);
                     res.json(calendarEvents);
                 }
             }
@@ -184,7 +181,7 @@ module.exports = function (app, bookingModel, cameraHandler) {
     });
 
     app.post("/bookings/manualbooking", isLoggedIn, function (req, res) {
-        cameraHandler.submitBooking(req);
+        cameraHandler.submitBooking(req, true);
         res.redirect("back");
     });
 
