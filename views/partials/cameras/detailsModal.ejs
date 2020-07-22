@@ -1,3 +1,65 @@
-<p>
-<%=booking%>
-</p>
+<div class="row">
+    <div class="col">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <h5>Camera <small class="text-muted"><%=booking.camera.name%></small></h5>
+                <% if (booking.camera.isFree) { %>
+                <p class="mb-0">This item has no conficts.</p>
+                <%} else { %>
+                <p class="mb-0">
+                    This item conflicts with another booking in this time frame.
+                    Please check the calendar page for more details.
+                </p>
+                <%}%>
+            </li>
+            <li class="list-group-item">
+                <h5>Lens 1 <small class="text-muted"><%=booking.lens1.name%></small></h5>
+                <% if (booking.lens1.isFree) { %>
+                <p class="mb-0">This item has no conficts.</p>
+                <%} else { %>
+                <p class="mb-0">
+                    This item conflicts with another booking in this time frame.
+                    Please check the calendar page for more details.
+				</p>
+                <%}%>
+            </li>
+            <li class="list-group-item">
+                <h5>Lens 2 <small class="text-muted"><%=booking.lens2.name%></small></h5>
+
+				<% if (booking.lens2.isFree) { %>
+                <p class="mb-0">This item has no conficts.</p>
+                <%} else { %>
+                <p>
+                    This item conflicts with another booking in this time frame.
+                    Please check the calendar page for more details.
+                </p class="mb-0">
+                <%}%>
+            </li>
+        </ul>
+    </div>
+    <div class="col">
+			<%if (booking.isBookable) {%>
+			<div class="alert alert-success" role="alert">
+            	<h5>All items in this request are available!</h5>
+				<p>
+					Click the accept button below to finalize this booking. Remeber
+					to send the acceptance email to the patron at
+					yaddayadda@gmail.com and copy this data into Sierra.
+				</p>
+			</div>
+			
+			<%} else {%>
+			<div class="alert alert-danger" role="alert">
+				<h5>There is a conflict in this booking request</h5>
+				<p>
+				You can still finalize this booking in this website, but please
+				be aware that if this needs to be entered in Sierra, you may
+				encounter errors.
+				</p>
+			</div>
+            
+			<% } %>
+			
+			
+    </div>
+</div>

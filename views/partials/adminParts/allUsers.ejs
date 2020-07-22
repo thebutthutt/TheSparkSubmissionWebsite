@@ -1,46 +1,109 @@
-<% for (var i = 0; i < euids.length; i++) { %>
-    <% if (euids[i] != myeuid) {%>
-        <li class="list-group-item">
-            <div class="row">
-                <div class="col">
-                    <strong><%=names[i]%></strong>
-                    <%if (statuses[i]==true){%>
-                        <svg class="bi bi-star-fill" width="0.75em" height="0.75em" viewBox="0 0 16 16" fill="#ffc107" xmlns="http://www.w3.org/2000/svg" style="vertical-align: baseline">
-                        <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-                        </svg>
-                    <%}%>
-                </div>
-                <div class="col">
-                    <%=euids[i]%>
-                </div>
-                <div class="col text-right" style="white-space: nowrap;">
+<% for (var i = 0; i < euids.length; i++) { %> <% if (euids[i] != myeuid) {%>
+<li class="list-group-item">
+    <div class="row">
+        <div class="col-8">
+            <strong><%=names[i]%></strong>
+            <%if (statuses[i]==true){%>
+            <svg
+                class="bi bi-star-fill"
+                width="0.75em"
+                height="0.75em"
+                viewBox="0 0 16 16"
+                fill="#ffc107"
+                xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: baseline;"
+            >
+                <path
+                    d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"
+                />
+            </svg>
+            <%}%>
+        </div>
+        <div class="col">
+            <%=euids[i]%>
+        </div>
+        <div class="col-auto text-right">
+            <div class="dropdown">
+                <svg
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    class="bi bi-three-dots-vertical"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        fill-rule="evenodd"
+                        d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"
+                    />
+                </svg>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <% if (statuses[i] == true) {%>
-                        <button class="btn btn-sm btn-outline-warning btn-user-demote" euid='<%=euids[i]%>'>Demote</button>
+                    <a
+                        class="dropdown-item btn-user-demote"
+                        euid="<%=euids[i]%>"
+                        href="#"
+                    >
+                        Demote
+                    </a>
                     <%} else {%>
-                        <button class="btn btn-sm btn-outline-success btn-user-promote" euid='<%=euids[i]%>'>Promote</button>
+                    <a
+                        class="dropdown-item btn-user-promote"
+                        euid="<%=euids[i]%>"
+                        href="#"
+                    >
+                        Promote
+                    </a>
                     <%}%>
-                    <a class="btn btn-sm btn-outline-primary" data-toggle="collapse" href='#<%=euids[i]%>' role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <a
+                        class="dropdown-item"
+                        data-toggle="collapse"
+                        href="#<%=euids[i]%>"
+                        role="button"
+                        aria-expanded="false"
+                        aria-controls="collapseExample"
+                    >
                         Rename
                     </a>
-                    <button class="btn btn-sm btn-outline-danger btn-user-delete" euid='<%=euids[i]%>'>Delete</button>
+                    <a
+                        class="dropdown-item btn-user-delete"
+                        euid="<%=euids[i]%>"
+                        href="#"
+                    >
+                        Delete
+                    </a>
                 </div>
             </div>
-            
-            
-            
+        </div>
+    </div>
 
-            <div class="collapse" id='<%=euids[i]%>'>
-                <form action="/changeName?euid=<%=euids[i]%>" method="post">
-                    <div class="form-group">
-                        <div class="input-group my-3">
-                            <input type="text" class="form-control" name="newName" placeholder="New screen name" aria-label="New screen name" aria-describedby="changeNameButton">
-                            <div class="input-group-append">
-                              <button class="btn btn-outline-primary" type="submit" id="changeNameButton">Change Name</button>
-                            </div>
-                        </div>
+    <div class="collapse" id="<%=euids[i]%>">
+        <form action="/changeName?euid=<%=euids[i]%>" method="post">
+            <div class="form-group">
+                <div class="input-group my-3">
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="newName"
+                        placeholder="New screen name"
+                        aria-label="New screen name"
+                        aria-describedby="changeNameButton"
+                    />
+                    <div class="input-group-append">
+                        <button
+                            class="btn btn-outline-primary"
+                            type="submit"
+                            id="changeNameButton"
+                        >
+                            Change Name
+                        </button>
                     </div>
-                </form>
+                </div>
             </div>
-        </li>
-    <% } %>
-<% } %>
+        </form>
+    </div>
+</li>
+<% } %> <% } %>

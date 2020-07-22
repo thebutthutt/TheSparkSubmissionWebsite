@@ -3,17 +3,6 @@ var fillSuper = function () {
     showUsers();
 };
 
-var checkSpace = function () {
-    $.ajax({
-        type: "GET",
-        url: "/diskusage",
-        dataType: "html",
-        success: function (data) {
-            $(".append-disk-here").append(data);
-        },
-    });
-};
-
 var showActionQueue = function () {
     $.ajax({
         type: "GET",
@@ -142,8 +131,5 @@ $(document).ready(function () {
 
     if ($(".hidden-extras").attr("isSuperAdmin") == "true") {
         fillSuper();
-    } else {
     }
-
-    checkSpace();
 });

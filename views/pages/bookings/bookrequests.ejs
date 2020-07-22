@@ -23,16 +23,16 @@
                     <li class="list-group-item rounded-0 border-top-0">
                         <div class="row">
                             <div class="col"><strong>Patron</strong></div>
-                            <div class="col"><strong>Submitted On</strong></div>
-                            <div class="col">
-                                <strong>Booking Dates</strong>
+                            <div class="col-1">
+                                <strong>Date</strong>
+                            </div>
+                            <div class="col-2">
+                                <strong>Booking</strong>
                             </div>
                             <div class="col"><strong>Camera</strong></div>
                             <div class="col"><strong>Lens 1</strong></div>
                             <div class="col"><strong>Lens 2</strong></div>
-                            <div class="col text-right">
-                                <strong>Actions</strong>
-                            </div>
+                            <div class="col-1"></div>
                         </div>
                     </li>
                     <%bookings.forEach(function (booking) {%>
@@ -42,10 +42,10 @@
                                 <%=booking.patron.fname%>
                                 <%=booking.patron.lname%>
                             </div>
-                            <div class="col">
+                            <div class="col-1">
                                 <%=booking.dateSubmitted%>
                             </div>
-                            <div class="col">
+                            <div class="col-2">
                                 <%if(booking.calendarEvent.start.substring(5,6)
                                 == "0")
                                 {%><%=booking.calendarEvent.start.substring(6,7)%><%}
@@ -66,7 +66,7 @@
                             <div class="col">
                                 <%=booking.lens2%>
                             </div>
-                            <div class="col text-right">
+                            <div class="col-1 text-right">
                                 <%if (camPage == "newSub") {%>
                                 <button
                                     class="btn btn-success btn-accept"
@@ -74,10 +74,7 @@
                                     data-toggle="modal"
                                     data-target=".modal"
                                 >
-                                    Accept
-                                </button>
-                                <button class="btn btn-danger btn-delete">
-                                    Reject
+                                    View
                                 </button>
                                 <%}%> <%if (camPage == "accepted") {%>
                                 <button
@@ -97,7 +94,7 @@
 
         <div class="modal fade" tabindex="-1" role="dialog">
             <div
-                class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl"
+                class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
             >
                 <div class="modal-content">
                     <div class="modal-header">
@@ -115,16 +112,16 @@
                     <div class="modal-footer">
                         <button
                             type="button"
-                            class="btn btn-danger"
-                            data-dismiss="modal"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="button"
                             class="btn btn-success booking-confirm"
                         >
                             Confirm
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn btn-danger booking-reject"
+                        >
+                            Reject
                         </button>
                     </div>
                 </div>

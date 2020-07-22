@@ -2,51 +2,131 @@
     hello
 </div>
 
-<nav class="navbar navbar-expand-lg navbar-dark shadow" style="background-color: #00853E;">
-
+<nav
+    class="navbar navbar-expand-lg navbar-dark shadow"
+    style="background-color: #00853e;"
+>
     <a class="navbar-brand" href="/">The Spark Makerspace</a>
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
-        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+    >
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav mr-auto">
-            <li class='nav-item <% if (pgnum == 1) { %> active <%}%>'>
+            <li class="nav-item <% if (pgnum == 1) { %> active <%}%>">
                 <a class="nav-link" href="/">Home</a>
             </li>
-            <li class='nav-item <% if (pgnum == 2) { %> active <%}%>'>
+            <li class="nav-item <% if (pgnum == 2) { %> active <%}%>">
                 <a class="nav-link" href="/submit">Submit</a>
             </li>
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle <% if (pgnum == 6) { %> active <%}%>" href="/cameras" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Cameras
+                <a
+                    class="nav-link dropdown-toggle <% if (pgnum == 6) { %> active <%}%>"
+                    href="/cameras"
+                    id="navbarDropdown"
+                    role="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                >
+                    Cameras
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="/cameras">Availability</a>
-                  <a class="dropdown-item" href="/book">Booking Request</a>
+                <div
+                    class="dropdown-menu shadow"
+                    aria-labelledby="navbarDropdown"
+                >
+                    <a class="dropdown-item" href="/cameras">Availability</a>
+                    <a class="dropdown-item" href="/book">Booking Request</a>
                 </div>
-              </li>
-            <% if (isAdmin) { %> 
-                <li class='nav-item <% if (pgnum == 4) { %> active <%}%>'>
-                    <a class="nav-link" href="/prints/new">Prints</a>
-                </li>
-                <li class='nav-item <% if (pgnum == 5) { %> active <%}%>'>
-                    <a class="nav-link" href="/workrequests/all">Work Requests</a>
-                </li>
-                <li class='nav-item <% if (pgnum == 7) { %> active <%}%>'>
-                    <a class="nav-link" href="/bookings/new">Booking Requests</a>
-                </li>
-                <li class='nav-item <% if (pgnum == 3) { %> active <%}%>'>
-                    <a class="nav-link" href="/profile">Profile</a>
-                </li>
+            </li>
+            <% if (isAdmin) { %>
+            <li class="nav-item">
+                <a
+                    class="nav-link ml-3"
+                    style="border-right: 1px solid rgba(255, 255, 255, 0.3);"
+                    >&nbsp;</a
+                >
+            </li>
+            <li class="nav-item">
+                <a class="nav-link mr-3">&nbsp;</a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a
+                    class="nav-link dropdown-toggle <% if (pgnum == 4) { %> active <%}%>"
+                    href="/prints/new"
+                    id="navbarDropdown"
+                    role="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                >
+                    Prints
+                </a>
+                <div
+                    class="dropdown-menu shadow"
+                    aria-labelledby="navbarDropdown"
+                >
+                    <a class="dropdown-item" href="/prints/new"
+                        >New Submissions</a
+                    >
+                    <a class="dropdown-item" href="/prints/pendpay"
+                        >Pending Payment</a
+                    >
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/prints/ready"
+                        >Ready to Print</a
+                    >
+                    <a class="dropdown-item" href="/prints/readywillis"
+                        >Ready to Print (Willis Library)</a
+                    >
+                    <a class="dropdown-item" href="/prints/readydp"
+                        >Ready to Print (Discovery Park)</a
+                    >
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/prints/pickup"
+                        >Waiting for Pickup</a
+                    >
+                    <a class="dropdown-item" href="/prints/pickupwillis"
+                        >Waiting for Pickup (Willis Library)</a
+                    >
+                    <a class="dropdown-item" href="/prints/pickupdp"
+                        >Waiting for Pickup (Discovery Park)</a
+                    >
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/prints/completed"
+                        >Completed</a
+                    >
+                    <a class="dropdown-item" href="/prints/rejected"
+                        >Rejected</a
+                    >
+                    <a class="dropdown-item" href="/prints/all">All Prints</a>
+                </div>
+            </li>
+
+            <li class="nav-item <% if (pgnum == 5) { %> active <%}%>">
+                <a class="nav-link" href="/workrequests/all">Work Requests</a>
+            </li>
+            <li class="nav-item <% if (pgnum == 7) { %> active <%}%>">
+                <a class="nav-link" href="/bookings/new">Booking Requests</a>
+            </li>
+            <li class="nav-item <% if (pgnum == 3) { %> active <%}%>">
+                <a class="nav-link" href="/profile">Profile</a>
+            </li>
             <% } else { %>
-                <li class=' nav-item <% if (pgnum == 3) { %> active <%}%>'>
-                    <a class="nav-link" href="/login">Admin Login</a>
-                </li>
+            <li class="nav-item <% if (pgnum == 3) { %> active <%}%>">
+                <a class="nav-link" href="/login">Admin Login</a>
+            </li>
             <% } %>
         </ul>
     </div>
-
 </nav>
