@@ -88,10 +88,19 @@ module.exports = function (app, printHandler, cleHandler) {
     app.get(
         "/signaturepad",
         function (req, res) {
-            console.log(req.body);
             res.render("partials/PrintDetails/signaturePad", {
                 fileName: req.body.fileName,
             });
+        },
+        function (err, html) {
+            res.send(html);
+        }
+    );
+
+    app.get(
+        "/sigwaitscreen",
+        function (req, res) {
+            res.render("partials/PrintDetails/waitontech");
         },
         function (err, html) {
             res.send(html);

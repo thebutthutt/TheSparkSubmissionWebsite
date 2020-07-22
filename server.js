@@ -168,6 +168,7 @@ messageStructure: {
     ws.on("message", function incoming(data) {
         //make sure every connected client knows who the messiah is
         if (data == "I am the messiah") {
+            console.log("sigpad connected");
             messiah = clientData.yourID; //this is the ID of the messiah
             iamthemessiah = true;
             for (var i = 0; i < CLIENTS.length; i++) {
@@ -244,6 +245,7 @@ messageStructure: {
     ws.on("close", function () {
         if (iamthemessiah) {
             messiah = -1;
+            console.log("sigpad gone");
         }
     });
 });
