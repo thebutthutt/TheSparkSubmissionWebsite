@@ -9,7 +9,6 @@ var getBookingInfo = function (event) {
         },
         dataType: "html",
         success: function (data) {
-            console.log(data);
             $(".modal-body > p").append(data);
         },
     });

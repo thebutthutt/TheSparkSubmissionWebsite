@@ -16,7 +16,6 @@ $(document).ready(function () {
         });
 
         $(".booking-confirm").on("click", function () {
-            console.log("here");
             let submissionID = currentSubmissionID;
             $.ajax({
                 type: "POST",
