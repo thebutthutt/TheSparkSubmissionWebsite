@@ -22,6 +22,9 @@ module.exports = {
                     var bookingStart, bookingEnd, requestStart, requestEnd;
                     requestStart = new Date(startDate);
                     requestEnd = new Date(endDate);
+
+                    requestEnd.setDate(requestEnd.getDate() + 1); //add one day for the necessary quarantine
+
                     data.forEach(function (booking) {
                         bookingStart = new Date(booking.calendarEvent.start);
                         bookingEnd = new Date(booking.calendarEvent.end);
@@ -118,6 +121,10 @@ module.exports = {
             newBooking.dateProcessed = time;
         }
         newBooking.save();
+
+        if (isForced) {
+            module.exports.makeQuarantine(newBooking);
+        }
     },
 
     confirmBooking: function (submissionID) {
@@ -134,6 +141,10 @@ module.exports = {
                     result.isAccepted = true;
                     result.dateProcessed = time;
                     result.save();
+
+                    //make a new booking for the 24 hour quarantine/ceaning period
+
+                    module.exports.makeQuarantine(result);
                 }
             }
         );
@@ -186,6 +197,9 @@ module.exports = {
                 var bookingStart, bookingEnd, requestStart, requestEnd;
                 requestStart = new Date(result.calendarEvent.start);
                 requestEnd = new Date(result.calendarEvent.end);
+
+                requestEnd.setDate(requestEnd.getDate() + 1); //add a day to the end for the required quarantine
+
                 var report = {
                     camera: {
                         name: result.camera,
@@ -262,5 +276,41 @@ module.exports = {
                 );
             }
         });
+    },
+
+    makeQuarantine: function (original) {
+        var quarantine = new bookingModel();
+        var time = new moment();
+        var classes = original.calendarEvent.classNames;
+        classes.push("quarantine");
+
+        quarantine.patron = {
+            fname: "The",
+            lname: "Spark",
+            email: "thespark.unt.edu",
+            euid: "unt1890",
+        };
+
+        quarantine.camera = original.camera;
+        quarantine.lens1 = original.lens1;
+        quarantine.lens2 = original.lens2;
+        quarantine.dateSubmitted = time.format(constants.format);
+        quarantine.isAccepted = true;
+        quarantine.isRejected = false;
+        var dateText = new Date(original.calendarEvent.end);
+
+        dateText.setDate(dateText.getDate() + 1);
+
+        dateText = dateText.toISOString();
+
+        quarantine.calendarEvent = {
+            title: "Quarantine",
+            start: dateText,
+            end: dateText,
+            allDay: true,
+            classNames: classes,
+        };
+
+        quarantine.save();
     },
 };
