@@ -36,14 +36,14 @@ module.exports = function (
     app.post("/verify", function (req, res, next) {
         passport.authenticate("local-login", function (err, user, info) {
             if (err) {
-                return res.send("no");
+                return res.send("error");
             }
             if (!user) {
-                return res.send("no");
+                return res.send("no user");
             }
             req.logIn(user, function (err) {
                 if (err) {
-                    return res.send("no");
+                    return res.send("password");
                 }
                 return res.send("yes");
             });
@@ -79,12 +79,35 @@ module.exports = function (
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get("/profile", isLoggedIn, function (req, res) {
-        res.render("pages/users/profile", {
-            message: req.flash("logoutMessage"),
-            pgnum: 3, //tells the navbar what page to highlight
-            user: req.user, // get the user out of session and pass to template
-            isAdmin: true,
-            isSuperAdmin: req.user.isSuperAdmin,
+        var numNew;
+        var numPrint;
+
+        //nested callbacks because I'm shit at event driven systems kill me
+        getNumNew(printRequestModel, function (numNewReturn) {
+            numNew = numNewReturn;
+            getNumPrint(printRequestModel, function (numPrintReturn) {
+                numPrint = numPrintReturn;
+                var prints = {
+                    newPrints: numNew,
+                    readyPrints: numPrint,
+                };
+
+                console.log(prints);
+
+                var size = getTotalSize(
+                    "/home/hcf0018/webserver/TheSparkSubmissionWebsite/app"
+                );
+
+                res.render("pages/users/profile", {
+                    message: req.flash("logoutMessage"),
+                    pgnum: 3, //tells the navbar what page to highlight
+                    user: req.user, // get the user out of session and pass to template
+                    isAdmin: true,
+                    isSuperAdmin: req.user.isSuperAdmin,
+                    queueData: prints,
+                    sizeData: size,
+                });
+            });
         });
     });
 
@@ -286,22 +309,6 @@ module.exports = function (
             }
         );
     });
-
-    app.get(
-        "/diskusage",
-        function (req, res) {
-            var data = getTotalSize(
-                "/home/hcf0018/webserver/TheSparkSubmissionWebsite/app"
-            );
-            res.render("partials/adminParts/sizeCheck", {
-                bytes: data.bytes,
-                human: data.human,
-            });
-        },
-        function (err, html) {
-            res.send(html);
-        }
-    );
 };
 
 // route middleware to make sure a user is logged in
@@ -375,4 +382,72 @@ function getTotalSize(directoryPath) {
     };
 
     return data;
+}
+
+function getNumPrint(printRequestModel, callback) {
+    printRequestModel.find(
+        {
+            "files.isReadyToPrint": true,
+        },
+        function (err, result) {
+            var num = 0,
+                numW = 0,
+                numDP = 0;
+            result.forEach((submission) => {
+                submission.files.forEach((file) => {
+                    if (file.isReadyToPrint) {
+                        num += 1;
+                        if (file.printLocation == "Willis Library") {
+                            numW += 1;
+                        } else {
+                            numDP += 1;
+                        }
+                    }
+                });
+            });
+            console.log("after", num, numW, numDP);
+
+            var data = {
+                numTotal: num,
+                numWillis: numW,
+                numDP: numDP,
+            };
+
+            callback(data);
+        }
+    );
+}
+
+function getNumNew(printRequestModel, callback) {
+    printRequestModel.find(
+        {
+            "files.isNewSubmission": true,
+        },
+        function (err, result) {
+            var num = 0,
+                numW = 0,
+                numDP = 0;
+            result.forEach((submission) => {
+                submission.files.forEach((file) => {
+                    if (file.isNewSubmission) {
+                        num += 1;
+                        if (file.printLocation == "Willis Library") {
+                            numW += 1;
+                        } else {
+                            numDP += 1;
+                        }
+                    }
+                });
+            });
+            console.log("after", num, numW, numDP);
+
+            var data = {
+                numTotal: num,
+                numWillis: numW,
+                numDP: numDP,
+            };
+
+            callback(data);
+        }
+    );
 }

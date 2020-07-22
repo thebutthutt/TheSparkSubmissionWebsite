@@ -8,6 +8,8 @@ var path = require("path");
 var printRequestModel = require("../app/models/printRequest");
 
 module.exports = {
+    //return the number of new prints in the queue
+
     //function receives the input from filled out request form and saves to the database
     addPrint: function (fields, prints) {
         var request = new printRequestModel(); //new instance of a request
@@ -449,6 +451,7 @@ module.exports = {
         );
     },
 
+    //mark that a file has finished printing, this moves it to the piickup queue
     markCompleted: function (fileID) {
         var time = moment();
         printRequestModel.findOneAndUpdate(
@@ -482,6 +485,7 @@ module.exports = {
         );
     },
 
+    //park that a print has been started, adds an attempt
     startPrint: function (fileID, callback) {
         printRequestModel.findOne(
             {
@@ -505,6 +509,7 @@ module.exports = {
         );
     },
 
+    //mark that a print succeeded, this then calls mark completed
     printSuccess: function (fileID, callback) {
         printRequestModel.findOne(
             {
@@ -689,6 +694,7 @@ module.exports = {
         );
     },
 
+    //delete the file from the disk
     deleteFile: function (fileID) {
         printRequestModel.findOne(
             {

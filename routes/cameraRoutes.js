@@ -149,12 +149,20 @@ module.exports = function (app, bookingModel, cameraHandler) {
         });
     });
 
-    app.post("/bookings/verifyavailable", function (req, res) {
-        var submissionID = req.body.submissionID || req.query.submissionID;
-        cameraHandler.verifyAvailable(submissionID, function (data) {
-            res.send(data);
-        });
-    });
+    app.post(
+        "/bookings/verifyavailable",
+        function (req, res) {
+            var submissionID = req.body.submissionID || req.query.submissionID;
+            cameraHandler.verifyAvailable(submissionID, function (data) {
+                res.render("partials/cameras/detailsModal", {
+                    booking: data,
+                });
+            });
+        },
+        function (err, html) {
+            res.send(html);
+        }
+    );
 
     //returns all the calendar events of acceted camera booking requests to the browser to display
     app.post("/bookings", function (req, res) {
@@ -204,6 +212,12 @@ module.exports = function (app, bookingModel, cameraHandler) {
     app.post("/bookings/confirmbooking", function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         cameraHandler.confirmBooking(submissionID);
+        res.json("done");
+    });
+
+    app.post("/bookings/rejectbooking", function (req, res) {
+        var submissionID = req.body.submissionID || req.query.submissionID;
+        cameraHandler.rejectBooking(submissionID);
         res.json("done");
     });
 

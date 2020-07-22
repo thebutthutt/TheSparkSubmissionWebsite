@@ -98,12 +98,16 @@ module.exports = {
         newBooking.dateSubmitted = time.format(constants.format);
         newBooking.isAccepted = false;
         newBooking.isRejected = false;
+        var startText = new Date(req.body.startDate);
+        var endText = new Date(req.body.endDate);
+        startText = startText.toISOString();
+        endText = endText.toISOString();
 
         //make the calendar event for fullCalendar to display
         newBooking.calendarEvent = {
             title: titleName,
-            start: req.body.startDate,
-            end: req.body.endDate,
+            start: startText,
+            end: endText,
             allDay: true,
             classNames: classes,
         };
@@ -128,6 +132,26 @@ module.exports = {
                     //set confirmed time and that it is confirmed, then save
                     var time = moment().format(constants.format);
                     result.isAccepted = true;
+                    result.dateProcessed = time;
+                    result.save();
+                }
+            }
+        );
+    },
+
+    rejectBooking: function (submissionID) {
+        bookingModel.findOne(
+            {
+                _id: submissionID,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    //set confirmed time and that it is confirmed, then save
+                    var time = moment().format(constants.format);
+                    result.isAccepted = false;
+                    result.isRejected = true;
                     result.dateProcessed = time;
                     result.save();
                 }
@@ -163,9 +187,18 @@ module.exports = {
                 requestStart = new Date(result.calendarEvent.start);
                 requestEnd = new Date(result.calendarEvent.end);
                 var report = {
-                    isCameraFree: true,
-                    isLens1Free: true,
-                    isLens2Free: true,
+                    camera: {
+                        name: result.camera,
+                        isFree: true,
+                    },
+                    lens1: {
+                        name: result.lens1,
+                        isFree: true,
+                    },
+                    lens2: {
+                        name: result.lens2,
+                        isFree: true,
+                    },
                     isBookable: true,
                 };
 
@@ -205,18 +238,18 @@ module.exports = {
 
                             //mark any items that are found in the list already booked
                             if (bookedCameras.includes(result.camera)) {
-                                report.isCameraFree = false;
+                                report.camera.isFree = false;
                             }
                             if (bookedLenses.includes(result.lens1)) {
-                                report.isLens1Free = false;
+                                report.lens1.isFree = false;
                             }
                             if (bookedLenses.includes(result.lens2)) {
-                                report.isLens2Free = false;
+                                report.lens2.isFree = false;
                             }
                             if (
-                                report.isCameraFree == false ||
-                                report.isLens1Free == false ||
-                                report.isLens2Free == false
+                                report.camera.isFree == false ||
+                                report.lens1.isFree == false ||
+                                report.lens2.isFree == false
                             ) {
                                 report.isBookable = false; //is only bookable if no components are booked
                             }

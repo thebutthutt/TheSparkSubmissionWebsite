@@ -10,9 +10,38 @@ $(document).ready(function () {
             data: {
                 submissionID: submissionID,
             },
-            dataType: "json",
+            dataType: "html",
         }).done(function (data) {
-            $(".modal-body").html(data);
+            $(".modal-body").append(data);
+        });
+
+        $(".booking-confirm").on("click", function () {
+            console.log("here");
+            let submissionID = currentSubmissionID;
+            $.ajax({
+                type: "POST",
+                url: "/bookings/confirmbooking",
+                data: {
+                    submissionID: submissionID,
+                },
+                dataType: "json",
+            }).done(function () {
+                location.reload();
+            });
+        });
+
+        $(".booking-reject").on("click", function () {
+            let submissionID = currentSubmissionID;
+            $.ajax({
+                type: "POST",
+                url: "/bookings/rejectbooking",
+                data: {
+                    submissionID: submissionID,
+                },
+                dataType: "json",
+            }).done(function () {
+                location.reload();
+            });
         });
     });
 
@@ -30,17 +59,7 @@ $(document).ready(function () {
         });
     });
 
-    $(".booking-confirm").on("click", function () {
-        let submissionID = currentSubmissionID;
-        $.ajax({
-            type: "POST",
-            url: "/bookings/confirmbooking",
-            data: {
-                submissionID: submissionID,
-            },
-            dataType: "json",
-        }).done(function () {
-            location.reload();
-        });
+    $(".modal").on("hidden.bs.modal", function (e) {
+        $(".modal-body").empty();
     });
 });

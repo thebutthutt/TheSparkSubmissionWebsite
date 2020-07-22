@@ -112,14 +112,30 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-auto">
-                                    <h5>4 New Submissions</h5>
-                                    <p class="mb-0">3 at Willis, 1 at DP</p>
+                                    <h5>
+                                        <%=queueData.newPrints.numTotal%> New
+                                        Submission <%if
+                                        (queueData.newPrints.numTotal != 1) {%>
+                                        s <%}%>
+                                    </h5>
+                                    <p class="mb-0">
+                                        <%=queueData.newPrints.numWillis%> at
+                                        Willis, <%=queueData.newPrints.numDP%>
+                                        at DP
+                                    </p>
                                 </div>
                                 <div class="col border-right"></div>
                                 <div class="col"></div>
                                 <div class="col-auto">
-                                    <h5>6 Ready for Printing</h5>
-                                    <p class="mb-0">4 at Willis, 2 at DP</p>
+                                    <h5>
+                                        <%=queueData.readyPrints.numTotal%>
+                                        Ready To Print
+                                    </h5>
+                                    <p class="mb-0">
+                                        <%=queueData.readyPrints.numWillis%> at
+                                        Willis, <%=queueData.readyPrints.numDP%>
+                                        at DP
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -169,7 +185,20 @@
                             <div class="card-header">
                                 <h4 class="mb-0">Disk Usage</h4>
                             </div>
-                            <div class="card-body append-disk-here"></div>
+                            <div class="card-body append-disk-here">
+                                <p>
+                                    <strong><%=sizeData.human%></strong> used
+                                    storing patron files.
+                                </p>
+                                <p class="mb-0 small">
+                                    This server allows up to 30GB to be stored
+                                    in the home directory. In the past, we have
+                                    only used around 3GB at most to store files.
+                                    When 1GB or more has been used, please
+                                    consider deleting old completed or rejected
+                                    print submissions. Thank you!
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
