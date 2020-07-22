@@ -159,7 +159,6 @@ module.exports = function (
                     result.intakeDates.push(time);
                     result.hasMaterials = true;
                     result.save();
-                    console.log(result);
                     res.redirect("back");
                 }
             }

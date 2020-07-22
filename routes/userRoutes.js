@@ -405,7 +405,6 @@ function getNumPrint(printRequestModel, callback) {
                     }
                 });
             });
-            console.log("after", num, numW, numDP);
 
             var data = {
                 numTotal: num,
@@ -439,7 +438,6 @@ function getNumNew(printRequestModel, callback) {
                     }
                 });
             });
-            console.log("after", num, numW, numDP);
 
             var data = {
                 numTotal: num,

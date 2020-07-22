@@ -192,7 +192,6 @@ module.exports = function (app, bookingModel, cameraHandler) {
 
                         calendarEvents.push(request.calendarEvent);
                     });
-                    console.log(calendarEvents);
                     res.json(calendarEvents);
                 }
             }

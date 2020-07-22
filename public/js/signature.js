@@ -1,6 +1,56 @@
-const ws = new WebSocket("wss://sparkorders.library.unt.edu");
+var ws;
 var fileName;
 var fileID;
+
+var hidden, visibilityChange;
+if (typeof document.hidden !== "undefined") {
+    // Opera 12.10 and Firefox 18 and later support
+    hidden = "hidden";
+    visibilityChange = "visibilitychange";
+} else if (typeof document.msHidden !== "undefined") {
+    hidden = "msHidden";
+    visibilityChange = "msvisibilitychange";
+} else if (typeof document.webkitHidden !== "undefined") {
+    hidden = "webkitHidden";
+    visibilityChange = "webkitvisibilitychange";
+}
+
+function connectWebSocket() {
+    ws = new WebSocket("wss://sparkorders.library.unt.edu");
+    ws.onopen = () => {
+        ws.send("I am the messiah");
+        console.log("Now connected");
+    };
+
+    $(".signature-pad").empty();
+    waitscreen();
+
+    ws.addEventListener("message", function (event) {
+        var obj = JSON.parse(event.data);
+        if (obj.command == "sendClientInfo") {
+        } else if (obj.command == "requestPatronSignature") {
+            fileID = obj.data.fileID;
+            patronSignature();
+        } else if (obj.command == "resetScreen") {
+            $(".signature-pad").empty();
+            waitscreen();
+        }
+    });
+}
+
+function handleVisibilityChange() {
+    if (document[hidden]) {
+        ws.close();
+    } else {
+        connectWebSocket();
+    }
+}
+
+document.addEventListener(visibilityChange, handleVisibilityChange, false);
+
+$(document).ready(function () {
+    connectWebSocket();
+});
 
 var getUrlParameter = function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1),
@@ -18,28 +68,6 @@ var getUrlParameter = function getUrlParameter(sParam) {
         }
     }
 };
-
-$(document).ready(function () {
-    ws.onopen = () => {
-        ws.send("I am the messiah");
-        console.log("Now connected");
-    };
-
-    waitscreen();
-
-    ws.addEventListener("message", function (event) {
-        console.log("Message from server ", event.data);
-        var obj = JSON.parse(event.data);
-        if (obj.command == "sendClientInfo") {
-            console.log(obj);
-        } else if (obj.command == "requestPatronSignature") {
-            fileID = obj.data.fileID;
-            patronSignature();
-        } else if (obj.command == "resetScreen") {
-            $(".signature-pad").empty();
-        }
-    });
-});
 
 var patronSignature = function () {
     $.ajax({
@@ -177,9 +205,17 @@ var patronSignature = function () {
                     })
                 );
                 $(".signature-pad").empty();
+                waitscreen();
             });
         });
     });
 };
 
-var waitscreen = function () {};
+var waitscreen = function () {
+    $.ajax({
+        url: "/sigwaitscreen",
+        dataType: "html",
+    }).done(function (data) {
+        $(".signature-pad").html(data);
+    });
+};
