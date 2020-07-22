@@ -7,8 +7,10 @@ module.exports = function (
     passport,
     userModel,
     adminRequestHandler,
+    cameraHandler,
     printRequestModel,
-    cleRequestModel
+    cleRequestModel,
+    objectToCleanModel
 ) {
     // =====================================
     // LOGIN ===============================
@@ -92,20 +94,21 @@ module.exports = function (
                     readyPrints: numPrint,
                 };
 
-                console.log(prints);
-
                 var size = getTotalSize(
                     "/home/hcf0018/webserver/TheSparkSubmissionWebsite/app"
                 );
 
-                res.render("pages/users/profile", {
-                    message: req.flash("logoutMessage"),
-                    pgnum: 3, //tells the navbar what page to highlight
-                    user: req.user, // get the user out of session and pass to template
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                    queueData: prints,
-                    sizeData: size,
+                objectToCleanModel.find({}, function (err, result) {
+                    res.render("pages/users/profile", {
+                        message: req.flash("logoutMessage"),
+                        pgnum: 3, //tells the navbar what page to highlight
+                        user: req.user, // get the user out of session and pass to template
+                        isAdmin: true,
+                        isSuperAdmin: req.user.isSuperAdmin,
+                        queueData: prints,
+                        cameraData: result,
+                        sizeData: size,
+                    });
                 });
             });
         });
@@ -181,6 +184,34 @@ module.exports = function (
             }
         );
         res.redirect("back");
+    });
+
+    app.post("/cameras/clean", function (req, res) {
+        var name = req.body.object || req.query.object;
+        objectToCleanModel.findOne(
+            {
+                objectName: name,
+            },
+            function (err, result) {
+                result.isCleaned = true;
+                result.save();
+                res.json("done");
+            }
+        );
+    });
+
+    app.post("/cameras/unclean", function (req, res) {
+        var name = req.body.object || req.query.object;
+        objectToCleanModel.findOne(
+            {
+                objectName: name,
+            },
+            function (err, result) {
+                result.isCleaned = false;
+                result.save();
+                res.json("done");
+            }
+        );
     });
 
     //Display the files pending delete to go into the full action queue

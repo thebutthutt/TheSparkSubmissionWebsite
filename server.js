@@ -21,6 +21,7 @@ var constants = require("./config/constants.js");
 var printRequestModel = require("./app/models/printRequest");
 var cleRequestModel = require("./app/models/cleRequest");
 var bookingModel = require("./app/models/booking");
+var objectToCleanModel = require("./app/models/cleaningObject");
 var userModel = require("./app/models/user");
 var payment = require("./config/payment.js");
 
@@ -100,8 +101,10 @@ require("./routes/userRoutes.js")(
     passport,
     userModel,
     adminRequestHandler,
+    cameraHandler,
     printRequestModel,
-    cleRequestModel
+    cleRequestModel,
+    objectToCleanModel
 ); // load our routes and pass in our app and fully configured passport
 require("./routes/cleRoutes.js")(
     app,
@@ -113,7 +116,12 @@ require("./routes/cleRoutes.js")(
 require("./routes/cameraRoutes.js")(app, bookingModel, cameraHandler); // load our routes and pass in our app and fully configured passport
 
 // Job Scheduler ======================================================================
-require("./config/jobs.js")(printRequestModel, constants); //make the job scheduler go
+require("./config/jobs.js")(
+    printRequestModel,
+    bookingModel,
+    objectToCleanModel,
+    constants
+); //make the job scheduler go
 //bookingModel.remove({}, function(){})
 // launch ======================================================================
 
