@@ -22,11 +22,7 @@ module.exports = {
             file.name = time.unix() + unique + file.name; //add special separater so we can get just the filename later
             //yes this is a dumb way to keep track of the original filename but I dont care
             unique += 1; //increment unique so every file is not the same name
-            file.path = path.join(
-                __dirname,
-                "../app/uploads/clefiles/",
-                file.name
-            );
+            file.path = path.join(__dirname, "../../Uploads/CLE/", file.name);
         });
         form.on("file", function (name, file) {
             filenames.push(file.path);
