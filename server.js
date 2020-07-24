@@ -244,6 +244,7 @@ messageStructure: {
                         command: "resetScreen",
                     })
                 );
+                printHandler.markPickedUp(currentRequestingID);
                 currentRequestingID = -1;
                 currentRequestingIndex = -1;
             }

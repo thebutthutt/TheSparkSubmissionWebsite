@@ -43,10 +43,13 @@ $(document).ready(function () {
 
                 if (obj.command == "sendClientInfo") {
                     if (obj.data.messiahID == -1) {
-                        $(".instructions").html(
-                            "Please connect a signature pad first!"
-                        );
+                        $(".nopad").show();
+                        $(".asksig").hide();
+                        $(".verify").hide();
                     } else {
+                        $(".nopad").hide();
+                        $(".asksig").show();
+                        $(".verify").hide();
                         ws.send(
                             JSON.stringify({
                                 sender: "tech",
@@ -56,18 +59,18 @@ $(document).ready(function () {
                         );
                     }
                 } else if (obj.command == "requestAdminLogin") {
-                    $(".instructions").html("Please verify your password");
-                    $(".subtext").hide();
-                    $(".verification").show();
+                    $(".nopad").hide();
+                    $(".asksig").hide();
+                    $(".verify").show();
                 }
                 if (message.data == "success") {
                     ws.close();
                     location.reload();
                 } else {
                     if (obj.messiahID == -1) {
-                        $(".instructions").html(
-                            "No signature pad was detected!"
-                        );
+                        $(".nopad").show();
+                        $(".asksig").hide();
+                        $(".verify").hide();
                     } else if (obj.messiahID != -1) {
                         ws.send(JSON.stringify(printData));
                     }
@@ -94,11 +97,14 @@ $(document).ready(function () {
                         $(".modal").modal("hide");
                     } else {
                         //verification failed
-                        $(".instructions").html("Please try again...");
                     }
                 });
             });
         };
+    });
+
+    $(".modal").on("hidden.bs.modal", function (e) {
+        location.reload();
     });
 
     $(".pickup-btn").on("click", function () {

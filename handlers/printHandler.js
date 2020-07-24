@@ -566,6 +566,7 @@ module.exports = {
 
     //the print has been picked up by the patron
     markPickedUp: function (fileID) {
+        console.log(fileID);
         var time = moment().format(constants.format);
         printRequestModel.findOne(
             {
