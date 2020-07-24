@@ -114,7 +114,8 @@
                                 <div class="col-auto">
                                     <h5>
                                         <%=queueData.newPrints.numTotal%> New
-                                        Submission<%if(queueData.newPrints.numTotal != 1){%>s<%}%>
+                                        Submission<%if(queueData.newPrints.numTotal
+                                        != 1){%>s<%}%>
                                     </h5>
                                     <p class="mb-0">
                                         <%=queueData.newPrints.numWillis%> at
@@ -138,6 +139,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <!--
                     <div class="card shadow mb-4">
                         <div class="card-header">
                             <h4 class="mb-0">Camera Cleaning</h4>
@@ -187,7 +190,7 @@
                             </ul>
                             <%}%>
                         </div>
-                    </div>
+                    </div>-->
                     <%if (isSuperAdmin) {%>
                     <div id="actionQueue">
                         <div class="shadow card mb-4">
@@ -216,6 +219,8 @@
                                 </li>
                             </ul>
                         </div>
+
+                        <!--
                         <div class="shadow card mb-4">
                             <div class="card-header border-bottom">
                                 <h4 class="mb-0">Unassigned Work Orders</h4>
@@ -227,7 +232,7 @@
                                     No unassigned work orders
                                 </li>
                             </ul>
-                        </div>
+                        </div>-->
                         <%}%>
                         <div class="shadow card mb-4">
                             <div class="card-header">
