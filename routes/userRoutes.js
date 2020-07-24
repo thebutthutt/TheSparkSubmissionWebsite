@@ -91,9 +91,7 @@ module.exports = function (
                     readyPrints: numPrint,
                 };
 
-                var size = getTotalSize(
-                    "/home/hcf0018/webserver/TheSparkSubmissionWebsite/app"
-                );
+                var size = getTotalSize("/home/hcf0018/webserver/Uploads");
 
                 res.render("pages/users/profile", {
                     message: req.flash("logoutMessage"),
