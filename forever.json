@@ -3,6 +3,9 @@
     "append": true,
     "watch": true,
     "script": "server.js",
-    "sourceDir": "/home/hcf0018/webserver/TheSparkSubmissionWebsite/",
+    "sourceDir": "/home/hcf0018/webserver/TheSparkSubmissionWebsite",
+    "logFile": "/home/hcf0018/webserver/logs/forever.log",
+    "outFile": "/home/hcf0018/webserver/logs/out.log",
+    "errFile": "/home/hcf0018/webserver/logs/error.log",
     "command": "/usr/bin/node"
 }
