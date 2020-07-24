@@ -2,7 +2,7 @@ var fs = require("fs");
 var path = require("path");
 var moment = require("moment");
 
-module.exports = function (app, printHandler, cleHandler) {
+module.exports = function (app, printHandler) {
     // =====================================
     // HOME PAGE (with login links) ========
     // =====================================

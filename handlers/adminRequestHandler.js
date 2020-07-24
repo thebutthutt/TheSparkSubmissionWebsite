@@ -1,7 +1,6 @@
 const moment = require("moment");
 const constants = require("../config/constants");
 var printRequestModel = require("../app/models/printRequest");
-var cleRequestModel = require("../app/models/cleRequest");
 
 module.exports = {
     addDelete: function (itemID, itemType) {
