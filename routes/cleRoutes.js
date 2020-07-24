@@ -8,6 +8,7 @@ module.exports = function (
     cleHandler,
     cleRequestModel
 ) {
+    /*
     // =====================================
     // CLE REQUESTS ========================
     // =====================================
@@ -163,7 +164,7 @@ module.exports = function (
                 }
             }
         );
-    });
+    }); */
 };
 
 // route middleware to make sure a user is logged in

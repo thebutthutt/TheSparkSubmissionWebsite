@@ -5,9 +5,8 @@ module.exports = function (app, bookingModel, cameraHandler) {
     // CAMERAS ========================
     // =====================================
     // show the bookings and such
-
     //page to display the calendar
-    app.get("/cameras", function (req, res) {
+    /*app.get("/cameras", function (req, res) {
         var admin = false,
             superAdmin = false;
         if (req.isAuthenticated()) {
@@ -224,7 +223,7 @@ module.exports = function (app, bookingModel, cameraHandler) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         cameraHandler.deleteBooking(submissionID);
         res.json("done");
-    });
+    });*/
 };
 
 // route middleware to make sure a user is logged in
