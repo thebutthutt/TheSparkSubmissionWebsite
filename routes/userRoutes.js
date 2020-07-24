@@ -7,10 +7,7 @@ module.exports = function (
     passport,
     userModel,
     adminRequestHandler,
-    cameraHandler,
-    printRequestModel,
-    cleRequestModel,
-    objectToCleanModel
+    printRequestModel
 ) {
     // =====================================
     // LOGIN ===============================

@@ -136,7 +136,7 @@ module.exports = {
             file.name = time.unix() + unique + file.name; //add special separater so we can get just the filename later
             //yes this is a dumb way to keep track of the original filename but I dont care
             unique += 1; //increment unique so every file is not the same name
-            file.path = path.join(__dirname, "../app/uploads/", file.name);
+            file.path = path.join(__dirname, "../../Uploads/STLs/", file.name);
         });
         form.on("file", (name, file) => {
             //when a file finishes coming through
@@ -270,7 +270,7 @@ module.exports = {
                 file.name = time.unix() + file.name; //add special separater so we can get just the filename later
                 file.path = path.join(
                     __dirname,
-                    "../app/uploads/gcode/",
+                    "../../Uploads/Gcode/",
                     file.name
                 );
             } else {
