@@ -6,7 +6,7 @@ var http = require("http");
 var fs = require("fs");
 const WebSocket = require("ws");
 var app = express();
-var port = 8082;
+var port = 8080;
 
 var mongoose = require("mongoose");
 var passport = require("passport");
