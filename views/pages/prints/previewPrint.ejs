@@ -126,18 +126,26 @@
     </div>
 
     <div class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title display-4 text-center">Please do not close this window!</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div class="modal-body">
-				<h3 class="instructions">Ask the patron to sign on the iPad in front of them.</h3>
-				<p class="subtext">You will then be asked to verify your password on this computer as a witness that the patron has signed and picked up their print.</p>
-				<form class="verification" style="display: none;">
+            <div class="modal-body" >
+				<div class="nopad" style="display: none;">
+					<h2>Please Connect A Signature Pad!</h2>
+					<p>Use an iPad and navigate to sparkorders.library.unt.edu/signature to get started.</p>
+				</div>
+				<div class="asksig" style="display: none;">
+					<h2>Please Do Not Close This Window</h2>
+					<p>Ask the patron to sign on the iPad in front of them.</p>
+				</div>
+				<div class="verify" style="display: none;">
+					<h2>Verify Your Credentials</h2>
+					<p>Please confirm your password below. By confirming your password you are signing as a witness that the patron has picked up their print.</p>
+					<form class="verification" >
 					<div class="form-group">
                             <label class="sr-only">EUID</label>
                             <input
@@ -164,6 +172,7 @@
                             Submit
                         </button>
 				</form>
+				</div>
 			</div>
           </div>
 		</div>

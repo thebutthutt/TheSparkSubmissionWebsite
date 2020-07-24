@@ -114,9 +114,7 @@
                                 <div class="col-auto">
                                     <h5>
                                         <%=queueData.newPrints.numTotal%> New
-                                        Submission <%if
-                                        (queueData.newPrints.numTotal != 1) {%>
-                                        s <%}%>
+                                        Submission<%if(queueData.newPrints.numTotal != 1){%>s<%}%>
                                     </h5>
                                     <p class="mb-0">
                                         <%=queueData.newPrints.numWillis%> at
@@ -145,7 +143,7 @@
                             <h4 class="mb-0">Camera Cleaning</h4>
                         </div>
                         <div class="card-body">
-                            <%if (cameraData.size == 0) {%> No items need
+                            <%if (cameraData.length == 0) {%> No items need
                             cleaning today! <%} else {%>
                             <p>These items need to be cleaned today:</p>
                             <ul class="list-group">
