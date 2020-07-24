@@ -56,7 +56,7 @@ app.use(
     express.static(__dirname + "/node_modules/fullcalendar/")
 ); //allow website to access the three.js library
 app.use("/gui", express.static(__dirname + "/node_modules/dat.gui/")); //allow website to access the uploaded STLs (for in site display)
-app.use("/uploads", express.static(__dirname + "/app/uploads/")); //allow website to access the uploaded STLs (for in site display)
+app.use("/Uploads", express.static(path.join(__dirname, "../Uploads/"))); //allow website to access the uploaded STLs (for in site display)
 app.use(
     "/qrcode",
     express.static(__dirname + "/node_modules/qrcode-generator/")
