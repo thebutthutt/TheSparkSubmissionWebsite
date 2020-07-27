@@ -20,15 +20,12 @@ var favicon = require("serve-favicon");
 var constants = require("./config/constants.js");
 var printRequestModel = require("./app/models/printRequest");
 var cleRequestModel = require("./app/models/cleRequest");
-var bookingModel = require("./app/models/booking");
-var objectToCleanModel = require("./app/models/cleaningObject");
 var userModel = require("./app/models/user");
 var payment = require("./config/payment.js");
 
 var printHandler = require("./handlers/printHandler.js");
 var cleHandler = require("./handlers/cleHandler.js");
 var adminRequestHandler = require("./handlers/adminRequestHandler.js");
-var cameraHandler = require("./handlers/cameraHandler.js");
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
@@ -101,10 +98,8 @@ require("./routes/userRoutes.js")(
     passport,
     userModel,
     adminRequestHandler,
-    cameraHandler,
     printRequestModel,
-    cleRequestModel,
-    objectToCleanModel
+    cleRequestModel
 ); // load our routes and pass in our app and fully configured passport
 require("./routes/cleRoutes.js")(
     app,
@@ -113,15 +108,9 @@ require("./routes/cleRoutes.js")(
     cleHandler,
     cleRequestModel
 ); // load our routes and pass in our app and fully configured passport
-require("./routes/cameraRoutes.js")(app, bookingModel, cameraHandler); // load our routes and pass in our app and fully configured passport
 
 // Job Scheduler ======================================================================
-require("./config/jobs.js")(
-    printRequestModel,
-    bookingModel,
-    objectToCleanModel,
-    constants
-); //make the job scheduler go
+require("./config/jobs.js")(printRequestModel, constants); //make the job scheduler go
 //bookingModel.remove({}, function(){})
 // launch ======================================================================
 
