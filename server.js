@@ -19,12 +19,16 @@ var favicon = require("serve-favicon");
 
 var constants = require("./config/constants.js");
 var printRequestModel = require("./app/models/printRequest");
+var cleRequestModel = require("./app/models/cleRequest");
+var bookingModel = require("./app/models/booking");
+var objectToCleanModel = require("./app/models/cleaningObject");
 var userModel = require("./app/models/user");
 var payment = require("./config/payment.js");
 
 var printHandler = require("./handlers/printHandler.js");
+var cleHandler = require("./handlers/cleHandler.js");
 var adminRequestHandler = require("./handlers/adminRequestHandler.js");
-const { cursorTo } = require("readline");
+var cameraHandler = require("./handlers/cameraHandler.js");
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
@@ -57,7 +61,7 @@ app.use(
     express.static(__dirname + "/node_modules/fullcalendar/")
 ); //allow website to access the three.js library
 app.use("/gui", express.static(__dirname + "/node_modules/dat.gui/")); //allow website to access the uploaded STLs (for in site display)
-app.use("/Uploads", express.static(path.join(__dirname, "../Uploads/"))); //allow website to access the uploaded STLs (for in site display)
+app.use("/Uploads", express.static(path.join(__dirname, "../Uploads"))); //allow website to access the uploaded STLs (for in site display)
 app.use(
     "/qrcode",
     express.static(__dirname + "/node_modules/qrcode-generator/")
@@ -82,7 +86,7 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require("./routes/routes.js")(app, printHandler); // load our routes and pass in our app and fully configured passport
+require("./routes/routes.js")(app, printHandler, cleHandler); // load our routes and pass in our app and fully configured passport
 require("./routes/printRoutes.js")(
     app,
     passport,
@@ -97,11 +101,27 @@ require("./routes/userRoutes.js")(
     passport,
     userModel,
     adminRequestHandler,
-    printRequestModel
+    cameraHandler,
+    printRequestModel,
+    cleRequestModel,
+    objectToCleanModel
 ); // load our routes and pass in our app and fully configured passport
+require("./routes/cleRoutes.js")(
+    app,
+    passport,
+    userModel,
+    cleHandler,
+    cleRequestModel
+); // load our routes and pass in our app and fully configured passport
+require("./routes/cameraRoutes.js")(app, bookingModel, cameraHandler); // load our routes and pass in our app and fully configured passport
 
 // Job Scheduler ======================================================================
-require("./config/jobs.js")(printRequestModel, constants); //make the job scheduler go
+require("./config/jobs.js")(
+    printRequestModel,
+    bookingModel,
+    objectToCleanModel,
+    constants
+); //make the job scheduler go
 //bookingModel.remove({}, function(){})
 // launch ======================================================================
 
@@ -124,31 +144,25 @@ const wss = new WebSocket.Server({
 });
 
 var CLIENTS = [];
-var willis = -1;
-var dp = -1;
-var currentWillisRequestingID = -1;
-var currentDPRequestingID = -1;
-var currentWillisRequestingIndex = -1;
-var currentDPRequestingIndex = -1;
+var messiah = -1;
+var currentRequestingID = -1;
+var currentRequestingIndex = -1;
 
 wss.on("connection", function connection(ws) {
     /*
 messageStructure: {
-	sender: messiah | tech | dptech | server
-	location: willis | dp
+	sender: messiah | tech | server
 	command: requestPatronSignature | recievePatronSignature | requestAdminLogin | recieveAdminLogin | resetScreen | sendClientInfo
 	data: variable
 }
 */
 
-    var iamwillis = false,
-        iamdp = false;
+    var iamthemessiah = false;
     CLIENTS.push(ws);
 
     var clientData = {
         yourID: CLIENTS.length - 1,
-        willisID: willis,
-        dpID: dp,
+        messiahID: messiah,
     };
 
     var connectionMessage = {
@@ -161,33 +175,14 @@ messageStructure: {
 
     ws.on("message", function incoming(data) {
         //make sure every connected client knows who the messiah is
-        if (data == "WillisSignaturePad") {
-            console.log("willis sigpad connected");
-            willis = clientData.yourID; //this is the ID of the messiah
-            iamwillis = true;
+        if (data == "I am the messiah") {
+            console.log("sigpad connected");
+            messiah = clientData.yourID; //this is the ID of the messiah
+            iamthemessiah = true;
             for (var i = 0; i < CLIENTS.length; i++) {
                 var newData = {
                     yourID: i,
-                    willisID: willis,
-                    dpID: dp,
-                };
-                CLIENTS[i].send(
-                    JSON.stringify({
-                        sender: "server",
-                        command: "sendClientInfo",
-                        data: newData,
-                    })
-                );
-            }
-        } else if (data == "DPSignaturePad") {
-            console.log("dp sigpad connected");
-            dp = clientData.yourID; //this is the ID of the messiah
-            iamdp = true;
-            for (var i = 0; i < CLIENTS.length; i++) {
-                var newData = {
-                    yourID: i,
-                    willisID: willis,
-                    dpID: dp,
+                    messiahID: messiah,
                 };
                 CLIENTS[i].send(
                     JSON.stringify({
@@ -205,138 +200,61 @@ messageStructure: {
                 obj.sender == "tech" &&
                 obj.command == "requestPatronSignature"
             ) {
-                if (obj.location == "willis") {
-                    currentWillisRequestingIndex = clientData.yourID; //mark what client is interacting with the signature pad
-                    currentWillisRequestingID = obj.data.fileID; //the ID of the file being signed for
-
-                    console.log(
-                        "willis is asking patron to sign",
-                        currentWillisRequestingIndex,
-                        currentWillisRequestingID
-                    );
-                    //send the signature pad the request for a signaturee
-                    CLIENTS[willis].send(
-                        JSON.stringify({
-                            sender: "tech",
-                            location: "willis",
-                            command: "requestPatronSignature",
-                            data: obj.data,
-                        })
-                    );
-                } else {
-                    currentDPRequestingIndex = clientData.yourID; //mark what client is interacting with the signature pad
-                    currentDPRequestingID = obj.data.fileID; //the ID of the file being signed for
-                    console.log(
-                        "dp is asking patron to sign",
-                        currentDPRequestingIndex,
-                        currentDPRequestingID
-                    );
-
-                    //send the signature pad the request for a signaturee
-                    CLIENTS[dp].send(
-                        JSON.stringify({
-                            sender: "tech",
-                            location: "dp",
-                            command: "requestPatronSignature",
-                            data: obj.data,
-                        })
-                    );
-                }
+                currentRequestingIndex = clientData.yourID; //mark what client is interacting with the signature pad
+                currentRequestingID = obj.data.fileID; //the ID of the file being signed for
+                //send the signature pad the request for a signaturee
+                CLIENTS[messiah].send(
+                    JSON.stringify({
+                        sender: "tech",
+                        command: "requestPatronSignature",
+                        data: obj.data,
+                    })
+                );
             } else if (
                 obj.sender == "messiah" &&
                 obj.command == "recievePatronSignature"
             ) {
-                if (obj.location == "willis") {
-                    if (obj.data.fileID == currentWillisRequestingID) {
-                        //send request for login to the technicians screen
-                        CLIENTS[currentWillisRequestingIndex].send(
-                            JSON.stringify({
-                                sender: "server",
-                                location: "willis",
-                                command: "requestAdminLogin",
-                                data: {
-                                    fileID: currentWillisRequestingID,
-                                },
-                            })
-                        );
-                    } else {
-                        console.log("Fake signature");
-                        CLIENTS[willis].send(
-                            JSON.stringify({
-                                sender: "server",
-                                command: "resetScreen",
-                            })
-                        );
-                    }
+                if (obj.data.fileID == currentRequestingID) {
+                    //send request for login to the technicians screen
+                    CLIENTS[currentRequestingIndex].send(
+                        JSON.stringify({
+                            sender: "server",
+                            command: "requestAdminLogin",
+                            data: {
+                                fileID: currentRequestingID,
+                            },
+                        })
+                    );
                 } else {
-                    if (obj.data.fileID == currentDPRequestingID) {
-                        //send request for login to the technicians screen
-                        CLIENTS[currentDPRequestingIndex].send(
-                            JSON.stringify({
-                                sender: "server",
-                                location: "dp",
-                                command: "requestAdminLogin",
-                                data: {
-                                    fileID: currentDPRequestingID,
-                                },
-                            })
-                        );
-                    } else {
-                        console.log("Fake signature");
-                        CLIENTS[willis].send(
-                            JSON.stringify({
-                                sender: "server",
-                                command: "resetScreen",
-                            })
-                        );
-                    }
+                    console.log("Fake signature");
+                    CLIENTS[messiah].send(
+                        JSON.stringify({
+                            sender: "server",
+                            command: "resetScreen",
+                        })
+                    );
                 }
             } else if (
                 obj.sender == "tech" &&
                 obj.command == "recieveAdminLogin"
             ) {
-                if (obj.location == "willis") {
-                    CLIENTS[willis].send(
-                        JSON.stringify({
-                            sender: "server",
-                            command: "resetScreen",
-                        })
-                    );
-                    console.log(
-                        "picking up at willis",
-                        currentWillisRequestingIndex,
-                        currentWillisRequestingID
-                    );
-                    printHandler.markPickedUp(currentWillisRequestingID);
-                    currentWillisRequestingID = -1;
-                    currentWillisRequestingIndex = -1;
-                } else {
-                    CLIENTS[dp].send(
-                        JSON.stringify({
-                            sender: "server",
-                            command: "resetScreen",
-                        })
-                    );
-                    console.log(
-                        "picking up at dp",
-                        currentDPRequestingIndex,
-                        currentDPRequestingID
-                    );
-                    printHandler.markPickedUp(currentDPRequestingID);
-                    currentDPRequestingID = -1;
-                    currentDPRequestingIndex = -1;
-                }
+                CLIENTS[messiah].send(
+                    JSON.stringify({
+                        sender: "server",
+                        command: "resetScreen",
+                    })
+                );
+                printHandler.markPickedUp(currentRequestingID);
+                currentRequestingID = -1;
+                currentRequestingIndex = -1;
             }
         }
     });
 
     ws.on("close", function () {
-        if (iamwillis) {
-            willis = -1;
-            console.log("willis sigpad gone");
-        } else if (iamdp) {
-            dp = -1;
-            console.log("dp sigpad gone");
+        if (iamthemessiah) {
+            messiah = -1;
+            console.log("sigpad gone");
         }
     });
 });
