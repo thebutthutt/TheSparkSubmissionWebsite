@@ -27,14 +27,12 @@ $(document).ready(function () {
         window.location = "/prints/download?fileID=" + fileLocation;
     });
 
-    $(".connect-button").on("click", function () {
-        console.log("click");
-        var location = $(this).attr("location");
+    $(".modal-button").on("click", function () {
         const ws = new WebSocket("wss://sparkorders.library.unt.edu");
 
         var printData = {
-            fileName: $(".modal-button").attr("fileName"),
-            fileID: $(".modal-button").attr("fileID"),
+            fileName: $(this).attr("fileName"),
+            fileID: $(this).attr("fileID"),
         };
 
         ws.onopen = () => {
@@ -42,52 +40,25 @@ $(document).ready(function () {
 
             ws.addEventListener("message", function (message) {
                 var obj = JSON.parse(message.data);
-                console.log(obj);
+
                 if (obj.command == "sendClientInfo") {
-                    console.log("here");
-                    if (location == "willis") {
-                        if (obj.data.willisID == -1) {
-                            $(".asklocation").hide();
-                            $(".nopad").show();
-                            $(".asksig").hide();
-                            $(".verify").hide();
-                        } else {
-                            $(".asklocation").hide();
-                            $(".nopad").hide();
-                            $(".asksig").show();
-                            $(".verify").hide();
-                            ws.send(
-                                JSON.stringify({
-                                    sender: "tech",
-                                    location: location,
-                                    command: "requestPatronSignature",
-                                    data: printData,
-                                })
-                            );
-                        }
+                    if (obj.data.messiahID == -1) {
+                        $(".nopad").show();
+                        $(".asksig").hide();
+                        $(".verify").hide();
                     } else {
-                        if (obj.data.dpID == -1) {
-                            $(".asklocation").hide();
-                            $(".nopad").show();
-                            $(".asksig").hide();
-                            $(".verify").hide();
-                        } else {
-                            $(".asklocation").hide();
-                            $(".nopad").hide();
-                            $(".asksig").show();
-                            $(".verify").hide();
-                            ws.send(
-                                JSON.stringify({
-                                    sender: "tech",
-                                    location: location,
-                                    command: "requestPatronSignature",
-                                    data: printData,
-                                })
-                            );
-                        }
+                        $(".nopad").hide();
+                        $(".asksig").show();
+                        $(".verify").hide();
+                        ws.send(
+                            JSON.stringify({
+                                sender: "tech",
+                                command: "requestPatronSignature",
+                                data: printData,
+                            })
+                        );
                     }
                 } else if (obj.command == "requestAdminLogin") {
-                    $(".asklocation").hide();
                     $(".nopad").hide();
                     $(".asksig").hide();
                     $(".verify").show();
@@ -97,7 +68,6 @@ $(document).ready(function () {
                     location.reload();
                 } else {
                     if (obj.messiahID == -1) {
-                        $(".asklocation").show();
                         $(".nopad").show();
                         $(".asksig").hide();
                         $(".verify").hide();
@@ -119,7 +89,6 @@ $(document).ready(function () {
                         ws.send(
                             JSON.stringify({
                                 sender: "tech",
-                                location: location,
                                 command: "recieveAdminLogin",
                                 data: printData,
                             })
