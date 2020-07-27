@@ -19,16 +19,12 @@ var favicon = require("serve-favicon");
 
 var constants = require("./config/constants.js");
 var printRequestModel = require("./app/models/printRequest");
-var cleRequestModel = require("./app/models/cleRequest");
-var bookingModel = require("./app/models/booking");
-var objectToCleanModel = require("./app/models/cleaningObject");
 var userModel = require("./app/models/user");
 var payment = require("./config/payment.js");
 
 var printHandler = require("./handlers/printHandler.js");
-var cleHandler = require("./handlers/cleHandler.js");
 var adminRequestHandler = require("./handlers/adminRequestHandler.js");
-var cameraHandler = require("./handlers/cameraHandler.js");
+const { cursorTo } = require("readline");
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
@@ -61,7 +57,7 @@ app.use(
     express.static(__dirname + "/node_modules/fullcalendar/")
 ); //allow website to access the three.js library
 app.use("/gui", express.static(__dirname + "/node_modules/dat.gui/")); //allow website to access the uploaded STLs (for in site display)
-app.use("/Uploads", express.static(path.join(__dirname, "../Uploads"))); //allow website to access the uploaded STLs (for in site display)
+app.use("/Uploads", express.static(path.join(__dirname, "../Uploads/"))); //allow website to access the uploaded STLs (for in site display)
 app.use(
     "/qrcode",
     express.static(__dirname + "/node_modules/qrcode-generator/")
@@ -86,7 +82,7 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require("./routes/routes.js")(app, printHandler, cleHandler); // load our routes and pass in our app and fully configured passport
+require("./routes/routes.js")(app, printHandler); // load our routes and pass in our app and fully configured passport
 require("./routes/printRoutes.js")(
     app,
     passport,
@@ -101,27 +97,11 @@ require("./routes/userRoutes.js")(
     passport,
     userModel,
     adminRequestHandler,
-    cameraHandler,
-    printRequestModel,
-    cleRequestModel,
-    objectToCleanModel
+    printRequestModel
 ); // load our routes and pass in our app and fully configured passport
-require("./routes/cleRoutes.js")(
-    app,
-    passport,
-    userModel,
-    cleHandler,
-    cleRequestModel
-); // load our routes and pass in our app and fully configured passport
-require("./routes/cameraRoutes.js")(app, bookingModel, cameraHandler); // load our routes and pass in our app and fully configured passport
 
 // Job Scheduler ======================================================================
-require("./config/jobs.js")(
-    printRequestModel,
-    bookingModel,
-    objectToCleanModel,
-    constants
-); //make the job scheduler go
+require("./config/jobs.js")(printRequestModel, constants); //make the job scheduler go
 //bookingModel.remove({}, function(){})
 // launch ======================================================================
 
@@ -362,6 +342,7 @@ messageStructure: {
 });
 
 server.listen(port, "0.0.0.0");
+
 //http server to redirect to https
 var http_server = http
     .createServer(function (req, res) {
