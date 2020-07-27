@@ -1,3 +1,4 @@
 *.key
 *.cer
 /app/uploads/*
+node_modules

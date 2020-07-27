@@ -6,7 +6,7 @@ var http = require("http");
 var fs = require("fs");
 const WebSocket = require("ws");
 var app = express();
-var port = 443;
+var port = 8080;
 
 var mongoose = require("mongoose");
 var passport = require("passport");
@@ -50,7 +50,7 @@ app.use(
 ); // get information from html forms
 
 app.set("view engine", "ejs"); // set up ejs for templating
-app.use("/public", express.static(path.join(__dirname + "/public"))); //allow us to grab local files in the public directory
+app.use("/public", express.static(path.join(__dirname, "/public"))); //allow us to grab local files in the public directory
 app.use("/three", express.static(__dirname + "/node_modules/three/")); //allow website to access the three.js library
 app.use(
     "/fullcalendar",
@@ -352,6 +352,6 @@ var http_server = http
         });
         res.end();
     })
-    .listen(80, "0.0.0.0");
+    .listen(8081, "0.0.0.0");
 
 console.log("The magic happens on port " + port);

@@ -166,6 +166,5 @@ function STLViewer(model, elementID) {
 
 $(document).ready(function () {
     var relativePath = $("#model").attr("filename").split("webserver").pop();
-    console.log(relativePath);
     STLViewer(relativePath, "model");
 });
