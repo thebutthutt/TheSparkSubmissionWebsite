@@ -1,8 +1,8 @@
-var mongoose = require('mongoose');
-require('./patron.js');
+var mongoose = require("mongoose");
+require("./patron.js");
 
 var cleSubmissionSchema = mongoose.Schema({
-    patron: mongoose.model('Patron').schema,
+    patron: mongoose.model("Patron").schema,
     maker: String,
     type: String,
     files: [String],
@@ -18,13 +18,14 @@ var cleSubmissionSchema = mongoose.Schema({
     materialDescriptions: [String],
     materialLocations: [String],
     intakeDates: [String],
+    intakeTechs: [String],
 
     dateSubmitted: String,
     dateAssigned: String,
     dateCompleted: String,
 
-    requestingMaker: String
+    requestingMaker: String,
 });
 
 // create the model for a print submission and expose it to our app
-module.exports = mongoose.model('CLERequest', cleSubmissionSchema);
+module.exports = mongoose.model("CLERequest", cleSubmissionSchema);
