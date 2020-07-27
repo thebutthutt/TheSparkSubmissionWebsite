@@ -10,6 +10,9 @@
         <%- include ("../../partials/header") %>
         <div class="container mt-5" style="margin-bottom: 100px;">
             <div class="shadow card">
+                <div class="card-header">
+                    <%- include ("../../partials/workOrders/workordernav") %>
+                </div>
                 <ol class="list-group list-group-flush">
                     <li class="list-group-item">
                         <div class="row">
@@ -32,10 +35,49 @@
                                 %>
                             </div>
                             <div class="col"><%=item.type%></div>
-                            <div class="col"><%=item.maker%></div>
+                            <div class="col">
+                                <%if (item.maker == "Unassigned") {%>
+                                <div class="dropdown">
+                                    <a
+                                        href="#"
+                                        class="dropdown-toggle text-wrap"
+                                        data-toggle="dropdown"
+                                    >
+                                        <%if (item.requestingMaker !=
+                                        "Unassigned") {%>
+                                        <%=item.requestingMaker%> (requested)
+                                        <%} else {%> <%=item.maker%> <%}%>
+                                    </a>
+                                    <div
+                                        class="dropdown-menu p-4"
+                                        style="width: 300px;"
+                                    >
+                                        <p>
+                                            Request to be assigned to this work
+                                            order?
+                                        </p>
+                                        <button
+                                            class="btn btn-primary btn-block request-workorder"
+                                            submissionID="<%=item._id%>"
+                                        >
+                                            Request
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <%} else {%> <%=item.maker%> <%}%>
+                            </div>
                             <div class="col"><%=item.dateSubmitted%></div>
                             <div class="col-4">
-                                <p class="text-muted font-italic">
+                                <p
+                                    class="text-muted font-italic"
+                                    style="
+                                        display: -webkit-box;
+                                        -webkit-line-clamp: 3;
+                                        -webkit-box-orient: vertical;
+                                        overflow: hidden;
+                                    "
+                                >
                                     <%=item.notes%>
                                 </p>
                                 <%if (item.files.length > 0) {%>
@@ -49,6 +91,11 @@
                                 >
                                 <br />
                                 <%})%> <%}%>
+                                <a
+                                    class="small"
+                                    href="/workorders/details?id=<%=item._id%>"
+                                    >More details...</a
+                                >
                             </div>
                             <div class="col-2 text-right">
                                 <div
