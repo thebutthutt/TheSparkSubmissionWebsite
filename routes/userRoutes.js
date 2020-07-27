@@ -93,14 +93,17 @@ module.exports = function (
 
                 var size = getTotalSize("/home/hcf0018/webserver/Uploads");
 
-                res.render("pages/users/profile", {
-                    message: req.flash("logoutMessage"),
-                    pgnum: 3, //tells the navbar what page to highlight
-                    user: req.user, // get the user out of session and pass to template
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                    queueData: prints,
-                    sizeData: size,
+                objectToCleanModel.find({}, function (err, result) {
+                    res.render("pages/users/profile", {
+                        message: req.flash("logoutMessage"),
+                        pgnum: 3, //tells the navbar what page to highlight
+                        user: req.user, // get the user out of session and pass to template
+                        isAdmin: true,
+                        isSuperAdmin: req.user.isSuperAdmin,
+                        queueData: prints,
+                        cameraData: result,
+                        sizeData: size,
+                    });
                 });
             });
         });
