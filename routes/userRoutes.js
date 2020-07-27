@@ -7,10 +7,7 @@ module.exports = function (
     passport,
     userModel,
     adminRequestHandler,
-    cameraHandler,
-    printRequestModel,
-    cleRequestModel,
-    objectToCleanModel
+    printRequestModel
 ) {
     // =====================================
     // LOGIN ===============================
@@ -184,6 +181,7 @@ module.exports = function (
         res.redirect("back");
     });
 
+    /*
     app.post("/cameras/clean", function (req, res) {
         var name = req.body.object || req.query.object;
         objectToCleanModel.findOne(
@@ -210,7 +208,9 @@ module.exports = function (
                 res.json("done");
             }
         );
-    });
+	});
+	
+	*/
 
     //Display the files pending delete to go into the full action queue
     app.get(
