@@ -2,7 +2,12 @@ var schedule = require("node-schedule");
 const moment = require("moment");
 var emailer = require("../config/email.js");
 
-module.exports = function (printRequestModel, constants) {
+module.exports = function (
+    printRequestModel,
+    bookingModel,
+    objectToCleanModel,
+    constants
+) {
     var staleOnPickup = function () {
         var today = moment().format(constants.format);
         var oneWeek = moment().subtract(6, "days").format(constants.format); //subtracting six days feom today to satisfy anything before being 7+ days old
@@ -88,10 +93,44 @@ module.exports = function (printRequestModel, constants) {
         );
     };
 
+    var needsCleaning = function () {
+        objectToCleanModel.deleteMany({}, function () {}); //delete all old objects to clean from yesterday
+
+        var today = new Date().toISOString();
+        today = today.substring(0, 10) + "T00:00:00.000Z";
+
+        var results = [];
+        bookingModel.find(
+            {
+                "calendarEvent.classNames": "quarantine",
+                "calendarEvent.start": today,
+                "calendarEvent.end": today,
+            },
+            function (err, data) {
+                data.forEach(function (booking) {
+                    results.push(booking.camera);
+                    results.push(booking.lens1);
+                    if (booking.lens1 != booking.lens2) {
+                        results.push(booking.lens2);
+                    }
+                });
+
+                results.forEach(function (item) {
+                    var newObject = new objectToCleanModel();
+                    newObject.objectName = item;
+                    newObject.isCleaned = false;
+                    newObject.save();
+                });
+            }
+        );
+    };
+
     schedule.scheduleJob("1 0 * * *", () => {
         //run once every day at midnight and one minute just in case idk im nervous
         staleOnPickup();
+        needsCleaning();
     });
 
     staleOnPickup();
+    needsCleaning();
 };
