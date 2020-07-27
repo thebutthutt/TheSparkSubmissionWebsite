@@ -18,8 +18,13 @@ if (typeof document.hidden !== "undefined") {
 function connectWebSocket() {
     ws = new WebSocket("wss://sparkorders.library.unt.edu");
     ws.onopen = () => {
-        ws.send("I am the messiah");
-        console.log("Now connected");
+        if ($(".signature-pad").attr("location") == "willis") {
+            ws.send("WillisSignaturePad");
+            console.log("Now connected");
+        } else {
+            ws.send("DPSignaturePad");
+            console.log("Now connected");
+        }
     };
 
     $(".signature-pad").empty();
@@ -198,6 +203,7 @@ var patronSignature = function () {
                 ws.send(
                     JSON.stringify({
                         sender: "messiah",
+                        location: $(".signature-pad").attr("location"),
                         command: "recievePatronSignature",
                         data: {
                             fileID: fileID,

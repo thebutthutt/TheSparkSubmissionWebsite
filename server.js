@@ -24,6 +24,7 @@ var payment = require("./config/payment.js");
 
 var printHandler = require("./handlers/printHandler.js");
 var adminRequestHandler = require("./handlers/adminRequestHandler.js");
+const { cursorTo } = require("readline");
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
@@ -123,25 +124,31 @@ const wss = new WebSocket.Server({
 });
 
 var CLIENTS = [];
-var messiah = -1;
-var currentRequestingID = -1;
-var currentRequestingIndex = -1;
+var willis = -1;
+var dp = -1;
+var currentWillisRequestingID = -1;
+var currentDPRequestingID = -1;
+var currentWillisRequestingIndex = -1;
+var currentDPRequestingIndex = -1;
 
 wss.on("connection", function connection(ws) {
     /*
 messageStructure: {
-	sender: messiah | tech | server
+	sender: messiah | tech | dptech | server
+	location: willis | dp
 	command: requestPatronSignature | recievePatronSignature | requestAdminLogin | recieveAdminLogin | resetScreen | sendClientInfo
 	data: variable
 }
 */
 
-    var iamthemessiah = false;
+    var iamwillis = false,
+        iamdp = false;
     CLIENTS.push(ws);
 
     var clientData = {
         yourID: CLIENTS.length - 1,
-        messiahID: messiah,
+        willisID: willis,
+        dpID: dp,
     };
 
     var connectionMessage = {
@@ -154,14 +161,33 @@ messageStructure: {
 
     ws.on("message", function incoming(data) {
         //make sure every connected client knows who the messiah is
-        if (data == "I am the messiah") {
-            console.log("sigpad connected");
-            messiah = clientData.yourID; //this is the ID of the messiah
-            iamthemessiah = true;
+        if (data == "WillisSignaturePad") {
+            console.log("willis sigpad connected");
+            willis = clientData.yourID; //this is the ID of the messiah
+            iamwillis = true;
             for (var i = 0; i < CLIENTS.length; i++) {
                 var newData = {
                     yourID: i,
-                    messiahID: messiah,
+                    willisID: willis,
+                    dpID: dp,
+                };
+                CLIENTS[i].send(
+                    JSON.stringify({
+                        sender: "server",
+                        command: "sendClientInfo",
+                        data: newData,
+                    })
+                );
+            }
+        } else if (data == "DPSignaturePad") {
+            console.log("dp sigpad connected");
+            dp = clientData.yourID; //this is the ID of the messiah
+            iamdp = true;
+            for (var i = 0; i < CLIENTS.length; i++) {
+                var newData = {
+                    yourID: i,
+                    willisID: willis,
+                    dpID: dp,
                 };
                 CLIENTS[i].send(
                     JSON.stringify({
@@ -179,61 +205,138 @@ messageStructure: {
                 obj.sender == "tech" &&
                 obj.command == "requestPatronSignature"
             ) {
-                currentRequestingIndex = clientData.yourID; //mark what client is interacting with the signature pad
-                currentRequestingID = obj.data.fileID; //the ID of the file being signed for
-                //send the signature pad the request for a signaturee
-                CLIENTS[messiah].send(
-                    JSON.stringify({
-                        sender: "tech",
-                        command: "requestPatronSignature",
-                        data: obj.data,
-                    })
-                );
+                if (obj.location == "willis") {
+                    currentWillisRequestingIndex = clientData.yourID; //mark what client is interacting with the signature pad
+                    currentWillisRequestingID = obj.data.fileID; //the ID of the file being signed for
+
+                    console.log(
+                        "willis is asking patron to sign",
+                        currentWillisRequestingIndex,
+                        currentWillisRequestingID
+                    );
+                    //send the signature pad the request for a signaturee
+                    CLIENTS[willis].send(
+                        JSON.stringify({
+                            sender: "tech",
+                            location: "willis",
+                            command: "requestPatronSignature",
+                            data: obj.data,
+                        })
+                    );
+                } else {
+                    currentDPRequestingIndex = clientData.yourID; //mark what client is interacting with the signature pad
+                    currentDPRequestingID = obj.data.fileID; //the ID of the file being signed for
+                    console.log(
+                        "dp is asking patron to sign",
+                        currentDPRequestingIndex,
+                        currentDPRequestingID
+                    );
+
+                    //send the signature pad the request for a signaturee
+                    CLIENTS[dp].send(
+                        JSON.stringify({
+                            sender: "tech",
+                            location: "dp",
+                            command: "requestPatronSignature",
+                            data: obj.data,
+                        })
+                    );
+                }
             } else if (
                 obj.sender == "messiah" &&
                 obj.command == "recievePatronSignature"
             ) {
-                if (obj.data.fileID == currentRequestingID) {
-                    //send request for login to the technicians screen
-                    CLIENTS[currentRequestingIndex].send(
-                        JSON.stringify({
-                            sender: "server",
-                            command: "requestAdminLogin",
-                            data: {
-                                fileID: currentRequestingID,
-                            },
-                        })
-                    );
+                if (obj.location == "willis") {
+                    if (obj.data.fileID == currentWillisRequestingID) {
+                        //send request for login to the technicians screen
+                        CLIENTS[currentWillisRequestingIndex].send(
+                            JSON.stringify({
+                                sender: "server",
+                                location: "willis",
+                                command: "requestAdminLogin",
+                                data: {
+                                    fileID: currentWillisRequestingID,
+                                },
+                            })
+                        );
+                    } else {
+                        console.log("Fake signature");
+                        CLIENTS[willis].send(
+                            JSON.stringify({
+                                sender: "server",
+                                command: "resetScreen",
+                            })
+                        );
+                    }
                 } else {
-                    console.log("Fake signature");
-                    CLIENTS[messiah].send(
-                        JSON.stringify({
-                            sender: "server",
-                            command: "resetScreen",
-                        })
-                    );
+                    if (obj.data.fileID == currentDPRequestingID) {
+                        //send request for login to the technicians screen
+                        CLIENTS[currentDPRequestingIndex].send(
+                            JSON.stringify({
+                                sender: "server",
+                                location: "dp",
+                                command: "requestAdminLogin",
+                                data: {
+                                    fileID: currentDPRequestingID,
+                                },
+                            })
+                        );
+                    } else {
+                        console.log("Fake signature");
+                        CLIENTS[willis].send(
+                            JSON.stringify({
+                                sender: "server",
+                                command: "resetScreen",
+                            })
+                        );
+                    }
                 }
             } else if (
                 obj.sender == "tech" &&
                 obj.command == "recieveAdminLogin"
             ) {
-                CLIENTS[messiah].send(
-                    JSON.stringify({
-                        sender: "server",
-                        command: "resetScreen",
-                    })
-                );
-                printHandler.markPickedUp(currentRequestingID);
-                currentRequestingID = -1;
-                currentRequestingIndex = -1;
+                if (obj.location == "willis") {
+                    CLIENTS[willis].send(
+                        JSON.stringify({
+                            sender: "server",
+                            command: "resetScreen",
+                        })
+                    );
+                    console.log(
+                        "picking up at willis",
+                        currentWillisRequestingIndex,
+                        currentWillisRequestingID
+                    );
+                    printHandler.markPickedUp(currentWillisRequestingID);
+                    currentWillisRequestingID = -1;
+                    currentWillisRequestingIndex = -1;
+                } else {
+                    CLIENTS[dp].send(
+                        JSON.stringify({
+                            sender: "server",
+                            command: "resetScreen",
+                        })
+                    );
+                    console.log(
+                        "picking up at dp",
+                        currentDPRequestingIndex,
+                        currentDPRequestingID
+                    );
+                    printHandler.markPickedUp(currentDPRequestingID);
+                    currentDPRequestingID = -1;
+                    currentDPRequestingIndex = -1;
+                }
             }
         }
     });
 
     ws.on("close", function () {
-        if (iamthemessiah) {
-            messiah = -1;
-            console.log("sigpad gone");
+        if (iamwillis) {
+            willis = -1;
+            console.log("willis sigpad gone");
+        } else if (iamdp) {
+            dp = -1;
+            console.log("dp sigpad gone");
         }
     });
 });
