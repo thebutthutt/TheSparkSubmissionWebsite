@@ -114,7 +114,8 @@
                                 <div class="col-auto">
                                     <h5>
                                         <%=queueData.newPrints.numTotal%> New
-                                        Submission<%if(queueData.newPrints.numTotal != 1){%>s<%}%>
+                                        Submission<%if(queueData.newPrints.numTotal
+                                        != 1){%>s<%}%>
                                     </h5>
                                     <p class="mb-0">
                                         <%=queueData.newPrints.numWillis%> at
@@ -136,56 +137,6 @@
                                     </p>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card shadow mb-4">
-                        <div class="card-header">
-                            <h4 class="mb-0">Camera Cleaning</h4>
-                        </div>
-                        <div class="card-body">
-                            <%if (cameraData.length == 0) {%> No items need
-                            cleaning today! <%} else {%>
-                            <p>These items need to be cleaned today:</p>
-                            <ul class="list-group">
-                                <%cameraData.forEach(function (item) {%>
-                                <li class="list-group-item">
-                                    <div class="row">
-                                        <div class="col">
-											<%if (item.isCleaned) {%><s><%}%>
-												<%=item.objectName%>
-											<%if (item.isCleaned) {%></s><%}%>
-												
-                                        </div>
-                                        <div class="col-1">
-                                            <span class="cleantoggle" isclean="<%=item.isCleaned%>" itemname="<%=item.objectName%>"">
-												<%if (item.isCleaned) {%>
-													<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-														<path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-														<path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
-													</svg>
-												<%} else {%>
-													<svg
-                                                    width="1em"
-                                                    height="1em"
-                                                    viewBox="0 0 16 16"
-                                                    class="bi bi-square"
-                                                    fill="currentColor"
-                                                    xmlns="http://www.w3.org/2000/svg"
-													>
-														<path
-															fill-rule="evenodd"
-															d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
-														/>
-													</svg>
-												<%}%>
-                                                
-                                            </span>
-                                        </div>
-                                    </div>
-                                </li>
-                                <%})%>
-                            </ul>
-                            <%}%>
                         </div>
                     </div>
                     <%if (isSuperAdmin) {%>
