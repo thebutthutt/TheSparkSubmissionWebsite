@@ -2,12 +2,7 @@ var schedule = require("node-schedule");
 const moment = require("moment");
 var emailer = require("../config/email.js");
 
-module.exports = function (
-    printRequestModel,
-    bookingModel,
-    objectToCleanModel,
-    constants
-) {
+module.exports = function (printRequestModel, constants) {
     var staleOnPickup = function () {
         var today = moment().format(constants.format);
         var oneWeek = moment().subtract(6, "days").format(constants.format); //subtracting six days feom today to satisfy anything before being 7+ days old

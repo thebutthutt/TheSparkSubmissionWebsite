@@ -20,15 +20,12 @@ var favicon = require("serve-favicon");
 var constants = require("./config/constants.js");
 var printRequestModel = require("./app/models/printRequest");
 var cleRequestModel = require("./app/models/cleRequest");
-var bookingModel = require("./app/models/booking");
-var objectToCleanModel = require("./app/models/cleaningObject");
 var userModel = require("./app/models/user");
 var payment = require("./config/payment.js");
 
 var printHandler = require("./handlers/printHandler.js");
 var cleHandler = require("./handlers/cleHandler.js");
 var adminRequestHandler = require("./handlers/adminRequestHandler.js");
-var cameraHandler = require("./handlers/cameraHandler.js");
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
@@ -54,14 +51,14 @@ app.use(
 ); // get information from html forms
 
 app.set("view engine", "ejs"); // set up ejs for templating
-app.use("/public", express.static(path.join(__dirname + "/public"))); //allow us to grab local files in the public directory
+app.use("/public", express.static(path.join(__dirname, "/public"))); //allow us to grab local files in the public directory
 app.use("/three", express.static(__dirname + "/node_modules/three/")); //allow website to access the three.js library
 app.use(
     "/fullcalendar",
     express.static(__dirname + "/node_modules/fullcalendar/")
 ); //allow website to access the three.js library
 app.use("/gui", express.static(__dirname + "/node_modules/dat.gui/")); //allow website to access the uploaded STLs (for in site display)
-app.use("/uploads", express.static(__dirname + "/app/uploads/")); //allow website to access the uploaded STLs (for in site display)
+app.use("/Uploads", express.static(path.join(__dirname, "../Uploads"))); //allow website to access the uploaded STLs (for in site display)
 app.use(
     "/qrcode",
     express.static(__dirname + "/node_modules/qrcode-generator/")
@@ -185,6 +182,24 @@ messageStructure: {
             console.log("willis sigpad connected");
             willis = clientData.yourID; //this is the ID of the messiah
             iamwillis = true;
+            for (var i = 0; i < CLIENTS.length; i++) {
+                var newData = {
+                    yourID: i,
+                    willisID: willis,
+                    dpID: dp,
+                };
+                CLIENTS[i].send(
+                    JSON.stringify({
+                        sender: "server",
+                        command: "sendClientInfo",
+                        data: newData,
+                    })
+                );
+            }
+        } else if (data == "DPSignaturePad") {
+            console.log("dp sigpad connected");
+            dp = clientData.yourID; //this is the ID of the messiah
+            iamdp = true;
             for (var i = 0; i < CLIENTS.length; i++) {
                 var newData = {
                     yourID: i,

@@ -65,7 +65,7 @@ module.exports = function (
 
     app.get("/workorders/details", function (req, res) {
         var id = req.body.id || req.query.id;
-        cleRequestModel.find(
+        cleRequestModel.findOne(
             {
                 _id: id,
             },
