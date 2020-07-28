@@ -223,7 +223,9 @@ module.exports = {
                             console.log(err);
                         }
                         //now find the fully updated top level submission so we can check if all the files have been reviewed
-                        module.exports.setFlags(id);
+                        module.exports.setFlags(id, function () {
+                            callback();
+                        });
                     }
                 );
             } else {
@@ -252,12 +254,11 @@ module.exports = {
                             console.log(err);
                         }
                         //now find the fully updated top level submission so we can check if all the files have been reviewed
-                        module.exports.setFlags(id);
+                        module.exports.setFlags(id, function () {
+                            callback();
+                        });
                     }
                 );
-            }
-            if (typeof callback == "function") {
-                callback(); //running the callback specified in calling function (in routes.js)
             }
         });
         form.on("field", (name, field) => {
@@ -478,7 +479,7 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 }
-                module.exports.setFlags(fileID);
+                module.exports.setFlags(fileID, function () {});
                 emailer.readyForPickup(
                     result.patron.email,
                     result.files
@@ -572,7 +573,6 @@ module.exports = {
 
     //the print has been picked up by the patron
     markPickedUp: function (fileID) {
-        console.log(fileID);
         var time = moment().format(constants.format);
         printRequestModel.findOne(
             {
@@ -671,7 +671,7 @@ module.exports = {
     },
 
     //set appropriate flags for top level submission
-    setFlags: function (submissionID) {
+    setFlags: function (submissionID, callback) {
         printRequestModel.findOne(
             {
                 "files._id": submissionID,
@@ -696,6 +696,7 @@ module.exports = {
                     }
 
                     result.save();
+                    callback();
                 }
             }
         );
@@ -763,7 +764,10 @@ module.exports = {
                         //save top level request db entry
                         if (err) console.log(err);
                     });
-                    module.exports.setFlags(result.files[0]._id); //now set all the flags of the updated top level submission
+                    module.exports.setFlags(
+                        result.files[0]._id,
+                        function () {}
+                    ); //now set all the flags of the updated top level submission
                 }
             }
         );
