@@ -139,6 +139,22 @@ module.exports = function (app, printHandler, cleHandler) {
         });
     });
 
+    app.get("/prints/error", function (req, res) {
+        var admin = false,
+            superAdmin = false;
+        if (req.isAuthenticated()) {
+            admin = true;
+            if (req.user.isSuperAdmin == true) {
+                isSuperAdmin = true;
+            }
+        }
+        res.render("pages/prints/error", {
+            pgnum: -1, //tells the navbar what page to highlight
+            isAdmin: admin,
+            isSuperAdmin: superAdmin,
+        });
+    });
+
     app.post("/recievesignature", function (req, res) {
         //printHandler.acceptSignature(req.body.uniqueID, newPath);
         res.json("done");
@@ -146,15 +162,18 @@ module.exports = function (app, printHandler, cleHandler) {
 
     //what do do when the user hits submit
     app.post("/submitprint", function (req, res) {
-        printHandler.handleSubmission(req); //pass the stuff to the print handler
-        req.flash("submitMessage", "Submitted the print!");
-        res.redirect("/prints/thankyou");
+        printHandler.handleSubmission(req, function (result) {
+            if (result == "success") {
+                res.redirect("/prints/thankyou");
+            } else {
+                res.redirect("/prints/error");
+            }
+        }); //pass the stuff to the print handler
     });
 
     //what do do when the user hits submit
     app.post("/submitcle", function (req, res) {
         cleHandler.handleSubmission(req); //pass the stuff to the print handler
-        req.flash("submitMessage", "Submitted the request!");
         res.redirect("/submit");
     });
 };
