@@ -80,7 +80,7 @@ module.exports = {
     },
 
     //handles the data for a new top level print request with possibly multiple low level file submissions
-    handleSubmission: function (req) {
+    handleSubmission: function (req, callback) {
         const form = formidable({
             maxFileSize: 1024 * 1024 * 1024,
         });
@@ -110,7 +110,13 @@ module.exports = {
             prints.push(notes);
             prints.push(time.format(constants.format));
             prints.push(numFiles);
-            module.exports.addPrint(patron, prints);
+            if (numFiles == 0) {
+                //no files uploaded, there was an error
+                callback("error");
+            } else {
+                module.exports.addPrint(patron, prints);
+                callback("success"); //tell calling function we got it
+            }
         });
         form.on("field", function (name, field) {
             //when a new field comes through
