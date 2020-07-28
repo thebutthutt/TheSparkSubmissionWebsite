@@ -6,7 +6,7 @@ var http = require("http");
 var fs = require("fs");
 const WebSocket = require("ws");
 var app = express();
-var port = 443;
+var port = 8080;
 
 var mongoose = require("mongoose");
 var passport = require("passport");
@@ -20,12 +20,15 @@ var favicon = require("serve-favicon");
 var constants = require("./config/constants.js");
 var printRequestModel = require("./app/models/printRequest");
 var cleRequestModel = require("./app/models/cleRequest");
+var bookingModel = require("./app/models/booking");
+var objectToCleanModel = require("./app/models/cleaningObject");
 var userModel = require("./app/models/user");
 var payment = require("./config/payment.js");
 
 var printHandler = require("./handlers/printHandler.js");
 var cleHandler = require("./handlers/cleHandler.js");
 var adminRequestHandler = require("./handlers/adminRequestHandler.js");
+var cameraHandler = require("./handlers/cameraHandler.js");
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
