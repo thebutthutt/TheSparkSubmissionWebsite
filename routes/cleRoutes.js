@@ -123,7 +123,6 @@ module.exports = function (
 
     app.get("/workrequests/download", function (req, res) {
         var fileName = req.body.fileName || req.query.fileName;
-        console.log("gorthere", fileName);
         res.download(fileName);
     });
 

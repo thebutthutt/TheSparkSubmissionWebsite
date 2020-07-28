@@ -28,7 +28,6 @@ $(document).ready(function () {
     });
 
     $(".connect-button").on("click", function () {
-        console.log("click");
         var location = $(this).attr("location");
         const ws = new WebSocket("wss://sparkorders.library.unt.edu");
 
@@ -42,9 +41,7 @@ $(document).ready(function () {
 
             ws.addEventListener("message", function (message) {
                 var obj = JSON.parse(message.data);
-                console.log(obj);
                 if (obj.command == "sendClientInfo") {
-                    console.log("here");
                     if (location == "willis") {
                         if (obj.data.willisID == -1) {
                             $(".asklocation").hide();
@@ -139,7 +136,6 @@ $(document).ready(function () {
     });
 
     $(".pickup-btn").on("click", function () {
-        console.log("hello");
         let fileID = $(this).attr("fileid");
         $.ajax({
             type: "POST",
