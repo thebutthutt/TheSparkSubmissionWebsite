@@ -163,6 +163,7 @@ module.exports = function (
                     $elemMatch: {
                         isPrinted: true,
                         isPickedUp: false,
+                        isStaleOnPickup: false,
                     },
                 },
             },
