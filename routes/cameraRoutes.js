@@ -9,7 +9,7 @@ module.exports = function (app, bookingModel, cameraHandler) {
     //page to display the calendar
     app.get("/cameras", function (req, res) {
         var admin = false,
-            superAdmin = false;
+            isSuperAdmin = false;
         if (req.isAuthenticated()) {
             admin = true;
             if (req.user.isSuperAdmin == true) {
@@ -19,7 +19,7 @@ module.exports = function (app, bookingModel, cameraHandler) {
         res.render("pages/bookings/cameras", {
             pgnum: 6, //cameras
             isAdmin: admin,
-            isSuperAdmin: superAdmin,
+            isSuperAdmin: isSuperAdmin,
             cameras: constants.cameras,
             lenses: constants.lenses,
         });
@@ -27,7 +27,7 @@ module.exports = function (app, bookingModel, cameraHandler) {
 
     app.get("/book", function (req, res) {
         var admin = false,
-            superAdmin = false;
+            isSuperAdmin = false;
         if (req.isAuthenticated()) {
             admin = true;
             if (req.user.isSuperAdmin == true) {
@@ -38,7 +38,7 @@ module.exports = function (app, bookingModel, cameraHandler) {
             message: req.flash("submitMessage"),
             pgnum: 6, //camera
             isAdmin: admin,
-            isSuperAdmin: superAdmin,
+            isSuperAdmin: isSuperAdmin,
         });
     });
 
@@ -127,7 +127,7 @@ module.exports = function (app, bookingModel, cameraHandler) {
 
     app.get("/bookings/thankyou", function (req, res) {
         var admin = false,
-            superAdmin = false;
+            isSuperAdmin = false;
         if (req.isAuthenticated()) {
             admin = true;
             if (req.user.isSuperAdmin == true) {
@@ -137,13 +137,13 @@ module.exports = function (app, bookingModel, cameraHandler) {
         res.render("pages/bookings/thankyou", {
             pgnum: 6, //camera
             isAdmin: admin,
-            isSuperAdmin: superAdmin,
+            isSuperAdmin: isSuperAdmin,
         });
     });
 
     app.get("/bookings/overrides", isLoggedIn, function (req, res) {
         var admin = false,
-            superAdmin = false;
+            isSuperAdmin = false;
         if (req.isAuthenticated()) {
             admin = true;
             if (req.user.isSuperAdmin == true) {
@@ -153,7 +153,7 @@ module.exports = function (app, bookingModel, cameraHandler) {
         res.render("pages/bookings/overrides", {
             pgnum: 7, //camera
             isAdmin: admin,
-            isSuperAdmin: superAdmin,
+            isSuperAdmin: isSuperAdmin,
             workingCameras: constants.cameras,
             workingLenses: constants.lenses,
             brokenCameras: constants.brokenCameras,
