@@ -18,7 +18,7 @@
             myeuid="<%=user.local.euid%>"
             isSuperAdmin="<%= isSuperAdmin%>"
         ></div>
-        <div class="container" style="margin-bottom: 100px;">
+        <div class="container-fluid mt-5 px-5" style="margin-bottom: 100px;">
             <!-- show any messages that come back with authentication -->
             <% if (message.length > 0) { %>
             <div class="alert alert-warning"><%= message %></div>
@@ -180,24 +180,39 @@
                             </ul>
                         </div>
                         <%}%>
-                        <div class="shadow card mb-4">
-                            <div class="card-header">
-                                <h4 class="mb-0">Disk Usage</h4>
-                            </div>
-                            <div class="card-body append-disk-here">
-                                <p>
-                                    <strong><%=sizeData.human%></strong> used
-                                    storing patron files.
-                                </p>
-                                <p class="mb-0 small">
-                                    This server allows up to 30GB to be stored
-                                    in the home directory. In the past, we have
-                                    only used around 3GB at most to store files.
-                                    When 1GB or more has been used, please
-                                    consider deleting old completed or rejected
-                                    print submissions. Thank you!
-                                </p>
-                            </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="shadow card mb-4">
+                        <div class="card-header">
+                            <h4 class="mb-0">Cleaning</h4>
+                            <ol class="list-group-flush">
+                                <%objectsToClean.forEach(function(object){%>
+                                <li class="list-group-item">
+                                    <%=object%>
+                                </li>
+                                <%})%>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="shadow card mb-4">
+                        <div class="card-header">
+                            <h4 class="mb-0">Disk Usage</h4>
+                        </div>
+                        <div class="card-body append-disk-here">
+                            <p>
+                                <strong><%=sizeData.human%></strong> used
+                                storing patron files.
+                            </p>
+                            <p class="mb-0 small">
+                                This server allows up to 30GB to be stored in
+                                the home directory. In the past, we have only
+                                used around 3GB at most to store files. When 1GB
+                                or more has been used, please consider deleting
+                                old completed or rejected print submissions.
+                                Thank you!
+                            </p>
                         </div>
                     </div>
                 </div>

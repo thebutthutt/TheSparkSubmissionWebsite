@@ -313,4 +313,54 @@ module.exports = {
 
         quarantine.save();
     },
+
+    markBroken: function (objectName) {
+        var indexInCameras = constants.cameras.indexOf(objectName);
+        var indexInLenses = -1;
+        if (indexInCameras == -1) {
+            indexInLenses = constants.lenses.indexOf(objectName);
+        }
+
+        if (indexInLenses == -1 && indexInCameras == -1) {
+            console.log("Object not found in cameras or lenses");
+        } else {
+            if (indexInCameras != -1) {
+                constants.cameras.splice(indexInCameras, 1);
+                constants.brokenCameras.push(objectName);
+            } else {
+                constants.lenses.splice(indexInLenses, 1);
+                constants.brokenLenses.push(objectName);
+            }
+
+            module.exports.notifyCancelled(objectName);
+        }
+    },
+
+    notifyCancelled: function (objectName) {
+        bookingModel.find(
+            {
+                $and: [
+                    { isAccepted: true },
+                    {
+                        $or: [
+                            { camera: objectName },
+                            { lens1: objectName },
+                            { lens2: objectName },
+                        ],
+                    },
+                ],
+            },
+            function (err, results) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    results.forEach(function (booking) {
+                        booking.isAccepted = false;
+                        booking.isRejected = true;
+                        booking.save();
+                    });
+                }
+            }
+        );
+    },
 };

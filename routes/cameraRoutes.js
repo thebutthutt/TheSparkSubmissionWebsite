@@ -141,6 +141,26 @@ module.exports = function (app, bookingModel, cameraHandler) {
         });
     });
 
+    app.get("/bookings/overrides", isLoggedIn, function (req, res) {
+        var admin = false,
+            superAdmin = false;
+        if (req.isAuthenticated()) {
+            admin = true;
+            if (req.user.isSuperAdmin == true) {
+                isSuperAdmin = true;
+            }
+        }
+        res.render("pages/bookings/overrides", {
+            pgnum: 7, //camera
+            isAdmin: admin,
+            isSuperAdmin: superAdmin,
+            workingCameras: constants.cameras,
+            workingLenses: constants.lenses,
+            brokenCameras: constants.brokenCameras,
+            brokenLenses: constants.brokenLenses,
+        });
+    });
+
     app.post("/bookings/availableon", function (req, res) {
         var startDate = req.body.startDate || req.query.startDate;
         var endDate = req.body.endDate || req.query.endDate;

@@ -12,7 +12,7 @@
         <%- include ("../../partials/header") %>
         <div class="container mt-5" style="margin-bottom: 100px;">
             <div class="row">
-                <div class="col-3">
+                <div class="col-4">
                     <div class="shadow card list-card">
                         <%if (isAdmin) {%>
                         <div
@@ -46,7 +46,7 @@
                         >
                             <%cameras.forEach(function (camera) { %>
                             <a
-                                class="nav-link filter-item"
+                                class="nav-link filter-item py-1"
                                 id="v-pills-home-tab"
                                 data-toggle="pill"
                                 role="tab"
@@ -58,7 +58,7 @@
                             <hr />
                             <%lenses.forEach(function (lens) { %>
                             <a
-                                class="nav-link filter-item"
+                                class="nav-link filter-item py-1"
                                 id="v-pills-home-tab"
                                 data-toggle="pill"
                                 role="tab"
