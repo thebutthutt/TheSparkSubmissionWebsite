@@ -399,7 +399,7 @@ module.exports = function (
     //-----------------------PUSH REVIEW-----------------------
     //handle technician updating file by reviewing print file
     app.post("/prints/singleReview", function (req, res) {
-        printHandler.updateSingle(req, function callBack() {
+        printHandler.updateSingle(req, function () {
             //send all the stuff to the submission handler
             res.redirect("/prints/new"); //when we are done tell the review page it's okay to reload now
         });

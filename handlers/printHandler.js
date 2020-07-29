@@ -80,7 +80,7 @@ module.exports = {
     },
 
     //handles the data for a new top level print request with possibly multiple low level file submissions
-    handleSubmission: function (req) {
+    handleSubmission: function (req, callback) {
         const form = formidable({
             maxFileSize: 1024 * 1024 * 1024,
         });
@@ -110,7 +110,13 @@ module.exports = {
             prints.push(notes);
             prints.push(time.format(constants.format));
             prints.push(numFiles);
-            module.exports.addPrint(patron, prints);
+            if (numFiles == 0) {
+                //no files uploaded, there was an error
+                callback("error");
+            } else {
+                module.exports.addPrint(patron, prints);
+                callback("success"); //tell calling function we got it
+            }
         });
         form.on("field", function (name, field) {
             //when a new field comes through
@@ -217,7 +223,9 @@ module.exports = {
                             console.log(err);
                         }
                         //now find the fully updated top level submission so we can check if all the files have been reviewed
-                        module.exports.setFlags(id);
+                        module.exports.setFlags(id, function () {
+                            callback();
+                        });
                     }
                 );
             } else {
@@ -246,12 +254,11 @@ module.exports = {
                             console.log(err);
                         }
                         //now find the fully updated top level submission so we can check if all the files have been reviewed
-                        module.exports.setFlags(id);
+                        module.exports.setFlags(id, function () {
+                            callback();
+                        });
                     }
                 );
-            }
-            if (typeof callback == "function") {
-                callback(); //running the callback specified in calling function (in routes.js)
             }
         });
         form.on("field", (name, field) => {
@@ -472,7 +479,7 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 }
-                module.exports.setFlags(fileID);
+                module.exports.setFlags(fileID, function () {});
                 emailer.readyForPickup(
                     result.patron.email,
                     result.files
@@ -566,7 +573,6 @@ module.exports = {
 
     //the print has been picked up by the patron
     markPickedUp: function (fileID) {
-        console.log(fileID);
         var time = moment().format(constants.format);
         printRequestModel.findOne(
             {
@@ -665,7 +671,7 @@ module.exports = {
     },
 
     //set appropriate flags for top level submission
-    setFlags: function (submissionID) {
+    setFlags: function (submissionID, callback) {
         printRequestModel.findOne(
             {
                 "files._id": submissionID,
@@ -690,6 +696,7 @@ module.exports = {
                     }
 
                     result.save();
+                    callback();
                 }
             }
         );
@@ -757,7 +764,10 @@ module.exports = {
                         //save top level request db entry
                         if (err) console.log(err);
                     });
-                    module.exports.setFlags(result.files[0]._id); //now set all the flags of the updated top level submission
+                    module.exports.setFlags(
+                        result.files[0]._id,
+                        function () {}
+                    ); //now set all the flags of the updated top level submission
                 }
             }
         );

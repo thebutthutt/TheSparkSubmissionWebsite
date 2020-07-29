@@ -19,7 +19,6 @@ function connectWebSocket() {
     ws = new WebSocket("wss://sparkorders.library.unt.edu");
     ws.onopen = () => {
         ws.send("I am the messiah");
-        console.log("Now connected");
     };
 
     $(".signature-pad").empty();
@@ -194,7 +193,6 @@ var patronSignature = function () {
                 },
             }).done(function () {
                 clearCanvas();
-                console.log("fileID", fileID);
                 ws.send(
                     JSON.stringify({
                         sender: "messiah",

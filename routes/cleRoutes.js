@@ -15,6 +15,22 @@ module.exports = function (
 
     //page to display all
     app.get("/workrequests/all", isLoggedIn, function (req, res) {
+        cleRequestModel.find({}, function (err, data) {
+            //loading every single top level request FOR NOW
+            if (err) {
+                console.log(err);
+            }
+            res.render("pages/workrequests/workrequests", {
+                pgnum: 5, //workrequests
+                dbdata: data,
+                isAdmin: true,
+                isSuperAdmin: req.user.isSuperAdmin,
+                woPage: "all",
+            });
+        });
+    });
+
+    app.get("/workrequests/progress", isLoggedIn, function (req, res) {
         cleRequestModel.find(
             {
                 isCompleted: false,
@@ -29,6 +45,28 @@ module.exports = function (
                     dbdata: data,
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
+                    woPage: "progress",
+                });
+            }
+        );
+    });
+
+    app.get("/workrequests/completed", isLoggedIn, function (req, res) {
+        cleRequestModel.find(
+            {
+                isCompleted: true,
+            },
+            function (err, data) {
+                //loading every single top level request FOR NOW
+                if (err) {
+                    console.log(err);
+                }
+                res.render("pages/workrequests/workrequests", {
+                    pgnum: 5, //workrequests
+                    dbdata: data,
+                    isAdmin: true,
+                    isSuperAdmin: req.user.isSuperAdmin,
+                    woPage: "completed",
                 });
             }
         );
@@ -112,6 +150,26 @@ module.exports = function (
         res.json(["done"]); //tell the front end the request is done
     });
 
+    app.post("/workrequests/requestassign", function (req, res) {
+        var user = req.user.local.euid;
+        var submissionID = req.body.submissionID || req.query.submissionID;
+
+        cleRequestModel.findOne(
+            {
+                _id: submissionID,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    result.requestingMaker = user;
+                    result.save();
+                    res.json(["done"]);
+                }
+            }
+        );
+    });
+
     app.post("/assignWorkOrder", function (req, res) {
         var submissionID = req.body.submissionID;
         var makerID = req.body.makerID;
@@ -145,6 +203,7 @@ module.exports = function (
 
     app.post("/workrequests/materialintake", function (req, res) {
         var submissionID = req.query.submissionID;
+        var euid = req.user.local.euid;
         cleRequestModel.findOne(
             {
                 _id: submissionID,
@@ -157,9 +216,30 @@ module.exports = function (
                     result.materialDescriptions.push(req.body.materials);
                     result.materialLocations.push(req.body.location);
                     result.intakeDates.push(time);
+                    result.intakeTechs.push(euid);
                     result.hasMaterials = true;
                     result.save();
                     res.redirect("back");
+                }
+            }
+        );
+    });
+
+    app.post("/workrequests/complete", function (req, res) {
+        var submissionID = req.body.submissionID || req.query.submissionID;
+        cleRequestModel.findOne(
+            {
+                _id: submissionID,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    var time = moment().format(constants.format);
+                    result.isCompleted = true;
+                    result.dateCompleted = time;
+                    result.save();
+                    res.json("done");
                 }
             }
         );
