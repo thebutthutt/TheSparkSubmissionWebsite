@@ -1,5 +1,6 @@
 var ws;
 var fileName;
+var signlocation;
 var fileID;
 
 var hidden, visibilityChange;
@@ -18,7 +19,11 @@ if (typeof document.hidden !== "undefined") {
 function connectWebSocket() {
     ws = new WebSocket("wss://sparkorders.library.unt.edu");
     ws.onopen = () => {
-        ws.send("I am the messiah");
+        if (signlocation == "willis") {
+            ws.send("WillisSignaturePad");
+        } else {
+            ws.send("DPSignaturePad");
+        }
     };
 
     $(".signature-pad").empty();
@@ -48,25 +53,9 @@ function handleVisibilityChange() {
 document.addEventListener(visibilityChange, handleVisibilityChange, false);
 
 $(document).ready(function () {
+    signlocation = $(".signature-pad").attr("signlocation");
     connectWebSocket();
 });
-
-var getUrlParameter = function getUrlParameter(sParam) {
-    var sPageURL = window.location.search.substring(1),
-        sURLVariables = sPageURL.split("&"),
-        sParameterName,
-        i;
-
-    for (i = 0; i < sURLVariables.length; i++) {
-        sParameterName = sURLVariables[i].split("=");
-
-        if (sParameterName[0] === sParam) {
-            return sParameterName[1] === undefined
-                ? true
-                : decodeURIComponent(sParameterName[1]);
-        }
-    }
-};
 
 var patronSignature = function () {
     $.ajax({
@@ -196,6 +185,7 @@ var patronSignature = function () {
                 ws.send(
                     JSON.stringify({
                         sender: "messiah",
+                        location: signlocation,
                         command: "recievePatronSignature",
                         data: {
                             fileID: fileID,
