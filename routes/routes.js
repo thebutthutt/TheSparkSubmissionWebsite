@@ -68,7 +68,7 @@ module.exports = function (app, printHandler, cleHandler) {
     );
 
     //main signature page
-    app.get("/signature", function (req, res) {
+    app.get("/signaturewillis", function (req, res) {
         var admin = false,
             superAdmin = false;
         if (req.isAuthenticated()) {
@@ -81,6 +81,24 @@ module.exports = function (app, printHandler, cleHandler) {
             pgnum: 2, //tells the navbar what page to highlight
             isAdmin: admin,
             isSuperAdmin: superAdmin,
+            signlocation: "willis",
+        });
+    });
+
+    app.get("/signaturedp", function (req, res) {
+        var admin = false,
+            superAdmin = false;
+        if (req.isAuthenticated()) {
+            admin = true;
+            if (req.user.isSuperAdmin == true) {
+                isSuperAdmin = true;
+            }
+        }
+        res.render("pages/prints/signature", {
+            pgnum: 2, //tells the navbar what page to highlight
+            isAdmin: admin,
+            isSuperAdmin: superAdmin,
+            signlocation: "dp",
         });
     });
 
