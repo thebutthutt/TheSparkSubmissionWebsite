@@ -1,12 +1,16 @@
 // load all the things we need
-var LocalStrategy = require('passport-local').Strategy;
+var LocalStrategy = require("passport-local").Strategy;
+var ldap = require("ldapjs");
 
 // load up the user model
-var User = require('../app/models/user');
+var User = require("../app/models/user");
+
+var client = ldap.createClient({
+    url: "ldaps://ldap-auth.untsystem.edu",
+});
 
 // expose this function to our app using module.exports
 module.exports = function (passport) {
-
     // =========================================================================
     // passport session setup ==================================================
     // =========================================================================
@@ -31,96 +35,137 @@ module.exports = function (passport) {
     // we are using named strategies since we have one for login and one for signup
     // by default, if there was no name, it would just be called 'local'
 
-    passport.use('local-signup', new LocalStrategy({
-            // by default, local strategy uses username and password, we will override with euid
-            usernameField: 'euid',
-            passwordField: 'password',
-            passReqToCallback: true // allows us to pass back the entire request to the callback
-        },
-        function (req, euid, password, done) {
-            // asynchronous
-            // User.findOne wont fire unless data is sent back
-            process.nextTick(function () {
-                // find a user whose euid is the same as the forms euid
-                // we are checking to see if the user trying to login already exists
-                User.findOne({
-                    'local.euid': euid
-                }, function (err, user) {
-                    // if there are any errors, return the error
-                    if (err)
-                        return done(err);
+    passport.use(
+        "local-signup",
+        new LocalStrategy(
+            {
+                // by default, local strategy uses username and password, we will override with euid
+                usernameField: "euid",
+                passwordField: "password",
+                passReqToCallback: true, // allows us to pass back the entire request to the callback
+            },
+            function (req, euid, password, done) {
+                // asynchronous
+                // User.findOne wont fire unless data is sent back
+                process.nextTick(function () {
+                    // find a user whose euid is the same as the forms euid
+                    // we are checking to see if the user trying to login already exists
+                    User.findOne(
+                        {
+                            "local.euid": euid,
+                        },
+                        function (err, user) {
+                            // if there are any errors, return the error
+                            if (err) return done(err);
 
-                    // check to see if theres already a user with that euid
-                    if (user) {
-                        return done(null, false, req.flash('signupMessage', 'That euid is already taken.'));
-                    } else if (req.body.magic == 'The Empire Strikes Back') { 
-                        //must enter correct magic words to continue
-                        // if there is no user with that euid
-                        // create the user
-                        var newUser = new User();
+                            // check to see if theres already a user with that euid
+                            if (user) {
+                                return done(
+                                    null,
+                                    false,
+                                    req.flash(
+                                        "signupMessage",
+                                        "That euid is already taken."
+                                    )
+                                );
+                            } else if (
+                                req.body.magic == "The Empire Strikes Back"
+                            ) {
+                                //must enter correct magic words to continue
+                                // if there is no user with that euid
+                                // create the user
+                                var newUser = new User();
 
-                        // set the user's local credentials
-                        newUser.local.euid = euid;
-                        newUser.local.password = newUser.generateHash(password);
-                        newUser.email = req.body.email;
-                        newUser.name = req.body.name;
-                        if (req.body.superAdmin) {
-                            newUser.isSuperAdmin = true;
-                        } else {
-                            newUser.isSuperAdmin = false;
-                        }  
+                                // set the user's local credentials
+                                newUser.local.euid = euid;
+                                newUser.local.password = newUser.generateHash(
+                                    password
+                                );
+                                newUser.email = req.body.email;
+                                newUser.name = req.body.name;
+                                if (req.body.superAdmin) {
+                                    newUser.isSuperAdmin = true;
+                                } else {
+                                    newUser.isSuperAdmin = false;
+                                }
 
-                        // save the user
-                        newUser.save(function (err) {
-                            if (err)
-                                throw err;
-                            return done(null, newUser);
-                        });
-                    } else {
-                        //incorrect magic words means no sign up
-                        return done(null, false, req.flash('signupMessage', 'Your magic words have no power here.'));
-                    }
-
+                                // save the user
+                                newUser.save(function (err) {
+                                    if (err) throw err;
+                                    return done(null, newUser);
+                                });
+                            } else {
+                                //incorrect magic words means no sign up
+                                return done(
+                                    null,
+                                    false,
+                                    req.flash(
+                                        "signupMessage",
+                                        "Your magic words have no power here."
+                                    )
+                                );
+                            }
+                        }
+                    );
                 });
-
-            });
-
-        }));
+            }
+        )
+    );
     // =========================================================================
     // LOCAL LOGIN =============================================================
     // =========================================================================
     // we are using named strategies since we have one for login and one for signup
     // by default, if there was no name, it would just be called 'local'
 
-    passport.use('local-login', new LocalStrategy({
-            // by default, local strategy uses username and password, we will override with euid
-            usernameField: 'euid',
-            passwordField: 'password',
-            passReqToCallback: true // allows us to pass back the entire request to the callback
-        },
-        function (req, euid, password, done) { // callback with euid and password from our form
+    passport.use(
+        "local-login",
+        new LocalStrategy(
+            {
+                // by default, local strategy uses username and password, we will override with euid
+                usernameField: "username",
+                passwordField: "password",
+                passReqToCallback: true, // allows us to pass back the entire request to the callback
+            },
+            function (req, euid, password, done) {
+                // callback with euid and password from our form
+                var dn = "uid=" + euid + ",ou=people,o=unt";
+                client.bind(dn, password, function (err, res) {
+                    if (err == null) {
+                        //authenticated with UNT just fine, now check if they exist in our DB
+                        User.findOne(
+                            {
+                                "local.euid": euid,
+                            },
+                            function (err, user) {
+                                // if there are any errors, return the error before anything else
+                                if (err) return done(err);
 
-            // find a user whose euid is the same as the forms euid
-            // we are checking to see if the user trying to login already exists
-            User.findOne({
-                'local.euid': euid
-            }, function (err, user) {
-                // if there are any errors, return the error before anything else
-                if (err)
-                    return done(err);
+                                // if no user is found, return the message
+                                if (!user) {
+                                    var newUser = new User();
 
-                // if no user is found, return the message
-                if (!user)
-                    return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+                                    // set the user's local credentials
+                                    newUser.local.euid = euid;
+                                    newUser.name = euid;
+                                    newUser.isSuperAdmin = false;
 
-                // if the user is found but the password is wrong
-                if (!user.validPassword(password))
-                    return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
-
-                // all is well, return successful user
-                return done(null, user);
-            });
-
-        }));
-
+                                    // save the user
+                                    newUser.save(function (err) {
+                                        if (err) throw err;
+                                        return done(null, newUser);
+                                    });
+                                } else {
+                                    console.log(user);
+                                    return done(null, user);
+                                }
+                            }
+                        );
+                    } else {
+                        console.log("whopps");
+                        return done(err, false);
+                    }
+                });
+            }
+        )
+    );
 };
