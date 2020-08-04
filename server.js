@@ -130,6 +130,19 @@ var server = https.createServer(
         key: fs.readFileSync("./npserver2048.key"),
         cert: fs.readFileSync("./sparkorders_library_unt_edu_cert.cer"),
         passphrase: "THEsparkMakerSPACE",
+        ciphers: [
+            "ECDHE-RSA-AES256-SHA384",
+            "AES256-SHA256",
+            "!RC4",
+            "HIGH",
+            "!MD5",
+            "!aNULL",
+            "!EDH",
+            "!EXP",
+            "!SSLV2",
+            "!eNULL",
+        ].join(":"),
+        honorCipherOrder: true,
     },
     app
 );
