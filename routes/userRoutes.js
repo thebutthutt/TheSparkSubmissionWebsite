@@ -59,6 +59,14 @@ module.exports = function (
     app.get("/profile", isLoggedIn, function (req, res) {
         var numNew;
         var numPrint;
+        var whitelist = null;
+        if (req.user.isSuperAdmin) {
+            let rawdata = fs.readFileSync(
+                path.join(__dirname, "../app/whitelist.json")
+            );
+            whitelist = JSON.parse(rawdata);
+            whitelist = whitelist.whitelist; //just get all the users, not the superadmin list
+        }
 
         //nested callbacks because I'm shit at event driven systems kill me
         getNumNew(printRequestModel, function (numNewReturn) {
@@ -82,6 +90,7 @@ module.exports = function (
                         queueData: prints,
                         cameraData: result,
                         sizeData: size,
+                        whitelist: whitelist,
                     });
                 });
             });

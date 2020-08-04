@@ -1,5 +1,4 @@
 // load all the things we need
-var LocalStrategy = require("passport-local").Strategy;
 var LdapStrategy = require("passport-ldapauth");
 const fs = require("fs");
 var path = require("path");
@@ -69,7 +68,6 @@ module.exports = function (passport) {
                                 return done(null, newUser); //makes new local user that matches UNT user cred
                             });
                         } else {
-                            console.log(localUser);
                             return done(null, localUser); //return the user in our database matching the UNT user
                         }
                     }
@@ -86,7 +84,7 @@ module.exports = function (passport) {
     // =========================================================================
     // we are using named strategies since we have one for login and one for signup
     // by default, if there was no name, it would just be called 'local'
-
+    /* 
     passport.use(
         "local-login",
         new LocalStrategy(
@@ -125,7 +123,6 @@ module.exports = function (passport) {
                                         return done(null, newUser);
                                     });
                                 } else {
-                                    console.log(user);
                                     return done(null, user);
                                 }
                             }
@@ -138,4 +135,5 @@ module.exports = function (passport) {
             }
         )
     );
+*/
 };

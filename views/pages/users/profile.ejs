@@ -86,7 +86,7 @@
                                     href="#"
                                     class="float-left"
                                     data-toggle="modal"
-                                    data-target="#staticBackdrop"
+                                    data-target="#edit-account"
                                     >Edit Account Info</a
                                 >
                                 <a class="float-right" href="/logout">Logout</a>
@@ -98,7 +98,11 @@
                         <div class="shadow card">
                             <div class="card-header border-bottom">
                                 <h4 class="mb-0 float-left">All Users</h4>
-                                <a href="" class="float-right"
+                                <a
+                                    href=""
+                                    class="float-right"
+                                    data-toggle="modal"
+                                    data-target="#edit-whitelist"
                                     >Edit Whitelist</a
                                 >
                             </div>
@@ -201,129 +205,189 @@
                 <%}%>
             </div>
 
-            <!-- Modal -->
-            <div
-                class="modal fade"
-                id="staticBackdrop"
-                data-keyboard="false"
-                tabindex="-1"
-                role="dialog"
-                aria-labelledby="staticBackdropLabel"
-                aria-hidden="true"
-            >
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">
-                                Edit Account
-                            </h5>
-                            <button
-                                type="button"
-                                class="close"
-                                data-dismiss="modal"
-                                aria-label="Close"
-                            >
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form
-                                action="/changeName?euid=<%=user.local.euid%>"
-                                method="post"
-                            >
-                                <div class="form-group">
-                                    <label>Change your screen name</label>
-                                    <div class="input-group mb-3">
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            name="newName"
-                                            placeholder="New screen name"
-                                            aria-label="New screen name"
-                                            aria-describedby="changeNameButton"
-                                        />
-                                        <div class="input-group-append">
-                                            <button
-                                                class="btn btn-outline-primary"
-                                                type="submit"
-                                                id="changeNameButton"
-                                            >
-                                                Change Name
-                                            </button>
+            <div>
+                <!-- Modal 1 Edit Account -->
+                <div
+                    class="modal fade staticBackdrop"
+                    id="edit-account"
+                    data-keyboard="false"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="staticBackdropLabel"
+                    aria-hidden="true"
+                >
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5
+                                    class="modal-title"
+                                    id="staticBackdropLabel"
+                                >
+                                    Edit Account
+                                </h5>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    aria-label="Close"
+                                >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form
+                                    action="/changeName?euid=<%=user.local.euid%>"
+                                    method="post"
+                                >
+                                    <div class="form-group">
+                                        <label>Change your screen name</label>
+                                        <div class="input-group mb-3">
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                name="newName"
+                                                placeholder="New screen name"
+                                                aria-label="New screen name"
+                                                aria-describedby="changeNameButton"
+                                            />
+                                            <div class="input-group-append">
+                                                <button
+                                                    class="btn btn-outline-primary"
+                                                    type="submit"
+                                                    id="changeNameButton"
+                                                >
+                                                    Change Name
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
-                            <hr />
-                            <form
-                                action="/changeEmail?euid=<%=user.local.euid%>"
-                                method="post"
-                            >
-                                <div class="form-group">
-                                    <label>Change your email</label>
-                                    <div class="input-group mb-3">
-                                        <input
-                                            type="email"
-                                            class="form-control"
-                                            name="newEmail"
-                                            placeholder="New email"
-                                            aria-label="New email"
-                                            aria-describedby="button-addon2"
-                                        />
-                                        <div class="input-group-append">
-                                            <button
-                                                class="btn btn-outline-primary"
-                                                type="submit"
-                                                id="button-addon2"
-                                            >
-                                                Change Email
-                                            </button>
+                                </form>
+                                <hr />
+                                <form
+                                    action="/changeEmail?euid=<%=user.local.euid%>"
+                                    method="post"
+                                >
+                                    <div class="form-group">
+                                        <label>Change your email</label>
+                                        <div class="input-group mb-3">
+                                            <input
+                                                type="email"
+                                                class="form-control"
+                                                name="newEmail"
+                                                placeholder="New email"
+                                                aria-label="New email"
+                                                aria-describedby="button-addon2"
+                                            />
+                                            <div class="input-group-append">
+                                                <button
+                                                    class="btn btn-outline-primary"
+                                                    type="submit"
+                                                    id="button-addon2"
+                                                >
+                                                    Change Email
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
-                            <hr />
-                            <form
-                                action="/changePassword?euid=<%=user.local.euid%>"
-                                method="post"
-                            >
-                                <div class="form-group">
-                                    <label>Change your password</label>
-                                    <input
-                                        type="password"
-                                        class="form-control"
-                                        id="oldPassword"
-                                        placeholder="Old password"
-                                    />
-                                </div>
-                                <div class="form-group">
-                                    <input
-                                        type="password"
-                                        class="form-control"
-                                        id="newPassword"
-                                        placeholder="New password"
-                                    />
-                                </div>
-                                <div class="form-group">
-                                    <button
-                                        type="submit"
-                                        class="btn btn-primary"
-                                    >
-                                        Submit
-                                    </button>
-                                </div>
-                            </form>
-                            <hr />
-                            <a
-                                type="button"
-                                class="btn btn-danger"
-                                href="/deleteme"
-                                >Delete Account</a
-                            >
+                                </form>
+                                <hr />
+                                <form
+                                    action="/changePassword?euid=<%=user.local.euid%>"
+                                    method="post"
+                                >
+                                    <div class="form-group">
+                                        <label>Change your password</label>
+                                        <input
+                                            type="password"
+                                            class="form-control"
+                                            id="oldPassword"
+                                            placeholder="Old password"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <input
+                                            type="password"
+                                            class="form-control"
+                                            id="newPassword"
+                                            placeholder="New password"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary"
+                                        >
+                                            Submit
+                                        </button>
+                                    </div>
+                                </form>
+                                <hr />
+                                <a
+                                    type="button"
+                                    class="btn btn-danger"
+                                    href="/deleteme"
+                                    >Delete Account</a
+                                >
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <%if (isSuperAdmin) {%>
+            <div>
+                <!-- Modal 2 Edit Whitelist -->
+                <div
+                    class="modal fade staticBackdrop"
+                    id="edit-whitelist"
+                    data-keyboard="false"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="staticBackdropLabel"
+                    aria-hidden="true"
+                >
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5
+                                    class="modal-title"
+                                    id="staticBackdropLabel"
+                                >
+                                    Edit Whitelist
+                                </h5>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    aria-label="Close"
+                                >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>
+                                    Please add new employee's EUIDs to this
+                                    list. If an employee's EUID is not on the
+                                    whitelist, they will not be able to log in,
+                                    even if they are both in the UNT database
+                                    and officially employed at The Spark.
+                                </p>
+                                <ol class="list-group">
+                                    <%whitelist.forEach(function (euid) {%>
+                                    <li class="list-group-item"><%=euid%></li>
+                                    <%})%>
+                                    <li class="list-group-item">
+                                        <a href="">
+                                            Add new employee EUID?
+                                        </a>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%}%>
         </div>
         <%- include ("../../partials/footer") %>
     </body>

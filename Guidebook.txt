@@ -1,6 +1,12 @@
 Intro guide to the Spark Submission Website!
 by Hanna Flores
 
+!!!FORCE USER SUPER admin!!!
+In case somehow all the super admin accounts get deleted, manually make somebody a super admin.
+Super Admins can promote other users from within the website itself
+$ mongo                                                                                 //start the mongo shell
+$ use auth                                                                              //switch to the database for this website
+$ db.users.updateOne({"local.euid": "<euid>"}, {$set: {"isSuperAdmin":true}})           //make the user with the selected euid a super admin
 
 Languages/Frameworks:
     JavaScript using:
