@@ -1,6 +1,5 @@
 const fs = require("fs");
 var path = require("path");
-const disk = require("diskusage");
 
 module.exports = function (
     app,
@@ -28,54 +27,29 @@ module.exports = function (
     // process the login form
     app.post(
         "/login",
-        passport.authenticate("local-login", {
+        passport.authenticate("ldapauth", {
             successRedirect: "/profile", // redirect to the secure profile section
             failureRedirect: "/login", // redirect back to the signup page if there is an error
         })
-        /*function (req, res) {
-            console.log("body parsing", req.body);
-        }*/
     );
 
     app.post("/verify", function (req, res, next) {
-        passport.authenticate("local-login", function (err, user, info) {
+        console.log("me");
+        passport.authenticate("ldapauth", function (err, user, info) {
+            console.log("also me");
             if (err) {
                 return res.send("error");
             }
-            if (!user) {
-                return res.send("no user");
-            }
-            req.logIn(user, function (err) {
-                if (err) {
-                    return res.send("password");
-                }
+
+            if (user != null) {
+                console.log("logged in");
                 return res.send("yes");
-            });
+            } else {
+                console.log("nope");
+                return res.send("password");
+            }
         })(req, res, next);
     });
-
-    // =====================================
-    // SIGNUP ==============================
-    // =====================================
-    // show the signup form
-    app.get("/signup", function (req, res) {
-        // render the page and pass in any flash data if it exists
-        res.render("pages/users/signup", {
-            message: req.flash("signupMessage"),
-            pgnum: 3, //tells the navbar what page to highlight
-            isAdmin: false,
-        });
-    });
-
-    // process the signup form
-    app.post(
-        "/signup",
-        passport.authenticate("local-signup", {
-            successRedirect: "/profile", // redirect to the secure profile section
-            failureRedirect: "/signup", // redirect back to the signup page if there is an error
-            failureFlash: true, // allow flash messages
-        })
-    );
 
     // =====================================
     // PROFILE SECTION =====================
@@ -96,9 +70,7 @@ module.exports = function (
                     readyPrints: numPrint,
                 };
 
-                var size = getTotalSize(
-                    "/home/hcf0018/webserver/TheSparkSubmissionWebsite/app"
-                );
+                var size = getTotalSize("/home/hcf0018/webserver/Uploads");
 
                 objectToCleanModel.find({}, function (err, result) {
                     res.render("pages/users/profile", {
@@ -180,6 +152,26 @@ module.exports = function (
                 } else {
                     if (req.body.newName != "") {
                         result.name = req.body.newName;
+                        result.save();
+                    }
+                }
+            }
+        );
+        res.redirect("back");
+    });
+
+    app.post("/changeEmail", function (req, res) {
+        var euid = req.body.euid || req.query.euid;
+        userModel.findOne(
+            {
+                "local.euid": euid,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    if (req.body.newEmail != "") {
+                        result.email = req.body.newEmail;
                         result.save();
                     }
                 }

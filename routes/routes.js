@@ -69,6 +69,7 @@ module.exports = function (app, printHandler, cleHandler) {
 
     //main signature page
     app.get("/signaturewillis", function (req, res) {
+        console.log("here");
         var admin = false,
             superAdmin = false;
         if (req.isAuthenticated()) {

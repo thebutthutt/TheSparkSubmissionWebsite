@@ -1,13 +1,23 @@
 // load all the things we need
 var LocalStrategy = require("passport-local").Strategy;
-var ldap = require("ldapjs");
+var LdapStrategy = require("passport-ldapauth");
+const fs = require("fs");
+var path = require("path");
+
+//grab the whitelist contents from the file
+let rawdata = fs.readFileSync(path.join(__dirname, "../app/whitelist.json"));
+whitelist = JSON.parse(rawdata);
 
 // load up the user model
 var User = require("../app/models/user");
 
-var client = ldap.createClient({
-    url: "ldaps://ldap-auth.untsystem.edu",
-});
+var OPTS = {
+    server: {
+        url: "ldaps://ldap-auth.untsystem.edu",
+        searchBase: "ou=people,o=unt",
+        searchFilter: "(uid={{username}})",
+    },
+};
 
 // expose this function to our app using module.exports
 module.exports = function (passport) {
@@ -29,88 +39,48 @@ module.exports = function (passport) {
         });
     });
 
-    // =========================================================================
-    // LOCAL SIGNUP ============================================================
-    // =========================================================================
-    // we are using named strategies since we have one for login and one for signup
-    // by default, if there was no name, it would just be called 'local'
-
     passport.use(
-        "local-signup",
-        new LocalStrategy(
-            {
-                // by default, local strategy uses username and password, we will override with euid
-                usernameField: "euid",
-                passwordField: "password",
-                passReqToCallback: true, // allows us to pass back the entire request to the callback
-            },
-            function (req, euid, password, done) {
-                // asynchronous
-                // User.findOne wont fire unless data is sent back
-                process.nextTick(function () {
-                    // find a user whose euid is the same as the forms euid
-                    // we are checking to see if the user trying to login already exists
-                    User.findOne(
-                        {
-                            "local.euid": euid,
-                        },
-                        function (err, user) {
-                            // if there are any errors, return the error
-                            if (err) return done(err);
+        new LdapStrategy(OPTS, function (user, done) {
+            if (whitelist.whitelist.includes(user.euid)) {
+                User.findOne(
+                    {
+                        "local.euid": user.euid,
+                    },
+                    function (err, localUser) {
+                        // if there are any errors, return the error before anything else
+                        if (err) return done(err);
 
-                            // check to see if theres already a user with that euid
-                            if (user) {
-                                return done(
-                                    null,
-                                    false,
-                                    req.flash(
-                                        "signupMessage",
-                                        "That euid is already taken."
-                                    )
-                                );
-                            } else if (
-                                req.body.magic == "The Empire Strikes Back"
-                            ) {
-                                //must enter correct magic words to continue
-                                // if there is no user with that euid
-                                // create the user
-                                var newUser = new User();
+                        // if no user is found, return the message
+                        if (!localUser) {
+                            var newUser = new User();
 
-                                // set the user's local credentials
-                                newUser.local.euid = euid;
-                                newUser.local.password = newUser.generateHash(
-                                    password
-                                );
-                                newUser.email = req.body.email;
-                                newUser.name = req.body.name;
-                                if (req.body.superAdmin) {
-                                    newUser.isSuperAdmin = true;
-                                } else {
-                                    newUser.isSuperAdmin = false;
-                                }
-
-                                // save the user
-                                newUser.save(function (err) {
-                                    if (err) throw err;
-                                    return done(null, newUser);
-                                });
+                            // set the user's local credentials
+                            newUser.local.euid = user.euid;
+                            newUser.name = user.euid;
+                            if (whitelist.superAdmins.contains(user.euid)) {
+                                newUser.isSuperAdmin = true;
                             } else {
-                                //incorrect magic words means no sign up
-                                return done(
-                                    null,
-                                    false,
-                                    req.flash(
-                                        "signupMessage",
-                                        "Your magic words have no power here."
-                                    )
-                                );
+                                newUser.isSuperAdmin = false;
                             }
+
+                            // save the user
+                            newUser.save(function (err) {
+                                if (err) throw err;
+                                return done(null, newUser); //makes new local user that matches UNT user cred
+                            });
+                        } else {
+                            console.log(localUser);
+                            return done(null, localUser); //return the user in our database matching the UNT user
                         }
-                    );
-                });
+                    }
+                );
+            } else {
+                console.log("User not on whitelist");
+                return done(null, null);
             }
-        )
+        })
     );
+
     // =========================================================================
     // LOCAL LOGIN =============================================================
     // =========================================================================
