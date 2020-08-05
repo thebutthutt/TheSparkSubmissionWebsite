@@ -62,10 +62,9 @@ module.exports = function (
         var whitelist = null;
         if (req.user.isSuperAdmin) {
             let rawdata = fs.readFileSync(
-                path.join(__dirname, "../app/whitelist.json")
+                path.join(__dirname, "../app/whitelist.txt")
             );
             whitelist = JSON.parse(rawdata);
-            whitelist = whitelist.whitelist; //just get all the users, not the superadmin list
         }
 
         //nested callbacks because I'm shit at event driven systems kill me
@@ -187,6 +186,30 @@ module.exports = function (
             }
         );
         res.redirect("back");
+    });
+
+    app.post("/users/addWhitelist", function (req, res) {
+        var newEUID = req.body.newEUID || req.query.newEUID;
+        if (newEUID != null) {
+            let rawdata = fs.readFileSync(
+                path.join(__dirname, "../app/whitelist.txt")
+            );
+            whitelist = JSON.parse(rawdata);
+            console.log(whitelist);
+            whitelist.push(newEUID);
+            console.log(whitelist);
+            fs.writeFile(
+                path.join(__dirname, "../app/whitelist.txt"),
+                JSON.stringify(whitelist),
+                function (err) {
+                    if (err) {
+                        console.log("JSON write error", err);
+                    } else {
+                        res.redirect("back");
+                    }
+                }
+            );
+        }
     });
 
     app.post("/cameras/clean", function (req, res) {

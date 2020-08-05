@@ -40,7 +40,7 @@ module.exports = function (passport) {
 
     passport.use(
         new LdapStrategy(OPTS, function (user, done) {
-            if (whitelist.whitelist.includes(user.euid)) {
+            if (whitelist.includes(user.euid)) {
                 User.findOne(
                     {
                         "local.euid": user.euid,
@@ -56,11 +56,7 @@ module.exports = function (passport) {
                             // set the user's local credentials
                             newUser.local.euid = user.euid;
                             newUser.name = user.euid;
-                            if (whitelist.superAdmins.contains(user.euid)) {
-                                newUser.isSuperAdmin = true;
-                            } else {
-                                newUser.isSuperAdmin = false;
-                            }
+                            newUser.isSuperAdmin = false;
 
                             // save the user
                             newUser.save(function (err) {

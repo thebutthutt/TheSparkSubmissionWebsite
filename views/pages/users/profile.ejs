@@ -349,12 +349,12 @@
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5
+                                <h4
                                     class="modal-title"
                                     id="staticBackdropLabel"
                                 >
                                     Edit Whitelist
-                                </h5>
+                                </h4>
                                 <button
                                     type="button"
                                     class="close"
@@ -365,23 +365,92 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <p>
-                                    Please add new employee's EUIDs to this
-                                    list. If an employee's EUID is not on the
-                                    whitelist, they will not be able to log in,
-                                    even if they are both in the UNT database
-                                    and officially employed at The Spark.
-                                </p>
-                                <ol class="list-group">
-                                    <%whitelist.forEach(function (euid) {%>
-                                    <li class="list-group-item"><%=euid%></li>
-                                    <%})%>
-                                    <li class="list-group-item">
-                                        <a href="">
-                                            Add new employee EUID?
-                                        </a>
-                                    </li>
-                                </ol>
+                                <div class="row">
+                                    <div class="col-7">
+                                        <h5>Instructions</h5>
+                                        <p>
+                                            Please add new employee's EUIDs to
+                                            this list. If an employee's EUID is
+                                            not on the whitelist, they will not
+                                            be able to log in, even if they are
+                                            both in the UNT database and
+                                            officially employed at The Spark.
+                                        </p>
+
+                                        <h5>Local vs UNT Accounts</h5>
+                                        <p>
+                                            Also note that adding an EUID to
+                                            this list will not create a local
+                                            account for that user. The local
+                                            account seen in the All Users list
+                                            is created the first time that
+                                            employee logs in to this website.
+                                            Once a local account has been
+                                            created you may promote or demote
+                                            their account as desired.
+                                        </p>
+
+                                        <h5>Preventing Login</h5>
+                                        <p>
+                                            Deleting a local account from the
+                                            All Users list only deletes the
+                                            local account from the database; it
+                                            does NOT prevent that employee from
+                                            logging back in and creating a new
+                                            local account. To prevent a user
+                                            from logging in, please delete their
+                                            EUID from this whitelist.
+                                        </p>
+                                    </div>
+
+                                    <div class="col">
+                                        <ol class="list-group">
+                                            <%whitelist.forEach(function (euid)
+                                            {%>
+                                            <li class="list-group-item">
+                                                <%=euid%>
+                                                <a
+                                                    class="float-right"
+                                                    href=""
+                                                    euid="<%=euid%>"
+                                                >
+                                                    Delete
+                                                </a>
+                                            </li>
+                                            <%})%>
+                                        </ol>
+
+                                        <form
+                                            class="form mt-3"
+                                            method="POST"
+                                            action="users/addWhitelist"
+                                        >
+                                            <div class="form-row">
+                                                <div class="col">
+                                                    <label
+                                                        for="inputPassword2"
+                                                        class="sr-only"
+                                                        >New EUID</label
+                                                    >
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        name="newEUID"
+                                                        placeholder="New EUID"
+                                                    />
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-primary"
+                                                    >
+                                                        Add New EUID
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
