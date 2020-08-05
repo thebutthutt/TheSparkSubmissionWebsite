@@ -29,10 +29,10 @@ module.exports = {
                         bookingStart = new Date(booking.calendarEvent.start);
                         bookingEnd = new Date(booking.calendarEvent.end);
                         if (
-                            (bookingStart >= requestStart &&
-                                bookingStart <= requestEnd) ||
-                            (bookingEnd >= requestStart &&
-                                bookingEnd <= requestEnd)
+                            (requestStart >= bookingStart &&
+                                requestStart <= bookingEnd) ||
+                            (requestEnd >= bookingStart &&
+                                requestEnd <= bookingEnd)
                         ) {
                             removeCameras.push(booking.camera);
                             removeLenses.push(booking.lens1);
