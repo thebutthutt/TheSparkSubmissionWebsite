@@ -4,7 +4,7 @@ const fs = require("fs");
 var path = require("path");
 
 //grab the whitelist contents from the file
-let rawdata = fs.readFileSync(path.join(__dirname, "../app/whitelist.json"));
+let rawdata = fs.readFileSync(path.join(__dirname, "../../novers.txt"));
 whitelist = JSON.parse(rawdata);
 
 // load up the user model
