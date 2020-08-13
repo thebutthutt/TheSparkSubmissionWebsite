@@ -18,7 +18,7 @@ module.exports = function (
     app.get("/login", isLoggedOut, function (req, res) {
         // render the page and pass in any flash data if it exists
         res.render("pages/users/login", {
-            message: req.flash("loginMessage"),
+            message: req.flash("error"),
             pgnum: 3, //tells the navbar what page to highlight
             isAdmin: false,
         });
@@ -27,7 +27,7 @@ module.exports = function (
     // process the login form
     app.post(
         "/login",
-        passport.authenticate("ldapauth", {
+        passport.authenticate("local-login", {
             successRedirect: "/profile", // redirect to the secure profile section
             failureRedirect: "/login", // redirect back to the signup page if there is an error
         })
