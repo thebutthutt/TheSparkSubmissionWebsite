@@ -1,0 +1,10 @@
+The magic happens on port 443
+[33m[nodemon] 2.0.4[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,json[39m
+[32m[nodemon] starting `node --tls-cipher-list='ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL' /home/hcf0018/webserver/TheSparkSubmissionWebsite/server.js`[39m
+The magic happens on port 443
+trying
+works here
+logged in
