@@ -1,0 +1,186 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ("../../partials/head") %>
+        <link
+            type="text/css"
+            rel="stylesheet"
+            href="../../public/css/submit.css"
+        />
+        <script src="/public/js/booking.js"></script>
+        <link rel="stylesheet" href="/datepicker/datepicker.min.css" />
+    </head>
+
+    <body>
+        <%- include ("../../partials/header") %>
+        <div class="container mt-5" style="margin-bottom: 100px;">
+            <div class="col-8 offset-2">
+                <div class="shadow card">
+                    <div class="card-header">
+                        <h1>New Booking Request</h1>
+                    </div>
+                    <div class="card-body">
+                        <!-- show any messages that come back with authentication -->
+                        <% if (message.length > 0) { %>
+                        <div class="alert alert-success"><%= message %></div>
+                        <% } %>
+
+                        <!-- SUBMISSION FORM -->
+                        <form
+                            id="submission-form"
+                            action="/bookings/submitbooking"
+                            method="post"
+                            autocomplete="off"
+                        >
+                            <div class="form-group no-margin">
+                                <label>Patron Info</label>
+                                <div class="input-group">
+                                    <input
+                                        type="text"
+                                        class="form-control top"
+                                        name="first"
+                                        placeholder="First name"
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        class="form-control top"
+                                        name="last"
+                                        placeholder="Last name"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div class="form-group no-margin">
+                                <input
+                                    type="email"
+                                    class="form-control inner"
+                                    name="email"
+                                    placeholder="Email"
+                                    required
+                                />
+                            </div>
+                            <div class="form-group">
+                                <input
+                                    type="text"
+                                    class="form-control euid bottom"
+                                    name="euid"
+                                    placeholder="EUID"
+                                    required
+                                />
+                            </div>
+
+                            <hr />
+                            <div class="form-group form-row mb-0">
+                                <div class="col">
+                                    <label for="startDate">Pickup On</label>
+                                </div>
+                                <div class="col">
+                                    <label for="endDate">Return On</label>
+                                </div>
+                            </div>
+                            <div class="form-group form-row">
+                                <div class="col">
+                                    <input
+                                        type="text"
+                                        id="startDate"
+                                        name="startDate"
+                                        class="form-control"
+                                    />
+                                </div>
+                                <div class="col">
+                                    <input
+                                        type="text"
+                                        id="endDate"
+                                        name="endDate"
+                                        class="form-control"
+                                        readonly
+                                    />
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <label for="availableCameras" class="mb-3">
+                                    Please select one camera and up to two
+                                    lenses that are available during the time
+                                    you selected
+                                </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span
+                                            class="input-group-text"
+                                            id="basic-addon1"
+                                            >Camera</span
+                                        >
+                                    </div>
+                                    <select
+                                        class="form-control"
+                                        id="availableCameras"
+                                        name="camera"
+                                    >
+                                        <option
+                                            >No cameras available for this
+                                            date</option
+                                        >
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form-row">
+                                <div class="col input-group">
+                                    <div class="input-group-prepend">
+                                        <span
+                                            class="input-group-text"
+                                            id="basic-addon1"
+                                            >Lens 1</span
+                                        >
+                                    </div>
+                                    <select
+                                        class="form-control"
+                                        id="availableLenses1"
+                                        name="lens1"
+                                    >
+                                        <option
+                                            >No lenses available for this
+                                            date</option
+                                        >
+                                    </select>
+                                </div>
+                                <div class="col input-group">
+                                    <div class="input-group-prepend">
+                                        <span
+                                            class="input-group-text"
+                                            id="basic-addon1"
+                                            >Lens 2</span
+                                        >
+                                    </div>
+                                    <select
+                                        class="form-control"
+                                        id="availableLenses2"
+                                        name="lens2"
+                                    >
+                                        <option
+                                            >No lenses available for this
+                                            date</option
+                                        >
+                                    </select>
+                                </div>
+                            </div>
+                            <button
+                                type="submit"
+                                class="btn btn-lg btn-primary btn-block submit-form"
+                            >
+                                Submit
+                            </button>
+                        </form>
+                        <hr />
+
+                        <p>Go <a href="/">home</a>?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/datepicker/datepicker.min.js"></script>
+        <%- include ("../../partials/footer") %>
+    </body>
+</html>

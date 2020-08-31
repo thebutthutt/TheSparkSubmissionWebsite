@@ -1,14 +1,15 @@
 const fs = require("fs");
 var path = require("path");
-const disk = require("diskusage");
 
 module.exports = function (
     app,
     passport,
     userModel,
     adminRequestHandler,
+    cameraHandler,
     printRequestModel,
-    cleRequestModel
+    cleRequestModel,
+    objectToCleanModel
 ) {
     // =====================================
     // LOGIN ===============================
@@ -17,7 +18,7 @@ module.exports = function (
     app.get("/login", isLoggedOut, function (req, res) {
         // render the page and pass in any flash data if it exists
         res.render("pages/users/login", {
-            message: req.flash("loginMessage"),
+            message: req.flash("error"),
             pgnum: 3, //tells the navbar what page to highlight
             isAdmin: false,
         });
@@ -29,49 +30,27 @@ module.exports = function (
         passport.authenticate("local-login", {
             successRedirect: "/profile", // redirect to the secure profile section
             failureRedirect: "/login", // redirect back to the signup page if there is an error
-            failureFlash: true, // allow flash messages
+            failureFlash: true,
         })
     );
 
     app.post("/verify", function (req, res, next) {
-        passport.authenticate("local-login", function (err, user, info) {
+        console.log("me");
+        passport.authenticate("ldapauth", function (err, user, info) {
+            console.log("also me");
             if (err) {
                 return res.send("error");
             }
-            if (!user) {
-                return res.send("no user");
-            }
-            req.logIn(user, function (err) {
-                if (err) {
-                    return res.send("password");
-                }
+
+            if (user != null) {
+                console.log("logged in");
                 return res.send("yes");
-            });
+            } else {
+                console.log("nope");
+                return res.send("password");
+            }
         })(req, res, next);
     });
-
-    // =====================================
-    // SIGNUP ==============================
-    // =====================================
-    // show the signup form
-    app.get("/signup", function (req, res) {
-        // render the page and pass in any flash data if it exists
-        res.render("pages/users/signup", {
-            message: req.flash("signupMessage"),
-            pgnum: 3, //tells the navbar what page to highlight
-            isAdmin: false,
-        });
-    });
-
-    // process the signup form
-    app.post(
-        "/signup",
-        passport.authenticate("local-signup", {
-            successRedirect: "/profile", // redirect to the secure profile section
-            failureRedirect: "/signup", // redirect back to the signup page if there is an error
-            failureFlash: true, // allow flash messages
-        })
-    );
 
     // =====================================
     // PROFILE SECTION =====================
@@ -81,6 +60,13 @@ module.exports = function (
     app.get("/profile", isLoggedIn, function (req, res) {
         var numNew;
         var numPrint;
+        var whitelist = null;
+        if (req.user.isSuperAdmin) {
+            let rawdata = fs.readFileSync(
+                path.join(__dirname, "../app/whitelist.txt")
+            );
+            whitelist = JSON.parse(rawdata);
+        }
 
         //nested callbacks because I'm shit at event driven systems kill me
         getNumNew(printRequestModel, function (numNewReturn) {
@@ -94,14 +80,18 @@ module.exports = function (
 
                 var size = getTotalSize("/home/hcf0018/webserver/Uploads");
 
-                res.render("pages/users/profile", {
-                    message: req.flash("logoutMessage"),
-                    pgnum: 3, //tells the navbar what page to highlight
-                    user: req.user, // get the user out of session and pass to template
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                    queueData: prints,
-                    sizeData: size,
+                objectToCleanModel.find({}, function (err, result) {
+                    res.render("pages/users/profile", {
+                        message: req.flash("logoutMessage"),
+                        pgnum: 3, //tells the navbar what page to highlight
+                        user: req.user, // get the user out of session and pass to template
+                        isAdmin: true,
+                        isSuperAdmin: req.user.isSuperAdmin,
+                        queueData: prints,
+                        cameraData: result,
+                        sizeData: size,
+                        whitelist: whitelist,
+                    });
                 });
             });
         });
@@ -177,6 +167,50 @@ module.exports = function (
             }
         );
         res.redirect("back");
+    });
+
+    app.post("/changeEmail", function (req, res) {
+        var euid = req.body.euid || req.query.euid;
+        userModel.findOne(
+            {
+                "local.euid": euid,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    if (req.body.newEmail != "") {
+                        result.email = req.body.newEmail;
+                        result.save();
+                    }
+                }
+            }
+        );
+        res.redirect("back");
+    });
+
+    app.post("/users/addWhitelist", function (req, res) {
+        var newEUID = req.body.newEUID || req.query.newEUID;
+        if (newEUID != null) {
+            let rawdata = fs.readFileSync(
+                path.join(__dirname, "../app/whitelist.txt")
+            );
+            whitelist = JSON.parse(rawdata);
+            console.log(whitelist);
+            whitelist.push(newEUID);
+            console.log(whitelist);
+            fs.writeFile(
+                path.join(__dirname, "../app/whitelist.txt"),
+                JSON.stringify(whitelist),
+                function (err) {
+                    if (err) {
+                        console.log("JSON write error", err);
+                    } else {
+                        res.redirect("back");
+                    }
+                }
+            );
+        }
     });
 
     app.post("/cameras/clean", function (req, res) {

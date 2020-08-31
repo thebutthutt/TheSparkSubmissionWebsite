@@ -1,8 +1,26 @@
 var schedule = require("node-schedule");
 const moment = require("moment");
-var emailer = require("../config/email.js");
+var emailer = require("./email.js");
 
-module.exports = function (printRequestModel, constants) {
+module.exports = function (
+    printRequestModel,
+    bookingModel,
+    objectToCleanModel,
+    constants
+) {
+    /*
+		This finds all the prints waiting for 
+		the patron to pick them up still.
+
+		Those over one week, two weeks, and
+		three weeks old will be marked with
+		the appropriate flags.
+
+		Additionally, those over 3 weeks old 
+		will be marked stale on pickup and 
+		removed from the waiting for pickup
+		queue.
+	*/
     var staleOnPickup = function () {
         var today = moment().format(constants.format);
         var oneWeek = moment().subtract(6, "days").format(constants.format); //subtracting six days feom today to satisfy anything before being 7+ days old
@@ -88,10 +106,62 @@ module.exports = function (printRequestModel, constants) {
         );
     };
 
+    /*
+		Finds all the quarantine bookings today 
+		and makes a list of all the unique items 
+		that need to be cleaned. 
+
+		First deletes any existing items that
+		need to be cleaned on the assumption 
+		that this will only run once a day.	
+
+		if the server restarts the data of what 
+		has been cleaned will NOT persist! 
+	*/
+
+    var needsCleaning = function () {
+        objectToCleanModel.deleteMany({}, function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
+
+        var today = new Date().toISOString();
+        today = today.substring(0, 10) + "T00:00:00.000Z";
+
+        var results = [];
+
+        bookingModel.find(
+            {
+                "calendarEvent.classNames": "quarantine",
+                "calendarEvent.start": today,
+                "calendarEvent.end": today,
+            },
+            function (err, data) {
+                data.forEach(function (booking) {
+                    results.push(booking.camera);
+                    results.push(booking.lens1);
+                    if (booking.lens1 != booking.lens2) {
+                        results.push(booking.lens2);
+                    }
+                });
+
+                results.forEach(function (item) {
+                    var newObject = new objectToCleanModel();
+                    newObject.objectName = item;
+                    newObject.isCleaned = false;
+                    newObject.save();
+                });
+            }
+        );
+    };
+
     schedule.scheduleJob("1 0 * * *", () => {
         //run once every day at midnight and one minute just in case idk im nervous
         staleOnPickup();
+        needsCleaning();
     });
 
     staleOnPickup();
+    needsCleaning();
 };

@@ -29,10 +29,10 @@ module.exports = {
                         bookingStart = new Date(booking.calendarEvent.start);
                         bookingEnd = new Date(booking.calendarEvent.end);
                         if (
-                            (bookingStart >= requestStart &&
-                                bookingStart <= requestEnd) ||
-                            (bookingEnd >= requestStart &&
-                                bookingEnd <= requestEnd)
+                            (requestStart >= bookingStart &&
+                                requestStart <= bookingEnd) ||
+                            (requestEnd >= bookingStart &&
+                                requestEnd <= bookingEnd)
                         ) {
                             removeCameras.push(booking.camera);
                             removeLenses.push(booking.lens1);
@@ -312,5 +312,55 @@ module.exports = {
         };
 
         quarantine.save();
+    },
+
+    markBroken: function (objectName) {
+        var indexInCameras = constants.cameras.indexOf(objectName);
+        var indexInLenses = -1;
+        if (indexInCameras == -1) {
+            indexInLenses = constants.lenses.indexOf(objectName);
+        }
+
+        if (indexInLenses == -1 && indexInCameras == -1) {
+            console.log("Object not found in cameras or lenses");
+        } else {
+            if (indexInCameras != -1) {
+                constants.cameras.splice(indexInCameras, 1);
+                constants.brokenCameras.push(objectName);
+            } else {
+                constants.lenses.splice(indexInLenses, 1);
+                constants.brokenLenses.push(objectName);
+            }
+
+            module.exports.notifyCancelled(objectName);
+        }
+    },
+
+    notifyCancelled: function (objectName) {
+        bookingModel.find(
+            {
+                $and: [
+                    { isAccepted: true },
+                    {
+                        $or: [
+                            { camera: objectName },
+                            { lens1: objectName },
+                            { lens2: objectName },
+                        ],
+                    },
+                ],
+            },
+            function (err, results) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    results.forEach(function (booking) {
+                        booking.isAccepted = false;
+                        booking.isRejected = true;
+                        booking.save();
+                    });
+                }
+            }
+        );
     },
 };

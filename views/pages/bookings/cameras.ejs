@@ -1,0 +1,117 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ("../../partials/head") %>
+        <link href="fullcalendar/main.css" rel="stylesheet" />
+        <script src="fullcalendar/main.js"></script>
+        <script src="/public/js/cameraBookings.js"></script>
+    </head>
+
+    <body>
+        <%- include ("../../partials/header") %>
+        <div class="container mt-5" style="margin-bottom: 100px;">
+            <div class="row">
+                <div class="col-4">
+                    <div class="shadow card list-card">
+                        <%if (isAdmin) {%>
+                        <div
+                            class="btn-group btn-group-toggle m-2"
+                            data-toggle="buttons"
+                        >
+                            <label class="btn btn-outline-primary active">
+                                <input
+                                    type="radio"
+                                    name="options"
+                                    id="filters"
+                                    checked
+                                />
+                                Filters
+                            </label>
+                            <label class="btn btn-outline-primary">
+                                <input
+                                    type="radio"
+                                    name="options"
+                                    id="editor"
+                                />
+                                Editor
+                            </label>
+                        </div>
+                        <%}%>
+                        <div
+                            class="nav flex-column nav-pills"
+                            id="filter-list"
+                            role="tablist"
+                            aria-orientation="vertical"
+                        >
+                            <%cameras.forEach(function (camera) { %>
+                            <a
+                                class="nav-link filter-item py-1"
+                                id="v-pills-home-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-home"
+                                aria-selected="false"
+                                ><%=camera%></a
+                            >
+                            <%})%>
+                            <hr />
+                            <%lenses.forEach(function (lens) { %>
+                            <a
+                                class="nav-link filter-item py-1"
+                                id="v-pills-home-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-home"
+                                aria-selected="false"
+                                ><%=lens%></a
+                            >
+                            <%})%>
+                            <hr class="mb-0" />
+                            <a
+                                class="nav-link active filter-item nav-link-all"
+                                id="v-pills-home-tab"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="v-pills-home"
+                                aria-selected="true"
+                                >All</a
+                            >
+                        </div>
+                        <%if (isAdmin) { %> <%- include
+                        ("../../partials/cameras/bookingEditor"), {cameras:
+                        cameras, lenses: lenses} %> <%}%>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="shadow card calendar-card">
+                        <div class="card-body" id="calendar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <% if (isAdmin) {%>
+        <div class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%}%> <%- include ("../../partials/footer") %>
+    </body>
+</html>
