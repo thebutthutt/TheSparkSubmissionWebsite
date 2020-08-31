@@ -1,16 +1,13 @@
 // load all the things we need
-var LdapStrategy = require("passport-ldapauth");
 var LocalStrategy = require("passport-local").Strategy;
 const fs = require("fs");
 var path = require("path");
 var ldap = require("ldapjs");
-var LdapAuth = require("ldapauth-fork");
 
 //grab the whitelist contents from the file
 let rawdata = fs.readFileSync(path.join(__dirname, "../../novers.txt"));
 var secrets = JSON.parse(rawdata);
 
-var bindDN = "cn=" + secrets.bindDN;
 var bindCredentials = secrets.bindPass;
 
 var employment = ldap.createClient({
@@ -29,27 +26,6 @@ var login = ldap.createClient({
 
 // load up the user model
 var User = require("../app/models/user");
-var searchOpts = {
-    server: {
-        //url: "ldaps://ldap-auth.untsystem.edu",
-        url: "ldaps://unt.ad.unt.edu",
-        bindDN: bindDN,
-        bindCredentials: secrets.other,
-        searchBase: "@unt.ad.unt.edu",
-        searchFilter: "(uid={{username}})",
-        tlsOptions: {
-            ca: [fs.readFileSync(path.join(__dirname, "../UNTADRootCA.pem"))],
-        },
-    },
-};
-
-var loginOpts = {
-    server: {
-        url: "ldaps://ldap-auth.untsystem.edu",
-        searchBase: "ou=people,o=unt",
-        searchFilter: "(uid={{username}})",
-    },
-};
 // expose this function to our app using module.exports
 module.exports = function (passport) {
     // =========================================================================
@@ -71,65 +47,93 @@ module.exports = function (passport) {
     });
 
     passport.use(
-        new LdapStrategy(searchOpts, function (user, done) {
-            User.findOne(
-                {
-                    "local.euid": user.euid,
-                },
-                function (err, localUser) {
-                    // if there are any errors, return the error before anything else
-                    if (err) return done(err);
-
-                    // if no user is found, return the message
-                    if (!localUser) {
-                        var newUser = new User();
-
-                        // set the user's local credentials
-                        newUser.local.euid = user.euid;
-                        newUser.name = user.euid;
-                        newUser.isSuperAdmin = false;
-
-                        // save the user
-                        newUser.save(function (err) {
-                            if (err) throw err;
-                            return done(null, newUser); //makes new local user that matches UNT user cred
-                        });
-                    } else {
-                        return done(null, localUser); //return the user in our database matching the UNT user
-                    }
-                }
-            );
-        })
-    );
-
-    passport.use(
         "local-login",
         new LocalStrategy(
             {
-                // by default, local strategy uses username and password, we will override with euid
                 usernameField: "username",
                 passwordField: "password",
                 passReqToCallback: true, // allows us to pass back the entire request to the callback
             },
             function (req, euid, password, done) {
                 // callback with euid and password from our form
-                var searchDN = "(" + euid + "@unt.ad.unt.edu)";
-                var loginDN = "uid=" + euid + "ou=people,o=unt";
+                //var searchDN = "(" + euid + "@unt.ad.unt.edu)";
+                var loginDN = "uid=" + euid + ",ou=people,o=unt";
+                console.log("trying");
+                var newSearch = "(uid=" + euid + ")";
                 employment.search(
                     "OU=UNT,DC=unt,DC=ad,DC=unt,DC=edu",
                     {
-                        filter: searchDN,
+                        filter: newSearch,
+                        scope: "sub",
+                        attributes: ["memberOf"],
                     },
                     function (err, res) {
-                        console.log("err", err, "res", res);
+                        res.on("searchEntry", function (entry) {
+                            if (
+                                entry.object.memberOf.includes(
+                                    "CN=LibFactory,OU=DeptGroups,OU=Users,OU=Special,OU=Tacoverse,OU=Libraries Support,OU=UNT,DC=unt,DC=ad,DC=unt,DC=edu"
+                                )
+                            ) {
+                                //user is a member of the spark so we can go ahead and log them in maybe
+                                console.log("works here");
+                                login.bind(loginDN, password, function (
+                                    err,
+                                    res
+                                ) {
+                                    if (err) {
+                                        done(null, false, {
+                                            message:
+                                                "Password not recognised. Try again?",
+                                        });
+                                    } else {
+                                        console.log("logged in");
+                                        User.findOne(
+                                            {
+                                                "local.euid": euid,
+                                            },
+                                            function (err, localUser) {
+                                                // if there are any errors, return the error before anything else
+                                                if (err) return done(err);
+
+                                                // if no user is found, return the message
+                                                if (!localUser) {
+                                                    var newUser = new User();
+
+                                                    // set the user's local credentials
+                                                    newUser.local.euid = euid;
+                                                    newUser.name = euid;
+                                                    newUser.isSuperAdmin = false;
+
+                                                    // save the user
+                                                    newUser.save(function (
+                                                        err
+                                                    ) {
+                                                        if (err) throw err;
+                                                        return done(
+                                                            null,
+                                                            newUser
+                                                        ); //makes new local user that matches UNT user cred
+                                                    });
+                                                } else {
+                                                    return done(
+                                                        null,
+                                                        localUser
+                                                    ); //return the user in our database matching the UNT user
+                                                }
+                                            }
+                                        );
+                                    }
+                                });
+                            } else {
+                                console.log("doesnt work here");
+                                done(null, false, {
+                                    message:
+                                        "Sorry, it looks like you aren't in the list of employees yet. This should be fixed by HR soon.",
+                                });
+                            }
+                        });
                     }
                 );
-
-                login.bind(loginDN, password, function (err, res) {
-                    if (err) {
-                        console.log(err);
-                    }
-                });
             }
         )
     );
