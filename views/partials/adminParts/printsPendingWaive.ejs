@@ -1,9 +1,16 @@
 <% for (var i = 0; i < submissions.length; i++) { %>
 <li class="list-group-item">
-    <button type="button" class="btn btn-warning btn-sm float-right btn-waive" itemID='<%=submissions[i][0]%>'>Waive</button>
+    <button
+        type="button"
+        class="btn btn-warning btn-sm float-right btn-waive"
+        itemID="<%=submissions[i][0]%>"
+    >
+        Waive
+    </button>
     <div>
-        <% for (var j = 0; j < submissions[i][1].length; j++) { %>
-            <%= submissions[i][1][j].substring(submissions[i][1][j].indexOf('/15') + 11);%><br>
+        <% for (var j = 0; j < submissions[i][1].length; j++) { %> <%=
+        submissions[i][1][j].substring(submissions[i][1][j].indexOf('/15') +
+        14);%><br />
         <% } %>
     </div>
 </li>
