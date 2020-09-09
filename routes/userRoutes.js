@@ -36,7 +36,7 @@ module.exports = function (
 
     app.post("/verify", function (req, res, next) {
         console.log("me");
-        passport.authenticate("ldapauth", function (err, user, info) {
+        passport.authenticate("local-login", function (err, user) {
             console.log("also me");
             if (err) {
                 return res.send("error");
@@ -58,6 +58,17 @@ module.exports = function (
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get("/profile", isLoggedIn, function (req, res) {
+        printRequestModel.deleteMany({ files: { $size: 0 } }, function (
+            err,
+            res
+        ) {
+            if (err) {
+                console.log(err);
+            } else {
+                //done
+            }
+        });
+        //database cleanup
         var numNew;
         var numPrint;
         var whitelist = null;

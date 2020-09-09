@@ -289,6 +289,7 @@ module.exports = function (
     //-----------------------ALL-----------------------
     app.get("/prints/all", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
+
         printRequestModel.find({}, function (err, data) {
             //loading every single top level request FOR NOW
             res.render("pages/prints/allPrints", {
