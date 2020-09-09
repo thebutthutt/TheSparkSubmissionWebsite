@@ -166,10 +166,8 @@ $(document).ready(function () {
         if (
             $(this)
                 .val()
-                .substring($(this).val().length - 6) != ".gcode" &&
-            $(this)
-                .val()
-                .substring($(this).val().length - 6) != ".GCODE"
+                .substring($(this).val().length - 6)
+                .toUpperCase() != ".GCODE"
         ) {
             $(this).attr("type", "text");
             $(this).attr("type", "file");
