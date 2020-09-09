@@ -361,9 +361,15 @@ DocumentArrayPath.prototype.cast = function(value, doc, init, prev, options) {
   // lazy load
   MongooseDocumentArray || (MongooseDocumentArray = require('../types/documentarray'));
 
+  // Skip casting if `value` is the same as the previous value, no need to cast. See gh-9266
+  if (value != null && value[arrayPathSymbol] != null && value === prev) {
+    return value;
+  }
+
   let selected;
   let subdoc;
   const _opts = { transform: false, virtuals: false };
+  options = options || {};
 
   if (!Array.isArray(value)) {
     if (!init && !DocumentArrayPath.options.castNonArrays) {
@@ -374,16 +380,20 @@ DocumentArrayPath.prototype.cast = function(value, doc, init, prev, options) {
     if (!!doc && init) {
       doc.markModified(this.path);
     }
-    return this.cast([value], doc, init, prev);
+    return this.cast([value], doc, init, prev, options);
   }
 
   if (!(value && value.isMongooseDocumentArray) &&
-      (!options || !options.skipDocumentArrayCast)) {
+      !options.skipDocumentArrayCast) {
     value = new MongooseDocumentArray(value, this.path, doc);
   } else if (value && value.isMongooseDocumentArray) {
     // We need to create a new array, otherwise change tracking will
     // update the old doc (gh-4449)
     value = new MongooseDocumentArray(value, this.path, doc);
+  }
+
+  if (options.arrayPath != null) {
+    value[arrayPathSymbol] = options.arrayPath;
   }
 
   const len = value.length;
@@ -460,6 +470,9 @@ DocumentArrayPath.prototype.clone = function() {
   const options = Object.assign({}, this.options);
   const schematype = new this.constructor(this.path, this.schema, options, this.schemaOptions);
   schematype.validators = this.validators.slice();
+  if (this.requiredValidator !== undefined) {
+    schematype.requiredValidator = this.requiredValidator;
+  }
   schematype.Constructor.discriminators = Object.assign({},
     this.Constructor.discriminators);
   return schematype;
@@ -504,6 +517,26 @@ function scopePaths(array, fields, init) {
 
   return hasKeys && selected || undefined;
 }
+
+/**
+ * Sets a default option for all DocumentArray instances.
+ *
+ * ####Example:
+ *
+ *     // Make all numbers have option `min` equal to 0.
+ *     mongoose.Schema.DocumentArray.set('_id', false);
+ *
+ * @param {String} option - The option you'd like to set the value for
+ * @param {*} value - value for option
+ * @return {undefined}
+ * @function set
+ * @static
+ * @api public
+ */
+
+DocumentArrayPath.defaultOptions = {};
+
+DocumentArrayPath.set = SchemaType.set;
 
 /*!
  * Module exports.

@@ -10,20 +10,6 @@ var secrets = JSON.parse(rawdata);
 
 var bindCredentials = secrets.bindPass;
 
-var employment = ldap.createClient({
-    url: "ldaps://unt.ad.unt.edu",
-    bindDN:
-        "CN=libsparkwebapp,OU=ServiceAccts,OU=Special,OU=Library Technology,OU=Libraries Support,OU=UNT,DC=unt,DC=ad,DC=unt,DC=edu",
-    bindCredentials: bindCredentials,
-    tlsOptions: {
-        ca: [fs.readFileSync(path.join(__dirname, "../UNTADRootCA.pem"))],
-    },
-});
-
-var login = ldap.createClient({
-    url: "ldaps://ldap-auth.untsystem.edu",
-});
-
 // load up the user model
 var User = require("../app/models/user");
 // expose this function to our app using module.exports
@@ -57,6 +43,25 @@ module.exports = function (passport) {
             function (req, euid, password, done) {
                 // callback with euid and password from our form
                 //var searchDN = "(" + euid + "@unt.ad.unt.edu)";
+
+                var employment = ldap.createClient({
+                    url: "ldaps://unt.ad.unt.edu",
+                    bindDN:
+                        "CN=libsparkwebapp,OU=ServiceAccts,OU=Special,OU=Library Technology,OU=Libraries Support,OU=UNT,DC=unt,DC=ad,DC=unt,DC=edu",
+                    bindCredentials: bindCredentials,
+                    tlsOptions: {
+                        ca: [
+                            fs.readFileSync(
+                                path.join(__dirname, "../UNTADRootCA.pem")
+                            ),
+                        ],
+                    },
+                });
+
+                var login = ldap.createClient({
+                    url: "ldaps://ldap-auth.untsystem.edu",
+                });
+
                 var loginDN = "uid=" + euid + ",ou=people,o=unt";
                 console.log("trying");
                 var newSearch = "(uid=" + euid + ")";

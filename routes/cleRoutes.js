@@ -115,6 +115,7 @@ module.exports = function (
                         request: data,
                         pgnum: 5,
                         isAdmin: true,
+                        isSuperAdmin: req.user.isSuperAdmin,
                     });
                 }
             }
