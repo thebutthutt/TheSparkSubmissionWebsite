@@ -1,8 +1,9 @@
 var fs = require("fs");
 var path = require("path");
 var moment = require("moment");
+var multer = require("multer");
 
-module.exports = function (app, printHandler, cleHandler) {
+module.exports = function (app, printHandler, cleHandler, storage) {
     // =====================================
     // HOME PAGE (with login links) ========
     // =====================================
@@ -180,21 +181,64 @@ module.exports = function (app, printHandler, cleHandler) {
     });
 
     //what do do when the user hits submit
-    app.post("/submitprint", function (req, res) {
-        printHandler.handleSubmission(req, function (result) {
-            if (result == "success") {
-                res.redirect("/prints/thankyou");
-            } else {
-                res.redirect("/prints/error");
-            }
-        }); //pass the stuff to the print handler
-    });
+
+    app.post(
+        "/submitprint",
+        multer({
+            storage: multer.diskStorage({
+                destination: function (req, file, cb) {
+                    cb(null, path.join(__dirname, "../../Uploads/STLs/"));
+                },
+
+                // By default, multer removes file extensions so let's add them back
+                filename: function (req, file, cb) {
+                    cb(
+                        null,
+                        Date.now() +
+                            file.originalname.split(".")[0] +
+                            "-" +
+                            path.extname(file.originalname)
+                    );
+                },
+            }),
+        }).any(),
+        function (req, res) {
+            printHandler.handleSubmission(req, function (result) {
+                if (result == "success") {
+                    res.redirect("/prints/thankyou");
+                } else {
+                    res.redirect("/prints/error");
+                }
+            }); //pass the stuff to the print handler
+        }
+    );
 
     //what do do when the user hits submit
-    app.post("/submitcle", function (req, res) {
-        cleHandler.handleSubmission(req); //pass the stuff to the print handler
-        res.redirect("/submit");
-    });
+    app.post(
+        "/submitcle",
+        multer({
+            storage: multer.diskStorage({
+                destination: function (req, file, cb) {
+                    cb(null, path.join(__dirname, "../../Uploads/CLE/"));
+                },
+
+                // By default, multer removes file extensions so let's add them back
+                filename: function (req, file, cb) {
+                    cb(
+                        null,
+                        Date.now() +
+                            file.originalname.split(".")[0] +
+                            "-" +
+                            path.extname(file.originalname)
+                    );
+                },
+            }),
+        }).any(),
+        function (req, res) {
+            cleHandler.handleSubmission(req); //pass the stuff to the print handler
+            res.redirect("/submit");
+        }
+    );
 };
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {

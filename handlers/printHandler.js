@@ -1,4 +1,5 @@
 const formidable = require("formidable");
+
 const moment = require("moment");
 const constants = require("../config/constants");
 var payment = require("../config/payment.js");
@@ -81,26 +82,43 @@ module.exports = {
 
     //handles the data for a new top level print request with possibly multiple low level file submissions
     handleSubmission: function (req, callback) {
-        const form = formidable({
-            maxFileSize: 1024 * 1024 * 1024,
-        });
         //arrays of each files specifications (will only hold one entry each if patron submits only one file)
         var filenames = [],
-            materials = [],
-            infills = [],
-            colors = [],
-            copies = [],
-            notes = [],
-            pickups = [],
+            materials = Array.isArray(req.body.material)
+                ? req.body.material
+                : Array.of(req.body.material),
+            infills = Array.isArray(req.body.infill)
+                ? req.body.infill
+                : Array.of(req.body.infill),
+            colors = Array.isArray(req.body.color)
+                ? req.body.color
+                : Array.of(req.body.color),
+            copies = Array.isArray(req.body.copies)
+                ? req.body.copies
+                : Array.of(req.body.copies),
+            notes = Array.isArray(req.body.notes)
+                ? req.body.notes
+                : Array.of(req.body.notes),
+            pickups = Array.isArray(req.body.pickup)
+                ? req.body.pickup
+                : Array.of(req.body.pickup),
             prints = [],
-            patron = [],
-            numFiles = 0,
-            time = moment(),
-            unique = 1;
-        //get the incoming form data
-        form.parse(req, function (err, fields, files) {
-            patron = fields; //put the fields data into the patron container to send to the database function
-            // add all our lists to one list to pass to the submission handler
+            patron = {
+                first: req.body.first,
+                last: req.body.last,
+                email: req.body.email,
+                euid: req.body.euid,
+            },
+            numFiles = req.files.length,
+            time = moment();
+
+        if (numFiles <= 0) {
+            //bad
+            callback("failure");
+        } else {
+            req.files.forEach(function (file) {
+                filenames.push(file.path);
+            });
             prints.push(filenames);
             prints.push(materials);
             prints.push(infills);
@@ -110,58 +128,115 @@ module.exports = {
             prints.push(notes);
             prints.push(time.format(constants.format));
             prints.push(numFiles);
-            if (numFiles == 0) {
-                //no files uploaded, there was an error
-                callback("error");
-            } else {
-                module.exports.addPrint(patron, prints);
-                callback("success"); //tell calling function we got it
-            }
-        });
-        form.on("field", function (name, field) {
-            //when a new field comes through
-            //handling duplicate input names cause for some reason formidable doesnt do it yet...
-            //makes arrays of all the duplicate form names
-            if (name == "material") {
-                materials.push(field);
-            } else if (name == "infill") {
-                infills.push(field);
-            } else if (name == "color") {
-                colors.push(field);
-            } else if (name == "copies") {
-                copies.push(field);
-            } else if (name == "pickup") {
-                pickups.push(field);
-            } else if (name == "notes") {
-                notes.push(field);
-            }
-        });
-        form.on("fileBegin", (name, file) => {
-            //when a new file comes through
-            file.name = file.name.split(" ").join(""); //remove spaces from file names
-            file.name = time.unix() + unique + file.name; //add special separater so we can get just the filename later
-            //yes this is a dumb way to keep track of the original filename but I dont care
-            unique += 1; //increment unique so every file is not the same name
-            file.path = path.join(__dirname, "../../Uploads/STLs/", file.name);
-        });
-        form.on("file", (name, file) => {
-            //when a file finishes coming through
-            filenames.push(file.path); //add this files path to the list of filenames
-            numFiles++; //increment the number of files this top level submission is holding
-        });
+
+            module.exports.addPrint(patron, prints);
+            callback("success"); //tell calling function we got it
+        }
     },
 
     //this function handles when a technician is reviewing a print file within a top level submission
     updateSingle: function (req, callback) {
-        const form = formidable({
-            maxFileSize: 1024 * 1024 * 1024,
-        });
-        var gcode;
+        var gcode = req.files[0].path;
         var time = moment();
         var shouldUpload = true;
         var maker = req.user.name;
         var id;
+
+        printRequestModel.findOne(
+            {
+                "files._id": req.body.fileID,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    id = req.body.fileID;
+                    if (result.files.id(req.body.fileID).gcodeName != null) {
+                        //delete gcode from disk if it exists
+                        console.log(
+                            "Submission had old GCODE file! deleting..."
+                        );
+                        fs.unlink(
+                            result.files.id(req.body.fileID).gcodeName,
+                            function (err) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                            }
+                        );
+                    }
+                }
+            }
+        );
+        //update the low level print according to the form data
+        if (req.body.decision == "accepted") {
+            //if the technician accepted the print, update accordingly
+            printRequestModel.findOneAndUpdate(
+                {
+                    "files._id": req.body.fileID,
+                },
+                {
+                    $set: {
+                        "files.$.gcodeName": gcode,
+                        "files.$.slicedPrinter": req.body.printer,
+                        "files.$.slicedMaterial": req.body.material,
+                        "files.$.timeHours": req.body.hours,
+                        "files.$.timeMinutes": req.body.minutes,
+                        "files.$.grams": req.body.grams,
+                        "files.$.patronNotes": req.body.patronNotes,
+                        "files.$.techNotes": req.body.technotes,
+                        "files.$.approvedBy": maker,
+                        "files.$.printLocation": req.body.printLocation,
+                        "files.$.isReviewed": true,
+                        "files.$.isRejected": false,
+                        "files.$.dateReviewed": time.format(constants.format),
+                    },
+                },
+                {
+                    new: true,
+                },
+                function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    //now find the fully updated top level submission so we can check if all the files have been reviewed
+                    module.exports.setFlags(id, function () {
+                        callback();
+                    });
+                }
+            );
+        } else {
+            //the tecnicican rejected the print, so update differently
+            printRequestModel.findOneAndUpdate(
+                {
+                    "files._id": req.body.fileID,
+                },
+                {
+                    $set: {
+                        "files.$.isReviewed": true,
+                        "files.$.isRejected": true,
+                        "files.$.isPendingPayment": false,
+                        "files.$.dateReviewed": time.format(constants.format),
+                        "files.$.approvedBy": maker,
+                        "files.$.patronNotes": req.body.patronNotes,
+                    },
+                },
+                {
+                    new: true,
+                },
+                function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    //now find the fully updated top level submission so we can check if all the files have been reviewed
+                    module.exports.setFlags(id, function () {
+                        callback();
+                    });
+                }
+            );
+        }
         //get the incoming form data
+        /*
         form.parse(req, function (err, fields, files) {
             printRequestModel.findOne(
                 {
@@ -289,6 +364,8 @@ module.exports = {
                 gcode = file.path;
             }
         });
+
+        */
     },
 
     //------------------------Add new technician notes without a full file review------------------------
@@ -357,14 +434,16 @@ module.exports = {
                             }
                             acceptedFiles.push(
                                 result.files[i].fileName.substring(
-                                    result.files[i].fileName.indexOf("/15") + 11
+                                    result.files[i].fileName.indexOf("/STLs") +
+                                        6
                                 )
                             );
                             acceptedMessages.push(result.files[i].patronNotes);
                         } else {
                             rejectedFiles.push(
                                 result.files[i].fileName.substring(
-                                    result.files[i].fileName.indexOf("/15") + 11
+                                    result.files[i].fileName.indexOf("/STLs") +
+                                        6
                                 )
                             );
                             rejectedMessages.push(result.files[i].patronNotes);
@@ -485,7 +564,8 @@ module.exports = {
                     result.files
                         .id(fileID)
                         .fileName.substring(
-                            result.files.id(fileID).fileName.indexOf("/15") + 11
+                            result.files.id(fileID).fileName.indexOf("/STLs") +
+                                6
                         )
                 );
             }

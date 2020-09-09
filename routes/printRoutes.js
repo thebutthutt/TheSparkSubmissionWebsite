@@ -1,4 +1,6 @@
 const { handlePaymentComplete } = require("../config/payment");
+var multer = require("multer");
+var path = require("path");
 
 module.exports = function (
     app,
@@ -43,7 +45,7 @@ module.exports = function (
             function (err, result) {
                 res.render("pages/prints/previewPrint", {
                     //render the review page
-                    pgnum: 4, //prints
+                    pgnum: 4, //prints  `
                     isAdmin: true,
                     timestamp: fileID.dateSubmitted,
                     isSuperAdmin: req.user.isSuperAdmin,
@@ -399,12 +401,33 @@ module.exports = function (
 
     //-----------------------PUSH REVIEW-----------------------
     //handle technician updating file by reviewing print file
-    app.post("/prints/singleReview", function (req, res) {
-        printHandler.updateSingle(req, function () {
-            //send all the stuff to the submission handler
-            res.redirect("/prints/new"); //when we are done tell the review page it's okay to reload now
-        });
-    });
+    app.post(
+        "/prints/singleReview",
+        multer({
+            storage: multer.diskStorage({
+                destination: function (req, file, cb) {
+                    cb(null, path.join(__dirname, "../../Uploads/Gcode/"));
+                },
+
+                // By default, multer removes file extensions so let's add them back
+                filename: function (req, file, cb) {
+                    cb(
+                        null,
+                        Date.now() +
+                            file.originalname.split(".")[0] +
+                            "-" +
+                            path.extname(file.originalname)
+                    );
+                },
+            }),
+        }).any(),
+        function (req, res) {
+            printHandler.updateSingle(req, function () {
+                //send all the stuff to the submission handler
+                res.redirect("/prints/new"); //when we are done tell the review page it's okay to reload now
+            });
+        }
+    );
 
     app.post("/prints/appendNotes", function (req, res) {
         printHandler.appendNotes(req);

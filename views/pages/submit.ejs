@@ -13,7 +13,7 @@
 
     <body>
         <%- include ("../partials/header") %>
-        <div class="container-xl mt-5" style="margin-bottom: 100px;">
+        <div class="container-xl mt-5" style="margin-bottom: 100px">
             <div class="col-8 offset-2">
                 <div class="shadow card">
                     <div class="card-header">
@@ -29,7 +29,7 @@
                         <form
                             id="submission-form"
                             action="/submitprint"
-                            method="post"
+                            method="POST"
                             enctype="multipart/form-data"
                         >
                             <div class="form-group no-margin">
@@ -80,16 +80,15 @@
                                 >
                                     <option value="print">3D Print</option>
                                     <option value="CNC">CNC Work Order</option>
-                                    <option value="Laser"
-                                        >Laser Cut/Engrave Work Order</option
-                                    >
-                                    <option value="Embroidery"
-                                        >Embroidery Machine Work Order</option
-                                    >
-                                    <option value="Other"
-                                        >Other (please specify in the
-                                        notes)</option
-                                    >
+                                    <option value="Laser">
+                                        Laser Cut/Engrave Work Order
+                                    </option>
+                                    <option value="Embroidery">
+                                        Embroidery Machine Work Order
+                                    </option>
+                                    <option value="Other">
+                                        Other (please specify in the notes)
+                                    </option>
                                 </select>
                             </div>
 

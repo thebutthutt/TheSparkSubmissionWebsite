@@ -13,7 +13,7 @@
     <body>
         <%- include ("../../partials/header") %> <% if (printPage == 'all') {var
         isall = true} else {var isall = false}%> <%var i = 0%>
-        <div class="container" style="margin-bottom: 100px;">
+        <div class="container" style="margin-bottom: 100px">
             <div class="shadow card">
                 <div class="card-header">
                     <%- include ("../../partials/PrintDetails/printNav") %>
@@ -199,7 +199,7 @@
                                             id="<%= file._id%>"
                                             href="#"
                                             ><%=file.fileName.substring(file.fileName.indexOf('/15')
-                                            + 11)%></a
+                                            + 14)%></a
                                         >
                                         &nbsp; <%- include
                                         ("../../partials/PrintDetails/flags",

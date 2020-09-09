@@ -6,7 +6,7 @@ var http = require("http");
 var fs = require("fs");
 
 var app = express();
-var port = 443;
+var port = 8080;
 
 var mongoose = require("mongoose");
 var passport = require("passport");
@@ -29,6 +29,7 @@ var printHandler = require("./handlers/printHandler.js");
 var cleHandler = require("./handlers/cleHandler.js");
 var adminRequestHandler = require("./handlers/adminRequestHandler.js");
 var cameraHandler = require("./handlers/cameraHandler.js");
+const { DH_UNABLE_TO_CHECK_GENERATOR } = require("constants");
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
@@ -161,6 +162,6 @@ var http_server = http
         });
         res.end();
     })
-    .listen(80, "0.0.0.0");
+    .listen(8081, "0.0.0.0");
 
 console.log("The magic happens on port " + port);
