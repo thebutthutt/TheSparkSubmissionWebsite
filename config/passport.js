@@ -63,7 +63,6 @@ module.exports = function (passport) {
                 });
 
                 var loginDN = "uid=" + euid + ",ou=people,o=unt";
-                console.log("trying");
                 var newSearch = "(uid=" + euid + ")";
                 employment.search(
                     "OU=UNT,DC=unt,DC=ad,DC=unt,DC=edu",
@@ -80,7 +79,6 @@ module.exports = function (passport) {
                                 )
                             ) {
                                 //user is a member of the spark so we can go ahead and log them in maybe
-                                console.log("works here");
                                 login.bind(loginDN, password, function (
                                     err,
                                     res
@@ -91,7 +89,6 @@ module.exports = function (passport) {
                                                 "Password not recognised. Try again?",
                                         });
                                     } else {
-                                        console.log("logged in");
                                         User.findOne(
                                             {
                                                 "local.euid": euid,
@@ -130,7 +127,6 @@ module.exports = function (passport) {
                                     }
                                 });
                             } else {
-                                console.log("doesnt work here");
                                 done(null, false, {
                                     message:
                                         "Sorry, it looks like you aren't in the list of employees yet. This should be fixed by HR soon.",
