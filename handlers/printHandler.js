@@ -434,16 +434,16 @@ module.exports = {
                             }
                             acceptedFiles.push(
                                 result.files[i].fileName.substring(
-                                    result.files[i].fileName.indexOf("/STLs") +
-                                        6
+                                    result.files[i].fileName.indexOf("STLs/") +
+                                        18
                                 )
                             );
                             acceptedMessages.push(result.files[i].patronNotes);
                         } else {
                             rejectedFiles.push(
                                 result.files[i].fileName.substring(
-                                    result.files[i].fileName.indexOf("/STLs") +
-                                        6
+                                    result.files[i].fileName.indexOf("STLs/") +
+                                        18
                                 )
                             );
                             rejectedMessages.push(result.files[i].patronNotes);
@@ -564,8 +564,8 @@ module.exports = {
                     result.files
                         .id(fileID)
                         .fileName.substring(
-                            result.files.id(fileID).fileName.indexOf("/STLs") +
-                                6
+                            result.files.id(fileID).fileName.indexOf("STLs/") +
+                                18
                         )
                 );
             }
