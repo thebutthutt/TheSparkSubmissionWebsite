@@ -7,29 +7,19 @@ var cleRequestModel = require("../app/models/cleRequest");
 
 module.exports = {
     handleSubmission: function (req) {
-        const form = formidable({ maxFileSize: 1024 * 1024 * 1024 });
         var time = moment(),
-            unique = 1,
             filenames = [],
             additional = [];
 
-        form.parse(req, function (err, fields, files) {
-            additional.push(time.format(constants.format), filenames);
-            module.exports.addEntry(fields, additional);
-        });
-        form.on("fileBegin", (name, file) => {
-            //when a new file comes through
-            file.name = time.unix() + unique + file.name; //add special separater so we can get just the filename later
-            //yes this is a dumb way to keep track of the original filename but I dont care
-            unique += 1; //increment unique so every file is not the same name
-            file.path = path.join(__dirname, "../../Uploads/CLE/", file.name);
-        });
-        form.on("file", function (name, file) {
+        req.files.forEach(function (file) {
             filenames.push(file.path);
         });
+        additional.push(time.format(constants.format), filenames);
+        module.exports.addEntry(req.body, additional);
     },
 
     addEntry: function (fields, additional) {
+        console.log(fields, additional);
         var request = new cleRequestModel(); //new instance of a request
         request.type = fields.requestType;
         request.patron = {

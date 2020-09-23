@@ -195,8 +195,8 @@ module.exports = function (app, printHandler, cleHandler, storage) {
                     cb(
                         null,
                         Date.now() +
-                            file.originalname.split(".")[0] +
                             "-" +
+                            file.originalname.split(".")[0] +
                             path.extname(file.originalname)
                     );
                 },
@@ -227,8 +227,8 @@ module.exports = function (app, printHandler, cleHandler, storage) {
                     cb(
                         null,
                         Date.now() +
-                            file.originalname.split(".")[0] +
                             "-" +
+                            file.originalname.split(".")[0] +
                             path.extname(file.originalname)
                     );
                 },
