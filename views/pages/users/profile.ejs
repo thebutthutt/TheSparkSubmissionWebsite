@@ -13,14 +13,14 @@
     <body>
         <%- include ("../../partials/header") %>
         <div
-            style="display: none;"
+            style="display: none"
             class="hidden-extras"
             myeuid="<%=user.local.euid%>"
             isSuperAdmin="<%= isSuperAdmin%>"
         ></div>
         <div
             class="<%if (isSuperAdmin){%>container-fluid mt-5 px-5<%} else {%>container<%}%>"
-            style="margin-bottom: 100px;"
+            style="margin-bottom: 100px"
         >
             <!-- show any messages that come back with authentication -->
             <% if (message.length > 0) { %>
@@ -50,9 +50,7 @@
                                         <div class="col-3">
                                             <strong>Name</strong>
                                         </div>
-                                        <div class="col">
-                                            <%=user.name%>
-                                        </div>
+                                        <div class="col"><%=user.name%></div>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
@@ -60,9 +58,7 @@
                                         <div class="col-3">
                                             <strong>Email</strong>
                                         </div>
-                                        <div class="col">
-                                            <%=user.email%>
-                                        </div>
+                                        <div class="col"><%=user.email%></div>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
@@ -98,13 +94,6 @@
                         <div class="shadow card">
                             <div class="card-header border-bottom">
                                 <h4 class="mb-0 float-left">All Users</h4>
-                                <a
-                                    href=""
-                                    class="float-right"
-                                    data-toggle="modal"
-                                    data-target="#edit-whitelist"
-                                    >Edit Whitelist</a
-                                >
                             </div>
                             <ul
                                 class="list-group list-group-flush appendUsersHere"
@@ -333,130 +322,6 @@
                     </div>
                 </div>
             </div>
-
-            <%if (isSuperAdmin) {%>
-            <div>
-                <!-- Modal 2 Edit Whitelist -->
-                <div
-                    class="modal fade staticBackdrop"
-                    id="edit-whitelist"
-                    data-keyboard="false"
-                    tabindex="-1"
-                    role="dialog"
-                    aria-labelledby="staticBackdropLabel"
-                    aria-hidden="true"
-                >
-                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4
-                                    class="modal-title"
-                                    id="staticBackdropLabel"
-                                >
-                                    Edit Whitelist
-                                </h4>
-                                <button
-                                    type="button"
-                                    class="close"
-                                    data-dismiss="modal"
-                                    aria-label="Close"
-                                >
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-7">
-                                        <h5>Instructions</h5>
-                                        <p>
-                                            Please add new employee's EUIDs to
-                                            this list. If an employee's EUID is
-                                            not on the whitelist, they will not
-                                            be able to log in, even if they are
-                                            both in the UNT database and
-                                            officially employed at The Spark.
-                                        </p>
-
-                                        <h5>Local vs UNT Accounts</h5>
-                                        <p>
-                                            Also note that adding an EUID to
-                                            this list will not create a local
-                                            account for that user. The local
-                                            account seen in the All Users list
-                                            is created the first time that
-                                            employee logs in to this website.
-                                            Once a local account has been
-                                            created you may promote or demote
-                                            their account as desired.
-                                        </p>
-
-                                        <h5>Preventing Login</h5>
-                                        <p>
-                                            Deleting a local account from the
-                                            All Users list only deletes the
-                                            local account from the database; it
-                                            does NOT prevent that employee from
-                                            logging back in and creating a new
-                                            local account. To prevent a user
-                                            from logging in, please delete their
-                                            EUID from this whitelist.
-                                        </p>
-                                    </div>
-
-                                    <div class="col">
-                                        <ol class="list-group">
-                                            <%whitelist.forEach(function (euid)
-                                            {%>
-                                            <li class="list-group-item">
-                                                <%=euid%>
-                                                <a
-                                                    class="float-right"
-                                                    href=""
-                                                    euid="<%=euid%>"
-                                                >
-                                                    Delete
-                                                </a>
-                                            </li>
-                                            <%})%>
-                                        </ol>
-
-                                        <form
-                                            class="form mt-3"
-                                            method="POST"
-                                            action="users/addWhitelist"
-                                        >
-                                            <div class="form-row">
-                                                <div class="col">
-                                                    <label
-                                                        for="inputPassword2"
-                                                        class="sr-only"
-                                                        >New EUID</label
-                                                    >
-                                                    <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        name="newEUID"
-                                                        placeholder="New EUID"
-                                                    />
-                                                </div>
-                                                <div class="col-auto">
-                                                    <button
-                                                        type="submit"
-                                                        class="btn btn-primary"
-                                                    >
-                                                        Add New EUID
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <%}%>
         </div>
         <%- include ("../../partials/footer") %>
     </body>

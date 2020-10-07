@@ -1,33 +1,47 @@
-<div class="shadow alert alert-warning">
+<div class="shadow alert alert-warning status-card">
     <h4>Attempts</h4>
-    <% if (!print.isStarted) {%>
-        <% if (print.numAttempts != 0) {%>
-            <p>
-                <strong>Attempts</strong> <%=print.numAttempts%> <br>
-                <strong>Failed attempts</strong> <%=print.numFailedAttempts%>
-            </p>
-        <%}%>
-
-        <%if (print.isPrinted) {%>
-            <hr>
-            <p class="mb-0 text-center">
-                Print succeeded on attempt number <%=print.numAttempts%>
-            </p>
-        <%} else {%>
-            <button type="button" class="btn btn-lg btn-warning btn-block start-print" fileID='<%=print._id%>'>Mark Printing Started!</button>
-        <%}%>
-    <% } else { %>
-        <p>
-            <strong>Current attempt number</strong> <%=print.numAttempts%> <br>
-            <strong>Failed attempts</strong> <%=print.numFailedAttempts%>
-        </p>
-        <div class="row">
-            <div class="col">
-                <button type="button" class="btn btn-success btn-block print-success" fileID='<%=print._id%>'>Print Completed</button>
-            </div>
-            <div class="col">
-                <button type="button" class="btn btn-danger btn-block print-fail" fileID='<%=print._id%>'>Print Failed</button>
-            </div>
+    <% if (!print.isStarted) {%> <% if (print.numAttempts != 0) {%>
+    <p>
+        <strong>Attempts</strong> <%=print.numAttempts%> <br />
+        <strong>Failed attempts</strong> <%=print.numFailedAttempts%>
+    </p>
+    <%}%> <%if (print.isPrinted) {%>
+    <hr />
+    <p class="mb-0 text-center">
+        Print succeeded on attempt number <%=print.numAttempts%>
+    </p>
+    <%} else {%>
+    <button
+        type="button"
+        class="btn btn-lg btn-warning btn-block start-print"
+        fileID="<%=print._id%>"
+    >
+        Mark Printing Started!
+    </button>
+    <%}%> <% } else { %>
+    <p>
+        <strong>Current attempt number</strong> <%=print.numAttempts%> <br />
+        <strong>Failed attempts</strong> <%=print.numFailedAttempts%>
+    </p>
+    <div class="row">
+        <div class="col">
+            <button
+                type="button"
+                class="btn btn-success btn-block print-success"
+                fileID="<%=print._id%>"
+            >
+                Print Completed
+            </button>
         </div>
+        <div class="col">
+            <button
+                type="button"
+                class="btn btn-danger btn-block print-fail"
+                fileID="<%=print._id%>"
+            >
+                Print Failed
+            </button>
+        </div>
+    </div>
     <%}%>
 </div>
