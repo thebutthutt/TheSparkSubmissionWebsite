@@ -4,7 +4,6 @@ var bookingModel = require("../app/models/booking");
 const { compareSync } = require("bcrypt-nodejs");
 
 module.exports = {
-    /*
     findAvailableItems: function (startDate, endDate, callback) {
         var removeCameras = [];
         var removeLenses = [];
@@ -364,6 +363,4 @@ module.exports = {
             }
         );
     },
-
-    */
 };

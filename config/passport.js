@@ -79,16 +79,19 @@ module.exports = function (passport) {
                                 )
                             ) {
                                 //user is a member of the spark so we can go ahead and log them in maybe
+                                employment.unbind();
                                 login.bind(loginDN, password, function (
                                     err,
                                     res
                                 ) {
                                     if (err) {
+                                        login.unbind();
                                         done(null, false, {
                                             message:
                                                 "Password not recognised. Try again?",
                                         });
                                     } else {
+                                        login.unbind();
                                         User.findOne(
                                             {
                                                 "local.euid": euid,
@@ -127,6 +130,7 @@ module.exports = function (passport) {
                                     }
                                 });
                             } else {
+                                employment.unbind();
                                 done(null, false, {
                                     message:
                                         "Sorry, it looks like you aren't in the list of employees yet. This should be fixed by HR soon.",
