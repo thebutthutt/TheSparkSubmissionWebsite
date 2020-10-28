@@ -10,7 +10,7 @@ var showActionQueue = function () {
         dataType: "html",
 
         success: function (data) {
-            if (data.length != 0) {
+            if (data.length > 1) {
                 $(".appendDeleteHere").empty().append(data);
 
                 $(".btn-delete").on("click", function () {
@@ -35,7 +35,7 @@ var showActionQueue = function () {
         url: "/printsPendingWaive",
         dataType: "html",
         success: function (data) {
-            if (data.length != 0) {
+            if (data.length > 1) {
                 $(".appendWaiveHere").empty().append(data);
                 $(".btn-waive").on("click", function () {
                     var itemID = $(this).attr("itemID");

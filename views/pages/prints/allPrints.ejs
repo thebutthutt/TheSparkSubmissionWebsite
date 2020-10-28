@@ -198,10 +198,11 @@
                                             class="preview-btn"
                                             id="<%= file._id%>"
                                             href="#"
-                                            ><%=file.fileName.substring(file.fileName.indexOf('STLs/')
-                                            + 18)%></a
                                         >
-                                        &nbsp; <%- include
+                                            <%=file.realFileName%>
+                                        </a>
+                                        <%console.log(file.fileName)%> &nbsp;
+                                        <%- include
                                         ("../../partials/PrintDetails/flags",
                                         {file:file, isAll: isall}) %>
                                     </div>

@@ -49,7 +49,7 @@ module.exports = function (
                     isAdmin: true,
                     timestamp: fileID.dateSubmitted,
                     isSuperAdmin: req.user.isSuperAdmin,
-                    euid: req.user.local.euid,
+                    name: req.user.name,
                     print: result.files.id(fileID), //send the review page the file to review
                     patron: result.patron,
                 });
@@ -321,6 +321,7 @@ module.exports = function (
                 printHandler.recievePayment(
                     submissionID,
                     false,
+                    "",
                     function callback() {}
                 );
                 res.render("pages/prints/thankyoupayment", {
@@ -361,9 +362,14 @@ module.exports = function (
     //-----------------------WAIVE PAYMENT-----------------------
     app.post("/prints/waive", function (req, res, next) {
         var submissionID = req.body.submissionID || req.query.submissionID;
-        printHandler.recievePayment(submissionID, true, function callback() {
-            res.json(["done"]); //tell the front end the request is done
-        });
+        printHandler.recievePayment(
+            submissionID,
+            true,
+            req.user.local.euid,
+            function callback() {
+                res.json(["done"]); //tell the front end the request is done
+            }
+        );
     });
 
     app.post("/prints/requestwaive", function (req, res, next) {
@@ -474,9 +480,14 @@ module.exports = function (
     //-----------------------HANDLE PAYMENT INCOME-----------------------
     app.post("/prints/recievePayment", function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
-        printHandler.recievePayment(submissionID, function callback() {
-            res.json(["done"]); //tell the front end the request is done
-        });
+        printHandler.recievePayment(
+            submissionID,
+            false,
+            "",
+            function callback() {
+                res.json(["done"]); //tell the front end the request is done
+            }
+        );
     });
 
     //-----------------------START PRINT-----------------------

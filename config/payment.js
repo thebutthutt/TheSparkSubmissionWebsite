@@ -1,5 +1,5 @@
 const base_url = "https://payments.library.unt.edu/payment/";
-const account = "spark-orders-production";
+const account = process.env.PAYMENT_ACCOUNT;
 var fs = require("fs");
 var path = require("path");
 var emailer = require("./email.js");

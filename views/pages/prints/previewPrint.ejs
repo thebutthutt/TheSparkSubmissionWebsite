@@ -22,7 +22,7 @@
         <%if (print.isPrinted && !print.isPickedUp) {%>
             <div class="row mb-3">
                 <div class="col">
-                    <button data-toggle="modal" data-target=".modal" data-backdrop="static" data-keyboard="false" fileName="<%=print.fileName.substring(print.fileName.indexOf('STLs/') + 18)%>" fileID="<%=print._id%>" class="shadow btn btn-lg btn-primary btn-block modal-button">Picking Up</button>
+                    <button data-toggle="modal" data-target=".modal" data-backdrop="static" data-keyboard="false" fileName="<%=print.realFileName%>" fileID="<%=print._id%>" class="shadow btn btn-lg btn-primary btn-block modal-button">Picking Up</button>
                 </div>
                 
             </div>
@@ -68,10 +68,11 @@
                                 <hr>
                                 <h6>Technician Notes</h6>
                                 <p style="white-space: pre-wrap;"><%=print.techNotes%></p>
+                                <p><%= print.overrideNotes%></p>
                                 <form action="/prints/appendNotes" method="post">
                                     <div class="hiddenExtras" style="display: none;">
                                         <input type="text" name="fileID" value='<%= print._id%>'>
-                                        <input type="text" name="euid" value='<%= euid%>'>
+                                        <input type="text" name="name" value='<%= name%>'>
                                     </div>
                                     <div class="form-group">
                                         <textarea class="form-control" name="newNotes" rows="3" placeholder="Add new technician notes here"></textarea>

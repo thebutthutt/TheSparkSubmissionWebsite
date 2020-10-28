@@ -176,7 +176,7 @@ module.exports = function (app, printHandler, cleHandler, storage) {
     });
 
     app.post("/recievesignature", function (req, res) {
-        //printHandler.acceptSignature(req.body.uniqueID, newPath);
+        printHandler.acceptSignature(req.body.uniqueID, req.body.fileName);
         res.json("done");
     });
 

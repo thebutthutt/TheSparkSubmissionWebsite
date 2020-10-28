@@ -1,8 +1,9 @@
-var mongoose = require('mongoose');
-require('./patron.js');
+var mongoose = require("mongoose");
+require("./patron.js");
 
 var singlePrintSchema = mongoose.Schema({
     fileName: String,
+    realFileName: String,
     material: String,
     infill: String,
     color: String,
@@ -10,7 +11,6 @@ var singlePrintSchema = mongoose.Schema({
     notes: String,
     printLocation: String,
     pickupLocation: String,
-
 
     isNewSubmission: Boolean,
     isReviewed: Boolean,
@@ -28,7 +28,6 @@ var singlePrintSchema = mongoose.Schema({
     isSigned: Boolean,
     signaturePath: String,
 
-
     dateSubmitted: String,
     dateReviewed: String,
     datePaid: String,
@@ -38,8 +37,8 @@ var singlePrintSchema = mongoose.Schema({
     dateOfSecondWarning: String,
     dateOfConfiscation: String,
 
-
     gcodeName: String,
+    realGcodeName: String,
     slicedPrinter: String,
     slicedMaterial: String,
     timeHours: Number,
@@ -52,12 +51,14 @@ var singlePrintSchema = mongoose.Schema({
     patronNotes: String,
 
     approvedBy: String,
-    startedBy: String
+    startedBy: String,
+
+    overrideNotes: String,
 });
 
 // define the schema for a single patron submission
 var printSubmissionSchema = mongoose.Schema({
-    patron: mongoose.model('Patron').schema,
+    patron: mongoose.model("Patron").schema,
     dateSubmitted: String,
     datePaymentRequested: String,
     datePaid: String,
@@ -67,4 +68,4 @@ var printSubmissionSchema = mongoose.Schema({
     files: [singlePrintSchema], //array of actual print files
 });
 
-module.exports = mongoose.model('PrintRequest', printSubmissionSchema);
+module.exports = mongoose.model("PrintRequest", printSubmissionSchema);

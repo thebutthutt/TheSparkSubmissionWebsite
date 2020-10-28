@@ -18,10 +18,13 @@
             myeuid="<%=user.local.euid%>"
             isSuperAdmin="<%= isSuperAdmin%>"
         ></div>
+        <!--
         <div
             class="<%if (isSuperAdmin){%>container-fluid mt-5 px-5<%} else {%>container<%}%>"
             style="margin-bottom: 100px"
         >
+        -->
+        <div class="container" style="margin-bottom: 100px">
             <!-- show any messages that come back with authentication -->
             <% if (message.length > 0) { %>
             <div class="alert alert-warning"><%= message %></div>
@@ -89,7 +92,8 @@
                             </li>
                         </ul>
                     </div>
-                    <%if (isSuperAdmin) {%>
+                    <!--
+                    <%if (isSuperAdmin) {%>-->
                     <div id="allUsers">
                         <div class="shadow card">
                             <div class="card-header border-bottom">
@@ -100,9 +104,10 @@
                             ></ul>
                         </div>
                     </div>
+                    <!--
                     <%} else {%> <%- include
                     ("../../partials/cameras/cleaning"), {cameraData:
-                    cameraData} %> <%}%>
+                    cameraData} %> <%}%>-->
                 </div>
 
                 <div class="col">
@@ -168,6 +173,7 @@
                                 </li>
                             </ul>
                         </div>
+                        <!--
                         <div class="shadow card mb-4">
                             <div class="card-header border-bottom">
                                 <h4 class="mb-0">Unassigned Work Orders</h4>
@@ -180,11 +186,14 @@
                                 </li>
                             </ul>
                         </div>
-                    </div>
-                    <%} else {%> <%- include ("../../partials/diskUsage"),
-                    {sizeData: sizeData} %> <%}%>
-                </div>
+                    --></div>
 
+                    <%} else {%>
+                    <!--<%- include ("../../partials/diskUsage"),
+                    {sizeData: sizeData} %>-->
+                    <%}%>
+                </div>
+                <!--
                 <%if (isSuperAdmin) {%>
                 <div class="col">
                     <%- include ("../../partials/cameras/cleaning"),
@@ -192,7 +201,7 @@
                     ("../../partials/diskUsage"), {sizeData: sizeData} %>
                 </div>
                 <%}%>
-            </div>
+            --></div>
 
             <div>
                 <!-- Modal 1 Edit Account -->
@@ -279,7 +288,8 @@
                                         </div>
                                     </div>
                                 </form>
-                                <hr />
+                                <!--<hr />
+                                
                                 <form
                                     action="/changePassword?euid=<%=user.local.euid%>"
                                     method="post"
@@ -310,7 +320,8 @@
                                         </button>
                                     </div>
                                 </form>
-                                <hr />
+                            
+                                <hr />-->
                                 <a
                                     type="button"
                                     class="btn btn-danger"

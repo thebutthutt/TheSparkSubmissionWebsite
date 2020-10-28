@@ -1,5 +1,3 @@
-const formidable = require("formidable");
-
 const moment = require("moment");
 const constants = require("../config/constants");
 var payment = require("../config/payment.js");
@@ -22,8 +20,8 @@ module.exports = {
             euid: fields.euid,
         };
 
-        request.dateSubmitted = prints[7]; //always the date submitted
-        request.numFiles = prints[8]; //always the number of files
+        request.dateSubmitted = prints[8]; //always the date submitted
+        request.numFiles = prints[9]; //always the number of files
 
         //set intitial parameters of the printRequest schema
         request.allFilesReviewed = false;
@@ -35,13 +33,14 @@ module.exports = {
         for (let i = 0; i < prints[0].length; i++) {
             request.files.push({
                 fileName: prints[0][i],
-                material: prints[1][i],
-                infill: prints[2][i],
-                color: prints[3][i],
-                copies: prints[4][i],
-                notes: prints[6][i],
-                printLocation: prints[5][i],
-                pickupLocation: prints[5][i],
+                realFileName: prints[1][i],
+                material: prints[2][i],
+                infill: prints[3][i],
+                color: prints[4][i],
+                copies: prints[5][i],
+                notes: prints[7][i],
+                printLocation: prints[6][i],
+                pickupLocation: prints[6][i],
 
                 isNewSubmission: true,
                 isReviewed: false,
@@ -57,7 +56,7 @@ module.exports = {
                 isStarted: false,
                 isStaleOnPickup: false,
 
-                dateSubmitted: prints[7], //always holds the date submitted
+                dateSubmitted: prints[8], //always holds the date submitted
                 dateReviewed: "Never",
                 datePaid: "Never",
                 datePrinted: "Never",
@@ -68,6 +67,8 @@ module.exports = {
 
                 numAttempts: 0,
                 numFailedAttempts: 0,
+
+                overrideNotes: "",
             });
         }
 
@@ -84,6 +85,7 @@ module.exports = {
     handleSubmission: function (req, callback) {
         //arrays of each files specifications (will only hold one entry each if patron submits only one file)
         var filenames = [],
+            realFileNames = [],
             materials = Array.isArray(req.body.material)
                 ? req.body.material
                 : Array.of(req.body.material),
@@ -118,8 +120,12 @@ module.exports = {
         } else {
             req.files.forEach(function (file) {
                 filenames.push(file.path);
+                realFileNames.push(
+                    file.path.substring(file.path.indexOf("/STLs/") + 20)
+                );
             });
             prints.push(filenames);
+            prints.push(realFileNames);
             prints.push(materials);
             prints.push(infills);
             prints.push(colors);
@@ -137,6 +143,9 @@ module.exports = {
     //this function handles when a technician is reviewing a print file within a top level submission
     updateSingle: function (req, callback) {
         var gcode = req.files[0].path;
+        var realGcodeName = req.files[0].path.substring(
+            req.files[0].path.indexOf("/Gcode/") + 20
+        );
         var time = moment();
         var shouldUpload = true;
         var maker = req.user.name;
@@ -178,6 +187,7 @@ module.exports = {
                 {
                     $set: {
                         "files.$.gcodeName": gcode,
+                        "files.$.realGcodeName": realGcodeName,
                         "files.$.slicedPrinter": req.body.printer,
                         "files.$.slicedMaterial": req.body.material,
                         "files.$.timeHours": req.body.hours,
@@ -235,137 +245,6 @@ module.exports = {
                 }
             );
         }
-        //get the incoming form data
-        /*
-        form.parse(req, function (err, fields, files) {
-            printRequestModel.findOne(
-                {
-                    "files._id": fields.fileID,
-                },
-                function (err, result) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        id = fields.fileID;
-                        if (result.files.id(fields.fileID).gcodeName != null) {
-                            //delete gcode from disk if it exists
-                            console.log(
-                                "Submission had old GCODE file! deleting..."
-                            );
-                            fs.unlink(
-                                result.files.id(fields.fileID).gcodeName,
-                                function (err) {
-                                    if (err) {
-                                        console.log(err);
-                                    }
-                                }
-                            );
-                        }
-                    }
-                }
-            );
-            //update the low level print according to the form data
-            if (fields.decision == "accepted") {
-                //if the technician accepted the print, update accordingly
-                printRequestModel.findOneAndUpdate(
-                    {
-                        "files._id": fields.fileID,
-                    },
-                    {
-                        $set: {
-                            "files.$.gcodeName": gcode,
-                            "files.$.slicedPrinter": fields.printer,
-                            "files.$.slicedMaterial": fields.material,
-                            "files.$.timeHours": fields.hours,
-                            "files.$.timeMinutes": fields.minutes,
-                            "files.$.grams": fields.grams,
-                            "files.$.patronNotes": fields.patronNotes,
-                            "files.$.techNotes": fields.technotes,
-                            "files.$.approvedBy": maker,
-                            "files.$.printLocation": fields.printLocation,
-                            "files.$.isReviewed": true,
-                            "files.$.isRejected": false,
-                            "files.$.dateReviewed": time.format(
-                                constants.format
-                            ),
-                        },
-                    },
-                    {
-                        new: true,
-                    },
-                    function (err, result) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        //now find the fully updated top level submission so we can check if all the files have been reviewed
-                        module.exports.setFlags(id, function () {
-                            callback();
-                        });
-                    }
-                );
-            } else {
-                //the tecnicican rejected the print, so update differently
-                printRequestModel.findOneAndUpdate(
-                    {
-                        "files._id": fields.fileID,
-                    },
-                    {
-                        $set: {
-                            "files.$.isReviewed": true,
-                            "files.$.isRejected": true,
-                            "files.$.isPendingPayment": false,
-                            "files.$.dateReviewed": time.format(
-                                constants.format
-                            ),
-                            "files.$.approvedBy": maker,
-                            "files.$.patronNotes": fields.patronNotes,
-                        },
-                    },
-                    {
-                        new: true,
-                    },
-                    function (err, result) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        //now find the fully updated top level submission so we can check if all the files have been reviewed
-                        module.exports.setFlags(id, function () {
-                            callback();
-                        });
-                    }
-                );
-            }
-        });
-        form.on("field", (name, field) => {
-            //if we should be looking for a file uploaded for GCODE
-            if (name == "decision") {
-                if (field == "accepted") {
-                    shouldUpload = true;
-                } else {
-                    shouldUpload = false;
-                }
-            }
-        });
-        form.on("fileBegin", (name, file) => {
-            //handle uploading a file if needed
-            if (shouldUpload) {
-                file.name = time.unix() + file.name; //add special separater so we can get just the filename later
-                file.path = path.join(
-                    __dirname,
-                    "../../Uploads/Gcode/",
-                    file.name
-                );
-            } else {
-            }
-        });
-        form.on("file", (name, file) => {
-            //when a file finishes coming through
-            if (shouldUpload) {
-                gcode = file.path;
-            }
-        });
-
-        */
     },
 
     //------------------------Add new technician notes without a full file review------------------------
@@ -381,7 +260,7 @@ module.exports = {
                     if (req.body.newNotes != "") {
                         result.files.id(req.body.fileID).techNotes += "\n";
                         result.files.id(req.body.fileID).techNotes +=
-                            req.body.euid;
+                            req.body.name;
                         result.files.id(req.body.fileID).techNotes += ": ";
                         result.files.id(req.body.fileID).techNotes +=
                             req.body.newNotes;
@@ -435,7 +314,7 @@ module.exports = {
                             acceptedFiles.push(
                                 result.files[i].fileName.substring(
                                     result.files[i].fileName.indexOf("STLs/") +
-                                        18
+                                        19
                                 )
                             );
                             acceptedMessages.push(result.files[i].patronNotes);
@@ -443,7 +322,7 @@ module.exports = {
                             rejectedFiles.push(
                                 result.files[i].fileName.substring(
                                     result.files[i].fileName.indexOf("STLs/") +
-                                        18
+                                        19
                                 )
                             );
                             rejectedMessages.push(result.files[i].patronNotes);
@@ -503,7 +382,7 @@ module.exports = {
 
     //should fire when a user pays for a submission
     //pushes print from the pendpy queue to the paid and ready queue
-    recievePayment: function (submissionID, wasWaived, callback) {
+    recievePayment: function (submissionID, wasWaived, waivingEUID, callback) {
         var time = moment();
         printRequestModel.findOne(
             {
@@ -519,18 +398,24 @@ module.exports = {
                             result.files[i].isPaid = true;
                             result.files[i].isReadyToPrint = true;
                             result.files[i].isPendingWaive = false;
+                            if (wasWaived) {
+                                result.files[i].overrideNotes =
+                                    "Payment was waived by " +
+                                    waivingEUID +
+                                    "\n";
+                            }
                         }
                     }
                     result.datePaid = time.format(constants.format);
-                    result.save(); //save the db entry
-                    if (typeof callback == "function") {
-                        callback();
-                    }
-
                     if (wasWaived) {
                         emailer.paymentWaived(result.patron.email);
                     } else {
                         emailer.readyToPrint(result.patron.email);
+                    }
+
+                    result.save(); //save the db entry
+                    if (typeof callback == "function") {
+                        callback();
                     }
                 }
             }
@@ -619,6 +504,7 @@ module.exports = {
 
     //accept the signature from the patron
     acceptSignature: function (fileID, fileName) {
+        console.log("accepting signaature");
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -653,6 +539,7 @@ module.exports = {
 
     //the print has been picked up by the patron
     markPickedUp: function (fileID) {
+        console.log("was picked up");
         var time = moment().format(constants.format);
         printRequestModel.findOne(
             {
