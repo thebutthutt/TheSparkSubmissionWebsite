@@ -6,10 +6,7 @@ var emailer = require("./email.js");
 var crypto = require("crypto");
 var emailer = require("./email.js");
 
-let rawdata = fs.readFileSync(path.join(__dirname, "../../novers.txt"));
-novers = JSON.parse(rawdata);
-
-const secret_key = novers.secret_key;
+const secret_key = process.env.PAYMENT_KEY;
 
 module.exports = {
     //generate a URL for the patron to pay thrpugh

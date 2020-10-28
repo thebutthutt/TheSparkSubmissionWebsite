@@ -1,4 +1,7 @@
 // set up ======================================================================
+
+require("dotenv").config();
+
 // get all the tools we need
 var express = require("express");
 var https = require("https");
@@ -6,7 +9,7 @@ var http = require("http");
 var fs = require("fs");
 
 var app = express();
-var port = 443;
+var port = process.env.PORT;
 
 var mongoose = require("mongoose");
 var passport = require("passport");
@@ -162,6 +165,6 @@ var http_server = http
         });
         res.end();
     })
-    .listen(80, "0.0.0.0");
+    .listen(process.env.HTTP, "0.0.0.0");
 
 console.log("The magic happens on port " + port);

@@ -4,12 +4,6 @@ const fs = require("fs");
 var path = require("path");
 var ldap = require("ldapjs");
 
-//grab the whitelist contents from the file
-let rawdata = fs.readFileSync(path.join(__dirname, "../../novers.txt"));
-var secrets = JSON.parse(rawdata);
-
-var bindCredentials = secrets.bindPass;
-
 // load up the user model
 var User = require("../app/models/user");
 // expose this function to our app using module.exports
@@ -45,10 +39,9 @@ module.exports = function (passport) {
                 //var searchDN = "(" + euid + "@unt.ad.unt.edu)";
 
                 var employment = ldap.createClient({
-                    url: "ldaps://unt.ad.unt.edu",
-                    bindDN:
-                        "CN=libsparkwebapp,OU=ServiceAccts,OU=Special,OU=Library Technology,OU=Libraries Support,OU=UNT,DC=unt,DC=ad,DC=unt,DC=edu",
-                    bindCredentials: bindCredentials,
+                    url: process.env.LDAP_URL,
+                    bindDN: process.env.BIND_DN,
+                    bindCredentials: process.env.BIND_CRED,
                     tlsOptions: {
                         ca: [
                             fs.readFileSync(
