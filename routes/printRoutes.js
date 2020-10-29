@@ -2,15 +2,7 @@ const { handlePaymentComplete } = require("../config/payment");
 var multer = require("multer");
 var path = require("path");
 
-module.exports = function (
-    app,
-    passport,
-    userModel,
-    adminRequestHandler,
-    printHandler,
-    printRequestModel,
-    payment
-) {
+module.exports = function (app, passport, userModel, adminRequestHandler, printHandler, printRequestModel, payment) {
     //-----------------------NEW PRINTS-----------------------
     // show the new prints queue
     app.get("/prints/new", isLoggedIn, function (req, res) {
@@ -318,12 +310,7 @@ module.exports = function (
         payment.handlePaymentComplete(req, function (success, submissionID) {
             //tell the payment handler to update our databases
             if (success == true) {
-                printHandler.recievePayment(
-                    submissionID,
-                    false,
-                    "",
-                    function callback() {}
-                );
+                printHandler.recievePayment(submissionID, false, "", function callback() {});
                 res.render("pages/prints/thankyoupayment", {
                     //render the success page
                     data: req.query,
@@ -362,14 +349,9 @@ module.exports = function (
     //-----------------------WAIVE PAYMENT-----------------------
     app.post("/prints/waive", function (req, res, next) {
         var submissionID = req.body.submissionID || req.query.submissionID;
-        printHandler.recievePayment(
-            submissionID,
-            true,
-            req.user.local.euid,
-            function callback() {
-                res.json(["done"]); //tell the front end the request is done
-            }
-        );
+        printHandler.recievePayment(submissionID, true, req.user.local.euid, function callback() {
+            res.json(["done"]); //tell the front end the request is done
+        });
     });
 
     app.post("/prints/requestwaive", function (req, res, next) {
@@ -417,13 +399,7 @@ module.exports = function (
 
                 // By default, multer removes file extensions so let's add them back
                 filename: function (req, file, cb) {
-                    cb(
-                        null,
-                        Date.now() +
-                            file.originalname.split(".")[0] +
-                            "-" +
-                            path.extname(file.originalname)
-                    );
+                    cb(null, Date.now() + "-" + file.originalname.split(".")[0] + path.extname(file.originalname));
                 },
             }),
         }).any(),
@@ -452,15 +428,10 @@ module.exports = function (
                 if (err) {
                     console.log(err);
                 } else {
-                    if (
-                        result.files.id(fileID).printLocation ==
-                        "Willis Library"
-                    ) {
-                        result.files.id(fileID).printLocation =
-                            "Discovery Park";
+                    if (result.files.id(fileID).printLocation == "Willis Library") {
+                        result.files.id(fileID).printLocation = "Discovery Park";
                     } else {
-                        result.files.id(fileID).printLocation =
-                            "Willis Library";
+                        result.files.id(fileID).printLocation = "Willis Library";
                     }
                     result.save();
                 }
@@ -480,14 +451,9 @@ module.exports = function (
     //-----------------------HANDLE PAYMENT INCOME-----------------------
     app.post("/prints/recievePayment", function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
-        printHandler.recievePayment(
-            submissionID,
-            false,
-            "",
-            function callback() {
-                res.json(["done"]); //tell the front end the request is done
-            }
-        );
+        printHandler.recievePayment(submissionID, false, "", function callback() {
+            res.json(["done"]); //tell the front end the request is done
+        });
     });
 
     //-----------------------START PRINT-----------------------

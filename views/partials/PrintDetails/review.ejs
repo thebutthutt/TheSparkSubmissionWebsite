@@ -1,6 +1,4 @@
-<div
-    class="shadow alert print-card <%if (!print.isRejected) {%>alert-primary<%} else {%> alert-danger<%}%>"
->
+<div class="shadow alert print-card <%if (!print.isRejected) {%>alert-primary<%} else {%> alert-danger<%}%>">
     <h4>Review Details</h4>
     <p>
         <strong>Reviewed by:</strong> <%=print.approvedBy%> <br />
@@ -12,20 +10,12 @@
     <hr />
     <p>
         <strong>GCODE Filename:</strong>
-        <a href="#" class="download-btn" id="<%= print.gcodeName%>"
-            ><%=print.gcodeName.substring(print.gcodeName.indexOf('/15') +
-            14)%></a
-        >
+        <a href="#" class="download-btn" id="<%= print.gcodeName%>"><%=print.realGcodeName%></a>
         <br />
         <strong>Sliced for printer:</strong> <%=print.slicedPrinter%> <br />
         <strong>Sliced for material:</strong> <%=print.slicedMaterial%> <br />
         <strong>Print Location: </strong> <%=print.printLocation%> &nbsp;
-        <span
-            class="icon-btn"
-            data-toggle="tooltip"
-            data-placement="top"
-            title="Change Location"
-        >
+        <span class="icon-btn" data-toggle="tooltip" data-placement="top" title="Change Location">
             <svg
                 class="bi bi-arrow-left-right change-btn"
                 fileID="<%=print._id%>"
@@ -43,17 +33,13 @@
                     fill-rule="evenodd"
                     d="M2 11a.5.5 0 0 1 .5-.5H13a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 11zm3.854-9.354a.5.5 0 0 1 0 .708L3.207 5l2.647 2.646a.5.5 0 1 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z"
                 />
-                <path
-                    fill-rule="evenodd"
-                    d="M2.5 5a.5.5 0 0 1 .5-.5h10.5a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
-                />
+                <path fill-rule="evenodd" d="M2.5 5a.5.5 0 0 1 .5-.5h10.5a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
             </svg>
         </span>
     </p>
     <hr />
     <p class="mb-0">
-        <strong>Print time estimate: </strong> <%= print.timeHours%> hours, <%=
-        print.timeMinutes%> minutes <br />
+        <strong>Print time estimate: </strong> <%= print.timeHours%> hours, <%= print.timeMinutes%> minutes <br />
         <strong>Print weight estimate: </strong> <%= print.grams%> grams
     </p>
     <%} else {%>
