@@ -89,6 +89,9 @@
             </div>
 
             <div class="col-6">
+                <%if(isSuperAdmin && print.isPendingWaive) {%>
+                    <%- include ("../../partials/PrintDetails/waiveCard", {print:print}) %>
+                <%}%>
                     <% if (print.canBeReviewed) { %>
                         <%if (print.isReviewed) {%>
                             <%- include ("../../partials/PrintDetails/review", {print:print}) %>

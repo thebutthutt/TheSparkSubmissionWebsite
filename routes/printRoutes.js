@@ -354,6 +354,13 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         });
     });
 
+    app.post("/prints/waiveByFile", function (req, res, next) {
+        var fileID = req.body.fileID || req.query.fileID;
+        printHandler.recievePaymentByFile(fileID, true, req.user.local.euid, function callback() {
+            res.json(["done"]); //tell the front end the request is done
+        });
+    });
+
     app.post("/prints/requestwaive", function (req, res, next) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         adminRequestHandler.addWaive(submissionID, "print");

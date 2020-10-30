@@ -8,9 +8,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
         sParameterName = sURLVariables[i].split("=");
 
         if (sParameterName[0] === sParam) {
-            return sParameterName[1] === undefined
-                ? true
-                : decodeURIComponent(sParameterName[1]);
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
         }
     }
 };
@@ -25,6 +23,20 @@ $(document).ready(function () {
     $(".download-btn").on("click", function () {
         var fileLocation = $(this).attr("id");
         window.location = "/prints/download?fileID=" + fileLocation;
+    });
+
+    $(".btn-waive").on("click", function () {
+        let fileID = $(this).attr("fileID");
+        $.ajax({
+            type: "POST",
+            url: "/prints/waiveByFile",
+            data: {
+                fileID: fileID,
+            },
+            dataType: "json",
+        }).done(function () {
+            location.reload();
+        });
     });
 
     $(".connect-button").on("click", function () {
@@ -178,10 +190,7 @@ $(document).ready(function () {
         } else {
             $(this).popover("hide");
             let fileName = $(this).val().split("\\").pop();
-            $(this)
-                .siblings(".custom-file-label")
-                .addClass("selected")
-                .html(fileName);
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
         }
     });
 

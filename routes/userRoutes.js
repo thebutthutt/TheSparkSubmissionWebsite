@@ -58,10 +58,7 @@ module.exports = function (
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get("/profile", isLoggedIn, function (req, res) {
-        printRequestModel.deleteMany({ files: { $size: 0 } }, function (
-            err,
-            res
-        ) {
+        printRequestModel.deleteMany({ files: { $size: 0 } }, function (err, res) {
             if (err) {
                 console.log(err);
             } else {
@@ -73,9 +70,7 @@ module.exports = function (
         var numPrint;
         var whitelist = null;
         if (req.user.isSuperAdmin) {
-            let rawdata = fs.readFileSync(
-                path.join(__dirname, "../app/whitelist.txt")
-            );
+            let rawdata = fs.readFileSync(path.join(__dirname, "../app/whitelist.txt"));
             whitelist = JSON.parse(rawdata);
         }
 
@@ -203,24 +198,18 @@ module.exports = function (
     app.post("/users/addWhitelist", function (req, res) {
         var newEUID = req.body.newEUID || req.query.newEUID;
         if (newEUID != null) {
-            let rawdata = fs.readFileSync(
-                path.join(__dirname, "../app/whitelist.txt")
-            );
+            let rawdata = fs.readFileSync(path.join(__dirname, "../app/whitelist.txt"));
             whitelist = JSON.parse(rawdata);
             console.log(whitelist);
             whitelist.push(newEUID);
             console.log(whitelist);
-            fs.writeFile(
-                path.join(__dirname, "../app/whitelist.txt"),
-                JSON.stringify(whitelist),
-                function (err) {
-                    if (err) {
-                        console.log("JSON write error", err);
-                    } else {
-                        res.redirect("back");
-                    }
+            fs.writeFile(path.join(__dirname, "../app/whitelist.txt"), JSON.stringify(whitelist), function (err) {
+                if (err) {
+                    console.log("JSON write error", err);
+                } else {
+                    res.redirect("back");
                 }
-            );
+            });
         }
     });
 
@@ -266,7 +255,7 @@ module.exports = function (
                     data.forEach((element) => {
                         element.files.forEach((file) => {
                             if (file.isPendingDelete == true) {
-                                filenames.push(file.fileName);
+                                filenames.push(file.realFileName);
                                 fileIDs.push(file._id);
                             }
                         });
@@ -291,6 +280,7 @@ module.exports = function (
             var submissions = [],
                 singleSubmission = [],
                 filenames = [];
+            fileIDs = [];
             printRequestModel.find(
                 {
                     files: {
@@ -304,16 +294,16 @@ module.exports = function (
                     data.forEach((submission) => {
                         singleSubmission = []; //clear submission array
                         filenames = []; //clear filenames array
+                        fileIDs = []; //clear fileids array
                         singleSubmission.push(submission._id); //submission[i][0] = itemID
                         submission.files.forEach((file) => {
-                            if (
-                                file.isPendingWaive == true &&
-                                file.isRejected == false
-                            ) {
-                                filenames.push(file.fileName);
+                            if (file.isPendingWaive == true && file.isRejected == false) {
+                                filenames.push(file.realFileName);
+                                fileIDs.push(file._id);
                             }
                         });
-                        singleSubmission.push(filenames); //submission[i][j] = filenames
+                        singleSubmission.push(filenames); //submission[i][1][0-j] = filenames
+                        singleSubmission.push(fileIDs); //submission[i][2][0-j] = fileIDs
                         submissions.push(singleSubmission);
                     });
                     res.render("partials/adminParts/printsPendingWaive", {
