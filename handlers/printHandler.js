@@ -18,6 +18,7 @@ module.exports = {
             lname: fields.last,
             email: fields.email,
             euid: fields.euid,
+            phone: fields.phone,
         };
 
         request.dateSubmitted = prints[8]; //always the date submitted
@@ -98,10 +99,10 @@ module.exports = {
                 last: req.body.last,
                 email: req.body.email,
                 euid: req.body.euid,
+                phone: req.body.phone,
             },
             numFiles = req.files.length,
             time = moment();
-
         if (numFiles <= 0) {
             //bad
             callback("failure");
