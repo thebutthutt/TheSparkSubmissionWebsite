@@ -129,10 +129,13 @@ module.exports = {
 
     //this function handles when a technician is reviewing a print file within a top level submission
     updateSingle: function (req, callback) {
-        var gcode = req.files[0].path;
-        var realGcodeName = req.files[0].path.substring(req.files[0].path.indexOf("/Gcode/") + 20);
         var time = moment();
-        var shouldUpload = true;
+        var shouldUpload = false;
+        if(req.files[0]) {
+            var gcode = req.files[0].path;
+            var realGcodeName = req.files[0].path.substring(req.files[0].path.indexOf("/Gcode/") + 20);
+            shouldUpload = true;
+        }
         var maker = req.user.name;
         var id;
 
@@ -238,7 +241,13 @@ module.exports = {
                     console.log(err);
                 } else {
                     if (req.body.newNotes != "") {
-                        result.files.id(req.body.fileID).techNotes += "\n";
+
+                        if (!result.files.id(req.body.fileID).techNotes) {
+                            result.files.id(req.body.fileID).techNotes = "";
+                        } else {
+                            result.files.id(req.body.fileID).techNotes += "\n";
+                        }
+                        
                         result.files.id(req.body.fileID).techNotes += req.body.name;
                         result.files.id(req.body.fileID).techNotes += ": ";
                         result.files.id(req.body.fileID).techNotes += req.body.newNotes;
@@ -467,8 +476,39 @@ module.exports = {
         );
     },
 
+    markPrinting: function (fileID, copiesPrinting, callback) {
+        copiesPrinting = parseInt(copiesPrinting)
+        printRequestModel.findOne(
+            {
+                "files._id": fileID,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    result.files.id(fileID).isStarted = true;
+                    if (result.files.id(fileID).numAttempts == null) {
+                        result.files.id(fileID).numAttempts = 0;
+                    }
+                    result.files.id(fileID).numAttempts += 1;
+
+                    if (result.files.id(fileID).copiesPrinting == null) {
+                        result.files.id(fileID).copiesPrinting = 0;
+                    }
+                    result.files.id(fileID).copiesPrinting += copiesPrinting;
+
+                    result.save();
+                    if (typeof callback == "function") {
+                        callback();
+                    }
+                }
+            }
+        );
+    },
+
     //mark that a print succeeded, this then calls mark completed
-    printSuccess: function (fileID, callback) {
+    printSuccess: function (fileID, copiesPrinting, callback) {
+        copiesPrinting = parseInt(copiesPrinting)
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -478,7 +518,30 @@ module.exports = {
                     console.log(err);
                 } else {
                     result.files.id(fileID).isStarted = false;
+                    if (result.files.id(fileID).copiesPrinted == null) {
+                        result.files.id(fileID).copiesPrinted = 0;
+                    }
+                    result.files.id(fileID).copiesPrinted += copiesPrinting;
+                    result.files.id(fileID).copiesPrinting = 0;
                     result.save();
+                    //module.exports.markCompleted(fileID);
+                    if (typeof callback == "function") {
+                        callback();
+                    }
+                }
+            }
+        );
+    },
+
+    printCompleted: function (fileID, callback) {
+        printRequestModel.findOne(
+            {
+                "files._id": fileID,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
                     module.exports.markCompleted(fileID);
                     if (typeof callback == "function") {
                         callback();
@@ -552,6 +615,8 @@ module.exports = {
                         result.files.id(fileID).numFailedAttempts = 0;
                     }
                     result.files.id(fileID).numFailedAttempts += 1; //add a failed attempt
+
+                    result.files.id(fileID).copiesPrinting = 0;
                     result.save();
                     if (typeof callback == "function") {
                         callback();

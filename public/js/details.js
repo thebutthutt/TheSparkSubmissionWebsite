@@ -222,13 +222,33 @@ $(document).ready(function () {
         });
     });
 
+    $(".markCopiesPrinting").on("click", function (e) {
+        e.preventDefault()
+        let fileID = $(this).attr("fileid");
+        var copiesPrinting = $("#inlineFormInputCopies").val();
+        $.ajax({
+            type: "POST",
+            url: "/prints/markPrinting",
+            data: {
+                fileID: fileID,
+                copiesPrinting: copiesPrinting
+            },
+            dataType: "json",
+        }).done(function () {
+            location.reload();
+        });
+    });
+
     $(".print-success").on("click", function () {
         let fileID = $(this).attr("fileid");
+        var copiesPrinting = $(".copiesPrinting").attr("numCopiesPrinting");
+
         $.ajax({
             type: "POST",
             url: "/prints/printsuccess",
             data: {
                 fileID: fileID,
+                copiesPrinting: copiesPrinting
             },
             dataType: "json",
         }).done(function () {
@@ -241,6 +261,21 @@ $(document).ready(function () {
         $.ajax({
             type: "POST",
             url: "/prints/printfail",
+            data: {
+                fileID: fileID,
+            },
+            dataType: "json",
+        }).done(function () {
+            location.reload();
+        });
+    });
+
+    $(".markCompleted").on("click", function () {
+        let fileID = $(this).attr("fileid");
+
+        $.ajax({
+            type: "POST",
+            url: "/prints/printcomplete",
             data: {
                 fileID: fileID,
             },

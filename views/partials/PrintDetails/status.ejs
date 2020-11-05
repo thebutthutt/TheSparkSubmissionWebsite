@@ -1,5 +1,57 @@
 <div class="shadow alert alert-warning status-card">
-    <h4>Attempts</h4>
+
+    <% if (print.isStarted) {%>
+        <p class="copiesPrinting" numCopiesPrinting="<%=print.copiesPrinting%>"
+            <strong>Currently printing:</strong> <%=print.copiesPrinting%> <br />
+        </p>
+        
+        <div class="row">
+            <div class="col">
+                <button
+                    type="button"
+                    class="btn btn-success btn-block print-success"
+                    fileID="<%=print._id%>"
+                >
+                    Print Completed
+                </button>
+            </div>
+            <div class="col">
+                <button
+                    type="button"
+                    class="btn btn-danger btn-block print-fail"
+                    fileID="<%=print._id%>"
+                >
+                    Print Failed
+                </button>
+            </div>
+        </div>
+    <%} else {%>
+        <form class="form-inline">
+            <label class="sr-only" for="inlineFormInputName2">Name</label>
+            <input type="number" min="1" step="1" value="1" class="form-control mb-2 mr-sm-2" id="inlineFormInputCopies" name="copiesPrinting">
+            <button type="submit" class="btn btn-warning mb-2 markCopiesPrinting" fileID="<%=print._id%>">Start printing this many copies</button>
+        </form>
+    <%}%>
+
+    <p>
+        <strong>Attempts</strong> <%=print.numAttempts%> <br />
+        <strong>Failed attempts</strong> <%=print.numFailedAttempts%> <br />
+        <strong>Copies Printed</strong> <%=print.copiesPrinted%>
+    </p>
+    <% if (!print.isStarted) {%>
+        <button
+            type="button"
+            class="btn btn-lg btn-warning btn-block markCompleted"
+            fileID="<%=print._id%>"
+        >
+            Mark Completed!
+        </button>
+        <p>Please make sure you have printed as many copies as the patron requested.</p>
+    <%}%>
+    
+
+<!--    
+        <h4>Attempts</h4>
     <% if (!print.isStarted) {%> <% if (print.numAttempts != 0) {%>
     <p>
         <strong>Attempts</strong> <%=print.numAttempts%> <br />
@@ -44,4 +96,6 @@
         </div>
     </div>
     <%}%>
+    -->
+    
 </div>

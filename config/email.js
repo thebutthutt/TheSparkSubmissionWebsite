@@ -2,6 +2,15 @@ var nodemailer = require('nodemailer');
 var smtpserver = "mailhost.unt.edu";
 var portNum = 25;
 
+var transporter = nodemailer.createTransport({
+    host: smtpserver,
+    port: portNum,
+    secure: false,
+    tls: {
+        rejectUnauthorized: false
+    }
+});
+
 module.exports = {
     requestPayment: async function (email, acceptedFiles, acceptedMessages, rejectedFiles, rejectedMessages, link) {
         var fullEmail = `Thank you for your 3D print request with The Spark Makerspace.
@@ -13,7 +22,7 @@ module.exports = {
             `;
 
         for (var i = 0; i < acceptedFiles.length; i++) {
-            fullEmail += `<li>${acceptedFiles[i]} \"${acceptedMessages[i]}\" </li>`;
+            fullEmail += `<li>${acceptedFiles[i]}<br> \"${acceptedMessages[i]}\" </li>`;
         }
 
         fullEmail += `</ul>`;
@@ -24,7 +33,7 @@ module.exports = {
                 <ul>`;
 
             for (var i = 0; i < rejectedFiles.length; i++) {
-                fullEmail += `<li>${rejectedFiles[i]} \"${rejectedMessages[i]}\" </li>`;
+                fullEmail += `<li>${rejectedFiles[i]}<br> \"${rejectedMessages[i]}\" </li>`;
             }
 
             fullEmail += `</ul>`;
@@ -36,14 +45,6 @@ module.exports = {
             After completing your payment, you will recieve an email when your models have been printed. This usually takes between 5 and 7 business days, however, during senior design season, we may be unusually busy. We will try our best to print all our requests as quickly as possible without sacrificing quality. Thank you for chosing The Spark Makerspace!
             `;
 
-        var transporter = nodemailer.createTransport({
-            host: smtpserver,
-            port: portNum,
-            secure: false,
-            tls: {
-                rejectUnauthorized: false
-            }
-        });
 
         var email = await transporter.sendMail({
             from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
@@ -51,7 +52,6 @@ module.exports = {
             subject: 'Your order has been accepted!',
             html: fullEmail
         });
-        console.log('emailSend');
 
     },
 
@@ -72,15 +72,6 @@ module.exports = {
             <br>
             <a href=\"https://sparkorders.library.unt.edu/submit\"></a>`;
 
-        var transporter = nodemailer.createTransport({
-            host: smtpserver,
-            port: portNum,
-            secure: false,
-            tls: {
-                rejectUnauthorized: false
-            }
-        });
-
         var email = await transporter.sendMail({
             from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
             to: email,
@@ -96,14 +87,6 @@ module.exports = {
             <br><br>
             We have waived the payment for your models and they are now in our printing queue! You will recieve an email when your models are sucessfully printed.`
 
-        var transporter = nodemailer.createTransport({
-            host: smtpserver,
-            port: portNum,
-            secure: false,
-            tls: {
-                rejectUnauthorized: false
-            }
-        });
 
         var email = await transporter.sendMail({
             from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
@@ -119,15 +102,6 @@ module.exports = {
             <br><br>
             We have recieved the payment for your models and they are now in our printing queue! You will recieve an email when your models are sucessfully printed.`
 
-        var transporter = nodemailer.createTransport({
-            host: smtpserver,
-            port: portNum,
-            secure: false,
-            tls: {
-                rejectUnauthorized: false
-            }
-        });
-
         var email = await transporter.sendMail({
             from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
             to: email,
@@ -142,15 +116,6 @@ module.exports = {
             <br><br>
             Your file has finished printing and is now ready for you to pick up! Come by The Spark Makerspace any time we are open to pick up your print. Please note that we may not have completed every file in your submission yet, but you will recieve an email every time a file has completed with the name of the file that was completed. The file we have just finished printing is `;
         fullEmail += fileName;
-
-        var transporter = nodemailer.createTransport({
-            host: smtpserver,
-            port: portNum,
-            secure: false,
-            tls: {
-                rejectUnauthorized: false
-            }
-        });
 
         var email = await transporter.sendMail({
             from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',

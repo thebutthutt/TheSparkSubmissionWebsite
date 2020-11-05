@@ -23,7 +23,6 @@ var singlePrintSchema = mongoose.Schema({
     isPickedUp: Boolean,
     isPendingDelete: Boolean,
     canBeReviewed: Boolean,
-    isStarted: Boolean,
     isStaleOnPickup: Boolean,
     isSigned: Boolean,
     signaturePath: String,
@@ -44,6 +43,10 @@ var singlePrintSchema = mongoose.Schema({
     timeHours: Number,
     timeMinutes: Number,
     grams: Number,
+
+    isStarted: Boolean,
+    copiesPrinting: Number,
+    copiesPrinted: Number,
     numAttempts: Number,
     numFailedAttempts: Number,
 

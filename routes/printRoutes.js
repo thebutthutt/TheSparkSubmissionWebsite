@@ -471,10 +471,27 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         });
     });
 
+    app.post("/prints/markPrinting", function (req, res) {
+        var fileID = req.body.fileID || req.query.fileID;
+        var copiesPrinting = req.body.copiesPrinting || req.query.copiesPrinting;
+        printHandler.markPrinting(fileID, copiesPrinting, function callback() {
+            res.json(["done"]);
+        });
+    });
+
     //-----------------------PRINT SUCCESS-----------------------
     app.post("/prints/printsuccess", function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
-        printHandler.printSuccess(fileID, function callback() {
+        var copiesPrinting = req.body.copiesPrinting || req.query.copiesPrinting;
+
+        printHandler.printSuccess(fileID, copiesPrinting, function callback() {
+            res.json(["done"]);
+        });
+    });
+
+    app.post("/prints/printcomplete", function (req, res) {
+        var fileID = req.body.fileID || req.query.fileID;
+        printHandler.printCompleted(fileID, function callback() {
             res.json(["done"]);
         });
     });

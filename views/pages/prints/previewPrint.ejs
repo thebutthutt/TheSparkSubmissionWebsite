@@ -50,6 +50,22 @@
                                 <% }  else { %>
                                     <p class="mb-0"><%=print.notes%></p>
                                 <%}%>
+                                <hr>
+                                <h6>Technician Notes</h6>
+                                <p style="white-space: pre-wrap;"><%=print.techNotes%></p>
+                                <p><%= print.overrideNotes%></p>
+                                <form action="/prints/appendNotes" method="post">
+                                    <div class="hiddenExtras" style="display: none;">
+                                        <input type="text" name="fileID" value='<%= print._id%>'>
+                                        <input type="text" name="name" value='<%= name%>'>
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea class="form-control" name="newNotes" rows="3" placeholder="Add new technician notes here"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-success">Append</button>
+                                    </div>
+                                </form>
                             </div>
                 </div>
                             <%- include ("../../partials/PrintDetails/patron", {print:print}) %>
