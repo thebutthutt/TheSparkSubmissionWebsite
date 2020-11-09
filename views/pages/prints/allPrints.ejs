@@ -2,22 +2,16 @@
 <html>
     <head>
         <%- include ("../../partials/head") %>
-        <link
-            type="text/css"
-            rel="stylesheet"
-            href="../../public/css/prints.css"
-        />
+        <link type="text/css" rel="stylesheet" href="../../public/css/prints.css" />
         <script src="../public/js/prints.js"></script>
     </head>
 
     <body>
-        <%- include ("../../partials/header") %> <% if (printPage == 'all') {var
-        isall = true} else {var isall = false}%> <%var i = 0%>
+        <%- include ("../../partials/header") %> <% if (printPage == 'all') {var isall = true} else {var isall =
+        false}%> <%var i = 0%>
         <div class="container" style="margin-bottom: 100px">
             <div class="shadow card">
-                <div class="card-header">
-                    <%- include ("../../partials/PrintDetails/printNav") %>
-                </div>
+                <div class="card-header"><%- include ("../../partials/PrintDetails/printNav") %></div>
                 <ol class="list-group list-group-flush border-top-0">
                     <li class="list-group-item">
                         <div class="row">
@@ -54,28 +48,21 @@
 
                                     <%if (printPage == 'completed') {%>
                                     <div class="col text-right">
-                                        <a class="clear-btn" href="">
-                                            Clear All
-                                        </a>
+                                        <a class="clear-btn" href=""> Clear All </a>
                                     </div>
                                     <%}%> <%if (printPage == 'rejected') {%>
                                     <div class="col text-right">
-                                        <a class="clear-rejected-btn" href="">
-                                            Clear All
-                                        </a>
+                                        <a class="clear-rejected-btn" href=""> Clear All </a>
                                     </div>
                                     <%}%>
                                 </div>
                             </div>
                         </div>
                     </li>
-                    <%dbdata.slice().reverse().forEach(function (item) {%>
+                    <%dbdata.forEach(function (item) {%>
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="col-2">
-                                <%= item.patron.fname %> <%= item.patron.lname
-                                %>
-                            </div>
+                            <div class="col-2"><%= item.patron.fname %> <%= item.patron.lname %></div>
                             <div class="col-2"><%=item.dateSubmitted%></div>
 
                             <% if (printPage == 'newSub') {%>
@@ -100,22 +87,13 @@
                                             fill-rule="evenodd"
                                             d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z"
                                         />
-                                        <rect
-                                            width="3"
-                                            height="3"
-                                            x="2"
-                                            y="9"
-                                            rx="1"
-                                        />
+                                        <rect width="3" height="3" x="2" y="9" rx="1" />
                                         <path d="M1 5h14v2H1z" />
                                     </svg>
                                     <%} else {%>
                                     <button
                                         type="button"
-                                        style="
-                                            border: none;
-                                            background: transparent;
-                                        "
+                                        style="border: none; background: transparent"
                                         class="submit-btn p-0"
                                         id="<%= item._id%>"
                                     >
@@ -131,85 +109,55 @@
                                                 fill-rule="evenodd"
                                                 d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z"
                                             />
-                                            <rect
-                                                width="3"
-                                                height="3"
-                                                x="2"
-                                                y="9"
-                                                rx="1"
-                                            />
+                                            <rect width="3" height="3" x="2" y="9" rx="1" />
                                             <path d="M1 5h14v2H1z" />
                                         </svg>
                                     </button>
                                 </span>
                                 <%}%>
                             </div>
-                            <%}%> <%if (printPage == 'pendpay' || printPage ==
-                            'rejected') {%>
-                            <div class="col-2">
-                                <%=item.datePaymentRequested%>
-                            </div>
+                            <%}%> <%if (printPage == 'pendpay' || printPage == 'rejected') {%>
+                            <div class="col-2"><%=item.datePaymentRequested%></div>
                             <%}%> <% if (printPage == 'ready') {%>
                             <div class="col-2"><%=item.datePaid%></div>
                             <%}%>
 
                             <div class="col">
-                                <%i = 0%> <% item.files.forEach(function (file)
-                                {%> <%if ( (printPage == 'newSub' || (printPage
-                                == 'pendpay' && file.isRejected == false) ||
-                                printPage == 'all') || ( (printPage == 'ready'
-                                && file.isRejected == false && file.isPrinted ==
-                                false) && ( (location != "all" &&
-                                file.printLocation == location) || (location ==
-                                'all') ) ) || ( (printPage == 'pickup' &&
-                                file.isRejected == false && file.isPrinted ==
-                                true && file.isPickedUp == false) && ( (location
-                                != "all" && file.pickupLocation == location) ||
-                                (location == 'all') ) ) || (printPage ==
-                                'completed' && file.isPickedUp) || (printPage ==
-                                'rejected' && file.isRejected) ) { %> <%i++%>
+                                <%i = 0%> <% item.files.forEach(function (file) {%> <%if ( (printPage == 'newSub' ||
+                                (printPage == 'pendpay' && file.isRejected == false) || printPage == 'all') || (
+                                (printPage == 'ready' && file.isRejected == false && file.isPrinted == false) && (
+                                (location != "all" && file.printLocation == location) || (location == 'all') ) ) || (
+                                (printPage == 'pickup' && file.isRejected == false && file.isPrinted == true &&
+                                file.isPickedUp == false) && ( (location != "all" && file.pickupLocation == location) ||
+                                (location == 'all') ) ) || (printPage == 'completed' && file.isPickedUp) || (printPage
+                                == 'rejected' && file.isRejected) ) { %> <%i++%>
                                 <div class="row <%if (i > 1) {%> mt-3 <%}%>">
                                     <%if (printPage == 'pickup') {%>
                                     <div class="col-3">
-                                        <%if (file.datePrinted != "Never") {%>
-                                        <%=file.datePrinted%> <%}%>
+                                        <%if (file.datePrinted != "Never") {%> <%=file.datePrinted%> <%}%>
                                     </div>
 
                                     <%}%> <% if (printPage == 'completed') {%>
                                     <div class="col-3">
-                                        <%if (file.datePickedUp != "Never") {%>
-                                        <%=file.datePickedUp%> <%}%>
+                                        <%if (file.datePickedUp != "Never") {%> <%=file.datePickedUp%> <%}%>
                                     </div>
                                     <%}%> <% if (printPage == 'all') {%>
                                     <div class="col-3">
-                                        <% if (file.isRejected) { %> Rejected <%
-                                        } else if (file.isNewSubmission) { %>
-                                        New <% } else if (file.isPendingPayment)
-                                        { %> Pending payment <% } else if
-                                        (file.isReadyToPrint) { %> In Queue <% }
-                                        else if (file.isPrinted &&
-                                        !file.isPickedUp) { %> Waiting for
-                                        pickup <% } else { %> Complete <% } %>
+                                        <% if (file.isRejected) { %> Rejected <% } else if (file.isNewSubmission) { %>
+                                        New <% } else if (file.isPendingPayment) { %> Pending payment <% } else if
+                                        (file.isReadyToPrint) { %> In Queue <% } else if (file.isPrinted &&
+                                        !file.isPickedUp) { %> Waiting for pickup <% } else { %> Complete <% } %>
                                     </div>
                                     <%}%>
 
                                     <div class="col">
-                                        <a
-                                            class="preview-btn"
-                                            id="<%= file._id%>"
-                                            href="#"
-                                        >
-                                            <%=file.realFileName%>
-                                        </a>
-                                        &nbsp;
-                                        <%- include
-                                        ("../../partials/PrintDetails/flags",
-                                        {file:file, isAll: isall}) %>
+                                        <a class="preview-btn" id="<%= file._id%>" href="#"> <%=file.realFileName%> </a>
+                                        &nbsp; <%- include ("../../partials/PrintDetails/flags", {file:file, isAll:
+                                        isall}) %>
                                     </div>
                                     <div class="col-1 text-right">
-                                        <%- include
-                                        ("../../partials/PrintDetails/fileBurger",
-                                        {file:file, item:item}) %>
+                                        <%- include ("../../partials/PrintDetails/fileBurger", {file:file, item:item})
+                                        %>
                                     </div>
                                 </div>
                                 <%}%> <%})%>

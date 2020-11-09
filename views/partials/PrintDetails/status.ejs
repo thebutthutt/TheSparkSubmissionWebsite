@@ -26,10 +26,19 @@
             </div>
         </div>
     <%} else {%>
-        <form class="form-inline">
-            <label class="sr-only" for="inlineFormInputName2">Num Copies</label>
-            <input type="number" min="1" step="1" value="1" class="form-control mb-2 mr-sm-2" id="inlineFormInputCopies" name="copiesPrinting">
-            <button type="submit" class="btn btn-warning mb-2 markCopiesPrinting" fileID="<%=print._id%>">Start printing this many copies</button>
+        <form class="form">
+            <div class="form-row">
+                <div class="col">
+                    <label class="sr-only" for="inlineFormInputName2">Num Copies</label>
+                    <input type="number" min="1" step="1" value="1" class="form-control mb-2 mr-sm-2" id="inlineFormInputCopies" name="copiesPrinting">
+                </div class="col-md-auto">
+                    <button type="submit" class="btn btn-warning mb-2 markCopiesPrinting" fileID="<%=print._id%>">Start printing this many copies</button>
+                <div>
+                    
+                </div>
+            </div>
+            
+            
         </form>
     <%}%>
 
@@ -42,17 +51,28 @@
         <button
             type="button"
             class="btn btn-lg btn-warning btn-block markCompleted"
-            fileID="<%=print._id%>"
+            data-toggle="collapse" data-target="#gramsCollapse" aria-expanded="false" aria-controls="gramsCollapse"
         >
-            Mark Completed!
+            Print Complete?
         </button>
-        <p>Please make sure you have printed as many copies as the patron requested.</p>
+        
+        <div class="collapse" id="gramsCollapse">
+            <p class="mt-3">Please make sure you have printed as many copies as the patron requested.</p>
+            <form class="form">
+                <div class="form-row">
+                    <div class="col">
+                        <label class="sr-only" for="inlineFormInputName2">Actual Print Weight: </label>
+                        <input placeholder="Actual Print Weight (grams)" type="number" min="0" class="form-control" id="inlineFormRealGrams" name="realGrams" required>
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="button" class="btn btn-warning mb-2 submitRealGrams" fileID="<%=print._id%>">Confirm</button>
+                    </div>
+                </div>
+                
+            </form>
+        </div>
 
-        <form class="form-inline">
-            <label class="sr-only" for="inlineFormInputName2">Real Grams</label>
-            <input type="number" min="0" class="form-control mb-2 mr-sm-2" id="inlineFormRealGrams" name="realGrams" required>
-            <button type="button" class="btn btn-warning mb-2 submitRealGrams" fileID="<%=print._id%>">Confirm</button>
-        </form>
+        
     <%}%>
     
 
