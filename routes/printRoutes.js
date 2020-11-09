@@ -491,7 +491,8 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
 
     app.post("/prints/printcomplete", function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
-        printHandler.printCompleted(fileID, function callback() {
+        var realGrams = req.body.realGrams || req.query.realGrams;
+        printHandler.printCompleted(fileID, realGrams, function callback() {
             res.json(["done"]);
         });
     });

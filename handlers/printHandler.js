@@ -131,7 +131,7 @@ module.exports = {
     updateSingle: function (req, callback) {
         var time = moment();
         var shouldUpload = false;
-        if(req.files[0]) {
+        if (req.files[0]) {
             var gcode = req.files[0].path;
             var realGcodeName = req.files[0].path.substring(req.files[0].path.indexOf("/Gcode/") + 20);
             shouldUpload = true;
@@ -241,13 +241,12 @@ module.exports = {
                     console.log(err);
                 } else {
                     if (req.body.newNotes != "") {
-
                         if (!result.files.id(req.body.fileID).techNotes) {
                             result.files.id(req.body.fileID).techNotes = "";
                         } else {
                             result.files.id(req.body.fileID).techNotes += "\n";
                         }
-                        
+
                         result.files.id(req.body.fileID).techNotes += req.body.name;
                         result.files.id(req.body.fileID).techNotes += ": ";
                         result.files.id(req.body.fileID).techNotes += req.body.newNotes;
@@ -423,7 +422,7 @@ module.exports = {
     },
 
     //mark that a file has finished printing, this moves it to the piickup queue
-    markCompleted: function (fileID) {
+    markCompleted: function (fileID, realGrams) {
         var time = moment();
         printRequestModel.findOneAndUpdate(
             {
@@ -434,6 +433,7 @@ module.exports = {
                     "files.$.isPrinted": true,
                     "files.$.datePrinted": time.format(constants.format),
                     "files.$.isReadyToPrint": false,
+                    "files.$.realGrams": realGrams,
                 },
             },
             {
@@ -477,7 +477,7 @@ module.exports = {
     },
 
     markPrinting: function (fileID, copiesPrinting, callback) {
-        copiesPrinting = parseInt(copiesPrinting)
+        copiesPrinting = parseInt(copiesPrinting);
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -508,7 +508,7 @@ module.exports = {
 
     //mark that a print succeeded, this then calls mark completed
     printSuccess: function (fileID, copiesPrinting, callback) {
-        copiesPrinting = parseInt(copiesPrinting)
+        copiesPrinting = parseInt(copiesPrinting);
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -533,7 +533,7 @@ module.exports = {
         );
     },
 
-    printCompleted: function (fileID, callback) {
+    printCompleted: function (fileID, realGrams, callback) {
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -542,7 +542,8 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
-                    module.exports.markCompleted(fileID);
+                    module.exports.markCompleted(fileID, realGrams);
+                    console.log("here");
                     if (typeof callback == "function") {
                         callback();
                     }

@@ -45,6 +45,11 @@
         <strong>Print time estimate: </strong> <span class="data"><%= print.timeHours%> hours, <%= print.timeMinutes%> minutes</span> <br />
         <strong>Print weight estimate: </strong> <span class="data"><%= print.grams%> grams</span>
     </p>
+    <%if (print.isPrinted) {%>
+        <p class="mb-0">
+            <strong>Actual print weight: </strong> <span class="data"><%= print.realGrams%> grams</span>
+        </p>
+    <%}%>
     <%} else {%>
     <p class="mb-0"><strong>Status: </strong> <span class="data">Rejected</span><br /></p>
     <%}%>
