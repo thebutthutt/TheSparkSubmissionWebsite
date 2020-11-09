@@ -119,11 +119,3 @@
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
 }
-
-.status-card a,
-.patron-card a,
-.print-card a {
-    overflow-x: hidden;
-    width: calc(100% - 200px);
-    float: right;
-}

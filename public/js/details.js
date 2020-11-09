@@ -223,7 +223,7 @@ $(document).ready(function () {
     });
 
     $(".markCopiesPrinting").on("click", function (e) {
-        e.preventDefault()
+        e.preventDefault();
         let fileID = $(this).attr("fileid");
         var copiesPrinting = $("#inlineFormInputCopies").val();
         $.ajax({
@@ -231,7 +231,7 @@ $(document).ready(function () {
             url: "/prints/markPrinting",
             data: {
                 fileID: fileID,
-                copiesPrinting: copiesPrinting
+                copiesPrinting: copiesPrinting,
             },
             dataType: "json",
         }).done(function () {
@@ -248,7 +248,7 @@ $(document).ready(function () {
             url: "/prints/printsuccess",
             data: {
                 fileID: fileID,
-                copiesPrinting: copiesPrinting
+                copiesPrinting: copiesPrinting,
             },
             dataType: "json",
         }).done(function () {
@@ -270,14 +270,15 @@ $(document).ready(function () {
         });
     });
 
-    $(".markCompleted").on("click", function () {
+    $(".submitRealGrams").on("click", function () {
         let fileID = $(this).attr("fileid");
-
+        var realGrams = $("#inlineFormRealGrams").val();
         $.ajax({
             type: "POST",
             url: "/prints/printcomplete",
             data: {
                 fileID: fileID,
+                realGrams: realGrams,
             },
             dataType: "json",
         }).done(function () {

@@ -1,21 +1,23 @@
 <div class="shadow alert print-card <%if (!print.isRejected) {%>alert-primary<%} else {%> alert-danger<%}%>">
     <h4>Review Details</h4>
     <p>
-        <strong>Reviewed by:</strong> <%=print.approvedBy%> <br />
-        <strong>Reviewed on:</strong> <%=print.dateReviewed%> <br />
-        <strong>Review Notes:</strong> <%=print.patronNotes%> <br />
+        <strong>Reviewed by:</strong> <span class="data"><%=print.approvedBy%></span> <br />
+        <strong>Reviewed on:</strong> <span class="data"><%=print.dateReviewed%></span> <br />
+        <strong>Review Notes:</strong> <span class="data"><%=print.patronNotes%></span> <br />
         <%if (print.wasStarted) { %>
-        <strong>Started by:</strong> <%=print.startedBy%> <%}%>
+        <strong>Started by:</strong>  <span class="data"><%=print.startedBy%></span> <%}%>
     </p>
     <%if (!print.isRejected) {%>
     <hr />
     <p>
         <strong>GCODE Filename:</strong>
-        <a href="#" class="download-btn" id="<%= print.gcodeName%>"><%=print.realGcodeName%></a>
+        <span class="data"><a href="#" class="download-btn" id="<%= print.gcodeName%>"
+            ><%=print.realGcodeName%></a
+        ></span>
         <br />
-        <strong>Sliced for printer:</strong> <%=print.slicedPrinter%> <br />
-        <strong>Sliced for material:</strong> <%=print.slicedMaterial%> <br />
-        <strong>Print Location: </strong> <%=print.printLocation%> &nbsp;
+        <strong>Sliced for printer:</strong> <span class="data"><%=print.slicedPrinter%></span> <br />
+        <strong>Sliced for material:</strong> <span class="data"><%=print.slicedMaterial%></span> <br />
+        <strong>Print Location: </strong> <span class="data"><%=print.printLocation%> &nbsp;
         <span class="icon-btn" data-toggle="tooltip" data-placement="top" title="Change Location">
             <svg
                 class="bi bi-arrow-left-right change-btn"
@@ -40,10 +42,10 @@
     </p>
     <hr />
     <p class="mb-0">
-        <strong>Print time estimate: </strong> <%= print.timeHours%> hours, <%= print.timeMinutes%> minutes <br />
-        <strong>Print weight estimate: </strong> <%= print.grams%> grams
+        <strong>Print time estimate: </strong> <span class="data"><%= print.timeHours%> hours, <%= print.timeMinutes%> minutes</span> <br />
+        <strong>Print weight estimate: </strong> <span class="data"><%= print.grams%> grams</span>
     </p>
     <%} else {%>
-    <p class="mb-0"><strong>Status: </strong> Rejected<br /></p>
+    <p class="mb-0"><strong>Status: </strong> <span class="data">Rejected</span><br /></p>
     <%}%>
 </div>

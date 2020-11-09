@@ -43,6 +43,7 @@ var singlePrintSchema = mongoose.Schema({
     timeHours: Number,
     timeMinutes: Number,
     grams: Number,
+    realGrams: Number, //actual grams entered after printing is finished
 
     isStarted: Boolean,
     copiesPrinting: Number,

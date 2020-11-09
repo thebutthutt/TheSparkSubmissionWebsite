@@ -27,16 +27,16 @@
         </div>
     <%} else {%>
         <form class="form-inline">
-            <label class="sr-only" for="inlineFormInputName2">Name</label>
+            <label class="sr-only" for="inlineFormInputName2">Num Copies</label>
             <input type="number" min="1" step="1" value="1" class="form-control mb-2 mr-sm-2" id="inlineFormInputCopies" name="copiesPrinting">
             <button type="submit" class="btn btn-warning mb-2 markCopiesPrinting" fileID="<%=print._id%>">Start printing this many copies</button>
         </form>
     <%}%>
 
     <p>
-        <strong>Attempts</strong> <%=print.numAttempts%> <br />
-        <strong>Failed attempts</strong> <%=print.numFailedAttempts%> <br />
-        <strong>Copies Printed</strong> <%=print.copiesPrinted%>
+        <strong>Attempts</strong> <span class="data"><%=print.numAttempts%></span> <br />
+        <strong>Failed attempts</strong> <span class="data"><%=print.numFailedAttempts%></span> <br />
+        <strong>Copies Printed</strong> <span class="data"><%=print.copiesPrinted%></span>
     </p>
     <% if (!print.isStarted) {%>
         <button
@@ -47,6 +47,12 @@
             Mark Completed!
         </button>
         <p>Please make sure you have printed as many copies as the patron requested.</p>
+
+        <form class="form-inline">
+            <label class="sr-only" for="inlineFormInputName2">Real Grams</label>
+            <input type="number" min="0" class="form-control mb-2 mr-sm-2" id="inlineFormRealGrams" name="realGrams" required>
+            <button type="submit" class="btn btn-warning mb-2 submitRealGrams" fileID="<%=print._id%>">Confirm</button>
+        </form>
     <%}%>
     
 
