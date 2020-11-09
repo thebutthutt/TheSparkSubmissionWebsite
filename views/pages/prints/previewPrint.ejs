@@ -166,20 +166,37 @@
             </div>
             <div class="modal-body" >
 				<div class="asklocation">
-					<button class="btn btn-lg btn-primary connect-button" location="willis">WILLIS</button>
-					<button class="btn btn-lg btn-primary connect-button" location="dp">Discovery Park</button>
+                    <h1 class="display-4">Ready for Pickup?</h1>
+                    <p class="lead">Check the patron's ID card and get an iPad ready for them to sign on!</p>
+                    <div class="row my-3">
+                        <div class="col-7">
+                            <h4>Check the patron's ID</h4>
+                            <p>Next, you'll be directing them to an iPad to complete a digital signature. Have the iPad connected to the appropriate URL for the location the print is being picked up at. For willis, this is <a href="/signaturewillis">sparkorders.library.unt.edu/signaturewillis</a> and for Discovery Park this is <a href="/signaturedp">sparkorders.library.unt.edu/signaturedp</a></p>
+                        </div>
+                        <div class="col-5">
+                            <img src="/public/images/id.jpg" style="width: 100%; height: auto;">
+                        </div>
+                    </div>
+                    <h4>Select your current location:</h4>
+                    <div class="row">
+                        <div class="col"><button class="btn btn-lg btn-primary connect-button" style="width: 100%;" location="willis">Willis Library</button></div>
+                        <div class="col"><button class="btn btn-lg btn-primary connect-button" style="width: 100%; location="dp">Discovery Park</button></div>
+                    </div>
+					
+					
 				</div>
 				<div class="nopad" style="display: none;">
-					<h2>Please Connect A Signature Pad!</h2>
-					<p>Use an iPad and navigate to sparkorders.library.unt.edu/signature to get started.</p>
+                    <h1 class="display-4">Please Connect a Signature Pad!</h1>
+                    <p class="lead">Use an iPad and navigate to <a href="/signaturewillis">sparkorders.library.unt.edu/signaturewillis</a> or <a href="/signaturedp">sparkorders.library.unt.edu/signaturedp</a> to get started.</p>
+                    <p>In the future, these links will be pinned on the home screen of all our iPads for easy access. For now we must suffer.</p>
 				</div>
 				<div class="asksig" style="display: none;">
-					<h2>Please Do Not Close This Window</h2>
-					<p>Ask the patron to sign on the iPad in front of them.</p>
+                    <h1 class="display-4">Please Do Not Close This Window!</h1>
+					<p class="lead">Ask the patron to sign on the iPad in front of them.</p>
 				</div>
 				<div class="verify" style="display: none;">
-					<h2>Verify Your Credentials</h2>
-					<p>Please confirm your password below. By confirming your password you are signing as a witness that the patron has picked up their print.</p>
+					<h1 class="display-4">Verify Your Credentials</h1>
+					<p class="lead">Please confirm your password below. By confirming your password you are signing as a witness that the patron has picked up their print.</p>
 					<form class="verification" >
 					<div class="form-group">
                             <label class="sr-only">EUID</label>
