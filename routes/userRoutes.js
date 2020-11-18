@@ -37,7 +37,7 @@ module.exports = function (
     app.post("/verify", function (req, res, next) {
         console.log("me");
         passport.authenticate("verification", function (err, user) {
-            console.log("also me");
+            console.log("asking for verification");
             if (err) {
                 console.log("nope");
                 return res.send("password");

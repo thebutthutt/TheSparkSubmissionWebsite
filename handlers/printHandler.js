@@ -575,7 +575,7 @@ module.exports = {
                     result.files.id(fileID).isSigned = true;
                     result.files.id(fileID).signaturePath = fileName;
                     result.save();
-                    module.exports.markPickedUp(fileID); //also mark it picked up
+                    //module.exports.markPickedUp(fileID); //also mark it picked up
                 }
             }
         );

@@ -30,7 +30,7 @@ module.exports = function (passport) {
         "verification",
         new LocalStrategy(
             {
-                usernameField: "username",
+                usernameField: "euid",
                 passwordField: "password",
                 passReqToCallback: true, // allows us to pass back the entire request to the callback
             },
@@ -38,7 +38,7 @@ module.exports = function (passport) {
                 var login = ldap.createClient({
                     url: "ldaps://ldap-auth.untsystem.edu",
                 });
-
+                var loginDN = "uid=" + euid + ",ou=people,o=unt";
                 login.bind(loginDN, password, function (err, res) {
                     if (err) {
                         login.unbind();

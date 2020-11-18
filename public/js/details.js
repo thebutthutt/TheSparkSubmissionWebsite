@@ -137,6 +137,7 @@ $(document).ready(function () {
                         $(".modal").modal("hide");
                     } else {
                         //verification failed
+                        $(".wrong-password").show();
                     }
                 });
             });

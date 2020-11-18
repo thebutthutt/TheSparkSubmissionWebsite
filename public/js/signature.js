@@ -1,3 +1,5 @@
+//WEBSOCKET FRONTEND LOGIC
+
 var ws;
 var fileName;
 var signlocation;

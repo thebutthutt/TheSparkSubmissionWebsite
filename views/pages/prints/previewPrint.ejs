@@ -198,7 +198,7 @@
 					<h1 class="display-4">Verify Your Credentials</h1>
 					<p class="lead">Please confirm your password below. By confirming your password you are signing as a witness that the patron has picked up their print.</p>
 					<form class="verification" >
-					<div class="form-group">
+					    <div class="form-group">
                             <label class="sr-only">EUID</label>
                             <input
                                 type="text"
@@ -223,7 +223,10 @@
                         >
                             Submit
                         </button>
-				</form>
+                    </form>
+                    <div class="alert alert-danger wrong-password" role="alert" style="display: none;">
+                        That didn't work. Try again?
+                    </div>
 				</div>
 			</div>
           </div>
