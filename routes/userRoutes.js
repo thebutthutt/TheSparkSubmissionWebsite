@@ -36,7 +36,7 @@ module.exports = function (
 
     app.post("/verify", function (req, res, next) {
         console.log("me");
-        passport.authenticate("local-login", function (err, user) {
+        passport.authenticate("verification", function (err, user) {
             console.log("also me");
             if (err) {
                 return res.send("error");

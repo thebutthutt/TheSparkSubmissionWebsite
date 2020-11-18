@@ -27,6 +27,34 @@ module.exports = function (passport) {
     });
 
     passport.use(
+        "verification",
+        new LocalStrategy(
+            {
+                usernameField: "username",
+                passwordField: "password",
+                passReqToCallback: true, // allows us to pass back the entire request to the callback
+            },
+            function (req, euid, password, done) {
+                var login = ldap.createClient({
+                    url: "ldaps://ldap-auth.untsystem.edu",
+                });
+
+                login.bind(loginDN, password, function (err, res) {
+                    if (err) {
+                        login.unbind();
+                        done(null, req.user, {
+                            message: "Password not recognised. Try again?",
+                        });
+                    } else {
+                        login.unbind();
+                        done(null, req.user);
+                    }
+                });
+            }
+        )
+    );
+
+    passport.use(
         "local-login",
         new LocalStrategy(
             {
@@ -43,11 +71,7 @@ module.exports = function (passport) {
                     bindDN: process.env.BIND_DN,
                     bindCredentials: process.env.BIND_CRED,
                     tlsOptions: {
-                        ca: [
-                            fs.readFileSync(
-                                path.join(__dirname, "../UNTADRootCA.pem")
-                            ),
-                        ],
+                        ca: [fs.readFileSync(path.join(__dirname, "../UNTADRootCA.pem"))],
                     },
                 });
 
@@ -73,15 +97,11 @@ module.exports = function (passport) {
                             ) {
                                 //user is a member of the spark so we can go ahead and log them in maybe
                                 employment.unbind();
-                                login.bind(loginDN, password, function (
-                                    err,
-                                    res
-                                ) {
+                                login.bind(loginDN, password, function (err, res) {
                                     if (err) {
                                         login.unbind();
                                         done(null, false, {
-                                            message:
-                                                "Password not recognised. Try again?",
+                                            message: "Password not recognised. Try again?",
                                         });
                                     } else {
                                         login.unbind();
@@ -103,20 +123,12 @@ module.exports = function (passport) {
                                                     newUser.isSuperAdmin = false;
 
                                                     // save the user
-                                                    newUser.save(function (
-                                                        err
-                                                    ) {
+                                                    newUser.save(function (err) {
                                                         if (err) throw err;
-                                                        return done(
-                                                            null,
-                                                            newUser
-                                                        ); //makes new local user that matches UNT user cred
+                                                        return done(null, newUser); //makes new local user that matches UNT user cred
                                                     });
                                                 } else {
-                                                    return done(
-                                                        null,
-                                                        localUser
-                                                    ); //return the user in our database matching the UNT user
+                                                    return done(null, localUser); //return the user in our database matching the UNT user
                                                 }
                                             }
                                         );
