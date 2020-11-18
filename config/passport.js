@@ -42,7 +42,7 @@ module.exports = function (passport) {
                 login.bind(loginDN, password, function (err, res) {
                     if (err) {
                         login.unbind();
-                        done(null, req.user, {
+                        done("password", req.user, {
                             message: "Password not recognised. Try again?",
                         });
                     } else {

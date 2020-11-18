@@ -1,5 +1,5 @@
 const WebSocket = require("ws");
-module.exports = function (server) {
+module.exports = function (server, printHandler) {
     //=========================================
     //				WEB SOCKET
     //	Makes signature pad talk to browsers
@@ -105,10 +105,7 @@ messageStructure: {
                 var obj = JSON.parse(data);
 
                 //if a tech asks for a signature, tell the signature pad to work
-                if (
-                    obj.sender == "tech" &&
-                    obj.command == "requestPatronSignature"
-                ) {
+                if (obj.sender == "tech" && obj.command == "requestPatronSignature") {
                     if (obj.location == "willis") {
                         currentWillisRequestingIndex = clientData.yourID; //mark what client is interacting with the signature pad
                         currentWillisRequestingID = obj.data.fileID; //the ID of the file being signed for
@@ -130,11 +127,7 @@ messageStructure: {
                     } else {
                         currentDPRequestingIndex = clientData.yourID; //mark what client is interacting with the signature pad
                         currentDPRequestingID = obj.data.fileID; //the ID of the file being signed for
-                        console.log(
-                            "dp is asking patron to sign",
-                            currentDPRequestingIndex,
-                            currentDPRequestingID
-                        );
+                        console.log("dp is asking patron to sign", currentDPRequestingIndex, currentDPRequestingID);
 
                         //send the signature pad the request for a signaturee
                         CLIENTS[dp].send(
@@ -146,10 +139,7 @@ messageStructure: {
                             })
                         );
                     }
-                } else if (
-                    obj.sender == "messiah" &&
-                    obj.command == "recievePatronSignature"
-                ) {
+                } else if (obj.sender == "messiah" && obj.command == "recievePatronSignature") {
                     if (obj.location == "willis") {
                         if (obj.data.fileID == currentWillisRequestingID) {
                             //send request for login to the technicians screen
@@ -195,10 +185,7 @@ messageStructure: {
                             );
                         }
                     }
-                } else if (
-                    obj.sender == "tech" &&
-                    obj.command == "recieveAdminLogin"
-                ) {
+                } else if (obj.sender == "tech" && obj.command == "recieveAdminLogin") {
                     if (obj.location == "willis") {
                         CLIENTS[willis].send(
                             JSON.stringify({
@@ -206,11 +193,7 @@ messageStructure: {
                                 command: "resetScreen",
                             })
                         );
-                        console.log(
-                            "picking up at willis",
-                            currentWillisRequestingIndex,
-                            currentWillisRequestingID
-                        );
+                        console.log("picking up at willis", currentWillisRequestingIndex, currentWillisRequestingID);
                         printHandler.markPickedUp(currentWillisRequestingID);
                         currentWillisRequestingID = -1;
                         currentWillisRequestingIndex = -1;
@@ -221,11 +204,7 @@ messageStructure: {
                                 command: "resetScreen",
                             })
                         );
-                        console.log(
-                            "picking up at dp",
-                            currentDPRequestingIndex,
-                            currentDPRequestingID
-                        );
+                        console.log("picking up at dp", currentDPRequestingIndex, currentDPRequestingID);
                         printHandler.markPickedUp(currentDPRequestingID);
                         currentDPRequestingID = -1;
                         currentDPRequestingIndex = -1;

@@ -39,15 +39,11 @@ module.exports = function (
         passport.authenticate("verification", function (err, user) {
             console.log("also me");
             if (err) {
-                return res.send("error");
-            }
-
-            if (user != null) {
-                console.log("logged in");
-                return res.send("yes");
-            } else {
                 console.log("nope");
                 return res.send("password");
+            } else {
+                console.log("logged in");
+                return res.send("yes");
             }
         })(req, res, next);
     });
