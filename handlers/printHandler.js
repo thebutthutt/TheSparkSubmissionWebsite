@@ -564,16 +564,16 @@ module.exports = {
                     console.log(err);
                 } else {
                     //no more than one signature file for a print
-                    if (result.files.id(fileID).isSigned == true && result.files.id(fileID).signaturePath != "") {
+                    /*if (result.files.id(fileID).isSigned == true && result.files.id(fileID).signaturePath != "") {
                         //already had a signature, usually on when debugging
                         fs.unlink(result.files.id(fileID).signaturePath, function (err) {
                             if (err) {
                                 console.log(err);
                             }
                         });
-                    }
+                    }*/
                     result.files.id(fileID).isSigned = true;
-                    result.files.id(fileID).signaturePath = fileName;
+                    //result.files.id(fileID).signaturePath = fileName;
                     result.save();
                     //module.exports.markPickedUp(fileID); //also mark it picked up
                 }
