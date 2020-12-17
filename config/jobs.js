@@ -1,6 +1,6 @@
 var schedule = require("node-schedule");
 const moment = require("moment");
-var emailer = require("./email.js");
+var emailer = require("./emailer.js");
 
 module.exports = function (
     printRequestModel,
@@ -159,9 +159,9 @@ module.exports = function (
     schedule.scheduleJob("1 0 * * *", () => {
         //run once every day at midnight and one minute just in case idk im nervous
         staleOnPickup();
-        needsCleaning();
+        //needsCleaning();
     });
 
     staleOnPickup();
-    needsCleaning();
+    //needsCleaning();
 };

@@ -28,7 +28,7 @@ var objectToCleanModel = require("./app/models/cleaningObject");
 var userModel = require("./app/models/user");
 var payment = require("./config/payment.js");
 
-var emailer = require("./config/emailer.js");
+var tester = require("./tester.js");
 
 var printHandler = require("./handlers/printHandler.js");
 var cleHandler = require("./handlers/cleHandler.js");
@@ -171,4 +171,4 @@ var http_server = http
 
 console.log("The magic happens on port " + port);
 
-emailer.newSubmission();
+//emailer.newSubmission();

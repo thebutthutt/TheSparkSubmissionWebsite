@@ -24,7 +24,9 @@ const email = new Email({
 });
 
 module.exports = {
-    newSubmission: function () {
+    newSubmission: function (submission) {
+        console.log(submission);
+        /*
         email
             .send({
                 template: path.join(__dirname, "emails", "test"),
@@ -37,5 +39,15 @@ module.exports = {
             })
             .then(console.log)
             .catch(console.error);
+        */
     },
+    allApproved: function (submission) {},
+    someApproved: function (submission) {},
+    allRejected: function (submission) {},
+    modificationRequired: function (submission) {},
+    paymentThankYou: function (submission) {},
+    paymentWaived: function (submission) {},
+    readyForPickup: function (submission) {},
+    firstWarning: function (submission) {},
+    finalWarning: function (submission) {},
 };

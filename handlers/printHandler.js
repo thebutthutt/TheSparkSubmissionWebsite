@@ -2,6 +2,7 @@ const moment = require("moment");
 const constants = require("../config/constants");
 var payment = require("../config/payment.js");
 var emailer = require("../config/email.js");
+var newmailer = require("../config/emailer.js");
 var fs = require("fs");
 var path = require("path");
 var printRequestModel = require("../app/models/printRequest");
@@ -87,12 +88,24 @@ module.exports = {
         //arrays of each files specifications (will only hold one entry each if patron submits only one file)
         var filenames = [],
             realFileNames = [],
-            materials = Array.isArray(req.body.material) ? req.body.material : Array.of(req.body.material),
-            infills = Array.isArray(req.body.infill) ? req.body.infill : Array.of(req.body.infill),
-            colors = Array.isArray(req.body.color) ? req.body.color : Array.of(req.body.color),
-            copies = Array.isArray(req.body.copies) ? req.body.copies : Array.of(req.body.copies),
-            notes = Array.isArray(req.body.notes) ? req.body.notes : Array.of(req.body.notes),
-            pickups = Array.isArray(req.body.pickup) ? req.body.pickup : Array.of(req.body.pickup),
+            materials = Array.isArray(req.body.material)
+                ? req.body.material
+                : Array.of(req.body.material),
+            infills = Array.isArray(req.body.infill)
+                ? req.body.infill
+                : Array.of(req.body.infill),
+            colors = Array.isArray(req.body.color)
+                ? req.body.color
+                : Array.of(req.body.color),
+            copies = Array.isArray(req.body.copies)
+                ? req.body.copies
+                : Array.of(req.body.copies),
+            notes = Array.isArray(req.body.notes)
+                ? req.body.notes
+                : Array.of(req.body.notes),
+            pickups = Array.isArray(req.body.pickup)
+                ? req.body.pickup
+                : Array.of(req.body.pickup),
             prints = [],
             patron = {
                 first: req.body.first,
@@ -109,7 +122,9 @@ module.exports = {
         } else {
             req.files.forEach(function (file) {
                 filenames.push(file.path);
-                realFileNames.push(file.path.substring(file.path.indexOf("/STLs/") + 20));
+                realFileNames.push(
+                    file.path.substring(file.path.indexOf("/STLs/") + 20)
+                );
             });
             prints.push(filenames);
             prints.push(realFileNames);
@@ -133,7 +148,9 @@ module.exports = {
         var shouldUpload = false;
         if (req.files[0]) {
             var gcode = req.files[0].path;
-            var realGcodeName = req.files[0].path.substring(req.files[0].path.indexOf("/Gcode/") + 20);
+            var realGcodeName = req.files[0].path.substring(
+                req.files[0].path.indexOf("/Gcode/") + 20
+            );
             shouldUpload = true;
         }
         var maker = req.user.name;
@@ -150,12 +167,17 @@ module.exports = {
                     id = req.body.fileID;
                     if (result.files.id(req.body.fileID).gcodeName != null) {
                         //delete gcode from disk if it exists
-                        console.log("Submission had old GCODE file! deleting...");
-                        fs.unlink(result.files.id(req.body.fileID).gcodeName, function (err) {
-                            if (err) {
-                                console.log(err);
+                        console.log(
+                            "Submission had old GCODE file! deleting..."
+                        );
+                        fs.unlink(
+                            result.files.id(req.body.fileID).gcodeName,
+                            function (err) {
+                                if (err) {
+                                    console.log(err);
+                                }
                             }
-                        });
+                        );
                     }
                 }
             }
@@ -247,9 +269,11 @@ module.exports = {
                             result.files.id(req.body.fileID).techNotes += "\n";
                         }
 
-                        result.files.id(req.body.fileID).techNotes += req.body.name;
+                        result.files.id(req.body.fileID).techNotes +=
+                            req.body.name;
                         result.files.id(req.body.fileID).techNotes += ": ";
-                        result.files.id(req.body.fileID).techNotes += req.body.newNotes;
+                        result.files.id(req.body.fileID).techNotes +=
+                            req.body.newNotes;
                         result.save();
                     }
                 }
@@ -283,7 +307,10 @@ module.exports = {
                         result.files[i].canBeReviewed = false;
                         result.files[i].isNewSubmission = false;
 
-                        if (result.files[i].isRejected == false && result.files[i].isReviewed == true) {
+                        if (
+                            result.files[i].isRejected == false &&
+                            result.files[i].isReviewed == true
+                        ) {
                             //print is accepted
                             result.files[i].isPendingPayment = true;
                             if (result.files[i].timeHours <= 0) {
@@ -295,12 +322,18 @@ module.exports = {
                                 amount += result.files[i].timeMinutes / 60;
                             }
                             acceptedFiles.push(
-                                result.files[i].fileName.substring(result.files[i].fileName.indexOf("STLs/") + 19)
+                                result.files[i].fileName.substring(
+                                    result.files[i].fileName.indexOf("STLs/") +
+                                        19
+                                )
                             );
                             acceptedMessages.push(result.files[i].patronNotes);
                         } else {
                             rejectedFiles.push(
-                                result.files[i].fileName.substring(result.files[i].fileName.indexOf("STLs/") + 19)
+                                result.files[i].fileName.substring(
+                                    result.files[i].fileName.indexOf("STLs/") +
+                                        19
+                                )
                             );
                             rejectedMessages.push(result.files[i].patronNotes);
                         }
@@ -310,11 +343,17 @@ module.exports = {
 
                     //if the submission had any accepted files, we will ask for payment
                     if (acceptedFiles.length > 0) {
-                        result.datePaymentRequested = time.format(constants.format);
+                        result.datePaymentRequested = time.format(
+                            constants.format
+                        );
 
                         //calc full name of patron
                         var nameString = "";
-                        nameString = nameString.concat(result.patron.fname, " ", result.patron.lname);
+                        nameString = nameString.concat(
+                            result.patron.fname,
+                            " ",
+                            result.patron.lname
+                        );
 
                         //hand it to the payment handler to generate the url for the patron
                         payment.generatePaymentURL(
@@ -330,8 +369,15 @@ module.exports = {
                     } else {
                         //dont ask for payment, just move to the rejected queue
                         //none of the prints were accepted
-                        result.datePaymentRequested = time.format(constants.format); //still capture review time
-                        emailer.fullyRejected(email, rejectedFiles, rejectedMessages); //send a completely rejected email
+                        result.datePaymentRequested = time.format(
+                            constants.format
+                        ); //still capture review time
+                        emailer.fullyRejected(
+                            email,
+                            rejectedFiles,
+                            rejectedMessages
+                        ); //send a completely rejected email
+                        newmailer.allRejected(result);
                     }
 
                     //save result to the database with updated flags
@@ -364,15 +410,20 @@ module.exports = {
                             result.files[i].isReadyToPrint = true;
                             result.files[i].isPendingWaive = false;
                             if (wasWaived) {
-                                result.files[i].overrideNotes = "Payment was waived by " + waivingEUID + "\n";
+                                result.files[i].overrideNotes =
+                                    "Payment was waived by " +
+                                    waivingEUID +
+                                    "\n";
                             }
                         }
                     }
                     result.datePaid = time.format(constants.format);
                     if (wasWaived) {
                         emailer.paymentWaived(result.patron.email);
+                        newmailer.paymentWaived(result);
                     } else {
                         emailer.readyToPrint(result.patron.email);
+                        newmailer.paymentThankYou(result);
                     }
 
                     result.save(); //save the db entry
@@ -401,15 +452,20 @@ module.exports = {
                             result.files[i].isReadyToPrint = true;
                             result.files[i].isPendingWaive = false;
                             if (wasWaived) {
-                                result.files[i].overrideNotes = "Payment was waived by " + waivingEUID + "\n";
+                                result.files[i].overrideNotes =
+                                    "Payment was waived by " +
+                                    waivingEUID +
+                                    "\n";
                             }
                         }
                     }
                     result.datePaid = time.format(constants.format);
                     if (wasWaived) {
                         emailer.paymentWaived(result.patron.email);
+                        newmailer.paymentWaived(result);
                     } else {
                         emailer.readyToPrint(result.patron.email);
+                        newmailer.paymentThankYou(result);
                     }
 
                     result.save(); //save the db entry
@@ -446,8 +502,14 @@ module.exports = {
                 module.exports.setFlags(fileID, function () {});
                 emailer.readyForPickup(
                     result.patron.email,
-                    result.files.id(fileID).fileName.substring(result.files.id(fileID).fileName.indexOf("STLs/") + 18)
+                    result.files
+                        .id(fileID)
+                        .fileName.substring(
+                            result.files.id(fileID).fileName.indexOf("STLs/") +
+                                18
+                        )
                 );
+                newmailer.readyForPickup(result);
             }
         );
     },
@@ -731,21 +793,33 @@ module.exports = {
                 });
 
                 //delete gcode from disk if it exists
-                if (result.files.id(fileID).gcodeName != null && result.files.id(fileID).gcodeName != "") {
-                    fs.unlink(result.files.id(fileID).gcodeName, function (err) {
-                        if (err) {
-                            console.log(err);
+                if (
+                    result.files.id(fileID).gcodeName != null &&
+                    result.files.id(fileID).gcodeName != ""
+                ) {
+                    fs.unlink(
+                        result.files.id(fileID).gcodeName,
+                        function (err) {
+                            if (err) {
+                                console.log(err);
+                            }
                         }
-                    });
+                    );
                 }
 
                 //delete signature if it exists
-                if (result.files.id(fileID).signaturePath != null && result.files.id(fileID).signaturePath != "") {
-                    fs.unlink(result.files.id(fileID).signaturePath, function (err) {
-                        if (err) {
-                            console.log(err);
+                if (
+                    result.files.id(fileID).signaturePath != null &&
+                    result.files.id(fileID).signaturePath != ""
+                ) {
+                    fs.unlink(
+                        result.files.id(fileID).signaturePath,
+                        function (err) {
+                            if (err) {
+                                console.log(err);
+                            }
                         }
-                    });
+                    );
                 }
 
                 result.files.id(fileID).remove(); //remove the single file from the top level print submission
@@ -767,7 +841,10 @@ module.exports = {
                         //save top level request db entry
                         if (err) console.log(err);
                     });
-                    module.exports.setFlags(result.files[0]._id, function () {}); //now set all the flags of the updated top level submission
+                    module.exports.setFlags(
+                        result.files[0]._id,
+                        function () {}
+                    ); //now set all the flags of the updated top level submission
                 }
             }
         );
