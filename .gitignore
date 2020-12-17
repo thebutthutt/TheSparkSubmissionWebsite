@@ -3,6 +3,7 @@
 *.pem
 .env
 /app/uploads/*
+node_modules/*
 node_modules/
 node_modules
 package-lock.json
