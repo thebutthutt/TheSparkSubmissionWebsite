@@ -1,4 +1,5 @@
 const Email = require("email-templates");
+const { template } = require("lodash");
 var nodemailer = require("nodemailer");
 const path = require("path");
 
@@ -25,7 +26,25 @@ const email = new Email({
 
 module.exports = {
     newSubmission: function (submission) {
-        console.log(submission);
+        var recipient = submission.patron.email;
+        var files = submission.files;
+        var fileNames = files.map(function (file) {
+            return file.realFileName;
+        });
+        console.log(fileNames);
+        email
+            .send({
+                template: path.join(__dirname, "emails", "newSubmission"),
+                message: {
+                    to: recipient,
+                },
+                locals: {
+                    fileNames: fileNames,
+                },
+            })
+            .then(console.log)
+            .catch(console.error);
+        //console.log(submission);
         /*
         email
             .send({
