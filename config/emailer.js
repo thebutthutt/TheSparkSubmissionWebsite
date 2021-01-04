@@ -44,24 +44,36 @@ module.exports = {
             })
             .then(console.log)
             .catch(console.error);
-        //console.log(submission);
-        /*
+    },
+    allApproved: function (submission, amount, url) {
+        var recipient = submission.patron.email;
+        var files = submission.files;
+        var inputData = files.map(function (file) {
+            return {
+                fileName: file.realFileName,
+                grams: file.grams,
+                timeHours: file.timeHours,
+                timeMinutes: file.timeMinutes,
+                notes: file.patronNotes,
+            };
+        });
+        console.log(inputData);
         email
             .send({
-                template: path.join(__dirname, "emails", "test"),
+                template: path.join(__dirname, "emails", "allApproved"),
                 message: {
-                    to: "hanna.flores@unt.edu",
+                    to: recipient,
                 },
                 locals: {
-                    name: "Elon",
+                    allFiles: inputData,
+                    amount: amount,
+                    url: url,
                 },
             })
             .then(console.log)
             .catch(console.error);
-        */
     },
-    allApproved: function (submission) {},
-    someApproved: function (submission) {},
+    someApproved: function (submission, amount, url) {},
     allRejected: function (submission) {},
     modificationRequired: function (submission) {},
     paymentThankYou: function (submission) {},

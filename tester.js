@@ -1,4 +1,5 @@
 var printRequestModel = require("./app/models/printRequest");
+var printHandler = require("./handlers/printHandler.js");
 var emailer = require("./config/emailer.js");
 
 console.log("here");
@@ -10,7 +11,8 @@ async function testEmails() {
 
     console.log(dummySubmission);
     if (dummySubmission) {
-        emailer.newSubmission(dummySubmission);
+        //emailer.allApproved(dummySubmission, 123.45, "abc.com");
+        printHandler.requestPayment(dummySubmission._id, null);
     }
 }
 

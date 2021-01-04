@@ -5,6 +5,7 @@ var path = require("path");
 var emailer = require("./email.js");
 var crypto = require("crypto");
 var emailer = require("./email.js");
+var newmailer = require("../config/emailer.js");
 
 const secret_key = process.env.PAYMENT_KEY;
 
@@ -51,6 +52,42 @@ module.exports = {
                 newURL.href
             )
             .catch(console.error);
+    },
+
+    sendPaymentEmail: function (submission, amount, numRejected) {
+        var nameString = "";
+        nameString = nameString.concat(
+            submission.patron.fname,
+            " ",
+            submission.patron.lname
+        );
+
+        var concatString = "";
+        var newURL = new URL(base_url);
+        concatString = concatString.concat(
+            account,
+            amount,
+            nameString,
+            submission._id,
+            secret_key
+        );
+
+        var otherHash = crypto
+            .createHash("md5")
+            .update(concatString)
+            .digest("hex");
+
+        newURL.searchParams.append("account", account);
+        newURL.searchParams.append("amount", amount);
+        newURL.searchParams.append("contact_name", nameString);
+        newURL.searchParams.append("submissionID", submission._id);
+        newURL.searchParams.append("libhash", otherHash);
+
+        if (numRejected > 0) {
+            newmailer.someApproved(submission, amount, newURL.href);
+        } else {
+            newmailer.allApproved(submission, amount, newURL.href);
+        }
     },
 
     //validate an incoming payment confirmation url
@@ -104,17 +141,16 @@ module.exports = {
 
     handlePaymentComplete: function (req, callback) {
         //validate the incoming payment confirmation
-        this.validatePaymentURL(req.query, function (
-            innerMatch,
-            outerMatch,
-            submissionID
-        ) {
-            if (innerMatch == true && outerMatch == true) {
-                callback(true, submissionID);
-            } else {
-                console.log("Hashes invalid");
-                callback(false, submissionID);
+        this.validatePaymentURL(
+            req.query,
+            function (innerMatch, outerMatch, submissionID) {
+                if (innerMatch == true && outerMatch == true) {
+                    callback(true, submissionID);
+                } else {
+                    console.log("Hashes invalid");
+                    callback(false, submissionID);
+                }
             }
-        });
+        );
     },
 };

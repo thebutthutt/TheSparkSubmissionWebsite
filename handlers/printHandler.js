@@ -313,7 +313,10 @@ module.exports = {
                         ) {
                             //print is accepted
                             result.files[i].isPendingPayment = true;
-                            if (result.files[i].timeHours <= 0) {
+                            if (
+                                result.files[i].timeHours <= 0 &&
+                                result.files[i].timeMinutes <= 59
+                            ) {
                                 //if its less than an hour, just charge one dollar
                                 amount += 1;
                             } else {
@@ -321,20 +324,10 @@ module.exports = {
                                 amount += result.files[i].timeHours;
                                 amount += result.files[i].timeMinutes / 60;
                             }
-                            acceptedFiles.push(
-                                result.files[i].fileName.substring(
-                                    result.files[i].fileName.indexOf("STLs/") +
-                                        19
-                                )
-                            );
+                            acceptedFiles.push(result.files[i].realFileName);
                             acceptedMessages.push(result.files[i].patronNotes);
                         } else {
-                            rejectedFiles.push(
-                                result.files[i].fileName.substring(
-                                    result.files[i].fileName.indexOf("STLs/") +
-                                        19
-                                )
-                            );
+                            rejectedFiles.push(result.files[i].realFileName);
                             rejectedMessages.push(result.files[i].patronNotes);
                         }
                     }
@@ -356,7 +349,7 @@ module.exports = {
                         );
 
                         //hand it to the payment handler to generate the url for the patron
-                        payment.generatePaymentURL(
+                        /*payment.generatePaymentURL(
                             nameString,
                             email,
                             acceptedFiles,
@@ -365,18 +358,19 @@ module.exports = {
                             rejectedMessages,
                             amount,
                             result._id
-                        ); //generate the URL
+                        ); //generate the URL*/
+
+                        payment.sendPaymentEmail(
+                            result,
+                            amount,
+                            rejectedFiles.length
+                        );
                     } else {
                         //dont ask for payment, just move to the rejected queue
                         //none of the prints were accepted
                         result.datePaymentRequested = time.format(
                             constants.format
                         ); //still capture review time
-                        emailer.fullyRejected(
-                            email,
-                            rejectedFiles,
-                            rejectedMessages
-                        ); //send a completely rejected email
                         newmailer.allRejected(result);
                     }
 
