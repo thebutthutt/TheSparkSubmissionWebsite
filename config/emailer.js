@@ -22,6 +22,11 @@ const email = new Email({
     },
     send: true,
     transport: transporter,
+    views: {
+        options: {
+            extension: "ejs", // <---- HERE
+        },
+    },
 });
 
 module.exports = {
@@ -42,7 +47,6 @@ module.exports = {
                     fileNames: fileNames,
                 },
             })
-            .then(console.log)
             .catch(console.error);
     },
     allApproved: function (submission, amount, url) {
@@ -57,10 +61,9 @@ module.exports = {
                 notes: file.patronNotes,
             };
         });
-        console.log(inputData);
         email
             .send({
-                template: path.join(__dirname, "emails", "allApproved"),
+                template: path.join(__dirname, "emails", "allApprovedEJS"),
                 message: {
                     to: recipient,
                 },
@@ -70,7 +73,6 @@ module.exports = {
                     url: url,
                 },
             })
-            .then(console.log)
             .catch(console.error);
     },
     someApproved: function (submission, amount, url) {},

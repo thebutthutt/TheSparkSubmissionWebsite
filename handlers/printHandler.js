@@ -349,7 +349,7 @@ module.exports = {
                         );
 
                         //hand it to the payment handler to generate the url for the patron
-                        /*payment.generatePaymentURL(
+                        payment.generatePaymentURL(
                             nameString,
                             email,
                             acceptedFiles,

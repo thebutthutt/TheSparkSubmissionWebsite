@@ -1,0 +1,62 @@
+<div>
+    The Spark is happy to inform you that your 3D print request has been
+    reviewed and all of your requested files have met the guidelines for being
+    printed. Here are the review notes for each of your files:
+</div>
+<div>&nbsp;</div>
+<div>
+    <% allFiles.forEach(function(file){ %>
+    <hr />
+    <div>File: <%= file.fileName %></div>
+    <div>Weight: <%= file.weight %> grams</div>
+    <div>
+        Time to print: <%= file.timeHours %> hours and <%= file.timeMinutes %>
+        minutes
+    </div>
+    <div>Notes: <%= file.notes %></div>
+    <% }); %>
+    <hr />
+</div>
+<div>&nbsp;</div>
+<div>
+    Often prints will require support. If in the notes above, we mentioned the
+    print will needs supports here is more information about what that means:
+    <a
+        href="https://www.3dhubs.com/knowledge-base/supports-3d-printing-technology-overview/#fdm"
+        >https://www.3dhubs.com/knowledge-base/supports-3d-printing-technology-overview/#fdm</a
+    >
+    It is important that you understand we do not remove supports, so they will
+    be on your print at pickup.
+</div>
+<div>&nbsp;</div>
+<div>
+    The total cost for this submission is <%= amount %>, and you can pay for
+    this submission online at the following link:
+</div>
+<a href="<%=url%>">https://payments.library.unt.edu/</a>
+<div>&nbsp;</div>
+<div>Thank you for using our services.</div>
+<div>
+    If you have any questions, please reach out to us at
+    <a href="mailto:TheSpark@unt.edu">TheSpark@unt.edu</a>
+</div>
+<div>&nbsp;</div>
+<div>The Spark Makerspace - UNT Libraries</div>
+<div>University of North Texas</div>
+<div>Willis Library rm. 135 | 940-369-5259</div>
+<div>Discovery Park rm. M130 | 940-565-3175</div>
+<div>Please visit https://guides.library.unt.edu/spark for our hours.</div>
+<div>&nbsp;</div>
+<div>
+    Podcast: on Apple Podcast as UNT MindSpark or at
+    <a href="https://untmakerspace.podbean.com"
+        >https://untmakerspace.podbean.com</a
+    >
+</div>
+<div>
+    Blog:
+    <a href="https://blogs.library.unt.edu/spark/"
+        >https://blogs.library.unt.edu/spark/</a
+    >
+</div>
+<div>Igniting the imagination through cooperative learning...</div>
