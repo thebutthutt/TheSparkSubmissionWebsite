@@ -1,3 +1,5 @@
+/** @format */
+
 const Email = require("email-templates");
 const { template } = require("lodash");
 var nodemailer = require("nodemailer");
@@ -25,6 +27,31 @@ const email = new Email({
     views: {
         options: {
             extension: "ejs", // <---- HERE
+        },
+    },
+    // <https://github.com/Automattic/juice>
+    juice: true,
+    // Override juice global settings <https://github.com/Automattic/juice#juicecodeblocks>
+    juiceSettings: {
+        tableElements: ["TABLE"],
+    },
+    juiceResources: {
+        preserveImportant: true,
+        webResources: {
+            //
+            // this is the relative directory to your CSS/image assets
+            // and its default path is `build/`:
+            //
+            // e.g. if you have the following in the `<head`> of your template:
+            // `<link rel="stylesheet" href="style.css" data-inline="data-inline">`
+            // then this assumes that the file `build/style.css` exists
+            //
+            relativeTo: path.join(__dirname, "emails", "assets"),
+            //
+            // but you might want to change it to something like:
+            // relativeTo: path.join(__dirname, '..', 'assets')
+            // (so that you can re-use CSS/images that are used in your web-app)
+            //
         },
     },
 });
@@ -68,6 +95,7 @@ module.exports = {
                     to: recipient,
                 },
                 locals: {
+                    submission: submission,
                     allFiles: inputData,
                     amount: amount,
                     url: url,
@@ -80,7 +108,21 @@ module.exports = {
     modificationRequired: function (submission) {},
     paymentThankYou: function (submission) {},
     paymentWaived: function (submission) {},
-    readyForPickup: function (submission) {},
+    readyForPickup: function (submission, readyFile) {
+        var recipient = submission.patron.email;
+        email
+            .send({
+                template: path.join(__dirname, "emails", "fileReady"),
+                message: {
+                    to: recipient,
+                },
+                locals: {
+                    submission: submission,
+                    readyFile: readyFile,
+                },
+            })
+            .catch(console.error);
+    },
     firstWarning: function (submission) {},
     finalWarning: function (submission) {},
 };

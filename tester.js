@@ -1,3 +1,5 @@
+/** @format */
+
 var printRequestModel = require("./app/models/printRequest");
 var printHandler = require("./handlers/printHandler.js");
 var emailer = require("./config/emailer.js");
@@ -12,17 +14,10 @@ async function testEmails() {
 
     //console.log(dummySubmission);
     if (dummySubmission) {
+        printHandler.requestPayment(dummySubmission, null);
         //emailer.allApproved(dummySubmission, 123.45, "abc.com");
-        printHandler.requestPayment(dummySubmission._id, null);
+        emailer.readyForPickup(dummySubmission, dummySubmission.files[0]);
     }
-}
-
-async function makePayment() {
-    var dummySubmission = await printRequestModel.findOne({
-        "patron.fname": "Dummy",
-    });
-
-    payment.generatePaymentURL();
 }
 
 testEmails();
