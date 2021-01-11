@@ -1,3 +1,5 @@
+/** @format */
+
 const base_url = "https://payments.library.unt.edu/payment/";
 const account = process.env.PAYMENT_ACCOUNT;
 var fs = require("fs");
@@ -23,18 +25,9 @@ module.exports = {
     ) {
         var concatString = "";
         var newURL = new URL(base_url);
-        concatString = concatString.concat(
-            account,
-            amount,
-            contact_name,
-            submissionID,
-            secret_key
-        );
+        concatString = concatString.concat(account, amount, contact_name, submissionID, secret_key);
 
-        var otherHash = crypto
-            .createHash("md5")
-            .update(concatString)
-            .digest("hex");
+        var otherHash = crypto.createHash("md5").update(concatString).digest("hex");
 
         newURL.searchParams.append("account", account);
         newURL.searchParams.append("amount", amount);
@@ -43,39 +36,19 @@ module.exports = {
         newURL.searchParams.append("libhash", otherHash);
 
         emailer
-            .requestPayment(
-                email,
-                acceptedFiles,
-                acceptedMessages,
-                rejectedFiles,
-                rejectedMessages,
-                newURL.href
-            )
+            .requestPayment(email, acceptedFiles, acceptedMessages, rejectedFiles, rejectedMessages, newURL.href)
             .catch(console.error);
     },
 
     sendPaymentEmail: function (submission, amount, numRejected) {
         var nameString = "";
-        nameString = nameString.concat(
-            submission.patron.fname,
-            " ",
-            submission.patron.lname
-        );
+        nameString = nameString.concat(submission.patron.fname, " ", submission.patron.lname);
 
         var concatString = "";
         var newURL = new URL(base_url);
-        concatString = concatString.concat(
-            account,
-            amount,
-            nameString,
-            submission._id,
-            secret_key
-        );
+        concatString = concatString.concat(account, amount, nameString, submission._id, secret_key);
 
-        var otherHash = crypto
-            .createHash("md5")
-            .update(concatString)
-            .digest("hex");
+        var otherHash = crypto.createHash("md5").update(concatString).digest("hex");
 
         newURL.searchParams.append("account", account);
         newURL.searchParams.append("amount", amount);
@@ -84,7 +57,7 @@ module.exports = {
         newURL.searchParams.append("libhash", otherHash);
 
         if (numRejected > 0) {
-            newmailer.someApproved(submission, amount, newURL.href);
+            newmailer.someApproved(submission, amount, newURL.href, acceptedIDs, rejectedIDs);
         } else {
             newmailer.allApproved(submission, amount, newURL.href);
         }
@@ -108,10 +81,7 @@ module.exports = {
         );
 
         //hash the params
-        var otherHash = crypto
-            .createHash("md5")
-            .update(concatString)
-            .digest("hex");
+        var otherHash = crypto.createHash("md5").update(concatString).digest("hex");
 
         //does is match the hash sent over?
         if (otherHash == request_contents.libhash) {
@@ -141,16 +111,13 @@ module.exports = {
 
     handlePaymentComplete: function (req, callback) {
         //validate the incoming payment confirmation
-        this.validatePaymentURL(
-            req.query,
-            function (innerMatch, outerMatch, submissionID) {
-                if (innerMatch == true && outerMatch == true) {
-                    callback(true, submissionID);
-                } else {
-                    console.log("Hashes invalid");
-                    callback(false, submissionID);
-                }
+        this.validatePaymentURL(req.query, function (innerMatch, outerMatch, submissionID) {
+            if (innerMatch == true && outerMatch == true) {
+                callback(true, submissionID);
+            } else {
+                console.log("Hashes invalid");
+                callback(false, submissionID);
             }
-        );
+        });
     },
 };

@@ -1,7 +1,7 @@
 /** @format */
 
 const Email = require("email-templates");
-const { template } = require("lodash");
+const { template, reject } = require("lodash");
 var nodemailer = require("nodemailer");
 const path = require("path");
 
@@ -90,7 +90,7 @@ module.exports = {
         });
         email
             .send({
-                template: path.join(__dirname, "emails", "allApprovedEJS"),
+                template: path.join(__dirname, "emails", "allApproved"),
                 message: {
                     to: recipient,
                 },
@@ -103,7 +103,46 @@ module.exports = {
             })
             .catch(console.error);
     },
-    someApproved: function (submission, amount, url) {},
+    someApproved: function (submission, amount, url) {
+        var recipient = submission.patron.email;
+        var files = submission.files;
+        var acceptedFiles = files.map(function (file) {
+            if (file.isRejected == false) {
+                return {
+                    fileName: file.realFileName,
+                    grams: file.grams,
+                    timeHours: file.timeHours,
+                    timeMinutes: file.timeMinutes,
+                    notes: file.patronNotes,
+                };
+            }
+        });
+
+        var rejectedFiles = files.map(function (file) {
+            if (file.isRejected == true) {
+                return {
+                    fileName: file.realFileName,
+                    notes: file.patronNotes,
+                };
+            }
+        });
+
+        email
+            .send({
+                template: path.join(__dirname, "emails", "allApproved"),
+                message: {
+                    to: recipient,
+                },
+                locals: {
+                    submission: submission,
+                    acceptedFiles: acceptedFiles,
+                    rejectedFiles: rejectedFiles,
+                    amount: amount,
+                    url: url,
+                },
+            })
+            .catch(console.error);
+    },
     allRejected: function (submission) {},
     modificationRequired: function (submission) {},
     paymentThankYou: function (submission) {},

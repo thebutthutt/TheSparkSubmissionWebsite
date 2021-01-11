@@ -275,8 +275,6 @@ module.exports = {
 
                     var acceptedFiles = [],
                         rejectedFiles = [],
-                        acceptedMessages = [],
-                        rejectedMessages = [];
 
                     var email = result.patron.email;
 
@@ -297,11 +295,9 @@ module.exports = {
                                 amount += result.files[i].timeHours;
                                 amount += result.files[i].timeMinutes / 60;
                             }
-                            acceptedFiles.push(result.files[i].realFileName);
-                            acceptedMessages.push(result.files[i].patronNotes);
+                            acceptedFiles.push(result.files[i]._id);
                         } else {
-                            rejectedFiles.push(result.files[i].realFileName);
-                            rejectedMessages.push(result.files[i].patronNotes);
+                            rejectedFiles.push(result.files[i]._id);
                         }
                     }
                     amount = Math.round((amount + Number.EPSILON) * 100) / 100; //make it a normal 2 decimal place charge
