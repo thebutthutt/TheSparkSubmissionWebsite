@@ -192,13 +192,7 @@ module.exports = function (app, printHandler, cleHandler, storage) {
 
                 // By default, multer removes file extensions so let's add them back
                 filename: function (req, file, cb) {
-                    cb(
-                        null,
-                        Date.now() +
-                            "-" +
-                            file.originalname.split(".")[0] +
-                            path.extname(file.originalname)
-                    );
+                    cb(null, Date.now() + "-" + file.originalname.split(".")[0] + path.extname(file.originalname));
                 },
             }),
         }).any(),
@@ -224,13 +218,7 @@ module.exports = function (app, printHandler, cleHandler, storage) {
 
                 // By default, multer removes file extensions so let's add them back
                 filename: function (req, file, cb) {
-                    cb(
-                        null,
-                        Date.now() +
-                            "-" +
-                            file.originalname.split(".")[0] +
-                            path.extname(file.originalname)
-                    );
+                    cb(null, Date.now() + "-" + file.originalname.split(".")[0] + path.extname(file.originalname));
                 },
             }),
         }).any(),
