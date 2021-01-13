@@ -108,26 +108,32 @@ module.exports = {
     someApproved: function (submission, amount, url) {
         var recipient = submission.patron.email;
         var files = submission.files;
-        var acceptedFiles = files.map(function (file) {
+
+        var acceptedFiles = files.reduce(function (result, file) {
             if (file.isRejected == false) {
-                return {
+                result.push({
                     fileName: file.realFileName,
                     grams: file.grams,
                     timeHours: file.timeHours,
                     timeMinutes: file.timeMinutes,
                     notes: file.patronNotes,
-                };
+                });
             }
-        });
+            return result;
+        }, []);
 
-        var rejectedFiles = files.map(function (file) {
+        var rejectedFiles = files.reduce(function (result, file) {
             if (file.isRejected == true) {
-                return {
+                result.push({
                     fileName: file.realFileName,
                     notes: file.patronNotes,
-                };
+                });
             }
-        });
+            return result;
+        }, []);
+
+        console.log(acceptedFiles);
+        console.log(rejectedFiles);
 
         email
             .send({

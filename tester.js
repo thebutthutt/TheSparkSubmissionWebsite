@@ -9,13 +9,13 @@ console.log("here");
 
 async function testEmails() {
     var dummySubmission = await printRequestModel.findOne({
-        "patron.fname": "Dummy",
+        "patron.lname": "DONOTPRINT",
     });
 
     //console.log(dummySubmission);
     if (dummySubmission) {
         printHandler.requestPayment(dummySubmission, null);
-        emailer.readyForPickup(dummySubmission, dummySubmission.files[0]);
+        //emailer.readyForPickup(dummySubmission, dummySubmission.files[0]);
     }
 }
 

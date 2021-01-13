@@ -194,6 +194,7 @@
                                     submitted. You can read the review notes for each of your files below:
                                 </p>
 
+                                <h4 style="margin-bottom: 0px">These Files Were Approved:</h4>
                                 <table style="table-layout: fixed">
                                     <tr class="nopadding">
                                         <th style="width: 66%">
@@ -206,7 +207,7 @@
                                             <p>Print Time</p>
                                         </th>
                                     </tr>
-                                    <% allFiles.forEach(function(file){ %>
+                                    <% acceptedFiles.forEach(function(file){ %>
                                     <tr>
                                         <td>
                                             <p style="margin-bottom: 0px"><strong><%= file.fileName %></strong></p>
@@ -227,9 +228,39 @@
                                     </tr>
                                     <% }); %>
                                 </table>
+
+                                <h4 style="margin-bottom: 0px">These Files Were Rejected:</h4>
+                                <table>
+                                    <tr class="nopadding">
+                                        <th style="width: 66%">
+                                            <p>File Name</p>
+                                        </th>
+                                        <th>
+                                            <p>Reviewer Notes</p>
+                                        </th>
+                                    </tr>
+                                    <% rejectedFiles.forEach(function(file){ %>
+                                    <tr>
+                                        <td>
+                                            <p style="margin-bottom: 0.5em"><strong><%= file.fileName %></strong></p>
+                                        </td>
+                                        <td>
+                                            <p style="margin-bottom: 0.5em"><i>"<%= file.notes %>"</i></p>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                </table>
+                                <p style="margin-top: 1em; margin-bottom: 2em">
+                                    Our reason for rejecting each file is detailed in the notes above. If these notes
+                                    contain suggestions or instructions for correcting these files so they can be
+                                    printed, you are welcome to correct any errors and resubmit these files to be
+                                    printed. If you have any questions or would like to comunicate in more detail,
+                                    please email us at <a href="mailto:TheSpark@unt.edu">TheSpark@unt.edu</a>
+                                </p>
+                                <h3>Payment</h3>
                                 <p>
                                     Our payment rate is $1.00 per hour of estimated print time, so the total cost for
-                                    this submission is <strong><%= amount %></strong>, and you can pay for this
+                                    this submission is <strong>$<%= amount %></strong>, and you can pay for this
                                     submission online at the following link. If you mentioned in the submission notes
                                     that this submission is for educational purposes, you may safely ignore this payment
                                     link; our team will request a payment waive for your submission shortly.
