@@ -1,4 +1,4 @@
-var nodemailer = require('nodemailer');
+var nodemailer = require("nodemailer");
 var smtpserver = "mailhost.unt.edu";
 var portNum = 25;
 
@@ -7,8 +7,8 @@ var transporter = nodemailer.createTransport({
     port: portNum,
     secure: false,
     tls: {
-        rejectUnauthorized: false
-    }
+        rejectUnauthorized: false,
+    },
 });
 
 module.exports = {
@@ -27,7 +27,6 @@ module.exports = {
 
         fullEmail += `</ul>`;
 
-
         if (rejectedFiles.length > 0) {
             fullEmail += `<br>These files were rejected:
                 <ul>`;
@@ -45,14 +44,12 @@ module.exports = {
             After completing your payment, you will recieve an email when your models have been printed. This usually takes between 5 and 7 business days, however, during senior design season, we may be unusually busy. We will try our best to print all our requests as quickly as possible without sacrificing quality. Thank you for chosing The Spark Makerspace!
             `;
 
-
         var email = await transporter.sendMail({
             from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
             to: email,
-            subject: 'Your order has been accepted!',
-            html: fullEmail
+            subject: "Your order has been accepted!",
+            html: fullEmail,
         });
-
     },
 
     fullyRejected: async function (email, rejectedFiles, rejectedMessages) {
@@ -75,41 +72,37 @@ module.exports = {
         var email = await transporter.sendMail({
             from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
             to: email,
-            subject: 'We could not print your order',
-            html: fullEmail
+            subject: "We could not print your order",
+            html: fullEmail,
         });
-        console.log('emailSend');
-
+        console.log("emailSend");
     },
 
-    paymentWaived: async function(email) {
+    paymentWaived: async function (email) {
         var fullEmail = `Thank you for your 3D print request with The Spark Makerspace.
             <br><br>
-            We have waived the payment for your models and they are now in our printing queue! You will recieve an email when your models are sucessfully printed.`
-
+            We have waived the payment for your models and they are now in our printing queue! You will recieve an email when your models are sucessfully printed.`;
 
         var email = await transporter.sendMail({
             from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
             to: email,
-            subject: 'Your Payment Has Been Waived',
-            html: fullEmail
+            subject: "Your Payment Has Been Waived",
+            html: fullEmail,
         });
-        console.log('emailSend');
-
+        console.log("emailSend");
     },
     readyToPrint: async function (email) {
         var fullEmail = `Thank you for your 3D print request with The Spark Makerspace.
             <br><br>
-            We have recieved the payment for your models and they are now in our printing queue! You will recieve an email when your models are sucessfully printed.`
+            We have recieved the payment for your models and they are now in our printing queue! You will recieve an email when your models are sucessfully printed.`;
 
         var email = await transporter.sendMail({
             from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
             to: email,
-            subject: 'Your Payment Has Been Recieved',
-            html: fullEmail
+            subject: "Your Payment Has Been Recieved",
+            html: fullEmail,
         });
-        console.log('emailSend');
-
+        console.log("emailSend");
     },
     readyForPickup: async function (email, fileName) {
         var fullEmail = `Thank you for your 3D print request with The Spark Makerspace.
@@ -120,13 +113,28 @@ module.exports = {
         var email = await transporter.sendMail({
             from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
             to: email,
-            subject: 'Your Print Is Complete!',
-            html: fullEmail
+            subject: "Your Print Is Complete!",
+            html: fullEmail,
         });
 
-        console.log('emailSend');
+        console.log("emailSend");
     },
-    stillWaiting: async function (email, fileNames) {console.log('emailSend');},
-    finalWarning: async function (email, fileNames) {console.log('emailSend');},
-    repoPrint: async function (email, fileNames) {console.log('emailSend');}
-}
+    stillWaiting: async function (email, fileNames) {
+        console.log("emailSend");
+    },
+    finalWarning: async function (email, fileNames) {
+        console.log("emailSend");
+    },
+    repoPrint: async function (email, fileNames) {
+        console.log("emailSend");
+    },
+    sendBug: async function (body) {
+        var email = await transporter.sendMail({
+            from: '"SparkOrders" <no-reply.sparkorders@unt.edu>',
+            to: "hanna.flores@unt.edu",
+            subject: "bugreport",
+            html: JSON.stringify(body),
+        });
+        console.log("emailSend");
+    },
+};
