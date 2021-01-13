@@ -3,7 +3,6 @@
 const moment = require("moment");
 const constants = require("../config/constants");
 var payment = require("../config/payment.js");
-var emailer = require("../config/email.js");
 var newmailer = require("../config/emailer.js");
 var fs = require("fs");
 var path = require("path");
@@ -447,7 +446,7 @@ module.exports = {
                     console.log(err);
                 }
                 module.exports.setFlags(fileID, function () {});
-                emailer.readyForPickup(result.patron.email, result.files.id(fileID).realFileName);
+                //emailer.readyForPickup(result.patron.email, result.files.id(fileID).realFileName);
                 newmailer.readyForPickup(result, result.files.id(fileID));
             }
         );
