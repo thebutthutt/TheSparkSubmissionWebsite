@@ -326,62 +326,62 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
 
     //-----------------------DELETE FILE-----------------------
     //deletes a database entry and asscoiated files
-    app.post("/prints/delete", function (req, res, next) {
+    app.post("/prints/delete", isLoggedIn, function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
         printHandler.deleteFile(fileID);
         res.json(["done"]); //tell the front end the request is done
     });
 
     //request superadmin to delete
-    app.post("/prints/requestdelete", function (req, res, next) {
+    app.post("/prints/requestdelete", isLoggedIn, function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
         adminRequestHandler.addDelete(fileID, "print");
         res.json(["done"]); //tell the front end the request is done
     });
 
     //undo request SU delete
-    app.post("/prints/undodelete", function (req, res, next) {
+    app.post("/prints/undodelete", isLoggedIn, function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
         adminRequestHandler.undoDelete(fileID, "print");
         res.json(["done"]); //tell the front end the request is done
     });
 
     //-----------------------WAIVE PAYMENT-----------------------
-    app.post("/prints/waive", function (req, res, next) {
+    app.post("/prints/waive", isLoggedIn, function (req, res, next) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         printHandler.recievePayment(submissionID, true, req.user.local.euid, function callback() {
             res.json(["done"]); //tell the front end the request is done
         });
     });
 
-    app.post("/prints/waiveByFile", function (req, res, next) {
+    app.post("/prints/waiveByFile", isLoggedIn, function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
         printHandler.recievePaymentByFile(fileID, true, req.user.local.euid, function callback() {
             res.json(["done"]); //tell the front end the request is done
         });
     });
 
-    app.post("/prints/requestwaive", function (req, res, next) {
+    app.post("/prints/requestwaive", isLoggedIn, function (req, res, next) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         adminRequestHandler.addWaive(submissionID, "print");
         res.json(["done"]); //tell the front end the request is done
     });
 
-    app.post("/prints/undowaive", function (req, res, next) {
+    app.post("/prints/undowaive", isLoggedIn, function (req, res, next) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         adminRequestHandler.undoWaive(submissionID, "print");
         res.json(["done"]); //tell the front end the request is done
     });
 
     //-----------------------MARK COMPLETED-----------------------
-    app.post("/prints/finishPrinting", function (req, res) {
+    app.post("/prints/finishPrinting", isLoggedIn, function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
         printHandler.markCompleted(fileID);
         res.json(["done"]);
     });
 
     //-----------------------MARK PICKEFD UP-----------------------
-    app.post("/prints/markPickedUp", function (req, res) {
+    app.post("/prints/markPickedUp", isLoggedIn, function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
         printHandler.markPickedUp(fileID);
         res.json(["done"]);
@@ -389,7 +389,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
 
     //-----------------------DOWNLOAD-----------------------
     //downloads file specified in the parameter
-    app.get("/prints/download", function (req, res) {
+    app.get("/prints/download", isLoggedIn, function (req, res) {
         var fileLocation = req.body.fileID || req.query.fileID;
         res.download(fileLocation); //send the download
     });
@@ -410,6 +410,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                 },
             }),
         }).any(),
+        isLoggedIn,
         function (req, res) {
             printHandler.updateSingle(req, function () {
                 //send all the stuff to the submission handler
@@ -418,14 +419,14 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         }
     );
 
-    app.post("/prints/appendNotes", function (req, res) {
+    app.post("/prints/appendNotes", isLoggedIn, function (req, res) {
         printHandler.appendNotes(req);
         res.redirect("back");
     });
 
     //-----------------------CHANGE LOCATION-----------------------
     //simple change location without reviewing
-    app.post("/prints/changeLocation", function (req, res) {
+    app.post("/prints/changeLocation", isLoggedIn, function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
         printRequestModel.findOne(
             {
@@ -448,7 +449,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     });
 
     //-----------------------SEND PAYMENT EMAIL-----------------------
-    app.post("/prints/requestPayment", function (req, res) {
+    app.post("/prints/requestPayment", isLoggedIn, function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         printHandler.requestPayment(submissionID, function callback() {
             res.json(["done"]); //tell the front end the request is done
@@ -456,7 +457,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     });
 
     //-----------------------HANDLE PAYMENT INCOME-----------------------
-    app.post("/prints/recievePayment", function (req, res) {
+    app.post("/prints/recievePayment", isLoggedIn, function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
         printHandler.recievePayment(submissionID, false, "", function callback() {
             res.json(["done"]); //tell the front end the request is done
@@ -464,14 +465,14 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     });
 
     //-----------------------START PRINT-----------------------
-    app.post("/prints/startprint", function (req, res) {
+    app.post("/prints/startprint", isLoggedIn, function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
         printHandler.startPrint(fileID, function callback() {
             res.json(["done"]);
         });
     });
 
-    app.post("/prints/markPrinting", function (req, res) {
+    app.post("/prints/markPrinting", isLoggedIn, function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
         var copiesPrinting = req.body.copiesPrinting || req.query.copiesPrinting;
         printHandler.markPrinting(fileID, copiesPrinting, function callback() {
@@ -480,7 +481,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     });
 
     //-----------------------PRINT SUCCESS-----------------------
-    app.post("/prints/printsuccess", function (req, res) {
+    app.post("/prints/printsuccess", isLoggedIn, function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
         var copiesPrinting = req.body.copiesPrinting || req.query.copiesPrinting;
 
@@ -489,7 +490,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
         });
     });
 
-    app.post("/prints/printcomplete", function (req, res) {
+    app.post("/prints/printcomplete", isLoggedIn, function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
         var realGrams = req.body.realGrams || req.query.realGrams;
         printHandler.printCompleted(fileID, realGrams, function callback() {
@@ -498,7 +499,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     });
 
     //-----------------------PRINT FAIL-----------------------
-    app.post("/prints/printfail", function (req, res) {
+    app.post("/prints/printfail", isLoggedIn, function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
         printHandler.printFail(fileID, function callback() {
             res.json(["done"]);
@@ -506,14 +507,14 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
     });
 
     //-----------------------CLEAR ALL COMPLETED PRINTS-----------------------
-    app.post("/prints/clearAllCompleted", function (req, res) {
+    app.post("/prints/clearAllCompleted", isLoggedIn, function (req, res) {
         printHandler.clearAllCompleted(function callback() {
             res.json("done");
         });
     });
 
     //-----------------------CLEAR ALL REJECTED PRINTS-----------------------
-    app.post("/prints/clearAllRejected", function (req, res) {
+    app.post("/prints/clearAllRejected", isLoggedIn, function (req, res) {
         printHandler.clearAllRejected(function callback() {
             res.json("done");
         });
