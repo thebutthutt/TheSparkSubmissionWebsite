@@ -2,6 +2,7 @@ var fs = require("fs");
 var path = require("path");
 var moment = require("moment");
 var multer = require("multer");
+var emailer = require("../config/email.js");
 
 module.exports = function (app, printHandler, cleHandler, storage) {
     // =====================================
@@ -227,6 +228,11 @@ module.exports = function (app, printHandler, cleHandler, storage) {
             res.redirect("/submit");
         }
     );
+
+    app.post("/sendbugreport", function (req, res) {
+        emailer.sendBug(req.body);
+        res.redirect("/");
+    });
 };
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {

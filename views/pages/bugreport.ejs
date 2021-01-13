@@ -5,18 +5,16 @@
     </head>
     <body>
         <%- include ("../partials/header") %>
-        <div class="container mt-5" style="margin-bottom: 100px;">
+        <div class="container mt-5" style="margin-bottom: 100px">
             <div class="col-8 offset-2">
                 <div class="card shadow">
                     <div class="card-header">
                         <h1>Bug Report</h1>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form action="/sendbugreport" method="post">
                             <div class="form-group">
-                                <label>
-                                    What went wrong?
-                                </label>
+                                <label> What went wrong? </label>
                                 <textarea
                                     name="error"
                                     class="form-control"
@@ -25,9 +23,7 @@
                                 ></textarea>
                             </div>
                             <div class="form-group">
-                                <label>
-                                    What were you doing?
-                                </label>
+                                <label> What were you doing? </label>
                                 <textarea
                                     name="action"
                                     class="form-control"
@@ -36,27 +32,14 @@
                                 ></textarea>
                             </div>
                             <div class="form-group">
-                                <label
-                                    >Around what time did the error
-                                    occur?</label
-                                >
-                                <input
-                                    type="text"
-                                    name="time"
-                                    class="form-control"
-                                />
+                                <label>Around what time did the error occur?</label>
+                                <input type="text" name="time" class="form-control" />
                             </div>
                             <hr />
-                            <button
-                                type="submit"
-                                class="btn btn-lg btn-primary btn-block submit-form"
-                            >
-                                Submit
-                            </button>
+                            <button type="submit" class="btn btn-lg btn-primary btn-block submit-form">Submit</button>
 
                             <p class="mb-0 mt-2">
-                                Thank you for your time, every bug report helps
-                                make this site better! ❤️
+                                Thank you for your time, every bug report helps make this site better! ❤️
                             </p>
                         </form>
                     </div>
