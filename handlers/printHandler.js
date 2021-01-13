@@ -369,10 +369,10 @@ module.exports = {
                     }
                     result.datePaid = time.format(constants.format);
                     if (wasWaived) {
-                        emailer.paymentWaived(result.patron.email);
+                        //emailer.paymentWaived(result.patron.email);
                         newmailer.paymentWaived(result);
                     } else {
-                        emailer.readyToPrint(result.patron.email);
+                        //emailer.readyToPrint(result.patron.email);
                         newmailer.paymentThankYou(result);
                     }
 
@@ -408,10 +408,10 @@ module.exports = {
                     }
                     result.datePaid = time.format(constants.format);
                     if (wasWaived) {
-                        emailer.paymentWaived(result.patron.email);
+                        //emailer.paymentWaived(result.patron.email);
                         newmailer.paymentWaived(result);
                     } else {
-                        emailer.readyToPrint(result.patron.email);
+                        //emailer.readyToPrint(result.patron.email);
                         newmailer.paymentThankYou(result);
                     }
 

@@ -152,10 +152,54 @@ module.exports = {
             .then(console.log("sent some approved email to", recipient))
             .catch(console.error);
     },
-    allRejected: function (submission) {},
+    allRejected: function (submission) {
+        var recipient = submission.patron.email;
+        var files = submission.files;
+
+        var inputData = files.map(function (file) {
+            return {
+                fileName: file.realFileName,
+                notes: file.patronNotes,
+            };
+        });
+
+        email
+            .send({
+                template: path.join(__dirname, "emails", "allRejected"),
+                message: {
+                    to: recipient,
+                },
+                locals: {
+                    submission: submission,
+                    allFiles: inputData,
+                },
+            })
+            .then(console.log("sent all rejected email to", recipient))
+            .catch(console.error);
+    },
     modificationRequired: function (submission) {},
     paymentThankYou: function (submission) {},
-    paymentWaived: function (submission) {},
+    paymentWaived: function (submission) {
+        var recipient = submission.patron.email;
+        var files = submission.files;
+        var fileNames = files.map(function (file) {
+            return file.realFileName;
+        });
+
+        email
+            .send({
+                template: path.join(__dirname, "emails", "paymentWaived"),
+                message: {
+                    to: recipient,
+                },
+                locals: {
+                    submission: submission,
+                    fileNames: fileNames,
+                },
+            })
+            .then(console.log("sent payment waived email to", recipient))
+            .catch(console.error);
+    },
     readyForPickup: function (submission, readyFile) {
         var recipient = submission.patron.email;
         email
