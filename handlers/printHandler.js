@@ -81,6 +81,8 @@ module.exports = {
         request.save(function (err, document) {
             if (err) {
                 return console.error(err);
+            } else {
+                newmailer.newSubmission(request);
             }
         });
     },
@@ -274,7 +276,7 @@ module.exports = {
                     //found the submission in the database, now calc payment and send the link to the email
 
                     var acceptedFiles = [],
-                        rejectedFiles = [],
+                        rejectedFiles = [];
 
                     var email = result.patron.email;
 

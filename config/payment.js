@@ -57,7 +57,7 @@ module.exports = {
         newURL.searchParams.append("libhash", otherHash);
 
         if (numRejected > 0) {
-            newmailer.someApproved(submission, amount, newURL.href, acceptedIDs, rejectedIDs);
+            newmailer.someApproved(submission, amount, newURL.href);
         } else {
             newmailer.allApproved(submission, amount, newURL.href);
         }

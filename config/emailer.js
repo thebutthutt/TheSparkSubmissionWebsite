@@ -63,7 +63,6 @@ module.exports = {
         var fileNames = files.map(function (file) {
             return file.realFileName;
         });
-        console.log(fileNames);
         email
             .send({
                 template: path.join(__dirname, "emails", "newSubmission"),
@@ -71,9 +70,11 @@ module.exports = {
                     to: recipient,
                 },
                 locals: {
+                    submission: submission,
                     fileNames: fileNames,
                 },
             })
+            .then(console.log("sent new submission email to", recipient))
             .catch(console.error);
     },
     allApproved: function (submission, amount, url) {
@@ -101,6 +102,7 @@ module.exports = {
                     url: url,
                 },
             })
+            .then(console.log("sent all approved email to", recipient))
             .catch(console.error);
     },
     someApproved: function (submission, amount, url) {
@@ -129,7 +131,7 @@ module.exports = {
 
         email
             .send({
-                template: path.join(__dirname, "emails", "allApproved"),
+                template: path.join(__dirname, "emails", "someApproved"),
                 message: {
                     to: recipient,
                 },
@@ -141,6 +143,7 @@ module.exports = {
                     url: url,
                 },
             })
+            .then(console.log("sent some approved email to", recipient))
             .catch(console.error);
     },
     allRejected: function (submission) {},
