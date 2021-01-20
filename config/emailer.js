@@ -216,5 +216,6 @@ module.exports = {
             .catch(console.error);
     },
     firstWarning: function (submission) {},
+    stillWaiting: function (submission) {},
     finalWarning: function (submission) {},
 };
