@@ -50,7 +50,7 @@
                         <div id="model-container">
                             <div id="loading-image"></div>
 							<div id="gui-container"></div>
-                            <div id="model" filename='<%=print.fileName%>' style="width: 100%; height: 500px"></div>
+                            <div id="model" filename='<%=filePath%>' style="width: 100%; height: 500px"></div>
                         </div>
                     </div>
                         <% if (print.canBeReviewed) { %>
@@ -121,7 +121,7 @@
                 <%}%>
                     <% if (print.canBeReviewed) { %>
                         <%if (print.isReviewed) {%>
-                            <%- include ("../../partials/PrintDetails/review", {print:print}) %>
+                            <%- include ("../../partials/PrintDetails/review", {print:print, file:gcodePath}) %>
                         <%}%>
                         <div class="shadow card">
                             <div class="card-body">
@@ -134,20 +134,20 @@
                         <%if (print.isPrinted) {%>
                             <%- include ("../../partials/PrintDetails/contact", {print:print}) %>
                             <%- include ("../../partials/PrintDetails/patron", {print:print}) %>
-                            <%- include ("../../partials/PrintDetails/request", {print:print}) %>
-                            <%- include ("../../partials/PrintDetails/review", {print:print}) %>
+                            <%- include ("../../partials/PrintDetails/request", {print:print, file:filePath}) %>
+                            <%- include ("../../partials/PrintDetails/review", {print:print, file:gcodePath}) %>
                         <%} else { %>
                             <%if (!print.isRejected) {%>
                                 <% if (print.isPaid) {%>
                                     <%- include ("../../partials/PrintDetails/status", {print:print}) %>
                                 <%}%>
-                                <%- include ("../../partials/PrintDetails/review", {print:print}) %>
+                                <%- include ("../../partials/PrintDetails/review", {print:print, file:gcodePath}) %>
                                 <%- include ("../../partials/PrintDetails/patron", {print:print}) %>
-                                <%- include ("../../partials/PrintDetails/request", {print:print}) %>
+                                <%- include ("../../partials/PrintDetails/request", {print:print, file:filePath}) %>
                             <%} else {%>
-                                <%- include ("../../partials/PrintDetails/review", {print:print}) %>
+                                <%- include ("../../partials/PrintDetails/review", {print:print, file:gcodePath}) %>
                                 <%- include ("../../partials/PrintDetails/patron", {print:print}) %>
-                                <%- include ("../../partials/PrintDetails/request", {print:print}) %>
+                                <%- include ("../../partials/PrintDetails/request", {print:print, file:filePath}) %>
                             <%}%>
                         <%}%>
                     <% } %>
@@ -180,7 +180,7 @@
                     <h4>Select your current location:</h4>
                     <div class="row">
                         <div class="col"><button class="btn btn-lg btn-primary connect-button" style="width: 100%;" location="willis">Willis Library</button></div>
-                        <div class="col"><button class="btn btn-lg btn-primary connect-button" style="width: 100%; location="dp">Discovery Park</button></div>
+                        <div class="col"><button class="btn btn-lg btn-primary connect-button" style="width: 100%;" location="dp">Discovery Park</button></div>
                     </div>
 					
 					

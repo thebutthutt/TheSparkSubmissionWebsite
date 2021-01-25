@@ -2,6 +2,9 @@ const { handlePaymentComplete } = require("../config/payment");
 var multer = require("multer");
 var path = require("path");
 
+var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
+var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
+
 module.exports = function (app, passport, userModel, adminRequestHandler, printHandler, printRequestModel, payment) {
     //-----------------------NEW PRINTS-----------------------
     // show the new prints queue
@@ -44,6 +47,8 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                     name: req.user.name,
                     print: result.files.id(fileID), //send the review page the file to review
                     patron: result.patron,
+                    filePath: path.join(stlPath, result.files.id(fileID).fileName),
+                    gcodePath: path.join(gcodePath, result.files.id(fileID).gcodeName),
                 });
             }
         );

@@ -8,6 +8,9 @@ var fs = require("fs");
 var path = require("path");
 var printRequestModel = require("../app/models/printRequest");
 
+var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
+var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
+
 module.exports = {
     //return the number of new prints in the queue
 
@@ -89,6 +92,7 @@ module.exports = {
     //handles the data for a new top level print request with possibly multiple low level file submissions
     handleSubmission: function (req, callback) {
         //arrays of each files specifications (will only hold one entry each if patron submits only one file)
+        console.log(req.files);
         var filenames = [],
             realFileNames = [],
             materials = Array.isArray(req.body.material) ? req.body.material : Array.of(req.body.material),
@@ -112,8 +116,8 @@ module.exports = {
             callback("failure");
         } else {
             req.files.forEach(function (file) {
-                filenames.push(file.path);
-                realFileNames.push(file.path.substring(file.path.indexOf("/STLs/") + 20));
+                filenames.push(file.filename);
+                realFileNames.push(file.originalname);
             });
             prints.push(filenames);
             prints.push(realFileNames);
@@ -136,8 +140,8 @@ module.exports = {
         var time = moment();
         var shouldUpload = false;
         if (req.files[0]) {
-            var gcode = req.files[0].path;
-            var realGcodeName = req.files[0].path.substring(req.files[0].path.indexOf("/Gcode/") + 20);
+            var gcode = req.files[0].filename;
+            var realGcodeName = req.files[0].originalname;
             shouldUpload = true;
         }
         var maker = req.user.name;
@@ -155,9 +159,12 @@ module.exports = {
                     if (result.files.id(req.body.fileID).gcodeName != null) {
                         //delete gcode from disk if it exists
                         console.log("Submission had old GCODE file! deleting...");
-                        fs.unlink(result.files.id(req.body.fileID).gcodeName, function (err) {
-                            if (err) {
-                                console.log(err);
+                        var thisGcodePath = path.join(gcodePath, result.files.id(req.body.fileID).gcodeName);
+                        fs.unlink(thisGcodePath, function (err) {
+                            if (err.code === "ENOENT") {
+                                console.log("File not found!");
+                            } else {
+                                throw err;
                             }
                         });
                     }
@@ -724,17 +731,23 @@ module.exports = {
             },
             function (err, result) {
                 //delete stl from disk
-                fs.unlink(result.files.id(fileID).fileName, function (err) {
-                    if (err) {
-                        console.log(err);
+                var thisSTLPath = path.join(stlPath, result.files.id(fileID).fileName);
+                fs.unlink(thisSTLPath, function (err) {
+                    if (err.code === "ENOENT") {
+                        console.log("File not found!");
+                    } else {
+                        throw err;
                     }
                 });
 
                 //delete gcode from disk if it exists
-                if (result.files.id(fileID).gcodeName != null && result.files.id(fileID).gcodeName != "") {
-                    fs.unlink(result.files.id(fileID).gcodeName, function (err) {
-                        if (err) {
-                            console.log(err);
+                var thisGcodePath = path.join(gcodePath, result.files.id(fileID).gcodeName);
+                if (thisGcodePath != null && result.files.id(fileID).gcodeName != "") {
+                    fs.unlink(thisGcodePath, function (err) {
+                        if (err.code === "ENOENT") {
+                            console.log("File not found!");
+                        } else {
+                            throw err;
                         }
                     });
                 }
@@ -742,8 +755,10 @@ module.exports = {
                 //delete signature if it exists
                 if (result.files.id(fileID).signaturePath != null && result.files.id(fileID).signaturePath != "") {
                     fs.unlink(result.files.id(fileID).signaturePath, function (err) {
-                        if (err) {
-                            console.log(err);
+                        if (err.code === "ENOENT") {
+                            console.log("File not found!");
+                        } else {
+                            throw err;
                         }
                     });
                 }
