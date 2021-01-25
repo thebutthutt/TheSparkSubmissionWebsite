@@ -2,12 +2,7 @@ var schedule = require("node-schedule");
 const moment = require("moment");
 var emailer = require("./emailer.js");
 
-module.exports = function (
-    printRequestModel,
-    bookingModel,
-    objectToCleanModel,
-    constants
-) {
+module.exports = function (printRequestModel, bookingModel, objectToCleanModel, constants) {
     /*
 		This finds all the prints waiting for 
 		the patron to pick them up still.
@@ -26,8 +21,6 @@ module.exports = function (
         var oneWeek = moment().subtract(6, "days").format(constants.format); //subtracting six days feom today to satisfy anything before being 7+ days old
         var twoWeeks = moment().subtract(13, "days").format(constants.format);
         var threeWeeks = moment().subtract(20, "days").format(constants.format);
-        var whichEmail = "none";
-        var filenames = [];
 
         printRequestModel.find(
             {
@@ -41,65 +34,51 @@ module.exports = function (
             },
             function (err, result) {
                 result.forEach((submission) => {
+                    var three = [],
+                        two = [],
+                        one = [];
                     submission.files.forEach((file) => {
-                        if (
-                            moment(file.datePrinted, "M-D-YY").isBefore(
-                                moment(threeWeeks, "M-D-YY")
-                            )
-                        ) {
+                        if (moment(file.datePrinted, "M-D-YY").isBefore(moment(threeWeeks, "M-D-YY"))) {
                             //file is 3 weeks old, we keep it
                             if (file.dateOfConfiscation == "Not yet sent") {
                                 //third contact has not been sent
                                 file.dateOfConfiscation = today;
                                 file.isStaleOnPickup = true;
                                 submission.save();
-                                filenames.push(file.fileName);
-                                whichEmail = "repo";
+                                three.push(file);
                             }
-                        } else if (
-                            moment(file.datePrinted, "M-D-YY").isBefore(
-                                moment(twoWeeks, "M-D-YY")
-                            )
-                        ) {
+                        } else if (moment(file.datePrinted, "M-D-YY").isBefore(moment(twoWeeks, "M-D-YY"))) {
                             //file is 2 weeks old, another contact
                             if (file.dateOfSecondWarning == "Not yet sent") {
                                 //second contact has not been sent
                                 file.dateOfSecondWarning = today;
                                 submission.save();
-                                filenames.push(file.fileName);
-                                whichEmail = "final";
+                                two.push(file);
                             }
-                        } else if (
-                            moment(file.datePrinted, "M-D-YY").isBefore(
-                                moment(oneWeek, "M-D-YY")
-                            )
-                        ) {
+                        } else if (moment(file.datePrinted, "M-D-YY").isBefore(moment(oneWeek, "M-D-YY"))) {
                             //file is one week old, send a contact
                             if (file.dateOfFirstWarning == "Not yet sent") {
                                 //first contact has not been sent
                                 file.dateOfFirstWarning = today;
                                 submission.save();
-                                filenames.push(file.fileName);
-                                whichEmail = "first";
+                                one.push(file);
                             }
                         }
                     });
 
-                    if (whichEmail == "repo") {
-                        console.log("Repo prints", filenames);
-                        emailer.repoPrint(submission.patron.email, filenames);
-                    } else if (whichEmail == "final") {
-                        console.log("final warning prints", filenames);
-                        emailer.finalWarning(
-                            submission.patron.email,
-                            filenames
-                        );
-                    } else if (whichEmail == "first") {
-                        console.log("warning prints", filenames);
-                        emailer.stillWaiting(
-                            submission.patron.email,
-                            filenames
-                        );
+                    if (three.length > 0) {
+                        console.log("Repo prints", three);
+                        emailer.repoPrint(submission, three);
+                    }
+
+                    if (two.length > 0) {
+                        console.log("final warning prints", two);
+                        emailer.finalWarning(submission, two);
+                    }
+
+                    if (one.length > 0) {
+                        console.log("warning prints", one);
+                        emailer.stillWaiting(submission, one);
                     }
                 });
             }

@@ -18,5 +18,3 @@ async function testEmails() {
         //emailer.readyForPickup(dummySubmission, dummySubmission.files[0]);
     }
 }
-
-testEmails();

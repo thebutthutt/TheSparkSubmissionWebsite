@@ -215,7 +215,38 @@ module.exports = {
             })
             .catch(console.error);
     },
-    firstWarning: function (submission) {},
-    stillWaiting: function (submission) {},
-    finalWarning: function (submission) {},
+    //one week late
+    stillWaiting: function (submission, one) {
+        var recipient = submission.patron.email;
+        email
+            .send({
+                template: path.join(__dirname, "emails", "firstWarning"),
+                message: {
+                    to: recipient,
+                },
+                locals: {
+                    submission: submission,
+                    allFiles: one,
+                },
+            })
+            .catch(console.error);
+    },
+    //two weeks late
+    finalWarning: function (submission, two) {
+        var recipient = submission.patron.email;
+        email
+            .send({
+                template: path.join(__dirname, "emails", "finalWarning"),
+                message: {
+                    to: recipient,
+                },
+                locals: {
+                    submission: submission,
+                    allFiles: two,
+                },
+            })
+            .catch(console.error);
+    },
+    //three weeks late
+    repoPrint: function (submission) {},
 };

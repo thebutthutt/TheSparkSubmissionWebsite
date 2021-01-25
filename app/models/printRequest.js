@@ -66,6 +66,7 @@ var printSubmissionSchema = mongoose.Schema({
     dateSubmitted: String,
     datePaymentRequested: String,
     datePaid: String,
+
     numFiles: Number,
     allFilesReviewed: Boolean,
     isPendingWaive: Boolean,
