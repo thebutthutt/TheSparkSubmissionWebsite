@@ -105,6 +105,10 @@ module.exports = function (passport) {
                                         });
                                     } else {
                                         login.unbind();
+                                        //let only me have two accounts
+                                        if (euid.toLowerCase() != "hcf0018") {
+                                            euid = euid.toLowerCase();
+                                        }
                                         User.findOne(
                                             {
                                                 "local.euid": euid,
