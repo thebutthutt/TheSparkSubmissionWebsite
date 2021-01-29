@@ -46,12 +46,9 @@
         "ws": "^7.4.2"
     },
     "scripts": {
-        "killserver": "sudo systemctl stop sparkorders",
-        "startserver": "sudo systemctl start sparkorders",
-        "checkrunning": "ps -ax | grep server.js",
-        "kill8080": "sudo fuser -k 8080/tcp",
         "nodemon": "sudo nodemon --tls-cipher-list='ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL' server.js",
-        "debug": "sudo fuser -k 8080/tcp && sudo nodemon --tls-cipher-list='ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL' server.js"
+        "prestart": "./startmongod.sh $(grep PORT .env | cut -d '=' -f2)",
+        "start": "sudo node --tls-cipher-list='ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL' server.js"
     },
     "devDependencies": {
         "@types/express": "^4.17.11",

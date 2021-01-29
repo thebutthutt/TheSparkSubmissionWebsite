@@ -1,10 +1,15 @@
 #!/usr/bin/bash
 cd $(dirname $0)
-output=output_file.txt 
-now=$(date +"%T")
 if [[ $(sudo netstat -tulpn | grep :27017) ]]; then
-    echo "mongod running, starting server" >> now >> output
+    echo "mongod running, starting server"
 else
-    echo "mongod not running, starting mongod" >> now >> output
+    echo "mongod not running, starting mongod"
     sudo mongod
+fi
+
+if [[ $(sudo netstat -tulpn | grep :$1) ]]; then
+    echo "killing old process"
+    echo sudo fuser -k $1/tcp
+else
+    echo "port is clear"
 fi
