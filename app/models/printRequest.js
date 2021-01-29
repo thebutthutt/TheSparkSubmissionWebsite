@@ -58,6 +58,9 @@ var singlePrintSchema = mongoose.Schema({
     startedBy: String,
 
     overrideNotes: String,
+
+    singleCopyPrice: Number,
+    allCopiesPrice: Number,
 });
 
 // define the schema for a single patron submission
@@ -67,6 +70,8 @@ var printSubmissionSchema = mongoose.Schema({
     datePaymentRequested: String,
     datePaid: String,
 
+    requestedPrice: Number,
+    requestedSingleCopyPrice: Number,
     numFiles: Number,
     allFilesReviewed: Boolean,
     isPendingWaive: Boolean,

@@ -1,11 +1,22 @@
 const { handlePaymentComplete } = require("../config/payment");
 var multer = require("multer");
 var path = require("path");
-
+var numPerPage = 10;
 var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
 
 module.exports = function (app, passport, userModel, adminRequestHandler, printHandler, printRequestModel, payment) {
+    //Metainfo about all the prints we have done
+    app.get("/meta", isLoggedIn, async function (req, res) {
+        //grab most recently stored data by default
+        //var metadata = await printHandler.metainfo();
+        res.render("pages/prints/meta", {
+            pgnum: 5,
+            isAdmin: true,
+            isSuperAdmin: req.user.isSuperAdmin,
+        });
+    });
+
     //-----------------------NEW PRINTS-----------------------
     // show the new prints queue
     app.get("/prints/new", isLoggedIn, function (req, res) {
@@ -298,6 +309,21 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                 isAdmin: true,
                 isSuperAdmin: req.user.isSuperAdmin,
             });
+        });
+    });
+
+    app.get("/prints/allp", isLoggedIn, async function (req, res) {
+        //load the submission page and flash any messages
+        var page = req.query.page;
+        var skip = (page - 1) * numPerPage;
+        var submissions = await printRequestModel.find({}).skip(skip).limit(numPerPage);
+
+        res.render("pages/prints/allPrints", {
+            pgnum: 4, //tells the navbar what page to highlight
+            dbdata: submissions,
+            printPage: "all",
+            isAdmin: true,
+            isSuperAdmin: req.user.isSuperAdmin,
         });
     });
 

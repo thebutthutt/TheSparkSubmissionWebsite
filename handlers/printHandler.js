@@ -13,6 +13,7 @@ var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
 
 module.exports = {
     //return the number of new prints in the queue
+    metaInfo: function () {},
 
     //function receives the input from filled out request form and saves to the database
     addPrint: function (fields, prints) {
@@ -297,11 +298,15 @@ module.exports = {
                             result.files[i].isPendingPayment = true;
                             if (result.files[i].timeHours <= 0 && result.files[i].timeMinutes <= 59) {
                                 //if its less than an hour, just charge one dollar
-                                amount += 1;
+                                var thisCopy = 1;
+                                var allCopies = thisCopy * result.files[i].copies;
+                                amount += allCopies;
                             } else {
                                 //charge hours plus minutes out of 60 in cents
-                                amount += result.files[i].timeHours;
-                                amount += result.files[i].timeMinutes / 60;
+                                var thisCopy = result.files[i].timeHours;
+                                thisCopy += result.files[i].timeMinutes / 60;
+                                var allCopies = thisCopy * result.files[i].copies;
+                                amount += allCopies;
                             }
                             acceptedFiles.push(result.files[i]._id);
                         } else {

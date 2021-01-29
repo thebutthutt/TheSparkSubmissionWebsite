@@ -1,9 +1,6 @@
 <div id="imagebg">hello</div>
 
-<nav
-    class="navbar navbar-expand-lg navbar-dark shadow"
-    style="background-color: #00853e"
->
+<nav class="navbar navbar-expand-lg navbar-dark shadow" style="background-color: #00853e">
     <a class="navbar-brand" href="/">The Spark Makerspace</a>
 
     <button
@@ -28,9 +25,7 @@
             </li>
 
             <li class="nav-item">
-                <a
-                    class="nav-link"
-                    href="https://unt.az1.qualtrics.com/jfe/form/SV_czS3nZhPUhIK1QF"
+                <a class="nav-link" href="https://unt.az1.qualtrics.com/jfe/form/SV_czS3nZhPUhIK1QF"
                     >Machine Operator Request</a
                 >
             </li>
@@ -59,11 +54,7 @@
             -->
             <% if (isAdmin) { %>
             <li class="nav-item">
-                <a
-                    class="nav-link ml-3"
-                    style="border-right: 1px solid rgba(255, 255, 255, 0.3)"
-                    >&nbsp;</a
-                >
+                <a class="nav-link ml-3" style="border-right: 1px solid rgba(255, 255, 255, 0.3)">&nbsp;</a>
             </li>
 
             <li class="nav-item">
@@ -82,43 +73,20 @@
                 >
                     Prints
                 </a>
-                <div
-                    class="dropdown-menu shadow"
-                    aria-labelledby="navbarDropdown"
-                >
-                    <a class="dropdown-item" href="/prints/new"
-                        >New Submissions</a
-                    >
-                    <a class="dropdown-item" href="/prints/pendpay"
-                        >Pending Payment</a
-                    >
+                <div class="dropdown-menu shadow" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/prints/new">New Submissions</a>
+                    <a class="dropdown-item" href="/prints/pendpay">Pending Payment</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/prints/ready"
-                        >Ready to Print</a
-                    >
-                    <a class="dropdown-item" href="/prints/readywillis"
-                        >Ready to Print (Willis Library)</a
-                    >
-                    <a class="dropdown-item" href="/prints/readydp"
-                        >Ready to Print (Discovery Park)</a
-                    >
+                    <a class="dropdown-item" href="/prints/ready">Ready to Print</a>
+                    <a class="dropdown-item" href="/prints/readywillis">Ready to Print (Willis Library)</a>
+                    <a class="dropdown-item" href="/prints/readydp">Ready to Print (Discovery Park)</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/prints/pickup"
-                        >Waiting for Pickup</a
-                    >
-                    <a class="dropdown-item" href="/prints/pickupwillis"
-                        >Waiting for Pickup (Willis Library)</a
-                    >
-                    <a class="dropdown-item" href="/prints/pickupdp"
-                        >Waiting for Pickup (Discovery Park)</a
-                    >
+                    <a class="dropdown-item" href="/prints/pickup">Waiting for Pickup</a>
+                    <a class="dropdown-item" href="/prints/pickupwillis">Waiting for Pickup (Willis Library)</a>
+                    <a class="dropdown-item" href="/prints/pickupdp">Waiting for Pickup (Discovery Park)</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/prints/completed"
-                        >Completed</a
-                    >
-                    <a class="dropdown-item" href="/prints/rejected"
-                        >Rejected</a
-                    >
+                    <a class="dropdown-item" href="/prints/completed">Completed</a>
+                    <a class="dropdown-item" href="/prints/rejected">Rejected</a>
                     <a class="dropdown-item" href="/prints/all">All Prints</a>
                 </div>
             </li>
@@ -166,6 +134,10 @@
             -->
             <li class="nav-item <% if (pgnum == 3) { %> active <%}%>">
                 <a class="nav-link" href="/profile">Profile</a>
+            </li>
+
+            <li class="nav-item <% if (pgnum == 5) { %> active <%}%>">
+                <a class="nav-link" href="/meta">Meta Info</a>
             </li>
 
             <% } else { %>
