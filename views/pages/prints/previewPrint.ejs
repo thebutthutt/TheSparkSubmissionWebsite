@@ -80,7 +80,7 @@
                             </div>
                 </div>
                             <%- include ("../../partials/PrintDetails/patron", {print:print}) %>
-                            <%- include ("../../partials/PrintDetails/request", {print:print}) %>
+                            <%- include ("../../partials/PrintDetails/request", {print:print, filePath:filePath}) %>
                         <% } else { %>
                             <div class="card-body">
                                 <h6>Notes from Patron</h6>

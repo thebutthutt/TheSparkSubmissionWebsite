@@ -49,6 +49,10 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                 "files._id": fileID,
             },
             function (err, result) {
+                var finalGcode = "";
+                if (result.files.id(fileID).gcodeName) {
+                    finalGcode = path.join(gcodePath, result.files.id(fileID).gcodeName);
+                }
                 res.render("pages/prints/previewPrint", {
                     //render the review page
                     pgnum: 4, //prints  `
@@ -59,7 +63,7 @@ module.exports = function (app, passport, userModel, adminRequestHandler, printH
                     print: result.files.id(fileID), //send the review page the file to review
                     patron: result.patron,
                     filePath: path.join(stlPath, result.files.id(fileID).fileName),
-                    gcodePath: path.join(gcodePath, result.files.id(fileID).gcodeName),
+                    gcodePath: finalGcode,
                 });
             }
         );
