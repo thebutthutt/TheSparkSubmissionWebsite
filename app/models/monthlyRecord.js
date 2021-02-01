@@ -1,21 +1,15 @@
 var mongoose = require("mongoose");
 
 /*
-*Total submitted files 
-Total approved files
-    sum weight, duration
-Total rejected files
-Total files accepted never paid or waived
-Total printed files
-    sum weight, duration
-Total PAID printed files
-    sum weight duration
-Total WAIVED printed files
-    sum weight duration
-Total files picked up
-    sum weight, duration
-Total files NOT picked up
-    sum weight duration
+need to update every :
+new submission, 
+new approval, 
+new rejection, 
+new pay request, 
+new waive, 
+new payment, 
+new print complete,
+ new pickup
 */
 
 var monthlyRecordSchema = mongoose.Schema({

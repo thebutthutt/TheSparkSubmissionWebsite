@@ -21,20 +21,8 @@ var path = require("path");
 var favicon = require("serve-favicon");
 
 var constants = require("./config/constants.js");
-var printRequestModel = require("./app/models/printRequest");
-var cleRequestModel = require("./app/models/cleRequest");
-var bookingModel = require("./app/models/booking");
-var objectToCleanModel = require("./app/models/cleaningObject");
-var userModel = require("./app/models/user");
-var payment = require("./config/payment.js");
 
 var tester = require("./tester.js");
-
-var printHandler = require("./handlers/printHandler.js");
-var cleHandler = require("./handlers/cleHandler.js");
-var adminRequestHandler = require("./handlers/adminRequestHandler.js");
-var cameraHandler = require("./handlers/cameraHandler.js");
-const { DH_UNABLE_TO_CHECK_GENERATOR } = require("constants");
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
@@ -62,20 +50,11 @@ app.use(
 app.set("view engine", "ejs"); // set up ejs for templating
 app.use("/public", express.static(path.join(__dirname, "/public"))); //allow us to grab local files in the public directory
 app.use("/three", express.static(__dirname + "/node_modules/three/")); //allow website to access the three.js library
-app.use(
-    "/fullcalendar",
-    express.static(__dirname + "/node_modules/fullcalendar/")
-); //allow website to access the three.js library
+app.use("/fullcalendar", express.static(__dirname + "/node_modules/fullcalendar/")); //allow website to access the three.js library
 app.use("/gui", express.static(__dirname + "/node_modules/dat.gui/")); //allow website to access the uploaded STLs (for in site display)
 app.use("/Uploads", express.static(path.join(__dirname, "../Uploads"))); //allow website to access the uploaded STLs (for in site display)
-app.use(
-    "/qrcode",
-    express.static(__dirname + "/node_modules/qrcode-generator/")
-); //allow website to access the uploaded STLs (for in site display)
-app.use(
-    "/datepicker",
-    express.static(__dirname + "/node_modules/js-datepicker/dist/")
-);
+app.use("/qrcode", express.static(__dirname + "/node_modules/qrcode-generator/")); //allow website to access the uploaded STLs (for in site display)
+app.use("/datepicker", express.static(__dirname + "/node_modules/js-datepicker/dist/"));
 
 app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 
@@ -92,42 +71,14 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 // routes ======================================================================
-require("./routes/routes.js")(app, printHandler, cleHandler); // load our routes and pass in our app and fully configured passport
-require("./routes/printRoutes.js")(
-    app,
-    passport,
-    userModel,
-    adminRequestHandler,
-    printHandler,
-    printRequestModel,
-    payment
-); // load our routes and pass in our app and fully configured passport
-require("./routes/userRoutes.js")(
-    app,
-    passport,
-    userModel,
-    adminRequestHandler,
-    cameraHandler,
-    printRequestModel,
-    cleRequestModel,
-    objectToCleanModel
-); // load our routes and pass in our app and fully configured passport
-require("./routes/cleRoutes.js")(
-    app,
-    passport,
-    userModel,
-    cleHandler,
-    cleRequestModel
-); // load our routes and pass in our app and fully configured passport
-require("./routes/cameraRoutes.js")(app, bookingModel, cameraHandler); // load our routes and pass in our app and fully configured passport
+require("./routes/routes.js")(app); // load our routes and pass in our app and fully configured passport
+require("./routes/printRoutes.js")(app); // load our routes and pass in our app and fully configured passport
+require("./routes/userRoutes.js")(app, passport); // load our routes and pass in our app and fully configured passport
+//require("./routes/cleRoutes.js")(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
+//require("./routes/cameraRoutes.js")(app, bookingModel, cameraHandler); // load our routes and pass in our app and fully configured passport
 
 // Job Scheduler ======================================================================
-require("./config/jobs.js")(
-    printRequestModel,
-    bookingModel,
-    objectToCleanModel,
-    constants
-); //make the job scheduler go
+require("./config/jobs.js")(constants); //make the job scheduler go
 //bookingModel.remove({}, function(){})
 // launch ======================================================================
 
@@ -154,7 +105,7 @@ var server = https.createServer(
 );
 
 //sets up the websocket for signature pads
-require("./app/websocket.js")(server, printHandler);
+require("./app/websocket.js")(server);
 
 server.listen(port, "0.0.0.0");
 

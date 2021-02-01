@@ -4,8 +4,12 @@ var path = require("path");
 var numPerPage = 10;
 var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
+var printRequestModel = require("../app/models/printRequest");
+var printHandler = require("../handlers/printHandler.js");
+var adminRequestHandler = require("../handlers/adminRequestHandler.js");
+var payment = require("../config/payment.js");
 
-module.exports = function (app, passport, userModel, adminRequestHandler, printHandler, printRequestModel, payment) {
+module.exports = function (app) {
     //Metainfo about all the prints we have done
     app.get("/meta", isLoggedIn, async function (req, res) {
         //grab most recently stored data by default

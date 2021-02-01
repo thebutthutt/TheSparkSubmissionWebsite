@@ -1,8 +1,9 @@
 var schedule = require("node-schedule");
 const moment = require("moment");
 var emailer = require("./emailer.js");
+var printRequestModel = require("../app/models/printRequest");
 
-module.exports = function (printRequestModel, bookingModel, objectToCleanModel, constants) {
+module.exports = function (constants) {
     /*
 		This finds all the prints waiting for 
 		the patron to pick them up still.
@@ -97,43 +98,6 @@ module.exports = function (printRequestModel, bookingModel, objectToCleanModel, 
 		if the server restarts the data of what 
 		has been cleaned will NOT persist! 
 	*/
-
-    var needsCleaning = function () {
-        objectToCleanModel.deleteMany({}, function (err) {
-            if (err) {
-                console.log(err);
-            }
-        });
-
-        var today = new Date().toISOString();
-        today = today.substring(0, 10) + "T00:00:00.000Z";
-
-        var results = [];
-
-        bookingModel.find(
-            {
-                "calendarEvent.classNames": "quarantine",
-                "calendarEvent.start": today,
-                "calendarEvent.end": today,
-            },
-            function (err, data) {
-                data.forEach(function (booking) {
-                    results.push(booking.camera);
-                    results.push(booking.lens1);
-                    if (booking.lens1 != booking.lens2) {
-                        results.push(booking.lens2);
-                    }
-                });
-
-                results.forEach(function (item) {
-                    var newObject = new objectToCleanModel();
-                    newObject.objectName = item;
-                    newObject.isCleaned = false;
-                    newObject.save();
-                });
-            }
-        );
-    };
 
     schedule.scheduleJob("1 0 * * *", () => {
         //run once every day at midnight and one minute just in case idk im nervous

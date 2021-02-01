@@ -3,8 +3,9 @@ var path = require("path");
 var moment = require("moment");
 var multer = require("multer");
 var emailer = require("../config/email.js");
+var printHandler = require("../handlers/printHandler.js");
 
-module.exports = function (app, printHandler, cleHandler, storage) {
+module.exports = function (app) {
     // =====================================
     // HOME PAGE (with login links) ========
     // =====================================
@@ -205,27 +206,6 @@ module.exports = function (app, printHandler, cleHandler, storage) {
                     res.redirect("/prints/error");
                 }
             }); //pass the stuff to the print handler
-        }
-    );
-
-    //what do do when the user hits submit
-    app.post(
-        "/submitcle",
-        multer({
-            storage: multer.diskStorage({
-                destination: function (req, file, cb) {
-                    cb(null, path.join(__dirname, "../../Uploads/CLE/"));
-                },
-
-                // By default, multer removes file extensions so let's add them back
-                filename: function (req, file, cb) {
-                    cb(null, Date.now() + "-" + file.originalname.split(".")[0] + path.extname(file.originalname));
-                },
-            }),
-        }).any(),
-        function (req, res) {
-            cleHandler.handleSubmission(req); //pass the stuff to the print handler
-            res.redirect("/submit");
         }
     );
 
