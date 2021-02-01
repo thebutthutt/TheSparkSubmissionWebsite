@@ -2,7 +2,7 @@ var fs = require("fs");
 var path = require("path");
 var moment = require("moment");
 var multer = require("multer");
-var emailer = require("../config/email.js");
+//var emailer = require("../config/email.js");
 var printHandler = require("../handlers/printHandler.js");
 
 module.exports = function (app) {
@@ -210,7 +210,7 @@ module.exports = function (app) {
     );
 
     app.post("/sendbugreport", function (req, res) {
-        emailer.sendBug(req.body);
+        //emailer.sendBug(req.body);
         res.redirect("/");
     });
 };

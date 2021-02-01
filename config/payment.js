@@ -4,9 +4,9 @@ const base_url = "https://payments.library.unt.edu/payment/";
 const account = process.env.PAYMENT_ACCOUNT;
 var fs = require("fs");
 var path = require("path");
-var emailer = require("./email.js");
+//var emailer = require("./email.js");
 var crypto = require("crypto");
-var emailer = require("./email.js");
+//var emailer = require("./email.js");
 var newmailer = require("../config/emailer.js");
 
 const secret_key = process.env.PAYMENT_KEY;
