@@ -1,4 +1,3 @@
-const { handlePaymentComplete } = require("../config/payment");
 var multer = require("multer");
 var path = require("path");
 var numPerPage = 10;
@@ -7,7 +6,7 @@ var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
 var printRequestModel = require("../app/models/printRequest");
 var printHandler = require("../handlers/printHandler.js");
 var adminRequestHandler = require("../handlers/adminRequestHandler.js");
-var payment = require("../config/payment.js");
+var payment = require("../app/payment.js");
 
 module.exports = function (app) {
     //Metainfo about all the prints we have done

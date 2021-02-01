@@ -7,7 +7,7 @@ var path = require("path");
 //var emailer = require("./email.js");
 var crypto = require("crypto");
 //var emailer = require("./email.js");
-var newmailer = require("../config/emailer.js");
+var newmailer = require("./emailer.js");
 
 const secret_key = process.env.PAYMENT_KEY;
 

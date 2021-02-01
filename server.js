@@ -19,8 +19,7 @@ var bodyParser = require("body-parser");
 var session = require("express-session");
 var path = require("path");
 var favicon = require("serve-favicon");
-
-var constants = require("./config/constants.js");
+var constants = require("./app/constants.js");
 
 var tester = require("./tester.js");
 
@@ -31,7 +30,7 @@ mongoose.connect(constants.url, {
     useFindAndModify: false,
 }); // connect to our database
 
-require("./config/passport")(passport); // pass passport for configuration
+require("./app/passport")(passport); // pass passport for configuration
 
 // set up our express application
 app.use(cookieParser()); // read cookies (needed for auth)
@@ -78,7 +77,7 @@ require("./routes/userRoutes.js")(app, passport); // load our routes and pass in
 //require("./routes/cameraRoutes.js")(app, bookingModel, cameraHandler); // load our routes and pass in our app and fully configured passport
 
 // Job Scheduler ======================================================================
-require("./config/jobs.js")(constants); //make the job scheduler go
+require("./app/jobs.js")(constants); //make the job scheduler go
 //bookingModel.remove({}, function(){})
 // launch ======================================================================
 

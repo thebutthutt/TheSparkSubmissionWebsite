@@ -1,35 +1,24 @@
 const moment = require("moment");
-const constants = require("../config/constants");
+const constants = require("../app/constants");
 var printRequestModel = require("../app/models/printRequest");
-var cleRequestModel = require("../app/models/cleRequest");
+//var cleRequestModel = require("../app/models/cleRequest");
 
 module.exports = {
     addDelete: function (itemID, itemType) {
-        if (itemType == "print") {
-            printRequestModel.findOne(
-                {
-                    //find top level print request by single file ID
-                    "files._id": itemID,
-                },
-                function (err, result) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        result.files.id(itemID).isPendingDelete = true; //mark that the file is pending delete
-                        result.save(); //save the entry in the database
-                    }
-                }
-            );
-        } else if (itemType == "cle") {
-            cleRequestModel.findById(itemID, function (err, result) {
+        printRequestModel.findOne(
+            {
+                //find top level print request by single file ID
+                "files._id": itemID,
+            },
+            function (err, result) {
                 if (err) {
                     console.log(err);
                 } else {
-                    result.isPendingDelete = true; //mark that the file is pending delete
+                    result.files.id(itemID).isPendingDelete = true; //mark that the file is pending delete
                     result.save(); //save the entry in the database
                 }
-            });
-        }
+            }
+        );
     },
 
     undoDelete: function (itemID, itemType) {
