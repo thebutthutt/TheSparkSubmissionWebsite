@@ -23,120 +23,118 @@
 
                         <!-- SUBMISSION FORM -->
                         <form id="submission-form" action="/submitprint" method="POST" enctype="multipart/form-data">
-                            <div class="form-group no-margin">
-                                <label>Patron Info</label>
-                                <div class="input-group">
-                                    <input
-                                        type="text"
-                                        class="form-control top"
-                                        name="first"
-                                        placeholder="First name"
-                                        required
-                                    />
-                                    <input
-                                        type="text"
-                                        class="form-control top"
-                                        name="last"
-                                        placeholder="Last name"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div class="form-group no-margin">
-                                <input
-                                    type="email"
-                                    class="form-control inner"
-                                    name="email"
-                                    placeholder="Email"
-                                    required
-                                />
-                            </div>
-                            <div class="form-group no-margin">
+                            <h4>Contact Info</h4>
+                            <div class="input-group">
                                 <input
                                     type="text"
-                                    class="form-control euid inner"
-                                    name="euid"
-                                    placeholder="EUID (students only, not required)"
+                                    class="form-control top"
+                                    name="first"
+                                    placeholder="First name"
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    class="form-control top"
+                                    name="last"
+                                    placeholder="Last name"
+                                    required
                                 />
                             </div>
-                            <div class="form-group">
-                                <input type="tel" class="form-control bottom" name="phone" placeholder="Phone Number" />
-                            </div>
-                            <!--
-                            <div class="form-group">
-                                <label>Request Type</label>
-                                <select
-                                    class="form-control"
-                                    id="requestTypeSelector"
-                                    name="requestType"
-                                    required
-                                >
-                                    <option value="print">3D Print</option>
-                                    <option value="CNC">CNC Work Order</option>
-                                    <option value="Laser">
-                                        Laser Cut/Engrave Work Order
-                                    </option>
-                                    <option value="Embroidery">
-                                        Embroidery Machine Work Order
-                                    </option>
-                                    <option value="Other">
-                                        Other (please specify in the notes)
-                                    </option>
-                                </select>
-                            </div>
-                            -->
 
-                            <div class="print-only form-group">
-                                <hr />
-                                <div id="files-list"></div>
-                                <div class="clearfix">
-                                    <button type="button" id="change" class="btn btn-outline-primary btn-sm float-left">
-                                        Add a file
-                                    </button>
-                                    <button type="button" id="remove" class="btn btn-outline-danger btn-sm float-right">
-                                        Remove last file
-                                    </button>
+                            <input type="email" class="form-control inner" name="email" placeholder="Email" required />
+
+                            <input
+                                type="text"
+                                class="form-control euid inner"
+                                name="euid"
+                                placeholder="EUID (students only, not required)"
+                            />
+
+                            <input type="tel" class="form-control bottom" name="phone" placeholder="Phone Number" />
+
+                            <hr />
+
+                            <h4>This submission is:</h4>
+                            <div class="form-check form-check-inline">
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="submissionType"
+                                    id="inlineRadio1"
+                                    value="personal"
+                                    checked
+                                />
+                                <label class="form-check-label" for="inlineRadio1">Personal</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="submissionType"
+                                    id="inlineRadio2"
+                                    value="class"
+                                />
+                                <label class="form-check-label" for="inlineRadio2">For a class</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="submissionType"
+                                    id="inlineRadio3"
+                                    value="internal"
+                                />
+                                <label class="form-check-label" for="inlineRadio3">For a library department</label>
+                            </div>
+
+                            <h5>Class Details</h5>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-floating mb-3">
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="floatingInput"
+                                            placeholder="CSCE 4901"
+                                        />
+                                        <label for="floatingInput">Class Code</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-floating mb-3">
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="floatingInput"
+                                            placeholder="Firstname Lastname"
+                                        />
+                                        <label for="floatingInput">Professor</label>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="non-print form-group">
-                                <hr />
-                                <p>
-                                    Please provide details on what you would like us to do, what material(s) you plan to
-                                    bring in to space, and any other information about this project
-                                </p>
-                                <textarea
-                                    name="notes"
-                                    class="form-control"
-                                    rows="6"
-                                    placeholder="What can we help you with?"
-                                ></textarea>
-                                <p>
-                                    Please upload any files you would like to use in your project. These can be SVG
-                                    files for use by the cutting or engraving software, or referencce images if you
-                                    would like a technician to help you create files for the machines. File uploading is
-                                    optional.
-                                </p>
-                                <div id="files-list-other"></div>
-                                <div class="clearfix">
-                                    <button
-                                        type="button"
-                                        id="change-other"
-                                        class="btn btn-outline-primary btn-sm float-left"
-                                    >
-                                        Add a file
-                                    </button>
-                                    <button
-                                        type="button"
-                                        id="remove-other"
-                                        class="btn btn-outline-danger btn-sm float-right"
-                                    >
-                                        Remove last file
-                                    </button>
-                                </div>
+                            <h5>Liibrary Department Details</h5>
+                            <select class="form-select" aria-label="Default select example">
+                                <option selected>Library Department...</option>
+                                <option value="1">The Spark Makerspace</option>
+                                <option value="2">Media Library</option>
+                                <option value="3">Others</option>
+                            </select>
+
+                            <hr />
+                            <div id="files-list"></div>
+                            <div class="clearfix">
+                                <button type="button" id="change" class="btn btn-outline-primary btn-sm float-left">
+                                    Add a file
+                                </button>
+                                <button type="button" id="remove" class="btn btn-outline-danger btn-sm float-right">
+                                    Remove last file
+                                </button>
                             </div>
 
-                            <button type="submit" class="btn btn-lg btn-primary btn-block submit-form">Submit</button>
+                            <div class="d-grid gap-2 mt-2">
+                                <button type="submit" class="btn btn-lg btn-primary submit-form">Submit</button>
+                            </div>
                         </form>
                     </div>
                     <div class="card-footer">

@@ -12,9 +12,6 @@ var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
 
 module.exports = {
-    //return the number of new prints in the queue
-    metaInfo: function () {},
-
     //function receives the input from filled out request form and saves to the database
     addPrint: function (fields, prints) {
         var request = new printRequestModel(); //new instance of a request

@@ -14,14 +14,14 @@ form .row {
     margin-left: 0px;
     margin-right: 0px;
 }
-
+/*
 form .row:not(:first-child),
 .no-margin {
     margin-left: 0px;
     margin-right: 0px;
     margin-bottom: -1px;
 }
-
+*/
 form .inner {
     border-radius: 0px;
 }
@@ -34,6 +34,10 @@ form .top {
 form .bottom {
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
+}
+
+#remove {
+    float: right;
 }
 
 select {
