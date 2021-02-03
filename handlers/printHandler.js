@@ -743,8 +743,9 @@ module.exports = {
                 });
 
                 //delete gcode from disk if it exists
-                var thisGcodePath = path.join(gcodePath, result.files.id(fileID).gcodeName);
-                if (thisGcodePath != null && result.files.id(fileID).gcodeName != "") {
+
+                if (result.files.id(fileID).gcodeName) {
+                    var thisGcodePath = path.join(gcodePath, result.files.id(fileID).gcodeName);
                     fs.unlink(thisGcodePath, function (err) {
                         if (err.code === "ENOENT") {
                             console.log("File not found!");
