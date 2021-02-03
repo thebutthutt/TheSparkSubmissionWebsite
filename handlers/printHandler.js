@@ -114,6 +114,7 @@ module.exports = {
             callback("failure");
         } else {
             req.files.forEach(function (file) {
+                console.log(file.filename);
                 filenames.push(file.filename);
                 realFileNames.push(file.originalname);
             });
@@ -733,24 +734,21 @@ module.exports = {
             },
             function (err, result) {
                 //delete stl from disk
+                console.log(result.files.id(fileID).fileName);
                 var thisSTLPath = path.join(stlPath, result.files.id(fileID).fileName);
+                console.log(thisSTLPath);
                 fs.unlink(thisSTLPath, function (err) {
-                    if (err.code === "ENOENT") {
-                        console.log("File not found!");
-                    } else {
-                        throw err;
+                    if (err) {
+                        console.log(err);
                     }
                 });
 
                 //delete gcode from disk if it exists
-
                 if (result.files.id(fileID).gcodeName) {
                     var thisGcodePath = path.join(gcodePath, result.files.id(fileID).gcodeName);
                     fs.unlink(thisGcodePath, function (err) {
-                        if (err.code === "ENOENT") {
-                            console.log("File not found!");
-                        } else {
-                            throw err;
+                        if (err) {
+                            console.log(err);
                         }
                     });
                 }

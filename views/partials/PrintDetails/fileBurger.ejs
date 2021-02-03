@@ -1,6 +1,6 @@
 <span class="dropright icon-btn">
     <svg
-        data-toggle="dropdown"
+        data-bs-toggle="dropdown"
         aria-haspopup="true"
         aria-expanded="false"
         class="bi bi-three-dots-vertical"
@@ -23,7 +23,9 @@
         <a class="dropdown-item undo-delete-btn" id="<%= file._id%>" href="#">Undo Delete Request</a>
         <%} else { %>
         <a class="dropdown-item delete-btn" id="<%= file._id%>" issuperadmin="<%=isSuperAdmin%>" href="#">Delete</a>
-        <% } %> <% if (file.isPendingPayment) { %>
+        <%if (isSuperAdmin) {%>
+        <a class="dropdown-item delete-btn" id="<%= file._id%>" issuperadmin="false" href="#">Pending Delete</a>
+        <%}%> <% } %> <% if (file.isPendingPayment) { %>
         <a class="dropdown-item resend-btn" id="<%= item._id%>" href="#">Resend Payment Email</a>
         <% if (file.isPendingWaive) { %>
         <a class="dropdown-item undo-waive-btn" id="<%= item._id%>" href="#">Undo Waive Payment Request</a>

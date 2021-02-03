@@ -57,11 +57,6 @@ module.exports = function (app, passport) {
         //database cleanup
         var numNew;
         var numPrint;
-        var whitelist = null;
-        if (req.user.isSuperAdmin) {
-            let rawdata = fs.readFileSync(path.join(__dirname, "../app/whitelist.txt"));
-            whitelist = JSON.parse(rawdata);
-        }
 
         //nested callbacks because I'm shit at event driven systems kill me
         getNumNew(printRequestModel, function (numNewReturn) {
@@ -82,7 +77,6 @@ module.exports = function (app, passport) {
                     isSuperAdmin: req.user.isSuperAdmin,
                     queueData: prints,
                     sizeData: size,
-                    whitelist: whitelist,
                 });
             });
         });

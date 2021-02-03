@@ -3,148 +3,111 @@
         <input type="text" name="fileID" value="<%= print._id%>" />
     </div>
 
-    <div class="form-group">
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <div class="input-group-text">Decision</div>
-            </div>
+    <div class="row mb-3">
+        <div class="col">
             <select class="form-control" id="decision" name="decision" required>
                 <option value="accepted">Accepted</option>
                 <option value="rejected">Rejected</option>
             </select>
         </div>
+        <div class="col">
+            <select class="form-control" id="locationSelector" name="printLocation" required>
+                <% if (print.isReviewed) { %> <% if (print.printLocation == "Willis Library") { %>
+                <option value="Willis Library">Willis Library</option>
+                <option value="Discovery Park">Discovery Park</option>
+                <%} else {%>
+                <option value="Discovery Park">Discovery Park</option>
+                <option value="Willis Library">Willis Library</option>
+                <%}%> <% } else {%> <% if (print.pickupLocation == "Willis Library") { %>
+                <option value="Willis Library">Willis Library</option>
+                <option value="Discovery Park">Discovery Park</option>
+                <%} else {%>
+                <option value="Discovery Park">Discovery Park</option>
+                <option value="Willis Library">Willis Library</option>
+                <%}%> <% } %>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <label class="form-label">Estimations are for a ONE COPY ONLY! Thank you! </label>
+        <div class="col">
+            <div class="input-group mb-3">
+                <input type="number" class="form-control" name="hours" required />
+                <span class="input-group-text">h</span>
+                <input
+                    type="number"
+                    style="border-bottom-left-radius: 0px; border-top-left-radius: 0px"
+                    class="form-control"
+                    name="minutes"
+                    required
+                />
+                <span class="input-group-text">m</span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group mb-3">
+                <input type="number" class="form-control" name="grams" required />
+                <span class="input-group-text">grams</span>
+            </div>
+        </div>
     </div>
 
     <div class="accepted-controls">
-        <div class="form-group">
-            <div class="form-row">
-                <div class="col-7 pr-0">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Est. time</div>
-                        </div>
-                        <input type="number" class="form-control" name="hours" required />
-                        <div class="input-group-append">
-                            <div
-                                class="input-group-text border-right-0"
-                                style="border-bottom-right-radius: 0px; border-top-right-radius: 0px"
-                            >
-                                hours
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col pl-0">
-                    <div class="input-group">
-                        <input
-                            type="number"
-                            style="border-bottom-left-radius: 0px; border-top-left-radius: 0px"
-                            class="form-control"
-                            name="minutes"
-                            required
-                        />
-                        <div class="input-group-append">
-                            <div class="input-group-text">minutes</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <label>Upload Sliced GCODE</label>
+        <div class="input-group">
+            <input
+                type="file"
+                class="form-control"
+                id="exampleInputFile"
+                name="uploadedFile"
+                required
+                style="border-bottom-left-radius: 0px; border-bottom-right-radius: 0px"
+            />
         </div>
 
-        <div class="form-group">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">Est. weight</div>
-                </div>
-                <input type="number" class="form-control" name="grams" required />
-                <div class="input-group-append">
-                    <div class="input-group-text">grams</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">Print Location</div>
-                </div>
-                <select class="form-control" id="locationSelector" name="printLocation" required>
-                    <% if (print.isReviewed) { %> <% if (print.printLocation == "Willis Library") { %>
-                    <option value="Willis Library">Willis Library</option>
-                    <option value="Discovery Park">Discovery Park</option>
-                    <%} else {%>
-                    <option value="Discovery Park">Discovery Park</option>
-                    <option value="Willis Library">Willis Library</option>
-                    <%}%> <% } else {%> <% if (print.pickupLocation == "Willis Library") { %>
-                    <option value="Willis Library">Willis Library</option>
-                    <option value="Discovery Park">Discovery Park</option>
-                    <%} else {%>
-                    <option value="Discovery Park">Discovery Park</option>
-                    <option value="Willis Library">Willis Library</option>
-                    <%}%> <% } %>
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group no-bottom">
-            <label>GCODE Details</label>
-            <div class="custom-file" id="customFile" lang="es">
-                <input
-                    name="uploadedFile"
-                    type="file"
-                    class="custom-file-input"
-                    id="exampleInputFile"
-                    aria-describedby="fileHelp"
-                    ata-toggle="popover"
-                    data-placement="right"
-                    data-trigger="focus"
-                    data-content="File must be a GCODE file!"
-                    required
-                />
-                <label class="custom-file-label top-radius" for="exampleInputFile"> Upload GCODE </label>
-            </div>
-        </div>
-
-        <div class="form-group no-bottom">
-            <select class="form-control middle-radius" id="slicedPrinter" name="printer" required>
+        <div class="input-group mb-3">
+            <select
+                class="form-control border-top-0"
+                id="slicedPrinter"
+                name="printer"
+                required
+                style="border-top-left-radius: 0px"
+            >
+                <option>Sliced for printer...</option>
                 <option>Ender 5 Pro</option>
                 <option>Ender 3</option>
                 <option>Prusa i3 MK3</option>
                 <option>PolyPrinter 229</option>
                 <option>Other (write in technician notes)</option>
             </select>
+
+            <select class="form-control border-top-0" name="material" required style="border-top-right-radius: 0px">
+                <option>Sliced for material...</option>
+                <option>PLA</option>
+                <option>ABS</option>
+                <option>PETG</option>
+                <option>Other (write in technician notes)</option>
+            </select>
         </div>
 
-        <div class="form-group">
-            <input
-                type="text"
-                class="form-control bottom-radius"
-                name="material"
-                placeholder="Sliced for material..."
-                required
-            />
-        </div>
-
-        <div class="form-group">
-            <label for="technotes">Technician Notes</label>
-            <textarea
-                name="technotes"
-                placeholder="These are internal notes for other team members, and will not be sent to the patron. It might be helpful to include details on how you sliced this file!"
-                class="form-control"
-                rows="3"
-            ></textarea>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="patronNotes">Notes to Patron</label>
+        <label for="technotes">Technician Notes</label>
         <textarea
-            name="patronNotes"
-            placeholder="This is what will be sent to the patron."
-            class="form-control"
-            rows="2"
+            name="technotes"
+            placeholder="These are internal notes for other team members, and will not be sent to the patron. It might be helpful to include details on how you sliced this file!"
+            class="form-control mb-3"
+            rows="3"
         ></textarea>
     </div>
 
-    <button type="submit" class="btn btn-success submit-btn">Submit</button>
+    <label for="patronNotes">Notes to Patron</label>
+    <textarea
+        name="patronNotes"
+        placeholder="This is what will be sent to the patron."
+        class="form-control mb-3"
+        rows="2"
+    ></textarea>
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-success submit-btn">Submit</button>
+    </div>
 </form>

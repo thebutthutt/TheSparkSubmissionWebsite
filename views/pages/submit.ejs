@@ -23,103 +23,140 @@
 
                         <!-- SUBMISSION FORM -->
                         <form id="submission-form" action="/submitprint" method="POST" enctype="multipart/form-data">
-                            <h4>Contact Info</h4>
-                            <div class="input-group">
-                                <input
-                                    type="text"
-                                    class="form-control top"
-                                    name="first"
-                                    placeholder="First name"
-                                    required
-                                />
-                                <input
-                                    type="text"
-                                    class="form-control top"
-                                    name="last"
-                                    placeholder="Last name"
-                                    required
-                                />
-                            </div>
-
-                            <input type="email" class="form-control inner" name="email" placeholder="Email" required />
-
-                            <input
-                                type="text"
-                                class="form-control euid inner"
-                                name="euid"
-                                placeholder="EUID (students only, not required)"
-                            />
-
-                            <input type="tel" class="form-control bottom" name="phone" placeholder="Phone Number" />
-
-                            <hr />
-
-                            <h4>This submission is:</h4>
-                            <div class="form-check form-check-inline">
-                                <input
-                                    class="form-check-input"
-                                    type="radio"
-                                    name="submissionType"
-                                    id="inlineRadio1"
-                                    value="personal"
-                                    checked
-                                />
-                                <label class="form-check-label" for="inlineRadio1">Personal</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input
-                                    class="form-check-input"
-                                    type="radio"
-                                    name="submissionType"
-                                    id="inlineRadio2"
-                                    value="class"
-                                />
-                                <label class="form-check-label" for="inlineRadio2">For a class</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input
-                                    class="form-check-input"
-                                    type="radio"
-                                    name="submissionType"
-                                    id="inlineRadio3"
-                                    value="internal"
-                                />
-                                <label class="form-check-label" for="inlineRadio3">For a library department</label>
-                            </div>
-
-                            <h5>Class Details</h5>
-                            <div class="row">
+                            <div class="row g-3 mb-3">
                                 <div class="col">
-                                    <div class="form-floating mb-3">
+                                    <h4 class="mb-3">Contact Info</h4>
+                                    <div class="input-group">
                                         <input
                                             type="text"
                                             class="form-control"
-                                            id="floatingInput"
-                                            placeholder="CSCE 4901"
+                                            name="first"
+                                            placeholder="First name"
+                                            required
+                                            style="border-bottom-left-radius: 0px"
                                         />
-                                        <label for="floatingInput">Class Code</label>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="form-floating mb-3">
                                         <input
                                             type="text"
                                             class="form-control"
-                                            id="floatingInput"
-                                            placeholder="Firstname Lastname"
+                                            name="last"
+                                            placeholder="Last name"
+                                            required
+                                            style="border-bottom-right-radius: 0px"
                                         />
-                                        <label for="floatingInput">Professor</label>
+                                    </div>
+
+                                    <input
+                                        type="email"
+                                        class="form-control border-top-0"
+                                        name="email"
+                                        placeholder="Email"
+                                        required
+                                        style="border-radius: 0px"
+                                    />
+
+                                    <input
+                                        type="text"
+                                        class="form-control euid border-top-0"
+                                        name="euid"
+                                        placeholder="EUID (students only, not required)"
+                                        style="border-radius: 0px"
+                                    />
+
+                                    <input
+                                        type="tel"
+                                        class="form-control border-top-0"
+                                        name="phone"
+                                        placeholder="Phone Number"
+                                        style="border-top-left-radius: 0px; border-top-right-radius: 0px"
+                                    />
+                                </div>
+
+                                <div class="col">
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item">
+                                            <a
+                                                class="nav-link active"
+                                                id="personal-tab"
+                                                data-bs-toggle="tab"
+                                                href="#personal"
+                                                role="tab"
+                                                >Personal</a
+                                            >
+                                        </li>
+                                        <li class="nav-item">
+                                            <a
+                                                class="nav-link"
+                                                id="class-tab"
+                                                data-bs-toggle="tab"
+                                                href="#class"
+                                                role="tab"
+                                                >Class Related</a
+                                            >
+                                        </li>
+                                        <li class="nav-item">
+                                            <a
+                                                class="nav-link"
+                                                id="library-tab"
+                                                data-bs-toggle="tab"
+                                                href="#library"
+                                                role="tab"
+                                                >Library Department</a
+                                            >
+                                        </li>
+                                    </ul>
+
+                                    <div class="tab-content" id="myTabContent">
+                                        <div
+                                            class="tab-pane fade show active"
+                                            id="personal"
+                                            role="tabpanel"
+                                            aria-labelledby="personal-tab"
+                                        >
+                                            <p class="mt-2 mb-0">
+                                                No extra information is needed for personal prints. If this print is for
+                                                a class (i.e. senior design or research), please select the Class tab
+                                                above and enter the required information.
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="tab-pane fade"
+                                            id="class"
+                                            role="tabpanel"
+                                            aria-labelledby="class-tab"
+                                        >
+                                            <div class="mb-3">
+                                                <label for="course" class="form-label"
+                                                    >Course code (i.e. CSCE 4901)</label
+                                                >
+                                                <div class="form-floating mb-3">
+                                                    <input
+                                                        type="email"
+                                                        class="form-control"
+                                                        id="floatingInput"
+                                                        placeholder="name@example.com"
+                                                    />
+                                                    <label for="floatingInput">Email address</label>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="prof" class="form-label"
+                                                    >Professor (i.e. Firstname Lastname)</label
+                                                >
+
+                                                <input type="text" aria-label="prof" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="tab-pane fade"
+                                            id="library"
+                                            role="tabpanel"
+                                            aria-labelledby="library-tab"
+                                        >
+                                            Library
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <h5>Liibrary Department Details</h5>
-                            <select class="form-select" aria-label="Default select example">
-                                <option selected>Library Department...</option>
-                                <option value="1">The Spark Makerspace</option>
-                                <option value="2">Media Library</option>
-                                <option value="3">Others</option>
-                            </select>
 
                             <hr />
                             <div id="files-list"></div>

@@ -9,7 +9,7 @@ fi
 
 if [[ $(sudo netstat -tulpn | grep :$1) ]]; then
     echo "killing old process"
-    echo sudo fuser -k $1/tcp
+    sudo fuser -k $1/tcp
 else
     echo "port is clear"
 fi

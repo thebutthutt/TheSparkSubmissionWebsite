@@ -1,7 +1,6 @@
-{   
-    "ignore": [
-        "public/*",
-        "node_modules/*",
-        "views/*"
-    ]
+{
+    "ignore": ["public/*", "node_modules/*", "views/*"],
+    "events": {
+        "restart": "fuser -k 8080/tcp"
+    }
 }

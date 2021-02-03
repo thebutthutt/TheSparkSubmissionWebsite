@@ -1,66 +1,56 @@
 <div class="single-print">
-    <div class="row mb-2">
-        <input
-            type="file"
-            class="custom-file-input form-control file-upload"
-            id="exampleInputFile"
-            name="uploadedFile"
-            data-container="body"
-            data-toggle="popover"
-            data-placement="right"
-            data-trigger="focus"
-            data-content="File must be an STL!"
-            required
-        />
+    <div class="row g-3 mb-2">
+        <div class="col">
+            <input
+                type="file"
+                class="form-control"
+                id="exampleInputFile"
+                name="uploadedFile"
+                data-container="body"
+                data-toggle="popover"
+                data-placement="right"
+                data-trigger="focus"
+                data-content="File must be an STL!"
+                required
+            />
+        </div>
     </div>
 
-    <div class="row">
-        <label class="col-form-label col-sm-3">Material</label>
-        <div class="col-sm-9">
-            <select name="material" class="form-control top" required>
+    <div class="row g-3 mb-3">
+        <div class="col">
+            <label class="form-label">Material</label>
+            <select name="material" class="form-control" required>
                 <option value="No Preference">No preference</option>
                 <option value="PLA">PLA</option>
                 <option value="ABS">ABS</option>
                 <option value="Other">Other (requires prior approval)</option>
             </select>
         </div>
-    </div>
-
-    <div class="row">
-        <label class="col-form-label col-sm-3">Infill</label>
-        <div class="col-sm-9">
-            <input name="infill" type="text" class="form-control inner" value="12.5%" required />
+        <div class="col">
+            <label class="form-label">Infill</label>
+            <input name="infill" type="text" class="form-control" value="12.5%" required />
         </div>
-    </div>
-
-    <div class="row">
-        <label class="col-form-label col-sm-3">Color</label>
-        <div class="col-sm-9">
-            <input name="color" type="text" class="form-control inner" value="No preference" required />
+        <div class="col">
+            <label class="form-label">Color</label>
+            <input name="color" type="text" class="form-control" value="No preference" required />
         </div>
-    </div>
-
-    <div class="row">
-        <label class="col-form-label col-sm-3">Copies</label>
-        <div class="col-sm-9">
-            <input name="copies" type="number" class="form-control inner" value="1" required />
+        <div class="col">
+            <label class="form-label">Copies</label>
+            <input name="copies" type="number" class="form-control" value="1" required />
         </div>
-    </div>
-
-    <div class="row contains-select">
-        <label class="col-form-label col-sm-3">Pickup at</label>
-        <div class="col-sm-9">
-            <select name="pickup" class="form-control inner" required>
+        <div class="col">
+            <label class="form-label">Pickup Location</label>
+            <select name="pickup" class="form-control" required>
                 <option value="Willis Library">Willis Library</option>
                 <option value="Discovery Park">Discovery Park</option>
             </select>
         </div>
     </div>
 
-    <div class="row">
-        <label class="col-form-label col-sm-3" for="notes">Additional Notes</label>
-        <div class="col-sm-9">
-            <textarea name="notes" class="form-control bottom" rows="2"></textarea>
+    <div class="row g-3">
+        <div class="col">
+            <label class="form-label">Additional Information</label>
+            <textarea name="notes" class="form-control" rows="2"></textarea>
         </div>
     </div>
 
