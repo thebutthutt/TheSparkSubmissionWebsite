@@ -5,62 +5,66 @@ var dailyRecordModel = require("../app/models/dailyRecord");
 var monthlyRecordModel = require("../app/models/monthlyRecord");
 
 module.exports = {
+    createNewDailyRecord: async function (usingDate) {
+        var newDaily = new dailyRecordModel();
+        newDaily.thisDate = usingDate;
+        newDaily.lastModified = usingDate;
+        newDaily.dataRecord = {};
+        await newDaily.save();
+        return newDaily;
+    },
+    createNewMonthlyRecord: async function (usingDate) {
+        var firstDayOfMonth = new Date(Date.UTC(usingDate.getFullYear(), usingDate.getMonth(), 1));
+        var lastDayOfMonth = new Date(Date.UTC(usingDate.getFullYear(), usingDate.getMonth() + 1, 0));
+
+        var newMonthly = new dailyRecordModel();
+        newMonthly.startDate = firstDayOfMonth;
+        newMonthly.endDate = lastDayOfMonth;
+        newMonthly.lastModified = usingDate;
+        newMonthly.dataRecord = {};
+        await newMonthly.save();
+        return newMonthly;
+    },
     getTodaysRecord: async function () {
         var today = new Date();
         var todayDay = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
 
-        dailyRecordModel.findOne(
-            {
-                thisDate: todayDay,
-            },
-            async function (err, result) {
-                console.log(result);
-                if (result == null) {
-                    //create a new record for today
-                    var todaysRecord = new dailyRecordModel();
-                    todaysRecord.thisDate = todayDay;
-                    todaysRecord.lastModified = today;
-                    await todaysRecord.save();
-                    return todaysRecord;
-                } else {
-                    return result;
-                    //result.delete();
-                }
-            }
-        );
+        var thisDay = await dailyRecordModel.findOne({ thisDate: todayDay }).exec();
+        if (thisDay != null) {
+            return thisDay;
+        } else {
+            thisDay = await module.exports.createNewDailyRecord(todayDay);
+        }
     },
     getThisMonthRecord: async function () {
         var today = new Date();
         var todayDay = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
 
-        monthlyRecordModel.findOne(
-            {
+        var thisMonth = await monthlyRecordModel
+            .findOne({
                 startDate: { $lte: todayDay },
                 endDate: { $gte: todayDay },
-            },
-            async function (err, result) {
-                console.log(result);
-                if (result == null) {
-                    var thisMonthRecord = new monthlyRecordModel();
-
-                    var firstDayOfMonth = new Date(Date.UTC(today.getFullYear(), today.getMonth(), 1));
-                    var lastDayOfMonth = new Date(Date.UTC(today.getFullYear(), today.getMonth() + 1, 0));
-
-                    thisMonthRecord.startDate = firstDayOfMonth;
-                    thisMonthRecord.endDate = lastDayOfMonth;
-                    thisMonthRecord.lastModified = today;
-
-                    await thisMonthRecord.save();
-                    return thisMonthRecord;
-                } else {
-                    return result;
-                }
-            }
-        );
+            })
+            .exec();
+        if (thisMonth != null) {
+            return thisMonth;
+        } else {
+            thisMonth = await module.exports.createNewMonthlyRecord(todayDay);
+        }
     },
     recordNewSubmission: async function (submissionID) {
         var thisDay = await module.exports.getTodaysRecord();
         var thisMonth = await module.exports.getThisMonthRecord();
-        var newSubmission = printRequestModel.findById(submissionID);
+        var thisSubmission = await printRequestModel.findById(submissionID).exec();
+        console.log(thisSubmission);
+
+        thisDay.dataRecord.numSubmittedFiles += thisSubmission.numFiles;
+        thisDay.dataRecord.numWholeSubmissions += 1;
+
+        thisMonth.dataRecord.numSubmittedFiles += thisSubmission.numFiles;
+        thisMonth.dataRecord.numWholeSubmissions += 1;
+
+        console.log(thisDay);
+        console.log(thisMonth);
     },
 };

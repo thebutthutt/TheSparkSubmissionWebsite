@@ -76,11 +76,11 @@ async function findAllPrices() {
 }
 
 async function testMeta() {
-    var today = await metaGenerator.getTodaysRecord();
-    console.log(today);
+    var dummySubmission = await printRequestModel.findOne({
+        "patron.fname": "Hanna",
+    });
 
-    var thisMonth = await metaGenerator.getThisMonthRecord();
-    console.log(thisMonth);
+    metaGenerator.recordNewSubmission(dummySubmission._id);
 }
 
 testMeta();

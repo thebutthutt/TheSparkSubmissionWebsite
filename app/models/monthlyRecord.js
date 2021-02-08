@@ -16,7 +16,7 @@ var monthlyRecordSchema = mongoose.Schema({
     startDate: Date,
     endDate: Date,
     lastModified: Date,
-    data: mongoose.model("recordData").schema,
+    dataRecord: mongoose.model("recordData").schema,
 });
 
 module.exports = mongoose.model("monthlyRecord", monthlyRecordSchema);
