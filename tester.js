@@ -4,6 +4,7 @@ var printRequestModel = require("./app/models/printRequest");
 var printHandler = require("./handlers/printHandler.js");
 var emailer = require("./app/emailer.js");
 var payment = require("./app/payment.js");
+var metaGenerator = require("./handlers/metaGenerator.js");
 
 console.log("here");
 
@@ -74,7 +75,11 @@ async function findAllPrices() {
     }
 }
 
-//findAllPrices();
+async function testMeta() {
+    metaGenerator.getTodaysRecord();
+}
+
+testMeta();
 
 /*
 179748 sudo nodemon --tls-cipher-list=ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL server.js

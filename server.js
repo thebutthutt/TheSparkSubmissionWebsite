@@ -7,6 +7,7 @@ var express = require("express");
 var https = require("https");
 var http = require("http");
 var fs = require("fs");
+var nodeCleanup = require("node-cleanup");
 
 var app = express();
 var port = process.env.PORT;
@@ -109,15 +110,15 @@ require("./app/websocket.js")(server);
 server.listen(port, "0.0.0.0");
 
 //http server to redirect to https
-var http_server = http
-    .createServer(function (req, res) {
-        // 301 redirect (reclassifies google listings)
-        res.writeHead(301, {
-            Location: "https://" + req.headers["host"] + req.url,
-        });
-        res.end();
-    })
-    .listen(process.env.HTTP, "0.0.0.0");
+var http_server = http.createServer(function (req, res) {
+    // 301 redirect (reclassifies google listings)
+    res.writeHead(301, {
+        Location: "https://" + req.headers["host"] + req.url,
+    });
+    res.end();
+});
+
+http_server.listen(process.env.HTTP, "0.0.0.0");
 
 console.log("The magic happens on port " + port);
 
