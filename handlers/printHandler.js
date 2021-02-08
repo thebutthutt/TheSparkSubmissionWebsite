@@ -7,6 +7,7 @@ var newmailer = require("../app/emailer.js");
 var fs = require("fs");
 var path = require("path");
 var printRequestModel = require("../app/models/printRequest");
+var dataStorage = require("./metaGenerator");
 
 var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
@@ -83,6 +84,8 @@ module.exports = {
                 return console.error(err);
             } else {
                 newmailer.newSubmission(request);
+                //add a new submission to this day and month
+                dataStorage.recordNewSubmission(document._id);
             }
         });
     },

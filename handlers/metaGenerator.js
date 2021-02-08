@@ -7,60 +7,60 @@ var monthlyRecordModel = require("../app/models/monthlyRecord");
 module.exports = {
     getTodaysRecord: async function () {
         var today = new Date();
-        today = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
-
-        console.log(today);
+        var todayDay = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
 
         dailyRecordModel.findOne(
             {
-                thisDate: today,
+                thisDate: todayDay,
             },
-            function (err, result) {
+            async function (err, result) {
                 console.log(result);
                 if (result == null) {
                     //create a new record for today
                     var todaysRecord = new dailyRecordModel();
-                    todaysRecord.thisDate = today;
-                    todaysRecord.numSubmitted = 0;
-
-                    todaysRecord.numApproved = 0;
-                    todaysRecord.totalApprovedGrams = 0;
-                    todaysRecord.totalApprovedTime = 0; //in hours (decimal)
-
-                    todaysRecord.numRejected = 0;
-
-                    todaysRecord.numStaleOnPayment = 0;
-
-                    //Printed and subsets
-                    todaysRecord.numPrinted = 0;
-                    todaysRecord.totalPrintedGrams = 0;
-                    todaysRecord.totalPrintedTime = 0; //in hours (decimal)
-
-                    todaysRecord.numPrintedPaid = 0;
-                    todaysRecord.totalPaidGrams = 0;
-                    todaysRecord.totalPaidTime = 0; //in hours (decimal)
-
-                    todaysRecord.numPrintedWaived = 0;
-                    todaysRecord.totalWaivedGrams = 0;
-                    todaysRecord.totalWaivedTime = 0; //in hours (decimal)
-
-                    todaysRecord.numFailedAttempts = 0;
-                    totalFailedGrams = 0;
-                    todaysRecord.totalFailedTime = 0; //in hours (decimal)
-
-                    //Went Home or didnt
-                    todaysRecord.numPickedUp = 0;
-                    todaysRecord.totalPickedUpGrams = 0;
-                    todaysRecord.totalPickedUpTime = 0; //in hours (decimal)
-
-                    todaysRecord.numStaleOnPickup = 0;
-
-                    todaysRecord.save();
+                    todaysRecord.thisDate = todayDay;
+                    todaysRecord.lastModified = today;
+                    await todaysRecord.save();
                     return todaysRecord;
+                } else {
+                    return result;
+                    //result.delete();
+                }
+            }
+        );
+    },
+    getThisMonthRecord: async function () {
+        var today = new Date();
+        var todayDay = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+
+        monthlyRecordModel.findOne(
+            {
+                startDate: { $lte: todayDay },
+                endDate: { $gte: todayDay },
+            },
+            async function (err, result) {
+                console.log(result);
+                if (result == null) {
+                    var thisMonthRecord = new monthlyRecordModel();
+
+                    var firstDayOfMonth = new Date(Date.UTC(today.getFullYear(), today.getMonth(), 1));
+                    var lastDayOfMonth = new Date(Date.UTC(today.getFullYear(), today.getMonth() + 1, 0));
+
+                    thisMonthRecord.startDate = firstDayOfMonth;
+                    thisMonthRecord.endDate = lastDayOfMonth;
+                    thisMonthRecord.lastModified = today;
+
+                    await thisMonthRecord.save();
+                    return thisMonthRecord;
                 } else {
                     return result;
                 }
             }
         );
+    },
+    recordNewSubmission: async function (submissionID) {
+        var thisDay = await module.exports.getTodaysRecord();
+        var thisMonth = await module.exports.getThisMonthRecord();
+        var newSubmission = printRequestModel.findById(submissionID);
     },
 };

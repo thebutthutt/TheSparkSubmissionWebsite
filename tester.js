@@ -76,7 +76,11 @@ async function findAllPrices() {
 }
 
 async function testMeta() {
-    metaGenerator.getTodaysRecord();
+    var today = await metaGenerator.getTodaysRecord();
+    console.log(today);
+
+    var thisMonth = await metaGenerator.getThisMonthRecord();
+    console.log(thisMonth);
 }
 
 testMeta();
