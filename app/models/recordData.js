@@ -8,6 +8,9 @@ var dataSchema = mongoose.Schema({
     submittedFileIDs: [String],
     submittedSubmissionsIDs: [String],
 
+    totalRequestedPayment: { type: Number, default: 0 },
+    totalRecievedPayment: { type: Number, default: 0 },
+
     numApprovedFiles: { type: Number, default: 0 },
     approvedFileIDs: [String],
 

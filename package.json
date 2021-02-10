@@ -50,7 +50,7 @@
         "prenodemon": "./startmongod.sh $(grep PORT .env | cut -d '=' -f2); sleep 1",
         "nodemon": "sudo nodemon --delay 1500ms --tls-cipher-list='ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL' server.js",
         "prestart": "./startmongod.sh $(grep PORT .env | cut -d '=' -f2)",
-        "start": "sudo node --tls-cipher-list='ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL' server.js"
+        "start": "sudo /usr/ --tls-cipher-list='ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL' server.js"
     },
     "devDependencies": {
         "@types/express": "^4.17.11",

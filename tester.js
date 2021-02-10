@@ -77,13 +77,14 @@ async function findAllPrices() {
 
 async function testMeta() {
     var dummySubmission = await printRequestModel.findOne({
-        "patron.fname": "Hanna",
+        "patron.lname": "Bettis",
     });
 
-    metaGenerator.recordNewSubmission(dummySubmission._id);
+    metaGenerator.recordPaymentRequest(dummySubmission._id);
 }
 
-testMeta();
+//testMeta();
+metaGenerator.otherStuff();
 
 /*
 179748 sudo nodemon --tls-cipher-list=ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL server.js

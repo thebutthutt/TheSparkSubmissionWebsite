@@ -7,7 +7,6 @@ var express = require("express");
 var https = require("https");
 var http = require("http");
 var fs = require("fs");
-var nodeCleanup = require("node-cleanup");
 
 var app = express();
 var port = process.env.PORT;
@@ -29,6 +28,7 @@ mongoose.connect(constants.url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
+    useCreateIndex: true,
 }); // connect to our database
 
 require("./app/passport")(passport); // pass passport for configuration

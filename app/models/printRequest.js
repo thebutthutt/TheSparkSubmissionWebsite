@@ -18,6 +18,7 @@ var singlePrintSchema = mongoose.Schema({
     isPendingPayment: Boolean,
     isPendingWaive: Boolean,
     isPaid: Boolean,
+    wasWaived: Boolean,
     isReadyToPrint: Boolean,
     isPrinted: Boolean,
     isPickedUp: Boolean,
@@ -69,6 +70,7 @@ var printSubmissionSchema = mongoose.Schema({
     dateSubmitted: String,
     datePaymentRequested: String,
     datePaid: String,
+    wasWaived: Boolean,
 
     requestedPrice: Number,
     requestedSingleCopyPrice: Number,
@@ -77,5 +79,40 @@ var printSubmissionSchema = mongoose.Schema({
     isPendingWaive: Boolean,
     files: [singlePrintSchema], //array of actual print files
 });
+
+printSubmissionSchema.methods.getFilesApprovedRejected = function () {
+    if (!this.allFilesReviewed) {
+        return {
+            numAccepted: 0,
+            numRejected: 0,
+        };
+    } else {
+        var numAccepted = 0,
+            numRejected = 0,
+            acceptedGrams = 0,
+            acceptedHours = 0,
+            acceptedMinutes = 0;
+        for (let file of this.files) {
+            if (file.isReviewed && file.isRejected) {
+                numRejected++;
+            } else {
+                if (file.isReviewed && !file.isRejected) {
+                    numAccepted++;
+                    acceptedGrams += file.grams;
+                    acceptedHours += file.timeHours;
+                    acceptedMinutes += file.timeMinutes;
+                }
+            }
+        }
+        return {
+            numAccepted: numAccepted,
+            numRejected: numRejected,
+            acceptedGrams: acceptedGrams,
+            acceptedHours: acceptedHours,
+            acceptedMinutes: acceptedMinutes,
+            totalPayment: this.requestedPrice,
+        };
+    }
+};
 
 module.exports = mongoose.model("PrintRequest", printSubmissionSchema);
