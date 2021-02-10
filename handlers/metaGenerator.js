@@ -240,6 +240,12 @@ module.exports = {
                     },
                 },
             },
+            {
+                $group: {
+                    _id: "$_id",
+                    submissions: 1,
+                },
+            },
         ]);
 
         console.log(done);
