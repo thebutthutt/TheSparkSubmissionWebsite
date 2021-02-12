@@ -151,7 +151,9 @@
                                     <%}%>
 
                                     <div class="col">
-                                        <a class="preview-btn" id="<%= file._id%>" href="#"> <%=file.realFileName%> </a>
+                                        <a class="no" href='<%= "/prints/preview?fileID=" + file._id%>'>
+                                            <%=file.realFileName%>
+                                        </a>
                                         &nbsp; <%- include ("../../partials/PrintDetails/flags", {file:file, isAll:
                                         isall}) %>
                                     </div>

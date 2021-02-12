@@ -16,7 +16,7 @@
         />
     </svg>
     <div class="dropdown-menu">
-        <a class="dropdown-item download-btn" id="<%= file.fileName%>" href="#">Download</a>
+        <a class="dropdown-item" href='<%="/prints/download?fileID=" +  file.fileName%>'>Download</a>
         <a class="dropdown-item preview-btn" id="<%= file._id%>" href="#">Review</a>
 
         <% if (file.isPendingDelete) { %>

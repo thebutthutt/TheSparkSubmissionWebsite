@@ -738,10 +738,12 @@ module.exports = {
                 //delete stl from disk
                 var thisSTLPath = path.join(stlPath, result.files.id(fileID).fileName);
                 fs.unlink(thisSTLPath, function (err) {
-                    if (err.code === "ENOENT") {
-                        console.log("File not found!");
-                    } else {
-                        throw err;
+                    if (err) {
+                        if (err.code === "ENOENT") {
+                            console.log("File not found!");
+                        } else {
+                            throw err;
+                        }
                     }
                 });
 
@@ -750,10 +752,12 @@ module.exports = {
                 if (result.files.id(fileID).gcodeName) {
                     var thisGcodePath = path.join(gcodePath, result.files.id(fileID).gcodeName);
                     fs.unlink(thisGcodePath, function (err) {
-                        if (err.code === "ENOENT") {
-                            console.log("File not found!");
-                        } else {
-                            throw err;
+                        if (err) {
+                            if (err.code === "ENOENT") {
+                                console.log("File not found!");
+                            } else {
+                                throw err;
+                            }
                         }
                     });
                 }
