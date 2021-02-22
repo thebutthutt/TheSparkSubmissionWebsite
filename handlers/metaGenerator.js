@@ -1,11 +1,13 @@
 var fs = require("fs");
 var path = require("path");
 var printRequestModel = require("../app/models/printRequest");
-var dailyRecordModel = require("../app/models/dailyRecord");
-var monthlyRecordModel = require("../app/models/monthlyRecord");
+//var dailyRecordModel = require("../app/models/dailyRecord");
+//var monthlyRecordModel = require("../app/models/monthlyRecord");
 const { isNull } = require("lodash");
+const util = require("util");
 
 module.exports = {
+    /* 
     createNewDailyRecord: async function (usingDate) {
         var newDaily = new dailyRecordModel();
         newDaily.thisDate = usingDate;
@@ -57,10 +59,6 @@ module.exports = {
         }
     },
 
-    /*
-    Fires when a new submission comes in. Just increments the total number
-    of submissions and individual files we recieved today and this month
-    */
     recordNewSubmission: async function (submissionID) {
         var thisDay = await module.exports.getTodaysRecord();
         var thisMonth = await module.exports.getThisMonthRecord();
@@ -76,12 +74,6 @@ module.exports = {
         await thisMonth.save();
     },
 
-    /*
-    Fires when a submission is finalised for payment. Records the number of files
-    accepted and rejected, and the grams + time for the accepted prints. Records
-    the requested paymnt amount. Increments the all, some, or none accepted 
-    submission counts as appropriate
-    */
     recordPaymentRequest: async function (submissionID) {
         var thisDay = await module.exports.getTodaysRecord();
         var thisMonth = await module.exports.getThisMonthRecord();
@@ -118,9 +110,7 @@ module.exports = {
         await thisMonth.save();
     },
 
-    /*
-    Fires when a submission is totally rejected. Records the files
-    */
+
     recordSubmissionRejected: async function (submissionID) {
         var thisDay = await module.exports.getTodaysRecord();
         var thisMonth = await module.exports.getThisMonthRecord();
@@ -133,36 +123,23 @@ module.exports = {
         thisMonth.dataRecord.numRejectedFiles += thisSubmission.numFiles;
     },
 
-    /*
-    Fires when a submission payment is recieved. Records the total paid amount.
-    */
     recordPaymentRecieved: async function (submissionID) {
         var thisDay = await module.exports.getTodaysRecord();
         var thisMonth = await module.exports.getThisMonthRecord();
         var thisSubmission = await printRequestModel.findById(submissionID).exec();
     },
 
-    /*
-    Fires when the payment is waived for a submission. Records that all files in the
-    submission are waived as well
-    */
+
     recordPaymentWaived: async function (submissionID) {
         var thisDay = await module.exports.getTodaysRecord();
         var thisMonth = await module.exports.getThisMonthRecord();
         var thisSubmission = await printRequestModel.findById(submissionID).exec();
     },
 
-    /*
-    Fires when one file is marked as completely printed. Records the final grams
-    and whether or not this file was paid for or waived. If this is the final file
-    in the subission, also increment number of completely printed submissions
-    */
+
     recordFilePrinted: async function (fileID) {},
 
-    /*
-    Fires when a file is marked as picked up by the patron. If this is the final
-    file in the submission, also increment number of submissions picked up
-    */
+
     recordFilePickedUp: async function (fileID) {},
 
     testingStuff: async function () {
@@ -215,12 +192,78 @@ module.exports = {
 
         console.log(test);
     },
-
+*/
     otherStuff: async function () {
         var done = await printRequestModel.aggregate([
-            { $unwind: "$files" },
-            { $match: { "files.isPrinted": true } },
             {
+                $addFields: {
+                    newDateSubmitted: {
+                        $toDate: "$dateSubmitted",
+                    },
+                },
+            },
+            {
+                $match: {
+                    $and: [
+                        { "files.isPrinted": true },
+                        { newDateSubmitted: { $gte: new Date("2021-01-01") } },
+                        { newDateSubmitted: { $lte: new Date("2021-02-31") } },
+                    ],
+                },
+            },
+            {
+                $facet: {
+                    bySubmission: [
+                        {
+                            $bucket: {
+                                groupBy: {
+                                    $cond: {
+                                        if: { $anyElementTrue: ["$files.wasWaived"] },
+                                        then: "Waived",
+                                        else: "Paid",
+                                    },
+                                },
+                                boundaries: ["Paid", "Waived", "X"],
+                                output: {
+                                    numSubmissions: { $sum: 1 },
+                                    totalPrice: { $sum: "$requestedPrice" },
+                                },
+                            },
+                        },
+                    ],
+                    byFile: [
+                        { $unwind: "$files" },
+                        {
+                            $bucket: {
+                                groupBy: { $cond: ["$files.wasWaived", "Waived", "Paid"] },
+                                boundaries: ["Paid", "Waived", "X"],
+                                output: {
+                                    numFiles: { $sum: 1 },
+                                    totalEstGrams: { $sum: "$files.grams" },
+                                    totalPrintedGrams: { $sum: "$files.realGrams" },
+                                    totalMinutes: {
+                                        $sum: { $add: ["$files.timeMinutes", { $multiply: ["$files.timeHours", 60] }] },
+                                    },
+                                    submissionIDs: { $addToSet: "$_id" },
+                                },
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $count: "Paid",
+            },
+        ]);
+
+        console.log(util.inspect(done, false, null, true /* enable colors */));
+    },
+
+    getAllSubmissionCount: async function () {},
+};
+
+/*
+{
                 $bucket: {
                     groupBy: { $cond: ["$files.wasWaived", "Waived", "Paid"] },
                     boundaries: ["Paid", "Waived", "X"],
@@ -240,16 +283,22 @@ module.exports = {
                     },
                 },
             },
-            {
-                $group: {
-                    _id: "$_id",
-                    //heres wehre I copy the stuff from above
-                },
-            },
-        ]);
+*/
 
-        console.log(done);
-    },
+/*
 
-    getAllSubmissionCount: async function () {},
-};
+{
+                            $bucket: {
+                                groupBy: {
+                                    $cond: {
+                                        if: { $anyElementTrue: ["$files.wasWaived"] },
+                                        then: "Waived",
+                                        else: "Paid",
+                                    },
+                                },
+                                boundaries: ["Paid", "Waived", "X"],
+                                output: {
+                                    count: { $sum: 1 },
+                                },
+                            },
+                        },*/
