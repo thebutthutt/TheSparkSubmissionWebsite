@@ -62,20 +62,11 @@ app.use(
 app.set("view engine", "ejs"); // set up ejs for templating
 app.use("/public", express.static(path.join(__dirname, "/public"))); //allow us to grab local files in the public directory
 app.use("/three", express.static(__dirname + "/node_modules/three/")); //allow website to access the three.js library
-app.use(
-    "/fullcalendar",
-    express.static(__dirname + "/node_modules/fullcalendar/")
-); //allow website to access the three.js library
+app.use("/fullcalendar", express.static(__dirname + "/node_modules/fullcalendar/")); //allow website to access the three.js library
 app.use("/gui", express.static(__dirname + "/node_modules/dat.gui/")); //allow website to access the uploaded STLs (for in site display)
 app.use("/Uploads", express.static(path.join(__dirname, "../Uploads"))); //allow website to access the uploaded STLs (for in site display)
-app.use(
-    "/qrcode",
-    express.static(__dirname + "/node_modules/qrcode-generator/")
-); //allow website to access the uploaded STLs (for in site display)
-app.use(
-    "/datepicker",
-    express.static(__dirname + "/node_modules/js-datepicker/dist/")
-);
+app.use("/qrcode", express.static(__dirname + "/node_modules/qrcode-generator/")); //allow website to access the uploaded STLs (for in site display)
+app.use("/datepicker", express.static(__dirname + "/node_modules/js-datepicker/dist/"));
 
 app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 
@@ -112,29 +103,18 @@ require("./routes/userRoutes.js")(
     cleRequestModel,
     objectToCleanModel
 ); // load our routes and pass in our app and fully configured passport
-require("./routes/cleRoutes.js")(
-    app,
-    passport,
-    userModel,
-    cleHandler,
-    cleRequestModel
-); // load our routes and pass in our app and fully configured passport
+require("./routes/cleRoutes.js")(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
 require("./routes/cameraRoutes.js")(app, bookingModel, cameraHandler); // load our routes and pass in our app and fully configured passport
 
 // Job Scheduler ======================================================================
-require("./config/jobs.js")(
-    printRequestModel,
-    bookingModel,
-    objectToCleanModel,
-    constants
-); //make the job scheduler go
+require("./config/jobs.js")(printRequestModel, bookingModel, objectToCleanModel, constants); //make the job scheduler go
 //bookingModel.remove({}, function(){})
 // launch ======================================================================
 
 var server = https.createServer(
     {
-        key: fs.readFileSync("./npserver2048.key"),
-        cert: fs.readFileSync("./sparkorders_library_unt_edu_cert.cer"),
+        key: fs.readFileSync("./config/npserver2048.key"),
+        cert: fs.readFileSync("./config/sparkorders_library_unt_edu_cert.cer"),
         passphrase: "THEsparkMakerSPACE",
         ciphers: [
             "ECDHE-RSA-AES256-SHA384",

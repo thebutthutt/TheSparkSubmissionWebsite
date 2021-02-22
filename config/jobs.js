@@ -33,54 +33,57 @@ module.exports = function (printRequestModel, bookingModel, objectToCleanModel, 
                 },
             },
             function (err, result) {
-                result.forEach((submission) => {
-                    var three = [],
-                        two = [],
-                        one = [];
-                    submission.files.forEach((file) => {
-                        if (moment(file.datePrinted, "M-D-YY").isBefore(moment(threeWeeks, "M-D-YY"))) {
-                            //file is 3 weeks old, we keep it
-                            if (file.dateOfConfiscation == "Not yet sent") {
-                                //third contact has not been sent
-                                file.dateOfConfiscation = today;
-                                file.isStaleOnPickup = true;
-                                submission.save();
-                                three.push(file);
-                            }
-                        } else if (moment(file.datePrinted, "M-D-YY").isBefore(moment(twoWeeks, "M-D-YY"))) {
-                            //file is 2 weeks old, another contact
-                            if (file.dateOfSecondWarning == "Not yet sent") {
-                                //second contact has not been sent
-                                file.dateOfSecondWarning = today;
-                                submission.save();
-                                two.push(file);
-                            }
-                        } else if (moment(file.datePrinted, "M-D-YY").isBefore(moment(oneWeek, "M-D-YY"))) {
-                            //file is one week old, send a contact
-                            if (file.dateOfFirstWarning == "Not yet sent") {
-                                //first contact has not been sent
-                                file.dateOfFirstWarning = today;
-                                submission.save();
-                                one.push(file);
+                if (err) {
+                    console.log(err);
+                } else {
+                    result.forEach((submission) => {
+                        var three = [],
+                            two = [],
+                            one = [];
+
+                        for (const file of submission.files) {
+                            if (moment(file.datePrinted, "M-D-YY").isBefore(moment(threeWeeks, "M-D-YY"))) {
+                                //file is 3 weeks old, we keep it
+                                if (file.dateOfConfiscation == "Not yet sent") {
+                                    //third contact has not been sent
+                                    file.dateOfConfiscation = today;
+                                    file.isStaleOnPickup = true;
+                                    three.push(file);
+                                }
+                            } else if (moment(file.datePrinted, "M-D-YY").isBefore(moment(twoWeeks, "M-D-YY"))) {
+                                //file is 2 weeks old, another contact
+                                if (file.dateOfSecondWarning == "Not yet sent") {
+                                    //second contact has not been sent
+                                    file.dateOfSecondWarning = today;
+                                    two.push(file);
+                                }
+                            } else if (moment(file.datePrinted, "M-D-YY").isBefore(moment(oneWeek, "M-D-YY"))) {
+                                //file is one week old, send a contact
+                                if (file.dateOfFirstWarning == "Not yet sent") {
+                                    //first contact has not been sent
+                                    file.dateOfFirstWarning = today;
+                                    one.push(file);
+                                }
                             }
                         }
+                        submission.save();
+
+                        if (three.length > 0) {
+                            console.log("Repo prints", three);
+                            emailer.repoPrint(submission, three);
+                        }
+
+                        if (two.length > 0) {
+                            console.log("final warning prints", two);
+                            emailer.finalWarning(submission, two);
+                        }
+
+                        if (one.length > 0) {
+                            console.log("warning prints", one);
+                            emailer.stillWaiting(submission, one);
+                        }
                     });
-
-                    if (three.length > 0) {
-                        console.log("Repo prints", three);
-                        emailer.repoPrint(submission, three);
-                    }
-
-                    if (two.length > 0) {
-                        console.log("final warning prints", two);
-                        emailer.finalWarning(submission, two);
-                    }
-
-                    if (one.length > 0) {
-                        console.log("warning prints", one);
-                        emailer.stillWaiting(submission, one);
-                    }
-                });
+                }
             }
         );
     };
