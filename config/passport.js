@@ -71,7 +71,7 @@ module.exports = function (passport) {
                     bindDN: process.env.BIND_DN,
                     bindCredentials: process.env.BIND_CRED,
                     tlsOptions: {
-                        ca: [fs.readFileSync(path.join(__dirname, "../UNTADRootCA.pem"))],
+                        ca: [fs.readFileSync(path.join(__dirname, "UNTADRootCA.pem"))],
                     },
                 });
 
