@@ -1,4 +1,7 @@
 $(document).ready(function () {
+    $(window).on("popstate", function () {
+        location.reload();
+    });
     $('[data-toggle="tooltip"]').tooltip();
     $(".delete-btn").on("click", function () {
         var fileID = $(this).attr("id");
