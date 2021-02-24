@@ -84,8 +84,8 @@ require("./app/jobs.js")(constants); //make the job scheduler go
 
 var server = https.createServer(
     {
-        key: fs.readFileSync("./npserver2048.key"),
-        cert: fs.readFileSync("./sparkorders_library_unt_edu_cert.cer"),
+        key: fs.readFileSync("./config/npserver2048.key"),
+        cert: fs.readFileSync("./config/sparkorders_library_unt_edu_cert.cer"),
         passphrase: "THEsparkMakerSPACE",
         ciphers: [
             "ECDHE-RSA-AES256-SHA384",

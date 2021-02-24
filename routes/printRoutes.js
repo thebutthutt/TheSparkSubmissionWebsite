@@ -429,7 +429,17 @@ module.exports = function (app) {
     //downloads file specified in the parameter
     app.get("/prints/download", isLoggedIn, function (req, res) {
         var fileLocation = req.body.fileID || req.query.fileID;
-        res.download(fileLocation); //send the download
+        console.log(fileLocation);
+
+        var newLocation;
+        if (fileLocation.slice(-5).toUpperCase() == "GCODE") {
+            newLocation = path.join(gcodePath, fileLocation);
+        } else {
+            newLocation = path.join(stlPath, fileLocation);
+        }
+
+        console.log(newLocation);
+        res.download(newLocation); //send the download
     });
 
     //-----------------------PUSH REVIEW-----------------------
