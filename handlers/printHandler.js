@@ -1,9 +1,9 @@
 /** @format */
 
 const moment = require("moment");
-const constants = require("../config/constants");
-var payment = require("../config/payment.js");
-var newmailer = require("../config/emailer.js");
+const constants = require("../app/constants");
+var payment = require("../app/payment.js");
+var newmailer = require("../app/emailer.js");
 var fs = require("fs");
 var path = require("path");
 var printRequestModel = require("../app/models/printRequest");

@@ -46,6 +46,7 @@
         "ws": "^7.4.2"
     },
     "scripts": {
+        "prenodemon": "./startmongod.sh $(grep PORT .env | cut -d '=' -f2)",
         "nodemon": "sudo nodemon --tls-cipher-list='ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL' server.js",
         "nope": "./startmongod.sh $(grep PORT .env | cut -d '=' -f2)",
         "start": "sudo node --tls-cipher-list='ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL' server.js"
