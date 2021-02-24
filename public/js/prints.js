@@ -1,7 +1,13 @@
+window.addEventListener("pageshow", function (event) {
+    var historyTraversal =
+        event.persisted || (typeof window.performance != "undefined" && window.performance.navigation.type === 2);
+    if (historyTraversal) {
+        // Handle page restore.
+        window.location.reload();
+    }
+});
+
 $(document).ready(function () {
-    $(window).on("popstate", function () {
-        location.reload();
-    });
     $('[data-toggle="tooltip"]').tooltip();
     $(".delete-btn").on("click", function () {
         var fileID = $(this).attr("id");
@@ -49,8 +55,12 @@ $(document).ready(function () {
 
     $(".download-btn").on("click", function () {
         var fileID = $(this).attr("id");
-        console.log("wow");
         window.location = "/prints/download?fileID=" + fileID;
+    });
+
+    $(".zip-btn").on("click", function () {
+        var submissionID = $(this).attr("id");
+        window.location = "/prints/downloadSubmission?submissionID=" + submissionID;
     });
 
     $(".preview-btn").on("click", function () {

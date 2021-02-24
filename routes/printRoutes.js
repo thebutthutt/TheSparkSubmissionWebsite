@@ -7,6 +7,8 @@ var printRequestModel = require("../app/models/printRequest");
 var printHandler = require("../handlers/printHandler.js");
 var adminRequestHandler = require("../handlers/adminRequestHandler.js");
 var payment = require("../app/payment.js");
+const archiver = require("archiver");
+var fs = require("fs");
 
 module.exports = function (app) {
     //Metainfo about all the prints we have done
@@ -440,6 +442,43 @@ module.exports = function (app) {
 
         console.log(newLocation);
         res.download(newLocation); //send the download
+    });
+
+    app.get("/prints/downloadSubmission", isLoggedIn, async function (req, res) {
+        var thisSubmission = await printRequestModel.findById(req.query.submissionID);
+        if (thisSubmission) {
+            var zipName =
+                thisSubmission.patron.fname +
+                "_" +
+                thisSubmission.patron.lname +
+                "_" +
+                thisSubmission.dateSubmitted.replace("/", "-").replace("/", "-") +
+                ".zip";
+
+            var zipLocation = path.join(__dirname, "..", "..", "Uploads", "Zips", zipName);
+            const output = fs.createWriteStream(zipLocation);
+
+            const archive = archiver("zip", {
+                zlib: { level: 9 }, // Sets the compression level.
+            });
+
+            output.on("close", function () {
+                console.log(archive.pointer() + " total bytes");
+                console.log("archiver has been finalized and the output file descriptor has closed.");
+                res.download(zipLocation);
+            });
+
+            archive.pipe(output);
+
+            for (var file of thisSubmission.files) {
+                var thisFile = path.join(stlPath, file.fileName);
+                archive.append(fs.createReadStream(thisFile), { name: file.realFileName });
+            }
+
+            archive.finalize();
+        } else {
+            res.send(404);
+        }
     });
 
     //-----------------------PUSH REVIEW-----------------------
