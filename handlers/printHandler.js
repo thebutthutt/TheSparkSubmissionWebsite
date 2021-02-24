@@ -146,7 +146,7 @@ module.exports = {
             shouldUpload = true;
         }
         var maker = req.user.name;
-        var id;
+        var id = req.body.fileID;
 
         printRequestModel.findOne(
             {
@@ -156,8 +156,7 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
-                    id = req.body.fileID;
-                    if (result.files.id(req.body.fileID).gcodeName != null) {
+                    if (result.files.id(id).gcodeName != null) {
                         //delete gcode from disk if it exists
                         console.log("Submission had old GCODE file! deleting...");
                         var thisGcodePath = path.join(gcodePath, result.files.id(req.body.fileID).gcodeName);
@@ -204,6 +203,7 @@ module.exports = {
                     if (err) {
                         console.log(err);
                     }
+                    console.log(result);
                     //now find the fully updated top level submission so we can check if all the files have been reviewed
                     module.exports.setFlags(id, function () {
                         callback();
@@ -233,6 +233,7 @@ module.exports = {
                     if (err) {
                         console.log(err);
                     }
+                    console.log(result);
                     //now find the fully updated top level submission so we can check if all the files have been reviewed
                     module.exports.setFlags(id, function () {
                         callback();
