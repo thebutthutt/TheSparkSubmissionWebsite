@@ -5,7 +5,7 @@ var path = require("path");
 var ldap = require("ldapjs");
 
 // load up the user model
-var User = require("../app/models/user");
+var User = require("./models/user");
 // expose this function to our app using module.exports
 module.exports = function (passport) {
     // =========================================================================
@@ -71,7 +71,7 @@ module.exports = function (passport) {
                     bindDN: process.env.BIND_DN,
                     bindCredentials: process.env.BIND_CRED,
                     tlsOptions: {
-                        ca: [fs.readFileSync(path.join(__dirname, "UNTADRootCA.pem"))],
+                        ca: [fs.readFileSync(path.join(__dirname, "..", "config", "UNTADRootCA.pem"))],
                     },
                 });
 

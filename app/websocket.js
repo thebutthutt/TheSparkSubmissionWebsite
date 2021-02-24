@@ -1,7 +1,7 @@
 //BACKEND SERVER WEBSOCKET
-
+var printHandler = require("../handlers/printHandler.js");
 const WebSocket = require("ws");
-module.exports = function (server, printHandler) {
+module.exports = function (server) {
     //=========================================
     //				WEB SOCKET
     //	Makes signature pad talk to browsers

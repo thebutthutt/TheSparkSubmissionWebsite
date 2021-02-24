@@ -2,9 +2,8 @@
 
 var printRequestModel = require("./app/models/printRequest");
 var printHandler = require("./handlers/printHandler.js");
-var metaGenerator = require("./handlers/metaGenerator.js");
-var emailer = require("./config/emailer.js");
-var payment = require("./config/payment.js");
+var emailer = require("./app/emailer.js");
+var payment = require("./app/payment.js");
 
 console.log("here");
 

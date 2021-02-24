@@ -1,16 +1,9 @@
 const fs = require("fs");
 var path = require("path");
+var printRequestModel = require("../app/models/printRequest");
+var userModel = require("../app/models/user");
 
-module.exports = function (
-    app,
-    passport,
-    userModel,
-    adminRequestHandler,
-    cameraHandler,
-    printRequestModel,
-    cleRequestModel,
-    objectToCleanModel
-) {
+module.exports = function (app, passport) {
     // =====================================
     // LOGIN ===============================
     // =====================================
@@ -81,19 +74,15 @@ module.exports = function (
                 };
 
                 var size = getTotalSize("/home/hcf0018/webserver/Uploads");
-
-                objectToCleanModel.find({}, function (err, result) {
-                    res.render("pages/users/profile", {
-                        message: req.flash("logoutMessage"),
-                        pgnum: 3, //tells the navbar what page to highlight
-                        user: req.user, // get the user out of session and pass to template
-                        isAdmin: true,
-                        isSuperAdmin: req.user.isSuperAdmin,
-                        queueData: prints,
-                        cameraData: result,
-                        sizeData: size,
-                        whitelist: whitelist,
-                    });
+                res.render("pages/users/profile", {
+                    message: req.flash("logoutMessage"),
+                    pgnum: 3, //tells the navbar what page to highlight
+                    user: req.user, // get the user out of session and pass to template
+                    isAdmin: true,
+                    isSuperAdmin: req.user.isSuperAdmin,
+                    queueData: prints,
+                    sizeData: size,
+                    whitelist: whitelist,
                 });
             });
         });
@@ -207,34 +196,6 @@ module.exports = function (
                 }
             });
         }
-    });
-
-    app.post("/cameras/clean", function (req, res) {
-        var name = req.body.object || req.query.object;
-        objectToCleanModel.findOne(
-            {
-                objectName: name,
-            },
-            function (err, result) {
-                result.isCleaned = true;
-                result.save();
-                res.json("done");
-            }
-        );
-    });
-
-    app.post("/cameras/unclean", function (req, res) {
-        var name = req.body.object || req.query.object;
-        objectToCleanModel.findOne(
-            {
-                objectName: name,
-            },
-            function (err, result) {
-                result.isCleaned = false;
-                result.save();
-                res.json("done");
-            }
-        );
     });
 
     //Display the files pending delete to go into the full action queue
