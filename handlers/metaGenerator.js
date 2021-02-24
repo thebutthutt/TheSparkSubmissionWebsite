@@ -204,7 +204,7 @@ module.exports = {
                 $match: {
                     $and: [
                         { "files.isPrinted": true },
-                        { newDateSubmitted: { $gte: new Date("2021-01-01") } },
+                        { newDateSubmitted: { $gte: new Date("2020-01-01") } },
                         { newDateSubmitted: { $lte: new Date("2021-02-31") } },
                     ],
                 },
@@ -248,9 +248,6 @@ module.exports = {
                         },
                     ],
                 },
-            },
-            {
-                $count: "Paid",
             },
         ]);
 
