@@ -66,6 +66,20 @@ var singlePrintSchema = mongoose.Schema({
 // define the schema for a single patron submission
 var printSubmissionSchema = mongoose.Schema({
     patron: mongoose.model("Patron").schema,
+
+    isForClass: Boolean,
+    classDetails: {
+        classCode: String,
+        professor: String,
+        projectType: String,
+    },
+
+    isForDepartment: Boolean,
+    internalDetails: {
+        department: String,
+        project: String,
+    },
+
     dateSubmitted: String,
     datePaymentRequested: String,
     datePaid: String,
