@@ -187,10 +187,8 @@ module.exports = {
                         console.log("Submission had old GCODE file! deleting...");
                         var thisGcodePath = path.join(gcodePath, result.files.id(req.body.fileID).gcodeName);
                         fs.unlink(thisGcodePath, function (err) {
-                            if (err.code === "ENOENT") {
-                                console.log("File not found!");
-                            } else {
-                                throw err;
+                            if (err) {
+                                console.log(err);
                             }
                         });
                     }
