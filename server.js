@@ -22,6 +22,7 @@ var favicon = require("serve-favicon");
 var constants = require("./app/constants.js");
 
 var tester = require("./tester.js");
+var share = require("./app/sharepoint.js")(process.env.SPUSER, process.env.SPPASS);
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
