@@ -17,6 +17,7 @@ var flash = require("connect-flash");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 var session = require("express-session");
+var FileStore = require("session-file-store")(session);
 var path = require("path");
 var favicon = require("serve-favicon");
 var constants = require("./app/constants.js");
@@ -57,13 +58,18 @@ app.use("/qrcode", express.static(__dirname + "/node_modules/qrcode-generator/")
 app.use("/datepicker", express.static(__dirname + "/node_modules/js-datepicker/dist/"));
 
 app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
-
+var fileStoreOptions = {
+    reapInterval: -1,
+};
+var sessionStorage = new FileStore(fileStoreOptions);
 // required for passport
 app.use(
     session({
+        store: sessionStorage,
         secret: "istilllikethefactorymorethanthespark",
-        resave: true,
-        saveUninitialized: true,
+        resave: false,
+        saveUninitialized: false,
+        expires: new Date(Date.now() + 60 * 60 * 1000), //sessions expire after 30 minutes
     })
 ); // session secret
 app.use(passport.initialize());
@@ -74,11 +80,12 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 require("./routes/routes.js")(app); // load our routes and pass in our app and fully configured passport
 require("./routes/printRoutes.js")(app); // load our routes and pass in our app and fully configured passport
 require("./routes/userRoutes.js")(app, passport); // load our routes and pass in our app and fully configured passport
+require("./routes/filamentRoutes.js")(app); // load our routes and pass in our app and fully configured passport
 //require("./routes/cleRoutes.js")(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
 //require("./routes/cameraRoutes.js")(app, bookingModel, cameraHandler); // load our routes and pass in our app and fully configured passport
 
 // Job Scheduler ======================================================================
-require("./app/jobs.js")(constants); //make the job scheduler go
+require("./app/jobs.js")(constants, sessionStorage); //make the job scheduler go
 //bookingModel.remove({}, function(){})
 // launch ======================================================================
 

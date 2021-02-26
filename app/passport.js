@@ -1,5 +1,6 @@
 // load all the things we need
 var LocalStrategy = require("passport-local").Strategy;
+var sprequest = require("sp-request");
 const fs = require("fs");
 var path = require("path");
 var ldap = require("ldapjs");
@@ -65,7 +66,6 @@ module.exports = function (passport) {
             function (req, euid, password, done) {
                 // callback with euid and password from our form
                 //var searchDN = "(" + euid + "@unt.ad.unt.edu)";
-
                 var employment = ldap.createClient({
                     url: process.env.LDAP_URL,
                     bindDN: process.env.BIND_DN,
@@ -86,10 +86,11 @@ module.exports = function (passport) {
                     {
                         filter: newSearch,
                         scope: "sub",
-                        attributes: ["memberOf"],
+                        attributes: ["memberOf", "mail"],
                     },
                     function (err, res) {
                         res.on("searchEntry", function (entry) {
+                            var untEmail = entry.object.mail;
                             if (
                                 entry.object.memberOf.includes(
                                     "CN=LibFactory,OU=DeptGroups,OU=Users,OU=Special,OU=Tacoverse,OU=Libraries Support,OU=UNT,DC=unt,DC=ad,DC=unt,DC=edu"
@@ -127,12 +128,20 @@ module.exports = function (passport) {
                                                     newUser.isSuperAdmin = false;
 
                                                     // save the user
+                                                    var sharepoint = sprequest.create({
+                                                        username: untEmail,
+                                                        password: password,
+                                                    });
                                                     newUser.save(function (err) {
                                                         if (err) throw err;
-                                                        return done(null, newUser); //makes new local user that matches UNT user cred
+                                                        return done(null, newUser, sharepoint); //makes new local user that matches UNT user cred
                                                     });
                                                 } else {
-                                                    return done(null, localUser); //return the user in our database matching the UNT user
+                                                    var sharepoint = sprequest.create({
+                                                        username: untEmail,
+                                                        password: password,
+                                                    });
+                                                    return done(null, localUser, sharepoint); //return the user in our database matching the UNT user
                                                 }
                                             }
                                         );

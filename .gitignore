@@ -10,3 +10,5 @@ package-lock.json
 logs/
 logs/*
 /app/sharepoint.json
+sessions/*
+sessions/

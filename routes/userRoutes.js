@@ -2,6 +2,7 @@ const fs = require("fs");
 var path = require("path");
 var printRequestModel = require("../app/models/printRequest");
 var userModel = require("../app/models/user");
+var filamentHandler = require(path.join(__dirname, "..", "handlers", "filamentHandler.js"));
 
 module.exports = function (app, passport) {
     // =====================================
@@ -18,14 +19,23 @@ module.exports = function (app, passport) {
     });
 
     // process the login form
-    app.post(
-        "/login",
-        passport.authenticate("local-login", {
-            successRedirect: "/profile", // redirect to the secure profile section
-            failureRedirect: "/login", // redirect back to the signup page if there is an error
-            failureFlash: true,
-        })
-    );
+    app.post("/login", function (req, res, next) {
+        passport.authenticate("local-login", function (err, user, sharepoint) {
+            if (err) {
+                return next(err);
+            } else if (!user) {
+                return res.redirect("/login");
+            } else {
+                req.logIn(user, function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+                    filamentHandler.addSharePointToSession(req.session.id, sharepoint);
+                    return res.redirect("/profile");
+                });
+            }
+        })(req, res, next);
+    });
 
     app.post("/verify", function (req, res, next) {
         console.log("me");

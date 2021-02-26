@@ -2,8 +2,10 @@ var schedule = require("node-schedule");
 const moment = require("moment");
 var emailer = require("./emailer.js");
 var printRequestModel = require("./models/printRequest");
+var filamentHandler = require("../handlers/filamentHandler.js");
+const fs = require("fs");
 
-module.exports = function (constants) {
+module.exports = function (constants, FileStore) {
     /*
 		This finds all the prints waiting for 
 		the patron to pick them up still.
@@ -89,6 +91,25 @@ module.exports = function (constants) {
         );
     };
 
+    var deleteOldSharePoints = function () {
+        FileStore.list(function (err, result) {
+            result.forEach(function (filename) {
+                FileStore.expired(filename.slice(0, -5), function (err, isExpired) {
+                    if (isExpired) {
+                        filamentHandler.removeExpiredSharepoint(filename.slice(0, -5));
+                        try {
+                            fs.unlinkSync(__dirname + "/../sessions/" + filename);
+                            //file removed
+                        } catch (err) {
+                            console.error(err);
+                        }
+                    }
+                    console.log(filename.slice(0, -5), isExpired);
+                });
+            });
+        });
+    };
+
     /*
 		Finds all the quarantine bookings today 
 		and makes a list of all the unique items 
@@ -102,12 +123,18 @@ module.exports = function (constants) {
 		has been cleaned will NOT persist! 
 	*/
 
-    schedule.scheduleJob("1 0 * * *", () => {
+    schedule.scheduleJob("0 0 23 * * *", () => {
         //run once every day at midnight and one minute just in case idk im nervous
         staleOnPickup();
         //needsCleaning();
     });
 
-    staleOnPickup();
+    schedule.scheduleJob("0 * * * *", function () {
+        deleteOldSharePoints();
+    });
+
+    //staleOnPickup();
     //needsCleaning();
+
+    deleteOldSharePoints();
 };
