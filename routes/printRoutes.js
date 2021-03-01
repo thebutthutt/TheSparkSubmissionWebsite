@@ -67,7 +67,7 @@ module.exports = function (app) {
                     name: req.user.name,
                     print: result.files.id(fileID), //send the review page the file to review
                     patron: result.patron,
-                    filePath: path.join(stlPath, result.files.id(fileID).fileName),
+                    filePath: path.join(stlPath, result.files.id(fileID).fileName.replace("#", "%23")),
                     gcodePath: finalGcode,
                 });
             }
@@ -82,6 +82,7 @@ module.exports = function (app) {
         printRequestModel.find(
             {
                 "files.isPendingPayment": true,
+                "files.isStaleOnPayment": { $ne: true },
             },
             function (err, data) {
                 //loading every single top level request FOR NOW
@@ -89,6 +90,27 @@ module.exports = function (app) {
                     pgnum: 4, //prints
                     dbdata: data,
                     printPage: "pendpay",
+                    isAdmin: true,
+                    isSuperAdmin: req.user.isSuperAdmin,
+                });
+            }
+        );
+    });
+
+    //show pending payment prints
+    app.get("/prints/pendpaystale", isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printRequestModel.find(
+            {
+                "files.isPendingPayment": true,
+                "files.isStaleOnPayment": true,
+            },
+            function (err, data) {
+                //loading every single top level request FOR NOW
+                res.render("pages/prints/allPrints", {
+                    pgnum: 4, //prints
+                    dbdata: data,
+                    printPage: "pendpaystale",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });

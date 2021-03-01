@@ -20,7 +20,7 @@
 
                             <%if (printPage == 'newSub') { %>
                             <div class="col-2"><strong>Send</strong></div>
-                            <%}%> <%if (printPage == 'pendpay') { %>
+                            <%}%> <%if (printPage == 'pendpay' || printPage == 'pendpaystale') { %>
                             <div class="col-2"><strong>Reviewed</strong></div>
                             <%}%> <%if (printPage == 'ready') { %>
                             <div class="col-2"><strong>Paid</strong></div>
@@ -116,7 +116,8 @@
                                 </span>
                                 <%}%>
                             </div>
-                            <%}%> <%if (printPage == 'pendpay' || printPage == 'rejected') {%>
+                            <%}%> <%if (printPage == 'pendpay' || printPage == 'pendpaystale' || printPage ==
+                            'rejected') {%>
                             <div class="col-2"><%=item.datePaymentRequested%></div>
                             <%}%> <% if (printPage == 'ready') {%>
                             <div class="col-2"><%=item.datePaid%></div>
@@ -124,13 +125,13 @@
 
                             <div class="col">
                                 <%i = 0%> <% item.files.forEach(function (file) {%> <%if ( (printPage == 'newSub' ||
-                                (printPage == 'pendpay' && file.isRejected == false) || printPage == 'all') || (
-                                (printPage == 'ready' && file.isRejected == false && file.isPrinted == false) && (
-                                (location != "all" && file.printLocation == location) || (location == 'all') ) ) || (
-                                (printPage == 'pickup' && file.isRejected == false && file.isPrinted == true &&
-                                file.isPickedUp == false) && ( (location != "all" && file.pickupLocation == location) ||
-                                (location == 'all') ) ) || (printPage == 'completed' && file.isPickedUp) || (printPage
-                                == 'rejected' && file.isRejected) ) { %> <%i++%>
+                                ((printPage == 'pendpay' || printPage == 'pendpaystale') && file.isRejected == false) ||
+                                printPage == 'all') || ( (printPage == 'ready' && file.isRejected == false &&
+                                file.isPrinted == false) && ( (location != "all" && file.printLocation == location) ||
+                                (location == 'all') ) ) || ( (printPage == 'pickup' && file.isRejected == false &&
+                                file.isPrinted == true && file.isPickedUp == false) && ( (location != "all" &&
+                                file.pickupLocation == location) || (location == 'all') ) ) || (printPage == 'completed'
+                                && file.isPickedUp) || (printPage == 'rejected' && file.isRejected) ) { %> <%i++%>
                                 <div class="row <%if (i > 1) {%> mt-3 <%}%>">
                                     <%if (printPage == 'pickup') {%>
                                     <div class="col-3">

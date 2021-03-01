@@ -21,10 +21,7 @@ var addOne = function () {
                 } else {
                     $(this).popover("hide");
                     let fileName = $(this).val().split("\\").pop();
-                    $(this)
-                        .siblings(".custom-file-label")
-                        .addClass("selected")
-                        .html(fileName);
+                    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
                 }
             });
         },
@@ -40,10 +37,7 @@ var addOneOther = function () {
             $("#files-list-other").append(data);
             $(".custom-file-input").on("change", function () {
                 let fileName = $(this).val().split("\\").pop();
-                $(this)
-                    .siblings(".custom-file-label")
-                    .addClass("selected")
-                    .html(fileName);
+                $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
             });
         },
     });
@@ -94,8 +88,30 @@ $(document).ready(function () {
     $("#remove").click(function () {
         $(".single-print:last").remove();
     });
-});
 
-$(document).on("submit", "#submission-form", function () {
-    $(".modal").modal("show");
+    $("#personal-tab").click(function () {
+        console.log("personal");
+        $("#department").val("");
+        $("#departmentProject").val("");
+        $("#className").val("");
+        $("#professor").val("");
+        $("#projectType").val("");
+    });
+
+    $("#class-tab").click(function () {
+        console.log("class");
+        $("#department").val("");
+        $("#departmentProject").val("");
+    });
+
+    $("#internal-tab").click(function () {
+        console.log("internal");
+        $("#className").val("");
+        $("#professor").val("");
+        $("#projectType").val("");
+    });
+
+    $(document).on("submit", "#submission-form", function (event) {
+        $(".modal").modal("show");
+    });
 });
