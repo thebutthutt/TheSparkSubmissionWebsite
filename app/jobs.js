@@ -89,6 +89,25 @@ module.exports = function (constants) {
         );
     };
 
+    var staleOnPayment = async function () {
+        var twoWeeksAgo = new Date();
+        twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+        var stale = await printRequestModel.find({
+            "files.isPendingPayment": true,
+        });
+
+        for (var submission of stale) {
+            //console.log(submission);
+            for (var file of submission.files) {
+                var reviewed = new Date(file.dateReviewed);
+                if (reviewed <= twoWeeksAgo) {
+                    file.isStaleOnPayment = true;
+                }
+            }
+            submission.save();
+        }
+    };
+
     /*
 		Finds all the quarantine bookings today 
 		and makes a list of all the unique items 
@@ -105,9 +124,11 @@ module.exports = function (constants) {
     schedule.scheduleJob("1 0 * * *", () => {
         //run once every day at midnight and one minute just in case idk im nervous
         staleOnPickup();
+        staleOnPayment();
         //needsCleaning();
     });
 
     staleOnPickup();
+    staleOnPayment();
     //needsCleaning();
 };

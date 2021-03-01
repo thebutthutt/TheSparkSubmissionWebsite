@@ -74,8 +74,25 @@ async function findAllPrices() {
     }
 }
 
-//findAllPrices();
+async function findAllStalePayment() {
+    var stale = await printRequestModel.find({
+        "files.isPendingPayment": true,
+    });
 
+    for (var submission of stale) {
+        //console.log(submission);
+        for (var file of submission.files) {
+            var reviewed = new Date(file.dateReviewed);
+            if (reviewed <= new Date("1/1/2021")) {
+                file.isStaleOnPayment = true;
+            }
+        }
+        submission.save();
+    }
+}
+
+//findAllStalePayment();
+//findAllPrices();
 /*
 179748 sudo nodemon --tls-cipher-list=ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL server.js
 179750 node /bin/nodemon --tls-cipher-list=ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL server.js
