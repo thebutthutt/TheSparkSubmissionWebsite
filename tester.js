@@ -5,6 +5,10 @@ var printHandler = require("./handlers/printHandler.js");
 var emailer = require("./app/emailer.js");
 var payment = require("./app/payment.js");
 
+const fs = require("fs");
+var path = require("path");
+var ldap = require("ldapjs");
+
 console.log("here");
 
 async function testEmails() {
@@ -90,6 +94,35 @@ async function findAllStalePayment() {
         submission.save();
     }
 }
+
+function testLdap() {
+    var employment = ldap.createClient({
+        url: "ldaps://ad.unt.edu:636",
+        bindDN: process.env.BIND_DN,
+        bindCredentials: process.env.BIND_CRED,
+        tlsOptions: {
+            ca: [fs.readFileSync(path.join(__dirname, "config", "UNTADRootCA.pem"))],
+        },
+    });
+
+    employment.search(
+        "DC=ad,DC=unt,DC=edu",
+        {
+            filter: "(uid=*)",
+            scope: "sub",
+        },
+        function (err, res) {
+            res.on("searchEntry", function (entry) {
+                console.log(entry.object);
+            });
+            res.on("end", (result) => {
+                console.log("status: " + result.status);
+            });
+        }
+    );
+}
+
+//testLdap();
 
 //findAllStalePayment();
 //findAllPrices();
