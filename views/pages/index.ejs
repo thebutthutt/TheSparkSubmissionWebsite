@@ -17,114 +17,40 @@
 
     <body>
         <%- include ("../partials/header") %>
-        <div class="jumbotron">
-            <h1 class="display-4">This Website is in Beta!</h1>
-            <p class="lead">That means its very new and most likely very buggy...</p>
-            <hr class="my-4" />
-            <p>
-                If you encounter problems, <strong>please</strong> email
-                <a href="mailto:hanna.flores@unt.edu">hanna.flores@unt.edu</a>
-                or fill out <a href="/bugreport">this form</a>
-                with what happened, what you were doing when it happened, and what time it happened at. Thank you very
-                much!
-            </p>
-            <a class="btn btn-primary btn-lg" href="/bugreport" role="button">Submit a bug report?</a>
-            <a class="btn btn-primary btn-lg" href="mailto:hanna.flores@unt.edu" role="button">Or send me an email?</a>
-        </div>
-        <div class="container-fluid mt-5 px-5" style="margin-bottom: 100px; max-width: 100em">
+        <div class="container mt-5 px-5" style="margin-bottom: 100px; max-width: 100em">
             <div class="row mb-4">
                 <div class="col-lg mb-5">
-                    <div class="shadow card">
-                        <img src="/public/images/printer.png" class="card-img-top print-image" alt="..." />
-
-                        <div class="card-body">
-                            <h2>3D Printing</h2>
-                            <p>
-                                The Spark Makerspace has an army of 3D printers in both locations to print models for
-                                our patrons! Just submit your models through this website, and pick up your models in 5
-                                to 7 business days. Prints for classes are completely free, just make sure to tell us
-                                the class and professor in the notes when you submit your files. Otherwise, we only
-                                charge $1 per hour of print time.
-                            </p>
-                            <p>
-                                We offer prints in PLA and ABS in a wide variety of colors, just let us know what you
-                                would like in the submission form.
-                            </p>
-                            <p><a href="">3D Printing Submission Process</a></p>
-
-                            <a role="button" class="btn btn-primary" href="/submit">Submit 3D Print</a>
+                    <div class="shadow card mb-3">
+                        <div class="row no-gutters">
+                            <div class="col-md-5">
+                                <img
+                                    src="/public/images/printer.png"
+                                    class="card-img"
+                                    style="border-top-right-radius: 0px; border-bottom-right-radius: 0px"
+                                    alt="..."
+                                />
+                            </div>
+                            <div class="col-md-7">
+                                <div class="card-body">
+                                    <h3 class="card-title">3D Printing</h3>
+                                    <p class="card-text">
+                                        The Spark Makerspace has an army of 3D printers in both locations to print
+                                        models for our patrons! Just submit your models through this website, and pick
+                                        up your models in 5 to 7 business days. Prints for classes are completely free,
+                                        just make sure to tell us the class and professor in the notes when you submit
+                                        your files. Otherwise, we only charge $1 per hour of print time.
+                                    </p>
+                                    <p class="card-text">
+                                        We offer prints in PLA and ABS in a wide variety of colors, just let us know
+                                        what you would like in the submission form.
+                                    </p>
+                                    <a role="button" class="btn btn-primary" href="/submit">Submit 3D Print</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg mb-5">
-                    <div class="shadow card">
-                        <img src="/public/images/laser.png" class="card-img-top laser-image" alt="..." />
-
-                        <div class="card-body">
-                            <h2>Machine Operator Appointments</h2>
-                            <p>
-                                Do you have everything ready to complete your project? You should have a file created in
-                                the proper format, approved materials, and now you will need to schedule an appointment
-                                session with a Machine Operator to complete the cut/scan. Machine Operator's set up the
-                                machine and insure the machines is operating properly. Project planning and design are
-                                done through consultations and trainings respectively.
-                            </p>
-                            <p>
-                                Machine Operator Appointments are completely free, you only need to bring in the
-                                material you would like worked on. We highly encourage you to bring a few sample pieces
-                                as well for testing purposes.
-                            </p>
-                            <a
-                                role="button"
-                                class="btn btn-primary"
-                                href="https://unt.az1.qualtrics.com/jfe/form/SV_czS3nZhPUhIK1QF"
-                                >Submit Machine Operator Appointment Request</a
-                            >
-                        </div>
-                    </div>
-                </div>
-                <!--
-                <div class="col-lg mb-5">
-                    <div class="shadow card">
-                        <img
-                            src="/public/images/camera.png"
-                            class="card-img-top camera-image"
-                            alt="..."
-                        />
-
-                        <div class="card-body">
-                            <h2>Cameras</h2>
-                            <p>
-                                We offer several Canon DSLR cameras and a
-                                variety of lenses, all of which are in high
-                                demand and often have multiple holds during the
-                                long semesters.
-                                <strong
-                                    >Loan periods are 4 days and there is a 1
-                                    camera, 2 lens maximum.</strong
-                                >
-                                Plan your projects accordingly, and please
-                                respect the equipment and other users.
-                            </p>
-                            <p>
-                                Please use responsibly. Cameras and lenses are
-                                fragile and you are responsible for the items
-                                checked out to you. High fines, rates, and
-                                replacement costs apply.
-                            </p>
-                            <p>
-                                <a href="/cameras">Check camera availability</a>
-                            </p>
-                            <a
-                                role="button"
-                                class="btn btn-primary"
-                                href="/book"
-                                >Request Camera Booking</a
-                            >
-                        </div>
-                    </div>
-                </div>
-            --></div>
+            </div>
             <div class="row"></div>
         </div>
         <%- include ("../partials/footer") %>
