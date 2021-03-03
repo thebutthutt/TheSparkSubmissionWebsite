@@ -7,6 +7,7 @@ var newmailer = require("../app/emailer.js");
 var fs = require("fs");
 var path = require("path");
 var printRequestModel = require("../app/models/printRequest");
+var threejs = require("three");
 
 var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
@@ -14,6 +15,15 @@ var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
 module.exports = {
     //return the number of new prints in the queue
     metaInfo: function () {},
+
+    calcFileVolume: function (fileID) {
+        printRequestModel.findOne(
+            {
+                "files._id": fileID,
+            },
+            function () {}
+        );
+    },
 
     //function receives the input from filled out request form and saves to the database
     addPrint: function (fields, submissionDetails, prints) {
