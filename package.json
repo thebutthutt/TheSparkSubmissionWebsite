@@ -22,6 +22,7 @@
         "formidable": "^2.0.0-dev.20200131.2",
         "fs": "0.0.1-security",
         "fullcalendar": "^5.5.0",
+        "imapflow": "^1.0.53",
         "js-datepicker": "^5.18.0",
         "ldapjs": "^2.2.3",
         "ldapjs-client": "^0.1.1",

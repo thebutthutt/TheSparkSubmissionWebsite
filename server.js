@@ -21,7 +21,7 @@ var path = require("path");
 var favicon = require("serve-favicon");
 var constants = require("./app/constants.js");
 
-var tester = require("./tester.js");
+var teaster = require("./app/imap.js");
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
