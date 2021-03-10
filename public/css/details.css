@@ -3,6 +3,16 @@
     margin-bottom: 80px;
 }
 
+.alert th,
+.alert td {
+    padding: 0px;
+}
+
+.alert th {
+    white-space: nowrap;
+    padding-right: 1em;
+}
+
 .table-striped {
     margin-bottom: 0px;
 }
