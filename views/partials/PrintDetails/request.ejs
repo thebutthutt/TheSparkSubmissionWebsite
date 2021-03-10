@@ -2,7 +2,7 @@
     <h4>Request Details</h4>
     <p class="mb-0">
         <strong>Filename:</strong>
-        <a href='<%="/prints/download?fileID=" +  print.fileName%>'><%=print.realFileName%></a>
+        <a href='<%="/prints/download?fileID=" +  print.fileName.replace("#", "%23")%>'><%=print.realFileName%></a>
         <br />
         <strong>Requested material:</strong> <%=print.material%> <br />
         <strong>Requested infill:</strong> <%=print.infill%> <br />

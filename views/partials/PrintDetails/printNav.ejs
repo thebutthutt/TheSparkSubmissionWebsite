@@ -13,6 +13,7 @@
             >Pending Payment</a
         >
     </li>
+    
     <li class="nav-item dropdown">
         <a
             class="nav-link <% if (printPage == "ready") { %> active <%}%> dropdown-toggle"
@@ -67,6 +68,13 @@
             class="nav-link <% if (printPage == "rejected") { %> active <%}%>"
             href="/prints/rejected"
             >Rejected</a
+        >
+    </li>
+    <li class="nav-item">
+        <a
+            class="nav-link <% if (printPage == "pendpaystale") { %> active <%}%>"
+            href="/prints/pendpaystale"
+            >Stale On Payment</a
         >
     </li>
     <li class="nav-item">

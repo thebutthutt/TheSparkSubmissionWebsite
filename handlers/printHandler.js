@@ -7,6 +7,7 @@ var newmailer = require("../app/emailer.js");
 var fs = require("fs");
 var path = require("path");
 var printRequestModel = require("../app/models/printRequest");
+const NodeStl = require("node-stl");
 
 var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
@@ -15,8 +16,17 @@ module.exports = {
     //return the number of new prints in the queue
     metaInfo: function () {},
 
+    calcFileVolume: function (fileID) {
+        printRequestModel.findOne(
+            {
+                "files._id": fileID,
+            },
+            function () {}
+        );
+    },
+
     //function receives the input from filled out request form and saves to the database
-    addPrint: function (fields, prints) {
+    addPrint: function (fields, submissionDetails, prints) {
         var request = new printRequestModel(); //new instance of a request
         //fill the patron details
         request.patron = {
@@ -26,6 +36,19 @@ module.exports = {
             euid: fields.euid,
             phone: fields.phone,
         };
+
+        //if at least one class detail field is filled
+        if (Object.values(submissionDetails.classDetails).some((x) => x !== null && x !== "")) {
+            request.isForClass = true;
+            request.isForDepartment = false;
+            request.classDetails = submissionDetails.classDetails;
+        }
+        //if at least one department detail is filled
+        else if (Object.values(submissionDetails.classDetails).some((x) => x !== null && x !== "")) {
+            request.isForDepartment = true;
+            request.isForClass = false;
+            request.internalDetails = submissionDetails.internalDetails;
+        }
 
         request.dateSubmitted = prints[8]; //always the date submitted
         request.numFiles = prints[9]; //always the number of files
@@ -81,6 +104,23 @@ module.exports = {
 
         //save the top level submission and low level files to the database
 
+        //calculate the estimated volume for each submitted file
+        for (var file of request.files) {
+            try {
+                var stl = new NodeStl(
+                    path.join(stlPath, file.fileName.replace("/home/hcf0018/webserver/Uploads/STLs/", "")),
+                    {
+                        density: 1.04,
+                    }
+                );
+                console.log(file.fileName.replace("/home/hcf0018/webserver/Uploads/STLs/", ""));
+                console.log(stl.volume + "cm^3"); // 21cm^3
+                file.calculatedVolumeCm = stl.volume;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
         request.save(function (err, document) {
             if (err) {
                 return console.error(err);
@@ -94,6 +134,19 @@ module.exports = {
     handleSubmission: function (req, callback) {
         //arrays of each files specifications (will only hold one entry each if patron submits only one file)
         console.log(req.files);
+
+        var submissionDetails = {
+            classDetails: {
+                classCode: req.body.classCode,
+                professor: req.body.professor,
+                projectType: req.body.projectType,
+            },
+            internalDetails: {
+                department: req.body.department,
+                project: req.body.project,
+            },
+        };
+
         var filenames = [],
             realFileNames = [],
             materials = Array.isArray(req.body.material) ? req.body.material : Array.of(req.body.material),
@@ -131,7 +184,7 @@ module.exports = {
             prints.push(time.format(constants.format));
             prints.push(numFiles);
 
-            module.exports.addPrint(patron, prints);
+            module.exports.addPrint(patron, submissionDetails, prints);
             callback("success"); //tell calling function we got it
         }
     },
@@ -285,6 +338,7 @@ module.exports = {
                         rejectedFiles = [];
 
                     var email = result.patron.email;
+                    var shouldBeWaived = result.isForClass || result.isForDepartment;
 
                     //calculate paumet amount
                     var amount = 0.0;
@@ -308,6 +362,9 @@ module.exports = {
                                 amount += allCopies;
                             }
                             acceptedFiles.push(result.files[i]._id);
+                            if (shouldBeWaived) {
+                                result.files[i].isPendingWaive = true;
+                            }
                         } else {
                             rejectedFiles.push(result.files[i]._id);
                         }
@@ -336,6 +393,9 @@ module.exports = {
                         ); //generate the URL*/
 
                         payment.sendPaymentEmail(result, amount, rejectedFiles.length);
+                        if (shouldBeWaived) {
+                            result.isPendingWaive = true;
+                        }
                     } else {
                         //dont ask for payment, just move to the rejected queue
                         //none of the prints were accepted

@@ -10,7 +10,7 @@
     <body>
         <%- include ("../partials/header") %>
         <div class="container-xl mt-5" style="margin-bottom: 100px">
-            <div class="col-8 offset-2">
+            <div class="col-10 offset-1">
                 <div class="shadow card">
                     <div class="card-header">
                         <h1>New Submission</h1>
@@ -24,7 +24,12 @@
                         <!-- SUBMISSION FORM -->
                         <form id="submission-form" action="/submitprint" method="POST" enctype="multipart/form-data">
                             <div class="form-group no-margin">
-                                <label>Patron Info</label>
+                                <h3>Contact Informtion</h3>
+                                <p>
+                                    Please provide your contact information below. The email you enter will be used for
+                                    automated email notifications, as well as for further communication if our staff
+                                    needs more information to complete your request.
+                                </p>
                                 <div class="input-group">
                                     <input
                                         type="text"
@@ -62,6 +67,155 @@
                             <div class="form-group">
                                 <input type="tel" class="form-control bottom" name="phone" placeholder="Phone Number" />
                             </div>
+
+                            <hr />
+                            <h3>Submission Information</h3>
+                            <p>
+                                Please specify whether your submission is for a class or other educational purpose, for
+                                an internal library project, or for personal use. More details for each of these can be
+                                found below.
+                            </p>
+                            <ul class="nav nav-tabs nav-justified mb-3" id="myTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a
+                                        class="nav-link active"
+                                        id="personal-tab"
+                                        data-toggle="tab"
+                                        href="#personal"
+                                        role="tab"
+                                        aria-controls="personal"
+                                        aria-selected="true"
+                                        >Personal</a
+                                    >
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a
+                                        class="nav-link"
+                                        id="class-tab"
+                                        data-toggle="tab"
+                                        href="#class"
+                                        role="tab"
+                                        aria-controls="class"
+                                        aria-selected="false"
+                                        >Class</a
+                                    >
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a
+                                        class="nav-link"
+                                        id="internal-tab"
+                                        data-toggle="tab"
+                                        href="#internal"
+                                        role="tab"
+                                        aria-controls="internal"
+                                        aria-selected="false"
+                                        >Internal</a
+                                    >
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div
+                                    class="tab-pane fade show active"
+                                    id="personal"
+                                    role="tabpanel"
+                                    aria-labelledby="personal-tab"
+                                >
+                                    <p>
+                                        If your submission is for personal use (not a class assignment or research tool)
+                                        please continue to uploading your files below! The standard pricing of $1 per
+                                        hour of estimated print time will apply. To estimate your own print time, try
+                                        downloading the Cura slicing software and slicing your files yourself using the
+                                        default settings.
+                                    </p>
+                                </div>
+                                <div class="tab-pane fade" id="class" role="tabpanel" aria-labelledby="class-tab">
+                                    <div class="row">
+                                        <div class="col">
+                                            <p>
+                                                If your submission is for a class assignment or other education related
+                                                purpose, please fill in the following details. If your submission is for
+                                                research or other educational purposes not associated with a specific
+                                                class, you can put "other" in the class code field.
+                                            </p>
+                                            <p>
+                                                When printing for educational purposes, the standard price will be
+                                                waived, but it may take a day or two to be processed. You will recieve
+                                                updates by email for any changes to your submission's status.
+                                            </p>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="className">Class Code</label>
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    id="className"
+                                                    name="classCode"
+                                                    placeholder="ABCD 1234 (or 'other' for special cases)"
+                                                />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="professor">Professor</label>
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    id="professor"
+                                                    name="professor"
+                                                    placeholder="Firstname Lastname"
+                                                />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="professor">Project Type</label>
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    id="projectType"
+                                                    name="projectType"
+                                                    placeholder="class assignment, research project, etc."
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="internal" role="tabpanel" aria-labelledby="internal-tab">
+                                    <div class="row">
+                                        <div class="col">
+                                            <p>
+                                                If your submission is for a library department, please specify the
+                                                department and the project your submission is for in the following
+                                                fields.
+                                            </p>
+                                            <p>
+                                                When printing for a library department, the standard price will be
+                                                waived, but it may take a day or two to be processed. You will recieve
+                                                updates by email for any changes to your submission's status.
+                                            </p>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="professor">Library Department</label>
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    id="department"
+                                                    name="department"
+                                                    placeholder="Media Library, External Relations, etc."
+                                                />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="professor">Project</label>
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    id="departmentProject"
+                                                    name="project"
+                                                    placeholder="What are you making?"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <!--
                             <div class="form-group">
                                 <label>Request Type</label>
@@ -88,6 +242,12 @@
 
                             <div class="print-only form-group">
                                 <hr />
+                                <h3>Print Files</h3>
+                                <p>
+                                    Please upload the files you would like printed here. These files must be in stl
+                                    format. Use the extra fields to request specific print settings, or leave them
+                                    unchanged for our default settings.
+                                </p>
                                 <div id="files-list"></div>
                                 <div class="clearfix">
                                     <button type="button" id="change" class="btn btn-outline-primary btn-sm float-left">

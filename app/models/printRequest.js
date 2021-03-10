@@ -12,6 +12,8 @@ var singlePrintSchema = mongoose.Schema({
     printLocation: String,
     pickupLocation: String,
 
+    calculatedVolumeCm: Number,
+
     isNewSubmission: Boolean,
     isReviewed: Boolean,
     isRejected: Boolean,
@@ -24,6 +26,7 @@ var singlePrintSchema = mongoose.Schema({
     isPendingDelete: Boolean,
     canBeReviewed: Boolean,
     isStaleOnPickup: Boolean,
+    isStaleOnPayment: Boolean,
     isSigned: Boolean,
     signaturePath: String,
 
@@ -66,6 +69,20 @@ var singlePrintSchema = mongoose.Schema({
 // define the schema for a single patron submission
 var printSubmissionSchema = mongoose.Schema({
     patron: mongoose.model("Patron").schema,
+
+    isForClass: Boolean,
+    classDetails: {
+        classCode: String,
+        professor: String,
+        projectType: String,
+    },
+
+    isForDepartment: Boolean,
+    internalDetails: {
+        department: String,
+        project: String,
+    },
+
     dateSubmitted: String,
     datePaymentRequested: String,
     datePaid: String,

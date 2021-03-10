@@ -5,18 +5,53 @@ var printHandler = require("./handlers/printHandler.js");
 var metaGenerator = require("./handlers/metaGenerator.js");
 var emailer = require("./app/emailer.js");
 var payment = require("./app/payment.js");
+var path = require("path");
+const NodeStl = require("node-stl");
+async function calcAllVolume() {
+    var submissions = await printRequestModel.find({});
+
+    for (var submission of submissions) {
+        if (submission.files.length > 0) {
+            for (var file of submission.files) {
+                try {
+                    var stl = new NodeStl(
+                        path.join(
+                            __dirname,
+                            "..",
+                            "Uploads",
+                            "STLs",
+                            file.fileName.replace("/home/hcf0018/webserver/Uploads/STLs/", "")
+                        ),
+                        {
+                            density: 1.04,
+                        }
+                    );
+                    console.log(file.fileName.replace("/home/hcf0018/webserver/Uploads/STLs/", ""));
+                    console.log(stl.volume + "cm^3"); // 21cm^3
+                    file.calculatedVolumeCm = stl.volume;
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            submission.save();
+        }
+    }
+}
+
+//calcAllVolume();
 
 console.log("here");
 
 async function testEmails() {
     var dummySubmission = await printRequestModel.findOne({
-        "patron.lname": "DONOTPRINT",
+        "patron.fname": "Dummy",
     });
 
     //console.log(dummySubmission);
     if (dummySubmission) {
-        printHandler.requestPayment(dummySubmission, null);
-        //emailer.readyForPickup(dummySubmission, dummySubmission.files[0]);
+        //printHandler.requestPayment(dummySubmission, null);
+        emailer.stillWaiting(dummySubmission, dummySubmission.files);
+        //emailer.finalWarning(dummySubmission, dummySubmission.files);
     }
 }
 
@@ -75,10 +110,28 @@ async function findAllPrices() {
     }
 }
 
-//findAllPrices();
+async function findAllStalePayment() {
+    var stale = await printRequestModel.find({
+        "files.isPendingPayment": true,
+    });
 
 metaGenerator.otherStuff();
 
+    for (var submission of stale) {
+        //console.log(submission);
+        for (var file of submission.files) {
+            var reviewed = new Date(file.dateReviewed);
+            if (reviewed <= new Date("1/1/2021")) {
+                file.isStaleOnPayment = true;
+            }
+        }
+        submission.save();
+    }
+}
+
+//testEmails();
+//findAllStalePayment();
+//findAllPrices();
 /*
 179748 sudo nodemon --tls-cipher-list=ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL server.js
 179750 node /bin/nodemon --tls-cipher-list=ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL server.js
