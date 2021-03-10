@@ -9,12 +9,7 @@ function STLViewer(model, elementID) {
     //----------------------------------------------//
     //--------------------CAMERA--------------------//
     //----------------------------------------------//
-    var camera = new THREE.PerspectiveCamera(
-        70,
-        elem.clientWidth / elem.clientHeight,
-        1,
-        1000
-    );
+    var camera = new THREE.PerspectiveCamera(70, elem.clientWidth / elem.clientHeight, 1, 1000);
 
     var renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -25,14 +20,8 @@ function STLViewer(model, elementID) {
     var onProgress = function (xhr) {
         if (xhr.lengthComputable) {
             var percentComplete = (xhr.loaded / xhr.total) * 100;
-            $(".progress-bar").attr(
-                "aria-valuenow",
-                Math.round(percentComplete, 2)
-            );
-            $(".progress-bar").attr(
-                "style",
-                "width: " + Math.round(percentComplete, 2) + "%"
-            );
+            $(".progress-bar").attr("aria-valuenow", Math.round(percentComplete, 2));
+            $(".progress-bar").attr("style", "width: " + Math.round(percentComplete, 2) + "%");
             if (Math.round(percentComplete, 2) == 100) {
                 $(".progress").remove();
             }
@@ -75,12 +64,7 @@ function STLViewer(model, elementID) {
     var divisions = 23;
     var centerColor = 0xff0000;
     var gridColor = 0xbbbbbb;
-    var gridHelper = new THREE.GridHelper(
-        size,
-        divisions,
-        centerColor,
-        gridColor
-    );
+    var gridHelper = new THREE.GridHelper(size, divisions, centerColor, gridColor);
     scene.add(gridHelper);
 
     //----------------------------------------------//
@@ -132,9 +116,7 @@ function STLViewer(model, elementID) {
             geometry.computeBoundingBox();
 
             geometry.boundingBox.getCenter(middle);
-            mesh.geometry.applyMatrix(
-                new THREE.Matrix4().makeTranslation(-middle.x, -middle.y, 0)
-            );
+            mesh.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(-middle.x, -middle.y, 0));
 
             //-------------CAMERA-------------//
             camera.position.z = 150;
@@ -148,9 +130,32 @@ function STLViewer(model, elementID) {
             };
 
             animate();
+
+            var nonIndexedModel = geometry.toNonIndexed();
+            console.log("trying" + getVolume(nonIndexedModel));
         },
         onProgress
     );
+
+    function getVolume(geometry) {
+        let position = geometry.attributes.position;
+        let faces = position.count / 3;
+        let sum = 0;
+        let p1 = new THREE.Vector3(),
+            p2 = new THREE.Vector3(),
+            p3 = new THREE.Vector3();
+        for (let i = 0; i < faces; i++) {
+            p1.fromBufferAttribute(position, i * 3 + 0);
+            p2.fromBufferAttribute(position, i * 3 + 1);
+            p3.fromBufferAttribute(position, i * 3 + 2);
+            sum += signedVolumeOfTriangle(p1, p2, p3);
+        }
+        return sum;
+    }
+
+    function signedVolumeOfTriangle(p1, p2, p3) {
+        return p1.dot(p2.cross(p3)) / 6.0;
+    }
 
     //----------------------------------------------//
     //---------------------GUI----------------------//

@@ -12,6 +12,8 @@ var singlePrintSchema = mongoose.Schema({
     printLocation: String,
     pickupLocation: String,
 
+    calculatedVolumeCm: Number,
+
     isNewSubmission: Boolean,
     isReviewed: Boolean,
     isRejected: Boolean,

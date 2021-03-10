@@ -7,6 +7,7 @@ var newmailer = require("../app/emailer.js");
 var fs = require("fs");
 var path = require("path");
 var printRequestModel = require("../app/models/printRequest");
+const NodeStl = require("node-stl");
 
 var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
@@ -14,6 +15,15 @@ var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
 module.exports = {
     //return the number of new prints in the queue
     metaInfo: function () {},
+
+    calcFileVolume: function (fileID) {
+        printRequestModel.findOne(
+            {
+                "files._id": fileID,
+            },
+            function () {}
+        );
+    },
 
     //function receives the input from filled out request form and saves to the database
     addPrint: function (fields, submissionDetails, prints) {
@@ -93,6 +103,23 @@ module.exports = {
         }
 
         //save the top level submission and low level files to the database
+
+        //calculate the estimated volume for each submitted file
+        for (var file of request.files) {
+            try {
+                var stl = new NodeStl(
+                    path.join(stlPath, file.fileName.replace("/home/hcf0018/webserver/Uploads/STLs/", "")),
+                    {
+                        density: 1.04,
+                    }
+                );
+                console.log(file.fileName.replace("/home/hcf0018/webserver/Uploads/STLs/", ""));
+                console.log(stl.volume + "cm^3"); // 21cm^3
+                file.calculatedVolumeCm = stl.volume;
+            } catch (error) {
+                console.log(error);
+            }
+        }
 
         request.save(function (err, document) {
             if (err) {
