@@ -67,6 +67,7 @@ module.exports = function (app) {
                     name: req.user.name,
                     print: result.files.id(fileID), //send the review page the file to review
                     patron: result.patron,
+                    submission: result,
                     filePath: path.join(stlPath, result.files.id(fileID).fileName.replace("#", "%23")),
                     gcodePath: finalGcode,
                 });

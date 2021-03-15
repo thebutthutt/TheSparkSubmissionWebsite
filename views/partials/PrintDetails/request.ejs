@@ -1,13 +1,36 @@
 <div class="shadow alert alert-info">
     <h4>Request Details</h4>
-    <p class="mb-0">
-        <strong>Filename:</strong>
-        <a href='<%="/prints/download?fileID=" +  print.fileName.replace("#", "%23")%>'><%=print.realFileName%></a>
-        <br />
-        <strong>Requested material:</strong> <%=print.material%> <br />
-        <strong>Requested infill:</strong> <%=print.infill%> <br />
-        <strong>Requested color:</strong> <%=print.color%> <br />
-        <strong>Requested copies:</strong> <%=print.copies%> <br />
-        <strong>Pickup location:</strong> <%=print.pickupLocation%> <br />
-    </p>
+    <table class="table table-borderless alert-info table-sm mb-0">
+        <tbody>
+            <tr>
+                <th scope="row">Filename:</th>
+                <td>
+                    <a
+                        href='<%="/prints/download?fileID=" +  print.fileName.replace("#", "%23")%>'
+                        ><%=print.realFileName%></a
+                    >
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Material:</th>
+                <td><%=print.material%></td>
+            </tr>
+            <tr>
+                <th scope="row">Infill:</th>
+                <td><%=print.infill%></td>
+            </tr>
+            <tr>
+                <th scope="row">Color:</th>
+                <td><%=print.color%></td>
+            </tr>
+            <tr>
+                <th scope="row">Copies:</th>
+                <td><%=print.copies%></td>
+            </tr>
+            <tr>
+                <th scope="row">Pickup Location:</th>
+                <td><%=print.pickupLocation%></td>
+            </tr>
+        </tbody>
+    </table>
 </div>
