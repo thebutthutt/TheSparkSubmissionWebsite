@@ -12,6 +12,14 @@
                 height: 200px;
                 overflow: hidden;
             }
+
+            .image-col {
+                background-image: url("/public/images/printer.png");
+                background-origin: content-box;
+                background-clip: content-box;
+                background-position: center;
+                background-size: cover;
+            }
         </style>
     </head>
 
@@ -21,80 +29,57 @@
             class="container mt-5 px-5"
             style="margin-bottom: 100px; max-width: 100em"
         >
-            <div class="row mb-">
+            <div class="row">
                 <div class="col">
                     <div class="card shadow mb-4">
-                        <div class="card-body">
-                            <h3 class="card-title">3D Printing</h3>
-                            <p class="card-text">
-                                Welcome to The Spark Makerspace 3D printing
-                                services! This queue is for full service print
-                                submissions. Full service within The Spark
-                                generally costs $1.00 per print hour and
-                                includes:
-                            </p>
-                            <ul>
-                                <li>3D model quality review</li>
-                                <li>Material/s assessment</li>
-                                <li>Machine setup</li>
-                                <li>Quality control monitoring</li>
-                                <li>
-                                    Print Options
+                        <div class="row g-0">
+                            <div class="col-md-5 image-col"></div>
+                            <div class="col-md-7">
+                                <div class="card-body">
+                                    <h4 class="card-title">3D Printing</h4>
+                                    <p class="card-text">
+                                        Welcome to The Spark Makerspace 3D
+                                        printing services! This queue is for
+                                        full service print submissions. Full
+                                        service within The Spark generally costs
+                                        $1.00 per print hour and includes:
+                                    </p>
                                     <ul>
-                                        <li>Material selection options</li>
-                                        <li>Print bed upgrade</li>
-                                        <li>Dual color prints*</li>
+                                        <li>3D model quality review</li>
+                                        <li>Material(s) assessment</li>
+                                        <li>Machine setup</li>
+                                        <li>Quality control monitoring</li>
+                                        <li>
+                                            Print Options
+                                            <ul>
+                                                <li>
+                                                    Material selection options
+                                                </li>
+                                                <li>Print bed upgrade</li>
+                                                <li>Dual color prints*</li>
+                                            </ul>
+                                        </li>
                                     </ul>
-                                </li>
-                            </ul>
-                            <p class="card-text">
-                                Please visit The Spark website for more
-                                information about the 3D printers we have in our
-                                collection.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="card shadow">
-                        <div class="card-body">
-                            <p class="card-text">
-                                *Please let us know if you are not receiving
-                                communications within the standard timelines
-                                above
-                            </p>
-                            <p class="card-text">
-                                **Approval email will include the link to the
-                                payment portal
-                            </p>
-                            <p>
-                                The Spark is not allowed to make changes to
-                                submitted files, so please verify the print
-                                files meet your desired expectations before
-                                submitting. 3D prints often require supports in
-                                order to print,
-                                <a
-                                    href="https://blogs.library.unt.edu/spark/2021/03/03/support-on-3d-prints/"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    data-auth="NotApplicable"
-                                    >please go to our blog for more
-                                    information</a
-                                >. Also note, The Spark does not do any post
-                                processing of 3D prints.
-                            </p>
-                            <a
-                                role="button"
-                                class="btn btn-primary"
-                                href="/submit"
-                                >Submit 3D Print</a
-                            >
+                                    <p class="card-text">
+                                        Please visit
+                                        <a
+                                            href="https://guides.library.unt.edu/spark"
+                                            >The Spark</a
+                                        >
+                                        website for more information about the
+                                        3D printers we have in our collection.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col">
                     <div class="card shadow mb-4">
                         <div class="card-body">
-                            <h3 class="card-title">Submission Process</h3>
+                            <h4 class="card-title">Submission Process</h4>
                             <ul>
                                 <li>
                                     Complete Contact information- All
@@ -124,7 +109,7 @@
                                 </li>
 
                                 <li>
-                                    Upload your .stl file/s
+                                    Upload your .stl file(s)
                                     <ul>
                                         <li>
                                             Upload files separately; use the
@@ -143,7 +128,29 @@
                     </div>
                     <div class="card shadow">
                         <div class="card-body">
-                            <h3 class="card-title">Expectations:</h3>
+                            <p>
+                                The Spark is not allowed to make changes to
+                                submitted files, so please verify the print
+                                files meet your desired expectations before
+                                submitting. 3D prints often require supports in
+                                order to print,
+                                <a
+                                    href="https://blogs.library.unt.edu/spark/2021/03/03/support-on-3d-prints/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    data-auth="NotApplicable"
+                                    >please go to our blog for more
+                                    information</a
+                                >. Also note, The Spark does not do any post
+                                processing of 3D prints.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card mb-4 shadow">
+                        <div class="card-body">
+                            <h4 class="card-title">Expectations:</h4>
                             <ul>
                                 <li>Timeline</li>
                                 <ul>
@@ -151,9 +158,6 @@
                                         Submission reviewed in 2-3
                                         <a
                                             href="https://calendar.library.unt.edu/"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            data-auth="NotApplicable"
                                             >Spark business days</a
                                         >*
                                     </li>
@@ -162,9 +166,6 @@
                                         7-10
                                         <a
                                             href="https://calendar.library.unt.edu/"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            data-auth="NotApplicable"
                                             >Spark business days</a
                                         >
                                         of payment being received**
@@ -174,9 +175,6 @@
                                         times of less than 10
                                         <a
                                             href="https://calendar.library.unt.edu/"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            data-auth="NotApplicable"
                                             >Spark business days</a
                                         >*
                                     </li>
@@ -186,7 +184,7 @@
                                         although timelines can vary based on a
                                         number of factors including:
                                         <ul style="margin-bottom: 0in">
-                                            <li>Print time/s</li>
+                                            <li>Print time(s)</li>
                                             <li>Queue volume</li>
                                             <li>Staff and machine capacity</li>
                                             <li>Semester events</li>
@@ -196,9 +194,21 @@
                             </ul>
                         </div>
                     </div>
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <p class="card-text">
+                                *Please let us know if you are not receiving
+                                communications within the standard timelines
+                                above
+                            </p>
+                            <p class="card-text">
+                                **Approval email will include the link to the
+                                payment portal
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row"></div>
         </div>
         <%- include ("../partials/footer") %>
     </body>
