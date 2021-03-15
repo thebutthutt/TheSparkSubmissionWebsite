@@ -1,7 +1,8 @@
 {
     "events": {
-        "restart": "sudo fuser -k 8080/tcp; sleep 1",
-        "start": "sudo fuser -k 8080/tcp; sleep 1"
+        "restart": "sudo fuser -k 8080/tcp;",
+        "crash": "sudo fuser -k 8080/tcp",
+        "start": "sudo fuser -k 8080/tcp;"
     },
     "ignore": ["public/*", "node_modules/*", "views/*"]
 }

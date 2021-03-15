@@ -1,12 +1,24 @@
 // set up ======================================================================
+// nodemon shutdown please work
 
 require("dotenv").config();
+
+process.once("SIGUSR2", function () {
+    gracefulShutdown(function () {
+        process.kill(process.pid, "SIGUSR2");
+    });
+});
 
 // get all the tools we need
 var express = require("express");
 var https = require("https");
 var http = require("http");
 var fs = require("fs");
+const sh = require("shell-exec");
+
+sh(`sudo fuser -k ${port}/tcp`).then((message) => {
+    console.log(message);
+});
 
 var app = express();
 var port = process.env.PORT;
@@ -21,7 +33,7 @@ var path = require("path");
 var favicon = require("serve-favicon");
 var constants = require("./app/constants.js");
 
-//var tester = require("./tester.js");
+console.log(process.pid);
 
 // configuration ===============================================================
 mongoose.connect(constants.url, {
@@ -49,11 +61,20 @@ app.use(
 app.set("view engine", "ejs"); // set up ejs for templating
 app.use("/public", express.static(path.join(__dirname, "/public"))); //allow us to grab local files in the public directory
 app.use("/three", express.static(__dirname + "/node_modules/three/")); //allow website to access the three.js library
-app.use("/fullcalendar", express.static(__dirname + "/node_modules/fullcalendar/")); //allow website to access the three.js library
+app.use(
+    "/fullcalendar",
+    express.static(__dirname + "/node_modules/fullcalendar/")
+); //allow website to access the three.js library
 app.use("/gui", express.static(__dirname + "/node_modules/dat.gui/")); //allow website to access the uploaded STLs (for in site display)
 app.use("/Uploads", express.static(path.join(__dirname, "../Uploads"))); //allow website to access the uploaded STLs (for in site display)
-app.use("/qrcode", express.static(__dirname + "/node_modules/qrcode-generator/")); //allow website to access the uploaded STLs (for in site display)
-app.use("/datepicker", express.static(__dirname + "/node_modules/js-datepicker/dist/"));
+app.use(
+    "/qrcode",
+    express.static(__dirname + "/node_modules/qrcode-generator/")
+); //allow website to access the uploaded STLs (for in site display)
+app.use(
+    "/datepicker",
+    express.static(__dirname + "/node_modules/js-datepicker/dist/")
+);
 
 app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 
@@ -106,8 +127,8 @@ var server = https.createServer(
 //sets up the websocket for signature pads
 require("./app/websocket.js")(server);
 
+var tester = require("./tester.js");
 server.listen(port, "0.0.0.0");
-
 //http server to redirect to https
 var http_server = http
     .createServer(function (req, res) {
@@ -120,5 +141,13 @@ var http_server = http
     .listen(process.env.HTTP, "0.0.0.0");
 
 console.log("The magic happens on port " + port);
+
+function gracefulShutdown(callback) {
+    console.log("closing");
+    server.close(() => {
+        console.log("server closed");
+        callback();
+    });
+}
 
 //emailer.newSubmission();

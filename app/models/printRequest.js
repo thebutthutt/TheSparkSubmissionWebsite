@@ -39,6 +39,39 @@ var singlePrintSchema = mongoose.Schema({
     dateOfSecondWarning: String,
     dateOfConfiscation: String,
 
+    timestampSubmitted: {
+        type: Date,
+        default: "1970",
+    },
+    timestampReviewed: {
+        type: Date,
+        default: "1970",
+    },
+    timestampPaid: {
+        type: Date,
+        default: "1970",
+    },
+    timestampPrinted: {
+        type: Date,
+        default: "1970",
+    },
+    timestampPickedUp: {
+        type: Date,
+        default: "1970",
+    },
+    timestampOfFirstWarning: {
+        type: Date,
+        default: "1970",
+    },
+    timestampOfSecondWarning: {
+        type: Date,
+        default: "1970",
+    },
+    timestampOfConfiscation: {
+        type: Date,
+        default: "1970",
+    },
+
     gcodeName: String,
     realGcodeName: String,
     slicedPrinter: String,
@@ -55,6 +88,13 @@ var singlePrintSchema = mongoose.Schema({
     numFailedAttempts: Number,
 
     techNotes: String,
+    newTechNotes: [
+        {
+            techName: String,
+            dateAdded: Date,
+            notes: String,
+        },
+    ],
     patronNotes: String,
 
     approvedBy: String,

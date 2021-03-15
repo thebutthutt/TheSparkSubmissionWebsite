@@ -38,13 +38,21 @@ module.exports = {
         };
 
         //if at least one class detail field is filled
-        if (Object.values(submissionDetails.classDetails).some((x) => x !== null && x !== "")) {
+        if (
+            Object.values(submissionDetails.classDetails).some(
+                (x) => x !== null && x !== ""
+            )
+        ) {
             request.isForClass = true;
             request.isForDepartment = false;
             request.classDetails = submissionDetails.classDetails;
         }
         //if at least one department detail is filled
-        else if (Object.values(submissionDetails.classDetails).some((x) => x !== null && x !== "")) {
+        else if (
+            Object.values(submissionDetails.classDetails).some(
+                (x) => x !== null && x !== ""
+            )
+        ) {
             request.isForDepartment = true;
             request.isForClass = false;
             request.internalDetails = submissionDetails.internalDetails;
@@ -108,12 +116,23 @@ module.exports = {
         for (var file of request.files) {
             try {
                 var stl = new NodeStl(
-                    path.join(stlPath, file.fileName.replace("/home/hcf0018/webserver/Uploads/STLs/", "")),
+                    path.join(
+                        stlPath,
+                        file.fileName.replace(
+                            "/home/hcf0018/webserver/Uploads/STLs/",
+                            ""
+                        )
+                    ),
                     {
                         density: 1.04,
                     }
                 );
-                console.log(file.fileName.replace("/home/hcf0018/webserver/Uploads/STLs/", ""));
+                console.log(
+                    file.fileName.replace(
+                        "/home/hcf0018/webserver/Uploads/STLs/",
+                        ""
+                    )
+                );
                 console.log(stl.volume + "cm^3"); // 21cm^3
                 file.calculatedVolumeCm = stl.volume;
             } catch (error) {
@@ -149,12 +168,24 @@ module.exports = {
 
         var filenames = [],
             realFileNames = [],
-            materials = Array.isArray(req.body.material) ? req.body.material : Array.of(req.body.material),
-            infills = Array.isArray(req.body.infill) ? req.body.infill : Array.of(req.body.infill),
-            colors = Array.isArray(req.body.color) ? req.body.color : Array.of(req.body.color),
-            copies = Array.isArray(req.body.copies) ? req.body.copies : Array.of(req.body.copies),
-            notes = Array.isArray(req.body.notes) ? req.body.notes : Array.of(req.body.notes),
-            pickups = Array.isArray(req.body.pickup) ? req.body.pickup : Array.of(req.body.pickup),
+            materials = Array.isArray(req.body.material)
+                ? req.body.material
+                : Array.of(req.body.material),
+            infills = Array.isArray(req.body.infill)
+                ? req.body.infill
+                : Array.of(req.body.infill),
+            colors = Array.isArray(req.body.color)
+                ? req.body.color
+                : Array.of(req.body.color),
+            copies = Array.isArray(req.body.copies)
+                ? req.body.copies
+                : Array.of(req.body.copies),
+            notes = Array.isArray(req.body.notes)
+                ? req.body.notes
+                : Array.of(req.body.notes),
+            pickups = Array.isArray(req.body.pickup)
+                ? req.body.pickup
+                : Array.of(req.body.pickup),
             prints = [],
             patron = {
                 first: req.body.first,
@@ -211,8 +242,13 @@ module.exports = {
                 } else {
                     if (result.files.id(id).gcodeName != null) {
                         //delete gcode from disk if it exists
-                        console.log("Submission had old GCODE file! deleting...");
-                        var thisGcodePath = path.join(gcodePath, result.files.id(req.body.fileID).gcodeName);
+                        console.log(
+                            "Submission had old GCODE file! deleting..."
+                        );
+                        var thisGcodePath = path.join(
+                            gcodePath,
+                            result.files.id(req.body.fileID).gcodeName
+                        );
                         fs.unlink(thisGcodePath, function (err) {
                             if (err) {
                                 console.log(err);
@@ -225,6 +261,7 @@ module.exports = {
         //update the low level print according to the form data
         if (req.body.decision == "accepted") {
             //if the technician accepted the print, update accordingly
+            var now = new Date();
             printRequestModel.findOneAndUpdate(
                 {
                     "files._id": req.body.fileID,
@@ -239,12 +276,14 @@ module.exports = {
                         "files.$.timeMinutes": req.body.minutes,
                         "files.$.grams": req.body.grams,
                         "files.$.patronNotes": req.body.patronNotes,
-                        "files.$.techNotes": req.body.technotes,
+                        //"files.$.techNotes": req.body.technotes,
                         "files.$.approvedBy": maker,
                         "files.$.printLocation": req.body.printLocation,
                         "files.$.isReviewed": true,
                         "files.$.isRejected": false,
-                        "files.$.dateReviewed": time.format(constants.format),
+                        //"files.$.dateReviewed": time.format(constants.format),
+                        //"files.$.dateReviewed": time.format(constants.format),
+                        "files.$.timestampReviewed": now,
                     },
                 },
                 {
@@ -255,6 +294,15 @@ module.exports = {
                         console.log(err);
                     }
                     console.log(result);
+                    var newNoteObject = {
+                        techName: maker,
+                        dateAdded: now,
+                        notes: req.body.newNotes,
+                    };
+                    result.files
+                        .id(req.body.fileID)
+                        .newTechNotes.push(newNoteObject);
+                    result.save();
                     //now find the fully updated top level submission so we can check if all the files have been reviewed
                     module.exports.setFlags(id, function () {
                         callback();
@@ -305,15 +353,14 @@ module.exports = {
                     console.log(err);
                 } else {
                     if (req.body.newNotes != "") {
-                        if (!result.files.id(req.body.fileID).techNotes) {
-                            result.files.id(req.body.fileID).techNotes = "";
-                        } else {
-                            result.files.id(req.body.fileID).techNotes += "\n";
-                        }
-
-                        result.files.id(req.body.fileID).techNotes += req.body.name;
-                        result.files.id(req.body.fileID).techNotes += ": ";
-                        result.files.id(req.body.fileID).techNotes += req.body.newNotes;
+                        var newNoteObject = {
+                            techName: req.body.name,
+                            dateAdded: Date.now(),
+                            notes: req.body.newNotes,
+                        };
+                        result.files
+                            .id(req.body.fileID)
+                            .newTechNotes.push(newNoteObject);
                         result.save();
                     }
                 }
@@ -338,7 +385,8 @@ module.exports = {
                         rejectedFiles = [];
 
                     var email = result.patron.email;
-                    var shouldBeWaived = result.isForClass || result.isForDepartment;
+                    var shouldBeWaived =
+                        result.isForClass || result.isForDepartment;
 
                     //calculate paumet amount
                     var amount = 0.0;
@@ -346,19 +394,27 @@ module.exports = {
                         result.files[i].canBeReviewed = false;
                         result.files[i].isNewSubmission = false;
 
-                        if (result.files[i].isRejected == false && result.files[i].isReviewed == true) {
+                        if (
+                            result.files[i].isRejected == false &&
+                            result.files[i].isReviewed == true
+                        ) {
                             //print is accepted
                             result.files[i].isPendingPayment = true;
-                            if (result.files[i].timeHours <= 0 && result.files[i].timeMinutes <= 59) {
+                            if (
+                                result.files[i].timeHours <= 0 &&
+                                result.files[i].timeMinutes <= 59
+                            ) {
                                 //if its less than an hour, just charge one dollar
                                 var thisCopy = 1;
-                                var allCopies = thisCopy * result.files[i].copies;
+                                var allCopies =
+                                    thisCopy * result.files[i].copies;
                                 amount += allCopies;
                             } else {
                                 //charge hours plus minutes out of 60 in cents
                                 var thisCopy = result.files[i].timeHours;
                                 thisCopy += result.files[i].timeMinutes / 60;
-                                var allCopies = thisCopy * result.files[i].copies;
+                                var allCopies =
+                                    thisCopy * result.files[i].copies;
                                 amount += allCopies;
                             }
                             acceptedFiles.push(result.files[i]._id);
@@ -374,11 +430,17 @@ module.exports = {
 
                     //if the submission had any accepted files, we will ask for payment
                     if (acceptedFiles.length > 0) {
-                        result.datePaymentRequested = time.format(constants.format);
+                        result.datePaymentRequested = time.format(
+                            constants.format
+                        );
 
                         //calc full name of patron
                         var nameString = "";
-                        nameString = nameString.concat(result.patron.fname, " ", result.patron.lname);
+                        nameString = nameString.concat(
+                            result.patron.fname,
+                            " ",
+                            result.patron.lname
+                        );
 
                         /*//hand it to the payment handler to generate the url for the patron
                         payment.generatePaymentURL(
@@ -392,14 +454,20 @@ module.exports = {
                             result._id
                         ); //generate the URL*/
 
-                        payment.sendPaymentEmail(result, amount, rejectedFiles.length);
+                        payment.sendPaymentEmail(
+                            result,
+                            amount,
+                            rejectedFiles.length
+                        );
                         if (shouldBeWaived) {
                             result.isPendingWaive = true;
                         }
                     } else {
                         //dont ask for payment, just move to the rejected queue
                         //none of the prints were accepted
-                        result.datePaymentRequested = time.format(constants.format); //still capture review time
+                        result.datePaymentRequested = time.format(
+                            constants.format
+                        ); //still capture review time
                         newmailer.allRejected(result);
                     }
 
@@ -433,7 +501,10 @@ module.exports = {
                             result.files[i].isReadyToPrint = true;
                             result.files[i].isPendingWaive = false;
                             if (wasWaived) {
-                                result.files[i].overrideNotes = "Payment was waived by " + waivingEUID + "\n";
+                                result.files[i].overrideNotes =
+                                    "Payment was waived by " +
+                                    waivingEUID +
+                                    "\n";
                             }
                         }
                     }
@@ -472,7 +543,10 @@ module.exports = {
                             result.files[i].isReadyToPrint = true;
                             result.files[i].isPendingWaive = false;
                             if (wasWaived) {
-                                result.files[i].overrideNotes = "Payment was waived by " + waivingEUID + "\n";
+                                result.files[i].overrideNotes =
+                                    "Payment was waived by " +
+                                    waivingEUID +
+                                    "\n";
                             }
                         }
                     }
@@ -795,7 +869,10 @@ module.exports = {
             },
             function (err, result) {
                 //delete stl from disk
-                var thisSTLPath = path.join(stlPath, result.files.id(fileID).fileName);
+                var thisSTLPath = path.join(
+                    stlPath,
+                    result.files.id(fileID).fileName
+                );
                 fs.unlink(thisSTLPath, function (err) {
                     if (err) {
                         if (err.code === "ENOENT") {
@@ -809,7 +886,10 @@ module.exports = {
                 //delete gcode from disk if it exists
 
                 if (result.files.id(fileID).gcodeName) {
-                    var thisGcodePath = path.join(gcodePath, result.files.id(fileID).gcodeName);
+                    var thisGcodePath = path.join(
+                        gcodePath,
+                        result.files.id(fileID).gcodeName
+                    );
                     fs.unlink(thisGcodePath, function (err) {
                         if (err) {
                             if (err.code === "ENOENT") {
@@ -822,14 +902,20 @@ module.exports = {
                 }
 
                 //delete signature if it exists
-                if (result.files.id(fileID).signaturePath != null && result.files.id(fileID).signaturePath != "") {
-                    fs.unlink(result.files.id(fileID).signaturePath, function (err) {
-                        if (err.code === "ENOENT") {
-                            console.log("File not found!");
-                        } else {
-                            throw err;
+                if (
+                    result.files.id(fileID).signaturePath != null &&
+                    result.files.id(fileID).signaturePath != ""
+                ) {
+                    fs.unlink(
+                        result.files.id(fileID).signaturePath,
+                        function (err) {
+                            if (err.code === "ENOENT") {
+                                console.log("File not found!");
+                            } else {
+                                throw err;
+                            }
                         }
-                    });
+                    );
                 }
 
                 result.files.id(fileID).remove(); //remove the single file from the top level print submission
@@ -851,7 +937,10 @@ module.exports = {
                         //save top level request db entry
                         if (err) console.log(err);
                     });
-                    module.exports.setFlags(result.files[0]._id, function () {}); //now set all the flags of the updated top level submission
+                    module.exports.setFlags(
+                        result.files[0]._id,
+                        function () {}
+                    ); //now set all the flags of the updated top level submission
                 }
             }
         );

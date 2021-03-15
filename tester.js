@@ -5,131 +5,80 @@ var printHandler = require("./handlers/printHandler.js");
 var emailer = require("./app/emailer.js");
 var payment = require("./app/payment.js");
 var path = require("path");
-const NodeStl = require("node-stl");
-async function calcAllVolume() {
-    var submissions = await printRequestModel.find({});
-
-    for (var submission of submissions) {
-        if (submission.files.length > 0) {
-            for (var file of submission.files) {
-                try {
-                    var stl = new NodeStl(
-                        path.join(
-                            __dirname,
-                            "..",
-                            "Uploads",
-                            "STLs",
-                            file.fileName.replace("/home/hcf0018/webserver/Uploads/STLs/", "")
-                        ),
-                        {
-                            density: 1.04,
-                        }
-                    );
-                    console.log(file.fileName.replace("/home/hcf0018/webserver/Uploads/STLs/", ""));
-                    console.log(stl.volume + "cm^3"); // 21cm^3
-                    file.calculatedVolumeCm = stl.volume;
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-            submission.save();
-        }
-    }
-}
-
-//calcAllVolume();
 
 console.log("here");
 
-async function testEmails() {
-    var dummySubmission = await printRequestModel.findOne({
-        "patron.fname": "Dummy",
-    });
-
-    //console.log(dummySubmission);
-    if (dummySubmission) {
-        //printHandler.requestPayment(dummySubmission, null);
-        emailer.stillWaiting(dummySubmission, dummySubmission.files);
-        //emailer.finalWarning(dummySubmission, dummySubmission.files);
-    }
-}
-
-async function findAllPrices() {
-    var submissions = await printRequestModel.find({
-        files: {
-            $elemMatch: {
-                isReviewed: true,
-                isRejected: false,
-            },
-        },
-    });
-
-    for (const submission of submissions) {
-        console.log("\n\n\n");
-        var totalPrice = 0,
-            totalSinglePrice = 0;
-        var acceptedFiles = submission.files.filter(function (file) {
-            if (file.isReviewed && !file.isRejected) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        for (const file of acceptedFiles) {
-            var thisCopyPrice = 0,
-                allCopiesPrice = 0;
-            if (file.timeHours <= 0 && file.timeMinutes <= 59) {
-                //if its less than an hour, just charge one dollar
-                thisCopyPrice = 1;
-            } else {
-                //charge hours plus minutes out of 60 in cents
-                thisCopyPrice = file.timeHours;
-                thisCopyPrice += file.timeMinutes / 60;
-            }
-
-            allCopiesPrice = thisCopyPrice * file.copies;
-            totalPrice += allCopiesPrice;
-            totalSinglePrice += thisCopyPrice;
-
-            thisCopyPrice = (Math.round(thisCopyPrice * 100) / 100).toFixed(2);
-            allCopiesPrice = (Math.round(allCopiesPrice * 100) / 100).toFixed(2);
-
-            console.log("File: ", file.realFileName, " price: ", allCopiesPrice);
-            file.singleCopyPrice = thisCopyPrice;
-            file.allCopiesPrice = allCopiesPrice;
-        }
-        totalPrice = (Math.round(totalPrice * 100) / 100).toFixed(2);
-        totalSinglePrice = (Math.round(totalSinglePrice * 100) / 100).toFixed(2);
-        console.log("Total price for submission: ", totalPrice);
-        console.log("Total SINGLE price for submission: ", totalSinglePrice);
-        submission.requestedPrice = totalPrice;
-        submission.requestedSingleCopyPrice = totalSinglePrice;
-        submission.save();
-    }
-}
-
-async function findAllStalePayment() {
-    var stale = await printRequestModel.find({
-        "files.isPendingPayment": true,
-    });
-
-    for (var submission of stale) {
-        //console.log(submission);
+printRequestModel.find({}, function (err, result) {
+    for (var submission of result) {
         for (var file of submission.files) {
-            var reviewed = new Date(file.dateReviewed);
-            if (reviewed <= new Date("1/1/2021")) {
-                file.isStaleOnPayment = true;
+            if (file.isReviewed) {
+                console.log(file.techNotes);
+                if (file.techNotes.length > 0) {
+                    if (
+                        file.techNotes.indexOf(":") == -1 &&
+                        file.newTechNotes.length == 0
+                    ) {
+                        var newNoteObject = {
+                            techName: file.approvedBy,
+                            dateAdded: file.timestampReviewed,
+                            notes: file.techNotes,
+                        };
+                        file.newTechNotes.push(newNoteObject);
+                    }
+                }
             }
         }
         submission.save();
     }
+});
+
+/*
+printRequestModel.find({}, function (err, result) {
+    for (var submission of result) {
+        for (var file of submission.files) {
+            var dateSubParsed = new Date(file.dateSubmitted);
+            var dateReviewParsed = new Date(file.dateReviewed);
+            var datePaidParsed = new Date(file.datePaid);
+            var datePrintedParsed = new Date(file.datePrinted);
+            var datePickupParsed = new Date(file.datePickedUp);
+            var dateFirstParsed = new Date(file.dateOfFirstWarning);
+            var dateSecondParsed = new Date(file.dateOfSecondWarning);
+            var dateRepoParsed = new Date(file.dateOfConfiscation);
+
+            if (isValidDate(dateSubParsed)) {
+                file.timestampSubmitted = dateSubParsed;
+            }
+            if (isValidDate(dateReviewParsed)) {
+                file.timestampReviewed = dateReviewParsed;
+            }
+            if (isValidDate(datePaidParsed)) {
+                file.timestampPaid = datePaidParsed;
+            }
+            if (isValidDate(datePrintedParsed)) {
+                file.timestampPrinted = datePrintedParsed;
+            }
+            if (isValidDate(datePickupParsed)) {
+                file.timestampPickedUp = datePickupParsed;
+            }
+            if (isValidDate(dateFirstParsed)) {
+                file.timestampOfFirstWarning = dateFirstParsed;
+            }
+            if (isValidDate(dateSecondParsed)) {
+                file.timestampOfSecondWarning = dateSecondParsed;
+            }
+            if (isValidDate(dateRepoParsed)) {
+                file.timestampOfConfiscation = dateRepoParsed;
+            }
+        }
+        submission.save();
+    }
+});
+
+function isValidDate(d) {
+    return d instanceof Date && !isNaN(d);
 }
 
-//testEmails();
-//findAllStalePayment();
-//findAllPrices();
-/*
+
 179748 sudo nodemon --tls-cipher-list=ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL server.js
 179750 node /bin/nodemon --tls-cipher-list=ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL server.js
 1814585 node --tls-cipher-list=ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL server.js
