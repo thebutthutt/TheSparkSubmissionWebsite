@@ -14,12 +14,6 @@ var express = require("express");
 var https = require("https");
 var http = require("http");
 var fs = require("fs");
-const sh = require("shell-exec");
-
-sh(`sudo fuser -k ${port}/tcp`).then((message) => {
-    console.log(message);
-});
-
 var app = express();
 var port = process.env.PORT;
 
@@ -127,7 +121,7 @@ var server = https.createServer(
 //sets up the websocket for signature pads
 require("./app/websocket.js")(server);
 
-var tester = require("./tester.js");
+//var tester = require("./tester.js");
 server.listen(port, "0.0.0.0");
 //http server to redirect to https
 var http_server = http

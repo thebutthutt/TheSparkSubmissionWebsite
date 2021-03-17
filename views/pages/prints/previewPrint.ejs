@@ -46,7 +46,7 @@
             </div>
             <%}%>
             <div class="row">
-                <div class="col-4">
+                <div class="col-xl-4 col-lg-6 col-md-12">
                     <%- include ("../../partials/PrintDetails/patron",
                     {print:print, submission:submission}) %>
                     <div class="shadow card mb-3">
@@ -74,7 +74,7 @@
                     </div>
                 </div>
 
-                <div class="col-4">
+                <div class="col-xl-4 col-lg-6 col-md-12">
                     <!-- prettier-ignore -->
                     <%- include ("../../partials/PrintDetails/request", {print:print, filePath:filePath}) %> 
                     <%if (print.isReviewed && print.isNewSubmission ) {%> 
@@ -95,7 +95,6 @@
                             <hr />
                             <%}%>
                             <h6>Technician Notes</h6>
-                            <p><%=print.techNotes%></p>
                             <%for (var thisTechNote of print.newTechNotes) {%>
                             <p>
                                 <%=thisTechNote.techName%> -
@@ -135,7 +134,7 @@
                     </div>
                 </div>
 
-                <div class="col-4">
+                <div class="col-xl-4 col-lg-6 col-md-12">
                     <!-- prettier-ignore -->
                     <%if(isSuperAdmin && print.isPendingWaive) {%> 
                         <%- include ("../../partials/PrintDetails/waiveCard", {print:print}) %> 

@@ -7,24 +7,51 @@ var payment = require("./app/payment.js");
 var path = require("path");
 
 console.log("here");
+printRequestModel.find({}, function (err, result) {
+    for (var submission of result) {
+        for (var file of submission.files) {
+            console.log(file.newTechNotes);
+        }
+    }
+});
 
+/*
 printRequestModel.find({}, function (err, result) {
     for (var submission of result) {
         for (var file of submission.files) {
             if (file.isReviewed) {
-                console.log(file.techNotes);
-                if (file.techNotes.length > 0) {
-                    if (
-                        file.techNotes.indexOf(":") == -1 &&
-                        file.newTechNotes.length == 0
-                    ) {
-                        var newNoteObject = {
-                            techName: file.approvedBy,
-                            dateAdded: file.timestampReviewed,
-                            notes: file.techNotes,
-                        };
-                        file.newTechNotes.push(newNoteObject);
+                if (
+                    file.techNotes &&
+                    file.techNotes.length > 0 &&
+                    file.techNotes.indexOf(":") != -1
+                ) {
+                    console.log(file._id);
+                    var arr = file.techNotes.split(/[\n\r]+/);
+                    console.log(arr);
+                    for (var thisLine of arr) {
+                        var indexColon = thisLine.indexOf(": ");
+                        if (indexColon != -1 && indexColon < 20) {
+                            var nameAndMessage = thisLine.split(": ");
+                            var thisNoteObject = {
+                                techName: nameAndMessage[0],
+                                dateAdded: "1970",
+                                notes: nameAndMessage[1],
+                            };
+                            console.log(thisNoteObject);
+                            file.newTechNotes.push(thisNoteObject);
+                        } else {
+                            if (thisLine.length > 0) {
+                                var otherNoteObject = {
+                                    techName: file.approvedBy,
+                                    dateAdded: file.timestampReviewed,
+                                    notes: thisLine,
+                                };
+                                console.log(otherNoteObject);
+                                file.newTechNotes.push(otherNoteObject);
+                            }
+                        }
                     }
+                    console.log("\n\n----------------\n\n");
                 }
             }
         }
@@ -32,7 +59,14 @@ printRequestModel.find({}, function (err, result) {
     }
 });
 
-/*
+
+
+171809 sudo nodemon server.js
+171817 node /bin/nodemon server.js
+192596 sudo nodemon server.js
+192604 node /bin/nodemon server.js
+242514 /usr/bin/node server.js
+404525 /usr/bin/node server.js
 printRequestModel.find({}, function (err, result) {
     for (var submission of result) {
         for (var file of submission.files) {
