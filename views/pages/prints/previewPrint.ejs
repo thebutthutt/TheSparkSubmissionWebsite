@@ -6,6 +6,7 @@
         <script type="module" src="/public/js/stldisplay.js"></script>
         <script type="text/javascript" src="/qrcode/qrcode.js"></script>
         <link type="text/css" rel="stylesheet" href="/public/css/details.css" />
+        <!--
         <style>
             p strong {
                 width: 12rem;
@@ -22,32 +23,412 @@
                 clear: both;
                 overflow: auto;
             }
+        </style>-->
+        <style>
+            .bi {
+                width: 3rem;
+                height: 3rem;
+                vertical-align: baseline;
+            }
+
+            .bi-plus-circle {
+                color: #007bff;
+            }
+
+            .bi-check-circle {
+                color: #28a745;
+            }
+
+            .bi-clock {
+                color: #ffc107;
+            }
+
+            .bi-circle {
+                color: #aaa;
+            }
         </style>
     </head>
 
     <body>
         <%- include ("../../partials/header") %>
         <div class="container-flush mx-5 mt-5" style="margin-bottom: 100px">
-            <%if (print.isPrinted && !print.isPickedUp) {%>
             <div class="row mb-3">
                 <div class="col">
-                    <button
-                        data-toggle="modal"
-                        data-target=".modal"
-                        data-backdrop="static"
-                        data-keyboard="false"
-                        fileName="<%=print.realFileName%>"
-                        fileID="<%=print._id%>"
-                        class="shadow btn btn-lg btn-primary btn-block modal-button"
-                    >
-                        Picking Up
-                    </button>
+                    <div class="card shadow text-center">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5>Initial Submission</h5>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-plus-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                            <path
+                                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        This file was submitted on
+                                        <%=print.timestampSubmitted.toLocaleDateString('en-US')%>
+                                    </p>
+                                </div>
+                                <div class="col">
+                                    <h5>File Review</h5>
+                                    <% if (print.isReviewed) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-check-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                            <path
+                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        This file was reviewed on
+                                        <%=print.timestampReviewed.toLocaleDateString('en-US')%>
+                                    </p>
+                                    <% } else { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-clock"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                                            />
+                                            <path
+                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>This file still needs to be reviewed</p>
+                                    <% } %>
+                                </div>
+                                <div class="col">
+                                    <h5>Submission Review</h5>
+                                    <% if (submission.timestampPaymentRequested
+                                    > new Date("1971") ) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-check-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                            <path
+                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        This submission was reviewed on
+                                        <%=submission.timestampPaymentRequested.toLocaleDateString('en-US')%>
+                                    </p>
+                                    <%} else { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-clock"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                                            />
+                                            <path
+                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        This submission has not been fully
+                                        reviewed
+                                    </p>
+                                    <% } %>
+                                </div>
+                                <div class="col">
+                                    <h5>Payment</h5>
+                                    <% if (print.isPendingPayment &&
+                                    !print.isPendingWaive ) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-clock"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                                            />
+                                            <path
+                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>Waiting for the patron to pay</p>
+                                    <%} else if (print.isPendingWaive) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-clock"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                                            />
+                                            <path
+                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        Waiting for a manager to approve a
+                                        payment waive
+                                    </p>
+                                    <% } else if (print.isPaid) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-check-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                            <path
+                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        This submission was paid on
+                                        <%=submission.timestampPaid.toLocaleDateString('en-US')%>
+                                    </p>
+                                    <%} else {%>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>Not ready yet!</p>
+                                    <%}%>
+                                </div>
+                                <div class="col">
+                                    <h5>Printing</h5>
+                                    <% if (print.isReadyToPrint &&
+                                    !print.isStarted ) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-clock"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                                            />
+                                            <path
+                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>Waiting to be printed</p>
+                                    <%} else if (print.isStarted) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-clock"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                                            />
+                                            <path
+                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>Currently on a printer</p>
+                                    <% } else if (print.isPrinted){%>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-check-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                            <path
+                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        This file was printed on
+                                        <%=print.timestampPrinted.toLocaleDateString('en-US')%>
+                                    </p>
+                                    <%} else { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>Not ready yet!</p>
+                                    <%}%>
+                                </div>
+                                <div class="col">
+                                    <h5>Pickup</h5>
+                                    <% if (print.timestampPrinted > new
+                                    Date("1971")) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-check-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                            <path
+                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        Patron was notified on
+                                        <%=print.timestampPrinted.toLocaleDateString('en-US')%>
+                                    </p>
+                                    <button
+                                        data-toggle="modal"
+                                        data-target=".modal"
+                                        data-backdrop="static"
+                                        data-keyboard="false"
+                                        fileName="<%=print.realFileName%>"
+                                        fileID="<%=print._id%>"
+                                        class="shadow btn btn-lg btn-primary btn-block modal-button"
+                                    >
+                                        Picking Up
+                                    </button>
+                                    <%} else { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>Not ready yet!</p>
+                                    <%}%>
+                                </div>
+                                <div class="col">
+                                    <h5>Status</h5>
+                                    <% if (print.timestampOfFirstWarning > new
+                                    Date("1971")) { %>
+                                    <p>
+                                        First warning:
+                                        <%=print.timestampOfFirstWarning.toLocaleDateString('en-US')%>
+                                        <br />
+                                        <%}%> <% if
+                                        (print.timestampOfSecondWarning > new
+                                        Date("1971")) { %> Final warning:
+                                        <%=print.timestampOfSecondWarning.toLocaleDateString('en-US')%><br />
+                                        <%}%> <% if
+                                        (print.timestampOfConfiscation > new
+                                        Date("1971")) { %> Reposessed:
+                                        <%=print.timestampOfConfiscation.toLocaleDateString('en-US')%>
+                                        <%}%>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <%if (print.isPrinted && !print.isPickedUp) {%>
+                    <div class="row">
+                        <div class="col"></div>
+                    </div>
+                    <%}%>
                 </div>
             </div>
-            <%}%>
+
             <div class="row">
-                <div class="col-4">
-                    <%- include ("../../partials/PrintDetails/patron", {print:print, submission:submission}) %>
+                <div class="col-xl-4 col-lg-6 col-md-12">
+                    <%- include ("../../partials/PrintDetails/patron",
+                    {print:print, submission:submission}) %>
                     <div class="shadow card mb-3">
                         <div class="card-img-top">
                             <div class="progress">
@@ -63,85 +444,25 @@
                             <div id="model-container">
                                 <div id="loading-image"></div>
                                 <div id="gui-container"></div>
-                                <div id="model" filename="<%=filePath%>" style="width: 100%; height: 500px"></div>
+                                <div
+                                    id="model"
+                                    filename="<%=filePath%>"
+                                    style="width: 100%; height: 500px"
+                                ></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-4">
+                <div class="col-xl-4 col-lg-6 col-md-12">
                     <!-- prettier-ignore -->
-                    <%- include ("../../partials/PrintDetails/request", {print:print, filePath:filePath}) %> 
-                    <%if (print.isReviewed && print.isNewSubmission ) {%> 
-                        <%- include ("../../partials/PrintDetails/review", {print:print, file:gcodePath}) %> 
+                    <%- include ("../../partials/PrintDetails/requestAndReview", {print:print, filePath:filePath, gcodePath:gcodePath}) %> 
+                    <%if (print.isNewSubmission ) {%> 
+                        <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                     <%}%>
-                    <div class="card shadow mb-3">
-                        <div class="card-body">
-                            <%if (print.canBeReviewed) {%>
-                            <h6>Notes from Patron</h6>
-                            <%if (print.notes == "") { %>
-                            <p class="mb-0">Patron left no notes</p>
-                            <% } else { %>
-                            <p class="mb-0"><%=print.notes%></p>
-                            <%}%>
-                            <hr />
-                            <h6>Technician Notes</h6>
-                            <p style="white-space: pre-wrap"><%=print.techNotes%></p>
-                            <p><%= print.overrideNotes%></p>
-                            <form action="/prints/appendNotes" method="post">
-                                <div class="hiddenExtras" style="display: none">
-                                    <input type="text" name="fileID" value="<%= print._id%>" />
-                                    <input type="text" name="name" value="<%= name%>" />
-                                </div>
-                                <div class="form-group">
-                                    <textarea
-                                        class="form-control"
-                                        name="newNotes"
-                                        rows="3"
-                                        placeholder="Add new technician notes here"
-                                    ></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-success">Append</button>
-                                </div>
-                            </form>
-                            <%} else {%>
-                            <h6>Notes from Patron</h6>
-                            <%if (print.notes == "") { %>
-                            <p>Patron left no notes</p>
-                            <% } else { %>
-                            <p><%=print.notes%></p>
-                            <%}%>
-                            <hr />
-                            <h6>Notes to Patron</h6>
-                            <p><%=print.patronNotes%></p>
-                            <hr />
-                            <h6>Technician Notes</h6>
-                            <p style="white-space: pre-wrap"><%=print.techNotes%></p>
-                            <p><%= print.overrideNotes%></p>
-                            <form action="/prints/appendNotes" method="post">
-                                <div class="hiddenExtras" style="display: none">
-                                    <input type="text" name="fileID" value="<%= print._id%>" />
-                                    <input type="text" name="name" value="<%= name%>" />
-                                </div>
-                                <div class="form-group">
-                                    <textarea
-                                        class="form-control"
-                                        name="newNotes"
-                                        rows="3"
-                                        placeholder="Add new technician notes here"
-                                    ></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-success">Append</button>
-                                </div>
-                            </form>
-                            <%}%>
-                        </div>
-                    </div>
                 </div>
 
-                <div class="col-4">
+                <div class="col-xl-4 col-lg-6 col-md-12">
                     <!-- prettier-ignore -->
                     <%if(isSuperAdmin && print.isPendingWaive) {%> 
                         <%- include ("../../partials/PrintDetails/waiveCard", {print:print}) %> 
@@ -151,24 +472,26 @@
                         <div class="card-body">
                             <h4>Review Print</h4>
                             <hr />
-                            <%- include ("../../partials/PrintDetails/printReviewForm", {print:print}) %>
+                            <%- include
+                            ("../../partials/PrintDetails/printReviewForm",
+                            {print:print}) %>
                         </div>
                     </div>
                     <!-- prettier-ignore -->
                     <% } else { %> 
                         <%if (print.isPrinted) {%> 
                             <%- include ("../../partials/PrintDetails/contact", {print:print}) %> 
-                            <%- include ("../../partials/PrintDetails/review", {print:print, file:gcodePath}) %> 
+                            <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                         <%} else { %> 
                             <%if (!print.isRejected) {%> 
                                 <% if (print.isPaid) {%> 
                                     <%- include ("../../partials/PrintDetails/status", {print:print}) %> 
                                 <%}%> 
-                                <%- include ("../../partials/PrintDetails/review", {print:print, file:gcodePath}) %> 
+                                <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                             <%} else {%> 
-                                <%- include ("../../partials/PrintDetails/review", {print:print, file:gcodePath}) %> 
+                                <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                                 <%- include ("../../partials/PrintDetails/patron", {print:print}) %> 
-                                <%- include ("../../partials/PrintDetails/request", {print:print, file:filePath}) %> 
+                                <%- include ("../../partials/PrintDetails/requestAndReview", {print:print, file:filePath}) %> 
                             <%}%> 
                         <%}%> 
                     <% } %>
@@ -177,31 +500,51 @@
         </div>
 
         <div class="modal fade" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div
+                class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
+            >
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="asklocation">
                             <h1 class="display-4">Ready for Pickup?</h1>
-                            <p class="lead">Check the patron's ID card and get an iPad ready for them to sign on!</p>
+                            <p class="lead">
+                                Check the patron's ID card and get an iPad ready
+                                for them to sign on!
+                            </p>
                             <div class="row my-3">
                                 <div class="col-7">
                                     <h4>Check the patron's ID</h4>
                                     <p>
-                                        Next, you'll be directing them to an iPad to complete a digital signature. Have
-                                        the iPad connected to the appropriate URL for the location the print is being
-                                        picked up at. For willis, this is
-                                        <a href="/signaturewillis">sparkorders.library.unt.edu/signaturewillis</a> and
-                                        for Discovery Park this is
-                                        <a href="/signaturedp">sparkorders.library.unt.edu/signaturedp</a>
+                                        Next, you'll be directing them to an
+                                        iPad to complete a digital signature.
+                                        Have the iPad connected to the
+                                        appropriate URL for the location the
+                                        print is being picked up at. For willis,
+                                        this is
+                                        <a href="/signaturewillis"
+                                            >sparkorders.library.unt.edu/signaturewillis</a
+                                        >
+                                        and for Discovery Park this is
+                                        <a href="/signaturedp"
+                                            >sparkorders.library.unt.edu/signaturedp</a
+                                        >
                                     </p>
                                 </div>
                                 <div class="col-5">
-                                    <img src="/public/images/id.jpg" style="width: 100%; height: auto" />
+                                    <img
+                                        src="/public/images/id.jpg"
+                                        style="width: 100%; height: auto"
+                                    />
                                 </div>
                             </div>
                             <h4>Select your current location:</h4>
@@ -227,31 +570,52 @@
                             </div>
                         </div>
                         <div class="nopad" style="display: none">
-                            <h1 class="display-4">Please Connect a Signature Pad!</h1>
+                            <h1 class="display-4">
+                                Please Connect a Signature Pad!
+                            </h1>
                             <p class="lead">
                                 Use an iPad and navigate to
-                                <a href="/signaturewillis">sparkorders.library.unt.edu/signaturewillis</a> or
-                                <a href="/signaturedp">sparkorders.library.unt.edu/signaturedp</a> to get started.
+                                <a href="/signaturewillis"
+                                    >sparkorders.library.unt.edu/signaturewillis</a
+                                >
+                                or
+                                <a href="/signaturedp"
+                                    >sparkorders.library.unt.edu/signaturedp</a
+                                >
+                                to get started.
                             </p>
                             <p>
-                                In the future, these links will be pinned on the home screen of all our iPads for easy
-                                access. For now we must suffer.
+                                In the future, these links will be pinned on the
+                                home screen of all our iPads for easy access.
+                                For now we must suffer.
                             </p>
                         </div>
                         <div class="asksig" style="display: none">
-                            <h1 class="display-4">Please Do Not Close This Window!</h1>
-                            <p class="lead">Ask the patron to sign on the iPad in front of them.</p>
+                            <h1 class="display-4">
+                                Please Do Not Close This Window!
+                            </h1>
+                            <p class="lead">
+                                Ask the patron to sign on the iPad in front of
+                                them.
+                            </p>
                         </div>
                         <div class="verify" style="display: none">
                             <h1 class="display-4">Verify Your Credentials</h1>
                             <p class="lead">
-                                Please confirm your password below. By confirming your password you are signing as a
-                                witness that the patron has picked up their print.
+                                Please confirm your password below. By
+                                confirming your password you are signing as a
+                                witness that the patron has picked up their
+                                print.
                             </p>
                             <form class="verification">
                                 <div class="form-group">
                                     <label class="sr-only">EUID</label>
-                                    <input type="text" class="form-control" name="euid" placeholder="EUID" />
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="euid"
+                                        placeholder="EUID"
+                                    />
                                 </div>
                                 <div class="form-group">
                                     <label class="sr-only">Password</label>
@@ -263,11 +627,18 @@
                                     />
                                 </div>
 
-                                <button type="submit" class="btn btn-lg btn-primary btn-block verification-button">
+                                <button
+                                    type="submit"
+                                    class="btn btn-lg btn-primary btn-block verification-button"
+                                >
                                     Submit
                                 </button>
                             </form>
-                            <div class="alert alert-danger wrong-password" role="alert" style="display: none">
+                            <div
+                                class="alert alert-danger wrong-password"
+                                role="alert"
+                                style="display: none"
+                            >
                                 That didn't work. Try again?
                             </div>
                         </div>

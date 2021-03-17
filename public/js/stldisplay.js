@@ -3,13 +3,57 @@ import { OrbitControls } from "/three/examples/jsm/controls/OrbitControls.js";
 import { STLLoader } from "/three/examples/jsm/loaders/STLLoader.js";
 import { GUI } from "/gui/build/dat.gui.module.js";
 
+const fitCameraToObject = function (camera, object, offset, controls) {
+    offset = offset || 1.25;
+
+    const boundingBox = new THREE.Box3();
+
+    // get bounding box of object - this will be used to setup controls and camera
+    boundingBox.setFromObject(object);
+
+    const center = boundingBox.getCenter();
+
+    const size = boundingBox.getSize();
+
+    // get the max side of the bounding box (fits to width OR height as needed )
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const fov = camera.fov * (Math.PI / 180);
+    let cameraZ = Math.abs((maxDim / 4) * Math.tan(fov * 2));
+
+    cameraZ *= offset; // zoom out a little so that objects don't fill the screen
+
+    camera.position.z = cameraZ;
+
+    const minZ = boundingBox.min.z;
+    const cameraToFarEdge = minZ < 0 ? -minZ + cameraZ : cameraZ - minZ;
+
+    camera.far = 230;
+    camera.updateProjectionMatrix();
+
+    if (controls) {
+        // set camera to rotate around center of loaded object
+        controls.target = center;
+
+        // prevent camera from zooming out far enough to create far plane cutoff
+        controls.maxDistance = cameraToFarEdge * 20;
+
+        controls.saveState();
+    } else {
+        camera.lookAt(center);
+    }
+};
 function STLViewer(model, elementID) {
     var elem = document.getElementById(elementID);
 
     //----------------------------------------------//
     //--------------------CAMERA--------------------//
     //----------------------------------------------//
-    var camera = new THREE.PerspectiveCamera(70, elem.clientWidth / elem.clientHeight, 1, 1000);
+    var camera = new THREE.PerspectiveCamera(
+        70,
+        elem.clientWidth / elem.clientHeight,
+        1,
+        1000
+    );
 
     var renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -20,8 +64,14 @@ function STLViewer(model, elementID) {
     var onProgress = function (xhr) {
         if (xhr.lengthComputable) {
             var percentComplete = (xhr.loaded / xhr.total) * 100;
-            $(".progress-bar").attr("aria-valuenow", Math.round(percentComplete, 2));
-            $(".progress-bar").attr("style", "width: " + Math.round(percentComplete, 2) + "%");
+            $(".progress-bar").attr(
+                "aria-valuenow",
+                Math.round(percentComplete, 2)
+            );
+            $(".progress-bar").attr(
+                "style",
+                "width: " + Math.round(percentComplete, 2) + "%"
+            );
             if (Math.round(percentComplete, 2) == 100) {
                 $(".progress").remove();
             }
@@ -64,7 +114,12 @@ function STLViewer(model, elementID) {
     var divisions = 23;
     var centerColor = 0xff0000;
     var gridColor = 0xbbbbbb;
-    var gridHelper = new THREE.GridHelper(size, divisions, centerColor, gridColor);
+    var gridHelper = new THREE.GridHelper(
+        size,
+        divisions,
+        centerColor,
+        gridColor
+    );
     scene.add(gridHelper);
 
     //----------------------------------------------//
@@ -116,11 +171,27 @@ function STLViewer(model, elementID) {
             geometry.computeBoundingBox();
 
             geometry.boundingBox.getCenter(middle);
-            mesh.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(-middle.x, -middle.y, 0));
+            mesh.geometry.applyMatrix(
+                new THREE.Matrix4().makeTranslation(-middle.x, -middle.y, 0)
+            );
 
             //-------------CAMERA-------------//
-            camera.position.z = 150;
-            camera.position.y = 250;
+
+            const boundingBox = new THREE.Box3();
+
+            // get bounding box of object - this will be used to setup controls and camera
+            boundingBox.setFromObject(mesh);
+
+            const center = boundingBox.getCenter();
+
+            const size = boundingBox.getSize();
+
+            // get the max side of the bounding box (fits to width OR height as needed )
+            const maxDim = Math.max(size.x, size.y, size.z);
+            //const fov = camera.fov * (Math.PI / 180);
+            //let cameraZ = Math.abs((maxDim / 4) * Math.tan(fov * 2));
+            camera.position.z = maxDim + 3;
+            camera.position.y = maxDim + 5;
 
             //------------ANIMATION-----------//
             var animate = function () {
