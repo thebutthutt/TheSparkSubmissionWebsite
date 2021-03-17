@@ -6,6 +6,7 @@
         <script type="module" src="/public/js/stldisplay.js"></script>
         <script type="text/javascript" src="/qrcode/qrcode.js"></script>
         <link type="text/css" rel="stylesheet" href="/public/css/details.css" />
+        <!--
         <style>
             p strong {
                 width: 12rem;
@@ -22,7 +23,7 @@
                 clear: both;
                 overflow: auto;
             }
-        </style>
+        </style>-->
     </head>
 
     <body>
@@ -76,62 +77,10 @@
 
                 <div class="col-xl-4 col-lg-6 col-md-12">
                     <!-- prettier-ignore -->
-                    <%- include ("../../partials/PrintDetails/request", {print:print, filePath:filePath}) %> 
-                    <%if (print.isReviewed && print.isNewSubmission ) {%> 
-                        <%- include ("../../partials/PrintDetails/review", {print:print, file:gcodePath}) %> 
+                    <%- include ("../../partials/PrintDetails/requestAndReview", {print:print, filePath:filePath, gcodePath:gcodePath}) %> 
+                    <%if (print.isNewSubmission ) {%> 
+                        <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                     <%}%>
-                    <div class="card shadow mb-3">
-                        <div class="card-body">
-                            <h6>Notes from Patron</h6>
-                            <%if (print.notes == "") { %>
-                            <p>Patron left no notes</p>
-                            <% } else { %>
-                            <p><%=print.notes%></p>
-                            <%}%>
-                            <hr />
-                            <%if (!print.canBeReviewed) {%>
-                            <h6>Notes to Patron</h6>
-                            <p><%=print.patronNotes%></p>
-                            <hr />
-                            <%}%>
-                            <h6>Technician Notes</h6>
-                            <%for (var thisTechNote of print.newTechNotes) {%>
-                            <p>
-                                <%=thisTechNote.techName%> -
-                                <%=thisTechNote.dateAdded.toLocaleString()%>:<br />
-                                <%=thisTechNote.notes%>
-                            </p>
-                            <%}%>
-                            <p><%= print.overrideNotes%></p>
-                            <form action="/prints/appendNotes" method="post">
-                                <div class="hiddenExtras" style="display: none">
-                                    <input
-                                        type="text"
-                                        name="fileID"
-                                        value="<%= print._id%>"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value="<%= name%>"
-                                    />
-                                </div>
-                                <div class="form-group">
-                                    <textarea
-                                        class="form-control"
-                                        name="newNotes"
-                                        rows="3"
-                                        placeholder="Add new technician notes here"
-                                    ></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-success">
-                                        Append
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="col-xl-4 col-lg-6 col-md-12">
@@ -153,17 +102,17 @@
                     <% } else { %> 
                         <%if (print.isPrinted) {%> 
                             <%- include ("../../partials/PrintDetails/contact", {print:print}) %> 
-                            <%- include ("../../partials/PrintDetails/review", {print:print, file:gcodePath}) %> 
+                            <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                         <%} else { %> 
                             <%if (!print.isRejected) {%> 
                                 <% if (print.isPaid) {%> 
                                     <%- include ("../../partials/PrintDetails/status", {print:print}) %> 
                                 <%}%> 
-                                <%- include ("../../partials/PrintDetails/review", {print:print, file:gcodePath}) %> 
+                                <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                             <%} else {%> 
-                                <%- include ("../../partials/PrintDetails/review", {print:print, file:gcodePath}) %> 
+                                <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                                 <%- include ("../../partials/PrintDetails/patron", {print:print}) %> 
-                                <%- include ("../../partials/PrintDetails/request", {print:print, file:filePath}) %> 
+                                <%- include ("../../partials/PrintDetails/requestAndReview", {print:print, file:filePath}) %> 
                             <%}%> 
                         <%}%> 
                     <% } %>
