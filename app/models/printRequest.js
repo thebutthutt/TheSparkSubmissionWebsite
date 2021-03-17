@@ -124,8 +124,20 @@ var printSubmissionSchema = mongoose.Schema({
     },
 
     dateSubmitted: String,
+    timestampSubmitted: {
+        type: Date,
+        default: "1970",
+    },
     datePaymentRequested: String,
+    timestampPaymentRequested: {
+        type: Date,
+        default: "1970",
+    },
     datePaid: String,
+    timestampPaid: {
+        type: Date,
+        default: "1970",
+    },
 
     requestedPrice: Number,
     requestedSingleCopyPrice: Number,

@@ -7,15 +7,91 @@ var payment = require("./app/payment.js");
 var path = require("path");
 
 console.log("here");
+
+printRequestModel.find({}, function (err, result) {
+    for (var submission of result) {
+        if (submission.dateSubmitted != null) {
+            submission.timestampSubmitted = new Date(submission.dateSubmitted);
+        }
+        if (submission.datePaymentRequested != null) {
+            submission.timestampPaymentRequested = new Date(
+                submission.datePaymentRequested
+            );
+        }
+        if (submission.datePaid != null) {
+            submission.timestampPaid = new Date(submission.datePaid);
+        }
+        submission.save();
+    }
+});
+/*
 printRequestModel.find({}, function (err, result) {
     for (var submission of result) {
         for (var file of submission.files) {
-            console.log(file.newTechNotes);
+            var dateSubParsed = new Date(file.dateSubmitted);
+            var dateReviewParsed = new Date(file.dateReviewed);
+            var datePaidParsed = new Date(file.datePaid);
+            var datePrintedParsed = new Date(file.datePrinted);
+            var datePickupParsed = new Date(file.datePickedUp);
+            var dateFirstParsed = new Date(file.dateOfFirstWarning);
+            var dateSecondParsed = new Date(file.dateOfSecondWarning);
+            var dateRepoParsed = new Date(file.dateOfConfiscation);
+
+            if (isValidDate(dateSubParsed)) {
+                file.timestampSubmitted = dateSubParsed;
+            }
+            if (isValidDate(dateReviewParsed)) {
+                file.timestampReviewed = dateReviewParsed;
+            }
+            if (isValidDate(datePaidParsed)) {
+                file.timestampPaid = datePaidParsed;
+            }
+            if (isValidDate(datePrintedParsed)) {
+                file.timestampPrinted = datePrintedParsed;
+            }
+            if (isValidDate(datePickupParsed)) {
+                file.timestampPickedUp = datePickupParsed;
+            }
+            if (isValidDate(dateFirstParsed)) {
+                file.timestampOfFirstWarning = dateFirstParsed;
+            }
+            if (isValidDate(dateSecondParsed)) {
+                file.timestampOfSecondWarning = dateSecondParsed;
+            }
+            if (isValidDate(dateRepoParsed)) {
+                file.timestampOfConfiscation = dateRepoParsed;
+            }
         }
+        submission.save();
     }
 });
 
-/*
+function isValidDate(d) {
+    return d instanceof Date && !isNaN(d);
+}
+
+
+printRequestModel.find({}, function (err, result) {
+    for (var submission of result) {
+        console.log(submission.dateSubmitted);
+        console.log(submission.datePaymentRequested);
+        console.log(submission.datePaid);
+        if (submission.dateSubmitted) {
+            submission.timestampSubmitted = new Date(submission.dateSubmitted);
+        }
+        if (submission.datePaymentRequested) {
+            submission.timestampPaymentRequested = new Date(
+                submission.datePaymentRequested
+            );
+        }
+        if (submission.datePaid) {
+            submission.timestampPaid = new Date(submission.datePaid);
+        }
+        submission.save();
+    }
+});
+
+
 printRequestModel.find({}, function (err, result) {
     for (var submission of result) {
         for (var file of submission.files) {
@@ -67,50 +143,7 @@ printRequestModel.find({}, function (err, result) {
 192604 node /bin/nodemon server.js
 242514 /usr/bin/node server.js
 404525 /usr/bin/node server.js
-printRequestModel.find({}, function (err, result) {
-    for (var submission of result) {
-        for (var file of submission.files) {
-            var dateSubParsed = new Date(file.dateSubmitted);
-            var dateReviewParsed = new Date(file.dateReviewed);
-            var datePaidParsed = new Date(file.datePaid);
-            var datePrintedParsed = new Date(file.datePrinted);
-            var datePickupParsed = new Date(file.datePickedUp);
-            var dateFirstParsed = new Date(file.dateOfFirstWarning);
-            var dateSecondParsed = new Date(file.dateOfSecondWarning);
-            var dateRepoParsed = new Date(file.dateOfConfiscation);
 
-            if (isValidDate(dateSubParsed)) {
-                file.timestampSubmitted = dateSubParsed;
-            }
-            if (isValidDate(dateReviewParsed)) {
-                file.timestampReviewed = dateReviewParsed;
-            }
-            if (isValidDate(datePaidParsed)) {
-                file.timestampPaid = datePaidParsed;
-            }
-            if (isValidDate(datePrintedParsed)) {
-                file.timestampPrinted = datePrintedParsed;
-            }
-            if (isValidDate(datePickupParsed)) {
-                file.timestampPickedUp = datePickupParsed;
-            }
-            if (isValidDate(dateFirstParsed)) {
-                file.timestampOfFirstWarning = dateFirstParsed;
-            }
-            if (isValidDate(dateSecondParsed)) {
-                file.timestampOfSecondWarning = dateSecondParsed;
-            }
-            if (isValidDate(dateRepoParsed)) {
-                file.timestampOfConfiscation = dateRepoParsed;
-            }
-        }
-        submission.save();
-    }
-});
-
-function isValidDate(d) {
-    return d instanceof Date && !isNaN(d);
-}
 
 
 179748 sudo nodemon --tls-cipher-list=ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL server.js

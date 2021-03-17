@@ -27,6 +27,7 @@ module.exports = {
 
     //function receives the input from filled out request form and saves to the database
     addPrint: function (fields, submissionDetails, prints) {
+        var now = new Date();
         var request = new printRequestModel(); //new instance of a request
         //fill the patron details
         request.patron = {
@@ -59,6 +60,7 @@ module.exports = {
         }
 
         request.dateSubmitted = prints[8]; //always the date submitted
+        request.timestampSubmitted = now;
         request.numFiles = prints[9]; //always the number of files
 
         //set intitial parameters of the printRequest schema
@@ -95,6 +97,7 @@ module.exports = {
                 isStaleOnPickup: false,
 
                 dateSubmitted: prints[8], //always holds the date submitted
+                timestampSubmitted: now,
                 dateReviewed: "Never",
                 datePaid: "Never",
                 datePrinted: "Never",
@@ -223,6 +226,7 @@ module.exports = {
     //this function handles when a technician is reviewing a print file within a top level submission
     updateSingle: function (req, callback) {
         var time = moment();
+        var now = new Date();
         var shouldUpload = false;
         if (req.files[0]) {
             var gcode = req.files[0].filename;
@@ -261,7 +265,7 @@ module.exports = {
         //update the low level print according to the form data
         if (req.body.decision == "accepted") {
             //if the technician accepted the print, update accordingly
-            var now = new Date();
+
             printRequestModel.findOneAndUpdate(
                 {
                     "files._id": req.body.fileID,
@@ -323,6 +327,7 @@ module.exports = {
                         "files.$.dateReviewed": time.format(constants.format),
                         "files.$.approvedBy": maker,
                         "files.$.patronNotes": req.body.patronNotes,
+                        "files.$.timestampReviewed": now,
                     },
                 },
                 {
@@ -371,6 +376,7 @@ module.exports = {
     //this function fires when a tech says a submission is ready to be sent to the pendpay queue
     requestPayment: function (submissionID, callback) {
         var time = moment();
+        var now = new Date();
         printRequestModel.findOne(
             {
                 _id: submissionID,
@@ -434,6 +440,8 @@ module.exports = {
                             constants.format
                         );
 
+                        result.timestampPaymentRequested = now;
+
                         //calc full name of patron
                         var nameString = "";
                         nameString = nameString.concat(
@@ -468,6 +476,7 @@ module.exports = {
                         result.datePaymentRequested = time.format(
                             constants.format
                         ); //still capture review time
+                        result.timestampPaymentRequested = now;
                         newmailer.allRejected(result);
                     }
 
@@ -486,6 +495,7 @@ module.exports = {
     //pushes print from the pendpy queue to the paid and ready queue
     recievePayment: function (submissionID, wasWaived, waivingEUID, callback) {
         var time = moment();
+        var now = new Date();
         printRequestModel.findOne(
             {
                 _id: submissionID,
@@ -509,6 +519,7 @@ module.exports = {
                         }
                     }
                     result.datePaid = time.format(constants.format);
+                    result.timestampPaid = now;
                     if (wasWaived) {
                         //emailer.paymentWaived(result.patron.email);
                         newmailer.paymentWaived(result);
@@ -527,6 +538,7 @@ module.exports = {
     },
 
     recievePaymentByFile: function (fileID, wasWaived, waivingEUID, callback) {
+        var now = new Date();
         var time = moment();
         printRequestModel.findOne(
             {
@@ -551,6 +563,7 @@ module.exports = {
                         }
                     }
                     result.datePaid = time.format(constants.format);
+                    result.timestampPaid = now;
                     if (wasWaived) {
                         //emailer.paymentWaived(result.patron.email);
                         newmailer.paymentWaived(result);
@@ -571,6 +584,7 @@ module.exports = {
     //mark that a file has finished printing, this moves it to the piickup queue
     markCompleted: function (fileID, realGrams) {
         var time = moment();
+        var now = new Date();
         printRequestModel.findOneAndUpdate(
             {
                 "files._id": fileID,
@@ -579,6 +593,7 @@ module.exports = {
                 $set: {
                     "files.$.isPrinted": true,
                     "files.$.datePrinted": time.format(constants.format),
+                    "files.$.timestampPrinted": now,
                     "files.$.isReadyToPrint": false,
                     "files.$.realGrams": realGrams,
                 },
@@ -730,6 +745,7 @@ module.exports = {
     markPickedUp: function (fileID) {
         console.log("was picked up");
         var time = moment().format(constants.format);
+        var now = new Date();
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -740,6 +756,7 @@ module.exports = {
                 } else {
                     result.files.id(fileID).isPickedUp = true;
                     result.files.id(fileID).datePickedUp = time;
+                    result.files.id(fileID).timestampPickedUp = now;
                     result.save();
                 }
             }

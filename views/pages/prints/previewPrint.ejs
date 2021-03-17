@@ -24,28 +24,407 @@
                 overflow: auto;
             }
         </style>-->
+        <style>
+            .bi {
+                width: 3rem;
+                height: 3rem;
+                vertical-align: baseline;
+            }
+
+            .bi-plus-circle {
+                color: #007bff;
+            }
+
+            .bi-check-circle {
+                color: #28a745;
+            }
+
+            .bi-clock {
+                color: #ffc107;
+            }
+
+            .bi-circle {
+                color: #aaa;
+            }
+        </style>
     </head>
 
     <body>
         <%- include ("../../partials/header") %>
         <div class="container-flush mx-5 mt-5" style="margin-bottom: 100px">
-            <%if (print.isPrinted && !print.isPickedUp) {%>
             <div class="row mb-3">
                 <div class="col">
-                    <button
-                        data-toggle="modal"
-                        data-target=".modal"
-                        data-backdrop="static"
-                        data-keyboard="false"
-                        fileName="<%=print.realFileName%>"
-                        fileID="<%=print._id%>"
-                        class="shadow btn btn-lg btn-primary btn-block modal-button"
-                    >
-                        Picking Up
-                    </button>
+                    <div class="card shadow text-center">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5>Initial Submission</h5>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-plus-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                            <path
+                                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        This file was submitted on
+                                        <%=print.timestampSubmitted.toLocaleDateString('en-US')%>
+                                    </p>
+                                </div>
+                                <div class="col">
+                                    <h5>File Review</h5>
+                                    <% if (print.isReviewed) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-check-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                            <path
+                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        This file was reviewed on
+                                        <%=print.timestampReviewed.toLocaleDateString('en-US')%>
+                                    </p>
+                                    <% } else { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-clock"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                                            />
+                                            <path
+                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>This file still needs to be reviewed</p>
+                                    <% } %>
+                                </div>
+                                <div class="col">
+                                    <h5>Submission Review</h5>
+                                    <% if (submission.timestampPaymentRequested
+                                    > new Date("1971") ) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-check-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                            <path
+                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        This submission was reviewed on
+                                        <%=submission.timestampPaymentRequested.toLocaleDateString('en-US')%>
+                                    </p>
+                                    <%} else { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-clock"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                                            />
+                                            <path
+                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        This submission has not been fully
+                                        reviewed
+                                    </p>
+                                    <% } %>
+                                </div>
+                                <div class="col">
+                                    <h5>Payment</h5>
+                                    <% if (print.isPendingPayment &&
+                                    !print.isPendingWaive ) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-clock"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                                            />
+                                            <path
+                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>Waiting for the patron to pay</p>
+                                    <%} else if (print.isPendingWaive) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-clock"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                                            />
+                                            <path
+                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        Waiting for a manager to approve a
+                                        payment waive
+                                    </p>
+                                    <% } else if (print.isPaid) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-check-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                            <path
+                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        This submission was paid on
+                                        <%=submission.timestampPaid.toLocaleDateString('en-US')%>
+                                    </p>
+                                    <%} else {%>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>Not ready yet!</p>
+                                    <%}%>
+                                </div>
+                                <div class="col">
+                                    <h5>Printing</h5>
+                                    <% if (print.isReadyToPrint &&
+                                    !print.isStarted ) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-clock"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                                            />
+                                            <path
+                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>Waiting to be printed</p>
+                                    <%} else if (print.isStarted) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-clock"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
+                                            />
+                                            <path
+                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>Currently on a printer</p>
+                                    <% } else if (print.isPrinted){%>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-check-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                            <path
+                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        This file was printed on
+                                        <%=print.timestampPrinted.toLocaleDateString('en-US')%>
+                                    </p>
+                                    <%} else { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>Not ready yet!</p>
+                                    <%}%>
+                                </div>
+                                <div class="col">
+                                    <h5>Pickup</h5>
+                                    <% if (print.timestampPrinted > new
+                                    Date("1971")) { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-check-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                            <path
+                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>
+                                        Patron was notified on
+                                        <%=print.timestampPrinted.toLocaleDateString('en-US')%>
+                                    </p>
+                                    <button
+                                        data-toggle="modal"
+                                        data-target=".modal"
+                                        data-backdrop="static"
+                                        data-keyboard="false"
+                                        fileName="<%=print.realFileName%>"
+                                        fileID="<%=print._id%>"
+                                        class="shadow btn btn-lg btn-primary btn-block modal-button"
+                                    >
+                                        Picking Up
+                                    </button>
+                                    <%} else { %>
+                                    <div>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            class="bi bi-circle"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p>Not ready yet!</p>
+                                    <%}%>
+                                </div>
+                                <div class="col">
+                                    <h5>Status</h5>
+                                    <% if (print.timestampOfFirstWarning > new
+                                    Date("1971")) { %>
+                                    <p>
+                                        First warning:
+                                        <%=print.timestampOfFirstWarning.toLocaleDateString('en-US')%>
+                                        <br />
+                                        <%}%> <% if
+                                        (print.timestampOfSecondWarning > new
+                                        Date("1971")) { %> Final warning:
+                                        <%=print.timestampOfSecondWarning.toLocaleDateString('en-US')%><br />
+                                        <%}%> <% if
+                                        (print.timestampOfConfiscation > new
+                                        Date("1971")) { %> Reposessed:
+                                        <%=print.timestampOfConfiscation.toLocaleDateString('en-US')%>
+                                        <%}%>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <%if (print.isPrinted && !print.isPickedUp) {%>
+                    <div class="row">
+                        <div class="col"></div>
+                    </div>
+                    <%}%>
                 </div>
             </div>
-            <%}%>
+
             <div class="row">
                 <div class="col-xl-4 col-lg-6 col-md-12">
                     <%- include ("../../partials/PrintDetails/patron",

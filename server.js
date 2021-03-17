@@ -121,7 +121,7 @@ var server = https.createServer(
 //sets up the websocket for signature pads
 require("./app/websocket.js")(server);
 
-//var tester = require("./tester.js");
+var tester = require("./tester.js");
 server.listen(port, "0.0.0.0");
 //http server to redirect to https
 var http_server = http
