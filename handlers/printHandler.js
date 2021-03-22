@@ -301,7 +301,7 @@ module.exports = {
                     var newNoteObject = {
                         techName: maker,
                         dateAdded: now,
-                        notes: req.body.techNotes,
+                        notes: req.body.technotes,
                     };
                     result.files
                         .id(req.body.fileID)
