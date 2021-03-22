@@ -25,7 +25,7 @@
             }
         </style>-->
         <style>
-            .bi {
+            .timeline-col .bi {
                 width: 3rem;
                 height: 3rem;
                 vertical-align: baseline;
@@ -46,6 +46,16 @@
             .bi-circle {
                 color: #aaa;
             }
+
+            .timeline-col {
+                min-width: 8.5em;
+            }
+
+            .sep {
+                height: 10em;
+                width: 0px;
+                background-color: #aaa;
+            }
         </style>
     </head>
 
@@ -57,8 +67,8 @@
                     <div class="card shadow text-center">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col">
-                                    <h5>Initial Submission</h5>
+                                <div class="col timeline-col">
+                                    <h5>Request</h5>
                                     <div>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -81,8 +91,9 @@
                                         <%=print.timestampSubmitted.toLocaleDateString('en-US')%>
                                     </p>
                                 </div>
-                                <div class="col">
-                                    <h5>File Review</h5>
+                                <div class="sep"></div>
+                                <div class="col timeline-col">
+                                    <h5>File</h5>
                                     <% if (print.isReviewed) { %>
                                     <div>
                                         <svg
@@ -126,8 +137,9 @@
                                     <p>This file still needs to be reviewed</p>
                                     <% } %>
                                 </div>
-                                <div class="col">
-                                    <h5>Submission Review</h5>
+                                <div class="sep"></div>
+                                <div class="col timeline-col">
+                                    <h5>Submission</h5>
                                     <% if (submission.timestampPaymentRequested
                                     > new Date("1971") ) { %>
                                     <div>
@@ -175,7 +187,8 @@
                                     </p>
                                     <% } %>
                                 </div>
-                                <div class="col">
+                                <div class="sep"></div>
+                                <div class="col timeline-col">
                                     <h5>Payment</h5>
                                     <% if (print.isPendingPayment &&
                                     !print.isPendingWaive ) { %>
@@ -259,7 +272,8 @@
                                     <p>Not ready yet!</p>
                                     <%}%>
                                 </div>
-                                <div class="col">
+                                <div class="sep"></div>
+                                <div class="col timeline-col">
                                     <h5>Printing</h5>
                                     <% if (print.isReadyToPrint &&
                                     !print.isStarted ) { %>
@@ -340,7 +354,8 @@
                                     <p>Not ready yet!</p>
                                     <%}%>
                                 </div>
-                                <div class="col">
+                                <div class="sep"></div>
+                                <div class="col timeline-col">
                                     <h5>Pickup</h5>
                                     <% if (print.timestampPrinted > new
                                     Date("1971")) { %>
@@ -365,9 +380,10 @@
                                         Patron was notified on
                                         <%=print.timestampPrinted.toLocaleDateString('en-US')%>
                                     </p>
+                                    <%if(!print.isPrinted){%>
                                     <button
                                         data-toggle="modal"
-                                        data-target=".modal"
+                                        data-target="#modalPickup"
                                         data-backdrop="static"
                                         data-keyboard="false"
                                         fileName="<%=print.realFileName%>"
@@ -376,7 +392,7 @@
                                     >
                                         Picking Up
                                     </button>
-                                    <%} else { %>
+                                    <%}%> <%} else { %>
                                     <div>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -394,7 +410,8 @@
                                     <p>Not ready yet!</p>
                                     <%}%>
                                 </div>
-                                <div class="col">
+                                <div class="sep"></div>
+                                <div class="col timeline-col">
                                     <h5>Status</h5>
                                     <% if (print.timestampOfFirstWarning > new
                                     Date("1971")) { %>
@@ -485,13 +502,12 @@
                         <%} else { %> 
                             <%if (!print.isRejected) {%> 
                                 <% if (print.isPaid) {%> 
-                                    <%- include ("../../partials/PrintDetails/status", {print:print}) %> 
+                                    
+                                    <%- include ("../../partials/PrintDetails/printing", {print:print}) %> 
                                 <%}%> 
                                 <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                             <%} else {%> 
                                 <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
-                                <%- include ("../../partials/PrintDetails/patron", {print:print}) %> 
-                                <%- include ("../../partials/PrintDetails/requestAndReview", {print:print, file:filePath}) %> 
                             <%}%> 
                         <%}%> 
                     <% } %>
@@ -499,7 +515,7 @@
             </div>
         </div>
 
-        <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal fade" id="modalPickup" tabindex="-1" role="dialog">
             <div
                 class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
             >
@@ -642,6 +658,170 @@
                                 That didn't work. Try again?
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="modal fade"
+            id="modalPrintFinish"
+            tabindex="-1"
+            role="dialog"
+        >
+            <div
+                class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+            >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/prints/printfinished">
+                            <input
+                                type="hidden"
+                                name="fileID"
+                                value="<%= print._id %>"
+                            />
+
+                            <div class="form-group">
+                                <p style="font-size: 1.5em">
+                                    Weigh This Print!
+                                </p>
+                                <div class="row">
+                                    <div class="col">
+                                        <label
+                                            >How many copies of this print are
+                                            you weighing?</label
+                                        >
+                                        <div class="input-group mb-3">
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                placeholder="Copies"
+                                                aria-label="Final weight"
+                                                aria-describedby="basic-addon2"
+                                            />
+                                            <div class="input-group-append">
+                                                <span
+                                                    class="input-group-text"
+                                                    id="basic-addon2"
+                                                    >copies</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <label
+                                            >How much does that many copies
+                                            weigh?</label
+                                        >
+                                        <div class="input-group mb-3">
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                placeholder="Weight"
+                                                aria-label="Final weight"
+                                                aria-describedby="basic-addon2"
+                                            />
+                                            <div class="input-group-append">
+                                                <span
+                                                    class="input-group-text"
+                                                    id="basic-addon2"
+                                                    >grams</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label
+                                            >All requested copies of this print
+                                            weigh:</label
+                                        >
+                                        <div class="input-group mb-3">
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                placeholder="Weight for all copies"
+                                                aria-label="Final weight"
+                                                aria-describedby="basic-addon2"
+                                                readonly
+                                            />
+                                            <div class="input-group-append">
+                                                <span
+                                                    class="input-group-text"
+                                                    id="basic-addon2"
+                                                    >grams</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <p style="font-size: 1.5em">
+                                    Where are these objects right now?
+                                </p>
+                                <div
+                                    class="btn-group btn-group-toggle btn-block"
+                                    data-toggle="buttons"
+                                >
+                                    <label
+                                        class="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                                        style="width: 50%"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="location"
+                                            id="willis"
+                                            value="willis"
+                                            required
+                                        />
+                                        <p class="mb-0" style="font-size: 2em">
+                                            Willis Library
+                                        </p>
+                                    </label>
+                                    <label
+                                        class="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                                        style="width: 50%"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="location"
+                                            id="dp"
+                                            value="dp"
+                                            required
+                                        />
+                                        <p class="mb-0" style="font-size: 2em">
+                                            Discovery Park
+                                        </p>
+                                    </label>
+                                </div>
+                            </div>
+                            <p>
+                                If these files are not currently at the
+                                requested pickup location, tell Sean to send the
+                                prints to the other location. The patron will be
+                                notified via email that their prints are in
+                                transit.
+                            </p>
+                            <button
+                                type="submit"
+                                class="btn btn-block btn-lg btn-success"
+                            >
+                                Send Email to Patron!
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

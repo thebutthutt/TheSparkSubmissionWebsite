@@ -8,7 +8,9 @@ var getUrlParameter = function getUrlParameter(sParam) {
         sParameterName = sURLVariables[i].split("=");
 
         if (sParameterName[0] === sParam) {
-            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            return sParameterName[1] === undefined
+                ? true
+                : decodeURIComponent(sParameterName[1]);
         }
     }
 };
@@ -18,6 +20,7 @@ $(document).ready(function () {
     $(".accepted-controls").show();
     $(".accepted-controls input").prop("required", true);
     $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="popover"]').popover();
 
     //setting up the download button to work
     $(".download-btn").on("click", function () {
@@ -191,7 +194,10 @@ $(document).ready(function () {
         } else {
             $(this).popover("hide");
             let fileName = $(this).val().split("\\").pop();
-            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+            $(this)
+                .siblings(".custom-file-label")
+                .addClass("selected")
+                .html(fileName);
         }
     });
 

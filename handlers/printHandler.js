@@ -627,6 +627,7 @@ module.exports = {
                         result.files.id(fileID).numAttempts = 0;
                     }
                     result.files.id(fileID).numAttempts += 1;
+                    result.files.id(fileID).copiesPrinting = 1;
                     result.save();
                     if (typeof callback == "function") {
                         callback();
@@ -656,6 +657,29 @@ module.exports = {
                         result.files.id(fileID).copiesPrinting = 0;
                     }
                     result.files.id(fileID).copiesPrinting += copiesPrinting;
+
+                    result.save();
+                    if (typeof callback == "function") {
+                        callback();
+                    }
+                }
+            }
+        );
+    },
+
+    changePrintCopyStatus: function (fileID, copiesPrinting, copiesPrinted) {
+        copiesPrinting = parseInt(copiesPrinting);
+        copiesPrinted = parseInt(copiesPrinted);
+        printRequestModel.findOne(
+            {
+                "files._id": fileID,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    result.files.id(fileID).copiesPrinting = copiesPrinting;
+                    result.files.id(fileID).copiesPrinted = copiesPrinted;
 
                     result.save();
                     if (typeof callback == "function") {
