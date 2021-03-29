@@ -582,9 +582,13 @@ module.exports = {
     },
 
     //mark that a file has finished printing, this moves it to the piickup queue
-    markCompleted: function (fileID, realGrams) {
+    markCompleted: function (fileID, totalWeight, location, pickupLocation) {
         var time = moment();
         var now = new Date();
+        var isInTransit = false;
+        if (pickupLocation != location) {
+            isInTransit = true;
+        }
         printRequestModel.findOneAndUpdate(
             {
                 "files._id": fileID,
@@ -595,7 +599,9 @@ module.exports = {
                     "files.$.datePrinted": time.format(constants.format),
                     "files.$.timestampPrinted": now,
                     "files.$.isReadyToPrint": false,
-                    "files.$.realGrams": realGrams,
+                    "files.$.realGrams": totalWeight,
+                    "files.$.completedLocation": location,
+                    "files.$.isInTransit": isInTransit,
                 },
             },
             {
@@ -607,7 +613,12 @@ module.exports = {
                 }
                 module.exports.setFlags(fileID, function () {});
                 //emailer.readyForPickup(result.patron.email, result.files.id(fileID).realFileName);
-                newmailer.readyForPickup(result, result.files.id(fileID));
+                if (isInTransit) {
+                    //newmailer.fileInTransit(result, result.files.id(fileID));
+                } else {
+                    newmailer.readyForPickup(result, result.files.id(fileID));
+                }
+                //newmailer.readyForPickup(result, result.files.id(fileID));
             }
         );
     },
@@ -727,6 +738,31 @@ module.exports = {
                     console.log(err);
                 } else {
                     module.exports.markCompleted(fileID, realGrams);
+                    console.log("here");
+                    if (typeof callback == "function") {
+                        callback();
+                    }
+                }
+            }
+        );
+    },
+
+    printFinished: function (fileID, numCopies, weight, location, callback) {
+        var totalWeight = numCopies * weight;
+        printRequestModel.findOne(
+            {
+                "files._id": fileID,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    module.exports.markCompleted(
+                        fileID,
+                        totalWeight,
+                        location,
+                        result.files.id(fileID).pickupLocation
+                    );
                     console.log("here");
                     if (typeof callback == "function") {
                         callback();

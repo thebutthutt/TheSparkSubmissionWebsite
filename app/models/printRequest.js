@@ -22,6 +22,7 @@ var singlePrintSchema = mongoose.Schema({
     isPaid: Boolean,
     isReadyToPrint: Boolean,
     isPrinted: Boolean,
+    isInTransit: Boolean,
     isPickedUp: Boolean,
     isPendingDelete: Boolean,
     canBeReviewed: Boolean,
@@ -80,6 +81,7 @@ var singlePrintSchema = mongoose.Schema({
     timeMinutes: Number,
     grams: Number,
     realGrams: Number, //actual grams entered after printing is finished
+    completedLocation: String,
 
     isStarted: Boolean,
     copiesPrinting: Number,

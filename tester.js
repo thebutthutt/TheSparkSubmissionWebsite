@@ -8,6 +8,7 @@ var path = require("path");
 
 console.log("here");
 
+/*
 printRequestModel.find({}, function (err, result) {
     for (var submission of result) {
         if (submission.dateSubmitted != null) {
@@ -24,7 +25,7 @@ printRequestModel.find({}, function (err, result) {
         submission.save();
     }
 });
-/*
+
 printRequestModel.find({}, function (err, result) {
     for (var submission of result) {
         for (var file of submission.files) {

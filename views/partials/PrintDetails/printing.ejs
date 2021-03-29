@@ -1,135 +1,181 @@
 <style>
-    .icon-button {
-        padding: 0px;
-        line-height: 1em;
+    .number {
+        font-size: 1.3em;
+    }
+
+    .number span {
+        font-weight: bold;
+    }
+
+    .plus-minus {
+        line-height: 0.8em;
         font-size: 2em;
     }
-    .icon-button svg {
-        width: 1em;
-        height: 1em;
+    .plus-minus svg {
+        width: 0.8em;
+        height: 0.8em;
         vertical-align: top;
     }
-
-    .number {
-        font-size: 1.5em;
-    }
-
-    .btn-group .btn-danger {
-        border-top-left-radius: 50%;
-        border-bottom-left-radius: 50%;
-    }
-
-    .btn-group .btn-success {
-        border-top-right-radius: 50%;
-        border-bottom-right-radius: 50%;
-    }
 </style>
-
 <div class="card shadow mb-3">
     <div class="card-body">
         <%if (print.isStarted) {%>
-        <h3 class="text-success">File is currently printing!</h3>
+        <h4 class="text-success">File is currently printing!</h4>
         <%} else {%>
-        <h3>File is not currently printing</h3>
+        <h4>File is not currently printing</h4>
         <%}%>
-        <div class="row my-3">
-            <div
-                class="col-12 text-center d-flex align-items-center justify-content-between"
-            >
+        <div class="row">
+            <div class="col">
                 <button
-                    type="button"
-                    class="btn btn-secondary icon-button"
-                    style='display: <%= print.isStarted ? "block" : "none" %>'
-                    id="subPrinting"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-dash"
-                        viewBox="0 0 16 16"
-                    >
-                        <path
-                            d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"
-                        />
-                    </svg>
-                </button>
-                <div
-                    class="number"
-                    style='display: <%= print.isStarted ? "block" : "none" %>'
-                >
-                    <span id="numPrinting"></span> copies printing
-                </div>
-                <button
-                    type="button"
-                    style='display: <%= print.isStarted ? "block" : "none" %>'
-                    class="btn btn-secondary icon-button"
-                    id="addPrinting"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-plus"
-                        viewBox="0 0 16 16"
-                    >
-                        <path
-                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-                        />
-                    </svg>
-                </button>
-                <button
-                    type="button"
-                    class="btn btn-success btn-block"
+                    type="button "
+                    class="btn btn-info btn-block mb-3"
                     id="startButton"
-                    style='display: <%= print.isStarted ? "none" : "block" %>'
+                    style='font-size: 1.3em; display: <%= print.isStarted ? "none" : "block" %>'
                 >
                     Start Printing?
                 </button>
-            </div>
-            <div class="col-12">
-                <hr />
-            </div>
-            <div class="col-12">
-                <p>
-                    File currently needs
-                    <strong id="numNeeded"></strong>
-                    more copies printed to be complete. (This includes the
-                    number of copies currently printing)
-                </p>
+                <div
+                    class="btn-group w-100 mb-3"
+                    role="group"
+                    aria-label="Basic example"
+                >
+                    <!-- prettier-ignore -->
+                    <button
+                        type="button"
+                        class="btn <%if(!print.isStarted){%>btn-light<%}else{%>btn-info<%}%> plus-minus"
+                        id="subPrinting"
+                        <%if(!print.isStarted){%>disabled<%}%>
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-dash"
+                            viewBox="0 0 16 16"
+                        >
+                            <path
+                                d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"
+                            />
+                        </svg>
+                    </button>
+                    <div
+                        class="btn <%if(!print.isStarted){%>btn-light<%}else{%>btn-info<%}%> number <%if(!print.isStarted){%>disabled<%}%>"
+                    >
+                        <span id="numPrinting"></span> printing
+                    </div>
+                    <!-- prettier-ignore -->
+                    <button
+                        type="button"
+                        class="btn <%if(!print.isStarted){%>btn-light<%}else{%>btn-info<%}%> plus-minus "
+                        id="addPrinting"
+                        <%if(!print.isStarted){%>disabled<%}%>
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-plus"
+                            viewBox="0 0 16 16"
+                        >
+                            <path
+                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                            />
+                        </svg>
+                    </button>
+                </div>
+
                 <div
                     class="row"
                     style='display: <%= print.isStarted ? "flex" : "none" %>'
                 >
-                    <div class="col">
+                    <div class="col-6">
                         <button
                             type="button"
                             class="btn btn-danger btn-block"
                             id="failPrint"
                         >
-                            Print Failed
+                            Fail
                         </button>
                         <p class="small text-muted">
-                            This will mark the print stopped, but will not add
-                            any completed copies
+                            Stop print without adding completed copies
                         </p>
                     </div>
-                    <div class="col">
+                    <div class="col-6">
                         <button
                             type="button"
                             class="btn btn-success btn-block"
                             id="successPrint"
                         >
-                            Print Completed
+                            Success
                         </button>
                         <p class="small text-muted">
-                            This will mark the print stopped, and will add this
-                            many completed copies
+                            Add this many completed copies
                         </p>
                     </div>
                 </div>
+            </div>
+
+            <div class="col">
+                <div
+                    class="btn-group w-100 mb-3"
+                    role="group"
+                    aria-label="Basic example"
+                >
+                    <button
+                        type="button"
+                        class="btn btn-info plus-minus"
+                        id="subPrinted"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-dash"
+                            viewBox="0 0 16 16"
+                        >
+                            <path
+                                d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"
+                            />
+                        </svg>
+                    </button>
+                    <div class="btn btn-info number">
+                        <span id="numPrinted"></span> completed
+                    </div>
+                    <button
+                        type="button"
+                        class="btn btn-info plus-minus"
+                        id="addPrinted"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-plus"
+                            viewBox="0 0 16 16"
+                        >
+                            <path
+                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                            />
+                        </svg>
+                    </button>
+                </div>
+                <p class="mb-0">
+                    File currently needs
+                    <strong id="numNeeded"></strong>
+                    more copies printed to be complete.
+                    <small class="text-muted"
+                        >This includes the number of copies currently
+                        printing</small
+                    >
+                </p>
+            </div>
+
+            <div class="col-12">
+                <hr />
                 <!-- prettier-ignore -->
                 <button
                     type="button"
@@ -148,58 +194,10 @@
                 </button>
                 <% if (!print.isStarted){%>
                 <p class="small text-muted">
-                    Make sure all the requested copies have been printed.
-                    Clicking this button will send an email to the patron that
-                    their files are ready for pickup!
+                    Make sure all the requested copies have been printed. You'll
+                    enter the final weight and location in the next step
                 </p>
                 <%}%>
-            </div>
-            <div class="col-12">
-                <hr />
-            </div>
-
-            <div
-                class="col-12 text-center d-flex align-items-center justify-content-between"
-            >
-                <button
-                    type="button"
-                    class="btn btn-secondary icon-button"
-                    id="subPrinted"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-dash"
-                        viewBox="0 0 16 16"
-                    >
-                        <path
-                            d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"
-                        />
-                    </svg>
-                </button>
-                <div class="number">
-                    <span id="numPrinted"></span> copies completed
-                </div>
-                <button
-                    type="button"
-                    class="btn btn-secondary icon-button"
-                    id="addPrinted"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-plus"
-                        viewBox="0 0 16 16"
-                    >
-                        <path
-                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-                        />
-                    </svg>
-                </button>
             </div>
         </div>
     </div>

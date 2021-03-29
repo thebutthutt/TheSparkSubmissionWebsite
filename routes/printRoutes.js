@@ -26,10 +26,23 @@ module.exports = function (app) {
     // show the new prints queue
     app.get("/prints/new", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                "files.isNewSubmission": true,
-            },
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $eq: ["$$item.isNewSubmission", true],
+                                },
+                            },
+                        },
+                    },
+                },
+                { $match: { "files.0": { $exists: true } } },
+            ],
             function (err, data) {
                 //loading every single top level request FOR NOW
                 res.render("pages/prints/allPrints", {
@@ -86,13 +99,39 @@ module.exports = function (app) {
     //show pending payment prints
     app.get("/prints/pendpay", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                "files.isPendingPayment": true,
-                "files.isStaleOnPayment": { $ne: true },
-            },
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $and: [
+                                        {
+                                            $eq: [
+                                                "$$item.isPendingPayment",
+                                                true,
+                                            ],
+                                        },
+                                        {
+                                            $ne: [
+                                                "$$item.isStaleOnPayment",
+                                                true,
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+                { $match: { "files.0": { $exists: true } } },
+            ],
             function (err, data) {
                 //loading every single top level request FOR NOW
+                console.log(data);
                 res.render("pages/prints/allPrints", {
                     pgnum: 4, //prints
                     dbdata: data,
@@ -107,11 +146,23 @@ module.exports = function (app) {
     //show pending payment prints
     app.get("/prints/pendpaystale", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                "files.isPendingPayment": true,
-                "files.isStaleOnPayment": true,
-            },
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $eq: ["$$item.isStaleOnPayment", true],
+                                },
+                            },
+                        },
+                    },
+                },
+                { $match: { "files.0": { $exists: true } } },
+            ],
             function (err, data) {
                 //loading every single top level request FOR NOW
                 res.render("pages/prints/allPrints", {
@@ -130,10 +181,21 @@ module.exports = function (app) {
     //show pready to print all locations
     app.get("/prints/ready", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                "files.isReadyToPrint": true,
-            },
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: { $eq: ["$$item.isReadyToPrint", true] },
+                            },
+                        },
+                    },
+                },
+                { $match: { "files.0": { $exists: true } } },
+            ],
             function (err, data) {
                 //loading every single top level request FOR NOW
                 res.render("pages/prints/allPrints", {
@@ -151,15 +213,36 @@ module.exports = function (app) {
     //show ready to print at willis
     app.get("/prints/readywillis", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isReadyToPrint: true,
-                        printLocation: "Willis Library",
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $and: [
+                                        {
+                                            $eq: [
+                                                "$$item.isReadyToPrint",
+                                                true,
+                                            ],
+                                        },
+                                        {
+                                            $eq: [
+                                                "$$item.printLocation",
+                                                "Willis Library",
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
                     },
                 },
-            },
+                { $match: { "files.0": { $exists: true } } },
+            ],
             function (err, data) {
                 //loading every single top level request FOR NOW
                 res.render("pages/prints/allPrints", {
@@ -177,15 +260,36 @@ module.exports = function (app) {
     //show ready to print at dp
     app.get("/prints/readydp", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isReadyToPrint: true,
-                        printLocation: "Discovery Park",
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $and: [
+                                        {
+                                            $eq: [
+                                                "$$item.isReadyToPrint",
+                                                true,
+                                            ],
+                                        },
+                                        {
+                                            $eq: [
+                                                "$$item.printLocation",
+                                                "Discovery Park",
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
                     },
                 },
-            },
+                { $match: { "files.0": { $exists: true } } },
+            ],
             function (err, data) {
                 //loading every single top level request FOR NOW
                 res.render("pages/prints/allPrints", {
@@ -200,21 +304,89 @@ module.exports = function (app) {
         );
     });
 
+    app.get("/prints/intransit", isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: { $eq: ["$$item.isInTransit", true] },
+                            },
+                        },
+                    },
+                },
+                { $match: { "files.0": { $exists: true } } },
+            ],
+            function (err, data) {
+                res.render("pages/prints/allPrints", {
+                    pgnum: 4, //tells the navbar what page to highlight
+                    dbdata: data,
+                    printPage: "inTransit",
+                    location: "all",
+                    isAdmin: true,
+                    isSuperAdmin: req.user.isSuperAdmin,
+                });
+            }
+        );
+        /**
+        printRequestModel.find(
+            {
+                "files.isInTransit": true,
+            },
+            function (err, data) {
+                //loading every single top level request FOR NOW
+                res.render("pages/prints/allPrints", {
+                    pgnum: 4, //tells the navbar what page to highlight
+                    dbdata: data,
+                    printPage: "inTransit",
+                    location: "all",
+                    isAdmin: true,
+                    isSuperAdmin: req.user.isSuperAdmin,
+                });
+            }
+        );
+         */
+    });
+
     //---------------PICKUP-----------------------------------
 
     //show pickup all locations
     app.get("/prints/pickup", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isPrinted: true,
-                        isPickedUp: false,
-                        isStaleOnPickup: false,
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $and: [
+                                        {
+                                            $eq: ["$$item.isPrinted", true],
+                                        },
+                                        {
+                                            $eq: ["$$item.isPickedUp", false],
+                                        },
+                                        {
+                                            $eq: [
+                                                "$$item.isStaleOnPickup",
+                                                false,
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
                     },
                 },
-            },
+                { $match: { "files.0": { $exists: true } } },
+            ],
             function (err, data) {
                 //loading every single top level request FOR NOW
                 res.render("pages/prints/allPrints", {
@@ -232,17 +404,42 @@ module.exports = function (app) {
     //show pickup at willis
     app.get("/prints/pickupwillis", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isPrinted: true,
-                        isPickedUp: false,
-                        pickupLocation: "Willis Library",
-                        isStaleOnPickup: false,
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $and: [
+                                        {
+                                            $eq: ["$$item.isPrinted", true],
+                                        },
+                                        {
+                                            $eq: ["$$item.isPickedUp", false],
+                                        },
+                                        {
+                                            $eq: [
+                                                "$$item.pickupLocation",
+                                                "Willis Library",
+                                            ],
+                                        },
+                                        {
+                                            $eq: [
+                                                "$$item.isStaleOnPickup",
+                                                false,
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
                     },
                 },
-            },
+                { $match: { "files.0": { $exists: true } } },
+            ],
             function (err, data) {
                 //loading every single top level request FOR NOW
                 res.render("pages/prints/allPrints", {
@@ -260,17 +457,42 @@ module.exports = function (app) {
     //show pickip at dp
     app.get("/prints/pickupdp", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isPrinted: true,
-                        isPickedUp: false,
-                        pickupLocation: "Discovery Park",
-                        isStaleOnPickup: false,
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $and: [
+                                        {
+                                            $eq: ["$$item.isPrinted", true],
+                                        },
+                                        {
+                                            $eq: ["$$item.isPickedUp", false],
+                                        },
+                                        {
+                                            $eq: [
+                                                "$$item.pickupLocation",
+                                                "Discovery Park",
+                                            ],
+                                        },
+                                        {
+                                            $eq: [
+                                                "$$item.isStaleOnPickup",
+                                                false,
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
                     },
                 },
-            },
+                { $match: { "files.0": { $exists: true } } },
+            ],
             function (err, data) {
                 //loading every single top level request FOR NOW
                 res.render("pages/prints/allPrints", {
@@ -287,14 +509,23 @@ module.exports = function (app) {
 
     app.get("/prints/completed", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isPickedUp: true,
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $eq: ["$$item.isPickedUp", true],
+                                },
+                            },
+                        },
                     },
                 },
-            },
+                { $match: { "files.0": { $exists: true } } },
+            ],
             function (err, data) {
                 //loading every single top level request FOR NOW
                 res.render("pages/prints/allPrints", {
@@ -311,15 +542,23 @@ module.exports = function (app) {
     //-----------------------REJECTED-----------------------
     app.get("/prints/rejected", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isNewSubmission: false,
-                        isRejected: true,
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $eq: ["$$item.isRejected", true],
+                                },
+                            },
+                        },
                     },
                 },
-            },
+                { $match: { "files.0": { $exists: true } } },
+            ],
             function (err, data) {
                 //loading every single top level request FOR NOW
                 res.render("pages/prints/allPrints", {
@@ -684,6 +923,23 @@ module.exports = function (app) {
         printHandler.printCompleted(fileID, realGrams, function callback() {
             res.json(["done"]);
         });
+    });
+
+    app.post("/prints/printfinish", isLoggedIn, function (req, res) {
+        var fileID = req.body.fileID || req.query.fileID;
+        var numCopies = req.body.numCopies || req.query.numCopies;
+        var weight = req.body.weight || req.query.weight;
+        var location = req.body.location || req.query.location;
+        console.log(numCopies, weight, location);
+        printHandler.printFinished(
+            fileID,
+            numCopies,
+            weight,
+            location,
+            function callback() {
+                res.redirect("/prints/preview?fileID=" + fileID);
+            }
+        );
     });
 
     //-----------------------PRINT FAIL-----------------------

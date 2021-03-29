@@ -684,7 +684,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="/prints/printfinished">
+                        <form action="/prints/printfinis" method="POST">
                             <input
                                 type="hidden"
                                 name="fileID"
@@ -706,6 +706,7 @@
                                                 type="number"
                                                 class="form-control"
                                                 placeholder="Copies"
+                                                name="numCopies"
                                                 aria-label="Final weight"
                                                 aria-describedby="basic-addon2"
                                             />
@@ -728,6 +729,7 @@
                                                 type="number"
                                                 class="form-control"
                                                 placeholder="Weight"
+                                                name="weight"
                                                 aria-label="Final weight"
                                                 aria-describedby="basic-addon2"
                                             />
@@ -784,7 +786,7 @@
                                             type="radio"
                                             name="location"
                                             id="willis"
-                                            value="willis"
+                                            value="Willis Library"
                                             required
                                         />
                                         <p class="mb-0" style="font-size: 2em">
@@ -799,7 +801,7 @@
                                             type="radio"
                                             name="location"
                                             id="dp"
-                                            value="dp"
+                                            value="Discovery Park"
                                             required
                                         />
                                         <p class="mb-0" style="font-size: 2em">
@@ -818,6 +820,8 @@
                             <button
                                 type="submit"
                                 class="btn btn-block btn-lg btn-success"
+                                formmethod="post"
+                                formaction="/prints/printfinish"
                             >
                                 Send Email to Patron!
                             </button>
