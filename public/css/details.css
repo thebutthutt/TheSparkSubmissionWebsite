@@ -72,8 +72,8 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.125);
 }
 
-.progress,
-.progress-bar {
+#progress,
+#progress-bar {
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
     height: 0.25rem;

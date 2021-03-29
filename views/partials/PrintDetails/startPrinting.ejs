@@ -1,0 +1,174 @@
+<div class="card shadow mb-3">
+    <div class="card-body">
+        <h3>
+            <%if (print.isStarted) {%> Update Printing Info <%} else {%> Start
+            Printing <%}%>
+        </h3>
+        <form action="/prints/markPrinting" method="POST">
+            <input type="hidden" name="fileID" value="<%= print._id %>" />
+            <div class="form-row mb-2">
+                <div class="col">
+                    <label>Filament Roll ID</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="AB-CDE-12-345"
+                        id="rollID"
+                        name="rollID"
+                        required
+                    />
+                </div>
+                <div class="col">
+                    <label>Roll Weight </label>
+                    <div class="input-group">
+                        <input
+                            type="number"
+                            class="form-control"
+                            placeholder="1000"
+                            name="rollWeight"
+                            id="rollWeight"
+                            required
+                        />
+                        <div class="input-group-append">
+                            <span class="input-group-text">g</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <label>Copies</label>
+                    <input
+                        class="form-control"
+                        type="number"
+                        placeholder="0"
+                        name="copiesPrinting"
+                        id="copiesPrinting"
+                        required
+                    />
+                </div>
+            </div>
+            <div class="form-row mb-3">
+                <div class="col">
+                    <label>Printing Location</label>
+                    <select
+                        class="form-control"
+                        id="location-select"
+                        name="location"
+                        required
+                    >
+                        <option selected disabled value="">Choose...</option>
+                        <option value="willis">Willis Library</option>
+                        <option value="dp">Discovery Park</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Printer</label>
+                    <select
+                        class="form-control"
+                        id="printer-select"
+                        name="printer"
+                        required
+                    >
+                        <option selected disabled value="">
+                            Select a location first!
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <%if (print.isStarted) {%> Update Printing Info <%} else
+                        {%> Start Printing <%}%>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    var willisPrinters = [
+        "Scooby (top shelf)",
+        "Shaggy (middle shelf)",
+        "Velma (botttom shelf)",
+        "Lady Lavendar",
+        "Ms. White",
+        "Ms. Scarlet",
+        "Prusa",
+    ];
+    var dpPrinters = [
+        "Fred (left)",
+        "Daphne (right)",
+        "Hot Buttered Biscuit",
+        "Shazam (desk)",
+        "Aquaman (rolling table)",
+        "Megalo",
+    ];
+
+    function setPrinters(currentLocation) {
+        var printerSelect = document.getElementById("printer-select");
+        printerSelect.innerHTML = "";
+        if (currentLocation == "willis") {
+            var none = document.createElement("option");
+            none.value = "";
+            none.innerHTML = "Select a printer...";
+            none.disabled = true;
+            printerSelect.appendChild(none);
+            for (const thisPrinter of willisPrinters) {
+                var opt = document.createElement("option");
+                opt.value = thisPrinter;
+                opt.innerHTML = thisPrinter;
+                printerSelect.appendChild(opt);
+            }
+        } else if (currentLocation == "dp") {
+            var none = document.createElement("option");
+            none.value = "";
+            none.innerHTML = "Select a printer...";
+            none.disabled = true;
+            printerSelect.appendChild(none);
+            for (const thisPrinter of dpPrinters) {
+                var opt = document.createElement("option");
+                opt.value = thisPrinter;
+                opt.innerHTML = thisPrinter;
+                printerSelect.appendChild(opt);
+            }
+        } else {
+            var opt = document.createElement("option");
+            opt.value = "";
+            opt.innerHTML = "Select a location first!";
+            opt.disabled = true;
+            printerSelect.appendChild(opt);
+        }
+    }
+
+    document
+        .getElementById("location-select")
+        .addEventListener("change", function (e) {
+            var currentLocation = e.target.value;
+            setPrinters(currentLocation);
+        });
+
+    if (`<%= print.isStarted %>`) {
+        document.getElementById(
+            "rollID"
+        ).value = `<%=print.printingData.rollID%>`;
+
+        document.getElementById(
+            "rollWeight"
+        ).value = `<%=print.printingData.rollWeight%>`;
+
+        document.getElementById(
+            "copiesPrinting"
+        ).value = `<%=print.printingData.copiesPrinting%>`;
+
+        document.getElementById(
+            "location-select"
+        ).value = `<%=print.printingData.location%>`;
+
+        setPrinters(`<%=print.printingData.location%>`);
+
+        document.getElementById(
+            "printer-select"
+        ).value = `<%=print.printingData.printer%>`;
+    }
+</script>

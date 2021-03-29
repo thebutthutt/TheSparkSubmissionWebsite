@@ -648,8 +648,13 @@ module.exports = {
         );
     },
 
-    markPrinting: function (fileID, copiesPrinting, callback) {
-        copiesPrinting = parseInt(copiesPrinting);
+    markPrinting: function (body, callback) {
+        var fileID = body.fileID;
+        var copiesPrinting = parseInt(body.copiesPrinting);
+        var location = body.location;
+        var printer = body.printer;
+        var rollID = body.rollID;
+        var rollWeight = parseInt(body.rollWeight);
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -658,16 +663,13 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
-                    result.files.id(fileID).isStarted = true;
-                    if (result.files.id(fileID).numAttempts == null) {
-                        result.files.id(fileID).numAttempts = 0;
-                    }
-                    result.files.id(fileID).numAttempts += 1;
-
-                    if (result.files.id(fileID).copiesPrinting == null) {
-                        result.files.id(fileID).copiesPrinting = 0;
-                    }
-                    result.files.id(fileID).copiesPrinting += copiesPrinting;
+                    var thisFile = result.files.id(fileID);
+                    thisFile.isStarted = true;
+                    thisFile.printingData.copiesPrinting = copiesPrinting;
+                    thisFile.printingData.location = location;
+                    thisFile.printingData.printer = printer;
+                    thisFile.printingData.rollID = rollID;
+                    thisFile.printingData.rollWeight = rollWeight;
 
                     result.save();
                     if (typeof callback == "function") {

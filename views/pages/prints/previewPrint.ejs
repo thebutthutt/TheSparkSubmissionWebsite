@@ -26,8 +26,8 @@
         </style>-->
         <style>
             .timeline-col .bi {
-                width: 3rem;
-                height: 3rem;
+                width: 2rem;
+                height: 2rem;
                 vertical-align: baseline;
             }
 
@@ -52,7 +52,7 @@
             }
 
             .sep {
-                height: 10em;
+                
                 width: 0px;
                 background-color: #aaa;
             }
@@ -61,14 +61,14 @@
 
     <body>
         <%- include ("../../partials/header") %>
-        <div class="container-flush mx-5 mt-5" style="margin-bottom: 100px">
+        <div class="container-flush mx-5 mt-4" style="margin-bottom: 100px">
             <div class="row mb-3">
                 <div class="col">
                     <div class="card shadow text-center">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col timeline-col">
-                                    <h5>Request</h5>
+                                    <h6>Request</h6>
                                     <div>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -86,14 +86,14 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        This file was submitted on
+                                    <small>
+                                        File submitted on
                                         <%=print.timestampSubmitted.toLocaleDateString('en-US')%>
-                                    </p>
+                                    </small>
                                 </div>
                                 <div class="sep"></div>
                                 <div class="col timeline-col">
-                                    <h5>File</h5>
+                                    <h6>File</h6>
                                     <% if (print.isReviewed) { %>
                                     <div>
                                         <svg
@@ -112,10 +112,10 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        This file was reviewed on
+                                    <small>
+                                        File reviewed on
                                         <%=print.timestampReviewed.toLocaleDateString('en-US')%>
-                                    </p>
+                                    </small>
                                     <% } else { %>
                                     <div>
                                         <svg
@@ -134,12 +134,12 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>This file still needs to be reviewed</p>
+                                    <small>File needs review</small>
                                     <% } %>
                                 </div>
                                 <div class="sep"></div>
                                 <div class="col timeline-col">
-                                    <h5>Submission</h5>
+                                    <h6>Submission</h6>
                                     <% if (submission.timestampPaymentRequested
                                     > new Date("1971") ) { %>
                                     <div>
@@ -159,10 +159,10 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        This submission was reviewed on
+                                    <small>
+                                        Submission reviewed on
                                         <%=submission.timestampPaymentRequested.toLocaleDateString('en-US')%>
-                                    </p>
+                                    </small>
                                     <%} else { %>
                                     <div>
                                         <svg
@@ -181,15 +181,14 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        This submission has not been fully
-                                        reviewed
-                                    </p>
+                                    <small>
+                                        Submission not reviewed
+                                    </small>
                                     <% } %>
                                 </div>
                                 <div class="sep"></div>
                                 <div class="col timeline-col">
-                                    <h5>Payment</h5>
+                                    <h6>Payment</h6>
                                     <% if (print.isPendingPayment &&
                                     !print.isPendingWaive ) { %>
                                     <div>
@@ -209,7 +208,7 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>Waiting for the patron to pay</p>
+                                    <small>Waiting for payment</small>
                                     <%} else if (print.isPendingWaive) { %>
                                     <div>
                                         <svg
@@ -228,10 +227,9 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        Waiting for a manager to approve a
-                                        payment waive
-                                    </p>
+                                    <small>
+                                        Waiting for waive
+                                    </small>
                                     <% } else if (print.isPaid) { %>
                                     <div>
                                         <svg
@@ -250,10 +248,10 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        This submission was paid on
+                                    <small>
+                                        Submission paid on
                                         <%=submission.timestampPaid.toLocaleDateString('en-US')%>
-                                    </p>
+                                    </small>
                                     <%} else {%>
                                     <div>
                                         <svg
@@ -269,12 +267,12 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>Not ready yet!</p>
+                                    <small>Not ready yet!</small>
                                     <%}%>
                                 </div>
                                 <div class="sep"></div>
                                 <div class="col timeline-col">
-                                    <h5>Printing</h5>
+                                    <h6>Printing</h6>
                                     <% if (print.isReadyToPrint &&
                                     !print.isStarted ) { %>
                                     <div>
@@ -294,7 +292,7 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>Waiting to be printed</p>
+                                    <small>Waiting to be printed</small>
                                     <%} else if (print.isStarted) { %>
                                     <div>
                                         <svg
@@ -313,7 +311,7 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>Currently on a printer</p>
+                                    <small>Currently on a printer</small>
                                     <% } else if (print.isPrinted){%>
                                     <div>
                                         <svg
@@ -332,10 +330,10 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        This file was printed on
+                                    <small>
+                                        File printed on
                                         <%=print.timestampPrinted.toLocaleDateString('en-US')%>
-                                    </p>
+                                    </small>
                                     <%} else { %>
                                     <div>
                                         <svg
@@ -351,12 +349,12 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>Not ready yet!</p>
+                                    <small>Not ready yet!</small>
                                     <%}%>
                                 </div>
                                 <div class="sep"></div>
                                 <div class="col timeline-col">
-                                    <h5>Pickup</h5>
+                                    <h6>Pickup</h6>
                                     <% if (print.timestampPrinted > new
                                     Date("1971")) { %>
                                     <div>
@@ -376,10 +374,10 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        Patron was notified on
+                                    <small>
+                                        Patron notified on
                                         <%=print.timestampPrinted.toLocaleDateString('en-US')%>
-                                    </p>
+                                    </small>
                                     <%if(!print.isPrinted){%>
                                     <button
                                         data-toggle="modal"
@@ -407,15 +405,15 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>Not ready yet!</p>
+                                    <small>Not ready yet!</small>
                                     <%}%>
                                 </div>
                                 <div class="sep"></div>
                                 <div class="col timeline-col">
-                                    <h5>Status</h5>
+                                    <h6>Status</h6>
                                     <% if (print.timestampOfFirstWarning > new
                                     Date("1971")) { %>
-                                    <p>
+                                    <small>
                                         First warning:
                                         <%=print.timestampOfFirstWarning.toLocaleDateString('en-US')%>
                                         <br />
@@ -428,7 +426,7 @@
                                         Date("1971")) { %> Reposessed:
                                         <%=print.timestampOfConfiscation.toLocaleDateString('en-US')%>
                                         <%}%>
-                                    </p>
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -448,9 +446,10 @@
                     {print:print, submission:submission}) %>
                     <div class="shadow card mb-3">
                         <div class="card-img-top">
-                            <div class="progress">
+                            <div class="progress" id="progress">
                                 <div
                                     class="progress-bar"
+                                    id="progress-bar"
                                     role="progressbar"
                                     style="width: 0%"
                                     aria-valuenow="0"
@@ -473,6 +472,9 @@
 
                 <div class="col-xl-4 col-lg-6 col-md-12">
                     <!-- prettier-ignore -->
+                    <% if (print.isPaid) {%> 
+                        <%- include ("../../partials/PrintDetails/startPrinting", {print:print}) %> 
+                    <%}%>
                     <%- include ("../../partials/PrintDetails/requestAndReview", {print:print, filePath:filePath, gcodePath:gcodePath}) %> 
                     <%if (print.isNewSubmission ) {%> 
                         <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
@@ -501,11 +503,9 @@
                             <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                         <%} else { %> 
                             <%if (!print.isRejected) {%> 
-                                <% if (print.isPaid) {%> 
-                                    
-                                    <%- include ("../../partials/PrintDetails/printing", {print:print}) %> 
-                                <%}%> 
+                                <%- include ("../../partials/PrintDetails/finishPrinting", {print:print}) %> 
                                 <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
+                                
                             <%} else {%> 
                                 <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                             <%}%> 
@@ -540,7 +540,7 @@
                             <div class="row my-3">
                                 <div class="col-7">
                                     <h4>Check the patron's ID</h4>
-                                    <p>
+                                    <small>
                                         Next, you'll be directing them to an
                                         iPad to complete a digital signature.
                                         Have the iPad connected to the
@@ -600,7 +600,7 @@
                                 >
                                 to get started.
                             </p>
-                            <p>
+                            <small>
                                 In the future, these links will be pinned on the
                                 home screen of all our iPads for easy access.
                                 For now we must suffer.
@@ -684,7 +684,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="/prints/printfinis" method="POST">
+                        <form action="/prints/printfinish" method="POST">
                             <input
                                 type="hidden"
                                 name="fileID"
@@ -810,7 +810,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <p>
+                            <small>
                                 If these files are not currently at the
                                 requested pickup location, tell Sean to send the
                                 prints to the other location. The patron will be

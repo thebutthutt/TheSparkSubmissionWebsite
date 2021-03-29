@@ -881,11 +881,8 @@ module.exports = function (app) {
     });
 
     app.post("/prints/markPrinting", isLoggedIn, function (req, res) {
-        var fileID = req.body.fileID || req.query.fileID;
-        var copiesPrinting =
-            req.body.copiesPrinting || req.query.copiesPrinting;
-        printHandler.markPrinting(fileID, copiesPrinting, function callback() {
-            res.json(["done"]);
+        printHandler.markPrinting(req.body, function callback() {
+            res.redirect("/prints/preview?fileID=" + req.body.fileID);
         });
     });
 

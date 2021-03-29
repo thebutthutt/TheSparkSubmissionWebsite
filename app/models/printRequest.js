@@ -29,6 +29,7 @@ var singlePrintSchema = mongoose.Schema({
     isStaleOnPickup: Boolean,
     isStaleOnPayment: Boolean,
     isSigned: Boolean,
+
     signaturePath: String,
 
     dateSubmitted: String,
@@ -83,11 +84,18 @@ var singlePrintSchema = mongoose.Schema({
     realGrams: Number, //actual grams entered after printing is finished
     completedLocation: String,
 
+    printingData: {
+        rollID: String,
+        rollWeight: Number,
+        copiesPrinting: Number,
+        copiesPrinted: Number,
+        location: String,
+        printer: String,
+        numAttempts: Number,
+        numFailedAttempts: Number,
+    },
+
     isStarted: Boolean,
-    copiesPrinting: Number,
-    copiesPrinted: Number,
-    numAttempts: Number,
-    numFailedAttempts: Number,
 
     techNotes: String,
     newTechNotes: [
