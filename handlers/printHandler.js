@@ -691,8 +691,12 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
-                    result.files.id(fileID).copiesPrinting = copiesPrinting;
-                    result.files.id(fileID).copiesPrinted = copiesPrinted;
+                    result.files.id(
+                        fileID
+                    ).printingData.copiesPrinting = copiesPrinting;
+                    result.files.id(
+                        fileID
+                    ).printingData.copiesPrinted = copiesPrinted;
 
                     result.save();
                     if (typeof callback == "function") {
@@ -704,8 +708,7 @@ module.exports = {
     },
 
     //mark that a print succeeded, this then calls mark completed
-    printSuccess: function (fileID, copiesPrinting, callback) {
-        copiesPrinting = parseInt(copiesPrinting);
+    printSuccess: function (fileID, callback) {
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -715,13 +718,51 @@ module.exports = {
                     console.log(err);
                 } else {
                     result.files.id(fileID).isStarted = false;
-                    if (result.files.id(fileID).copiesPrinted == null) {
-                        result.files.id(fileID).copiesPrinted = 0;
+                    if (
+                        result.files.id(fileID).printingData.copiesPrinted ==
+                        null
+                    ) {
+                        result.files.id(fileID).printingData.copiesPrinted = 0;
                     }
-                    result.files.id(fileID).copiesPrinted += copiesPrinting;
-                    result.files.id(fileID).copiesPrinting = 0;
+                    result.files.id(
+                        fileID
+                    ).printingData.copiesPrinted += result.files.id(
+                        fileID
+                    ).printingData.copiesPrinting;
+                    result.files.id(fileID).printingData.copiesPrinting = 0;
                     result.save();
                     //module.exports.markCompleted(fileID);
+                    if (typeof callback == "function") {
+                        callback();
+                    }
+                }
+            }
+        );
+    },
+
+    //notify that a print attempt has failed
+    printFail: function (fileID, callback) {
+        printRequestModel.findOne(
+            {
+                "files._id": fileID,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    result.files.id(fileID).isStarted = false; //not started anymore
+                    if (
+                        result.files.id(fileID).printingData
+                            .numFailedAttempts == null
+                    ) {
+                        result.files.id(
+                            fileID
+                        ).printingData.numFailedAttempts = 0;
+                    }
+                    result.files.id(fileID).printingData.numFailedAttempts += 1; //add a failed attempt
+
+                    result.files.id(fileID).printingData.copiesPrinting = 0;
+                    result.save();
                     if (typeof callback == "function") {
                         callback();
                     }
@@ -749,8 +790,9 @@ module.exports = {
         );
     },
 
-    printFinished: function (fileID, numCopies, weight, location, callback) {
-        var totalWeight = numCopies * weight;
+    printFinished: function (body, callback) {
+        var fileID = body.fileID;
+        var now = new Date();
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -759,16 +801,43 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
-                    module.exports.markCompleted(
-                        fileID,
-                        totalWeight,
-                        location,
-                        result.files.id(fileID).pickupLocation
-                    );
-                    console.log("here");
-                    if (typeof callback == "function") {
-                        callback();
+                    var thisFile = result.files.id(fileID);
+                    if (thisFile.isStarted) {
+                        result.isStarted = false;
+                        thisFile.printingData.copiesPrinted +=
+                            thisFile.printingData.copiesPrinting;
+                        thisFile.printingData.copiesPrinting = 0;
+                        thisFile.printingData.numAttempts++;
                     }
+                    thisFile.printingData.rollID = body.rollID;
+                    thisFile.printingData.rollWeight = body.initialWeight;
+                    thisFile.printingData.finalWeight = body.finalWeight;
+                    thisFile.printingData.weightChange =
+                        body.initialWeight - body.finalWeight;
+                    thisFile.printingData.location = body.location;
+
+                    thisFile.isPrinted = true;
+                    thisFile.timestampPrinted = now;
+                    thisFile.isReadyToPrint = false;
+
+                    if (thisFile.pickupLocation != body.location) {
+                        thisFile.isInTransit = true;
+                        //newmailer.fileInTransit(result, thisFile);
+                    } else {
+                        thisFile.isInTransit = false;
+                        newmailer.readyForPickup(result, thisFile);
+                    }
+
+                    result.save(function (err, res) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log("here");
+                            if (typeof callback == "function") {
+                                callback();
+                            }
+                        }
+                    });
                 }
             }
         );
@@ -820,32 +889,6 @@ module.exports = {
                     result.files.id(fileID).datePickedUp = time;
                     result.files.id(fileID).timestampPickedUp = now;
                     result.save();
-                }
-            }
-        );
-    },
-
-    //notify that a print attempt has failed
-    printFail: function (fileID, callback) {
-        printRequestModel.findOne(
-            {
-                "files._id": fileID,
-            },
-            function (err, result) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    result.files.id(fileID).isStarted = false; //not started anymore
-                    if (result.files.id(fileID).numFailedAttempts == null) {
-                        result.files.id(fileID).numFailedAttempts = 0;
-                    }
-                    result.files.id(fileID).numFailedAttempts += 1; //add a failed attempt
-
-                    result.files.id(fileID).copiesPrinting = 0;
-                    result.save();
-                    if (typeof callback == "function") {
-                        callback();
-                    }
                 }
             }
         );

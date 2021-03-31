@@ -87,6 +87,8 @@ var singlePrintSchema = mongoose.Schema({
     printingData: {
         rollID: String,
         rollWeight: Number,
+        finalWeight: Number,
+        weightChange: Number,
         copiesPrinting: Number,
         copiesPrinted: Number,
         location: String,

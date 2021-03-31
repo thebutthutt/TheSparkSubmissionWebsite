@@ -1,88 +1,360 @@
-<div class="card shadow mb-3">
-    <div class="card-body">
-        <h3>
-            <%if (print.isStarted) {%> Update Printing Info <%} else {%> Start
-            Printing <%}%>
-        </h3>
-        <form action="/prints/markPrinting" method="POST">
-            <input type="hidden" name="fileID" value="<%= print._id %>" />
-            <div class="form-row mb-2">
-                <div class="col">
-                    <label>Filament Roll ID</label>
+<div class="accordion shadow mb-3" id="accordionExample">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <a
+                class="text-decoration-none text-reset h4 d-inline-block mb-0 w-100"
+                role="button"
+                data-toggle="collapse"
+                href="#collapseOne"
+                aria-expanded="true"
+                aria-controls="collapseOne"
+            >
+                <%if (print.isStarted) {%> Attempt Started
+                <small class="text-muted">Update printing info here</small>
+                <%} else {%> Start Attempt <%}%>
+            </a>
+        </div>
+
+        <div
+            id="collapseOne"
+            class="collapse <% if(!print.isStarted && (print.printingData.copiesPrinted || 0) < print.copies){%>show<%}%>"
+            aria-labelledby="headingOne"
+            data-parent="#accordionExample"
+        >
+            <div class="card-body">
+                <%if (print.isStarted) {%>
+                <p class="small text-muted">
+                    In case the current printing info is not correct. If this
+                    attempt failed and you're starting a new one, first mark the
+                    failure, then start a new attempt!
+                </p>
+                <%}%>
+                <form action="/prints/markPrinting" method="POST">
                     <input
-                        type="text"
-                        class="form-control"
-                        placeholder="AB-CDE-12-345"
-                        id="rollID"
-                        name="rollID"
-                        required
+                        type="hidden"
+                        name="fileID"
+                        value="<%= print._id %>"
                     />
-                </div>
-                <div class="col">
-                    <label>Roll Weight </label>
-                    <div class="input-group">
-                        <input
-                            type="number"
-                            class="form-control"
-                            placeholder="1000"
-                            name="rollWeight"
-                            id="rollWeight"
-                            required
-                        />
-                        <div class="input-group-append">
-                            <span class="input-group-text">g</span>
+                    <div class="form-row mb-2">
+                        <div class="col">
+                            <label>Filament Roll ID</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="AB-CDE-12-345"
+                                id="rollID"
+                                name="rollID"
+                                required
+                            />
+                        </div>
+                        <div class="col">
+                            <label>Initial Roll Weight *</label>
+
+                            <div class="input-group">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    placeholder="1000"
+                                    name="rollWeight"
+                                    id="rollWeight"
+                                    required
+                                />
+                                <div class="input-group-append">
+                                    <span class="input-group-text">g</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <p class="text-muted">
+                        * This is the weight of the roll
+                        <strong>before</strong> printing the first attempt. If
+                        you enter an incorrect weight, you can change it later,
+                        but
+                        <strong
+                            >don't change this value for any later attempts of
+                            this file!</strong
+                        >
+                    </p>
+                    <div class="form-row mb-3">
+                        <div class="col">
+                            <label>Printing Location</label>
+                            <select
+                                class="form-control"
+                                id="location-select"
+                                name="location"
+                                required
+                            >
+                                <option selected disabled value="">
+                                    Choose...
+                                </option>
+                                <option value="willis">Willis Library</option>
+                                <option value="dp">Discovery Park</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label>Printer</label>
+                            <select
+                                class="form-control"
+                                id="printer-select"
+                                name="printer"
+                                required
+                            >
+                                <option selected disabled value="">
+                                    Select a location first!
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label>Copies</label>
+                            <input
+                                class="form-control"
+                                type="number"
+                                placeholder="0"
+                                name="copiesPrinting"
+                                id="copiesPrinting"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-block"
+                            >
+                                <%if (print.isStarted) {%> Update Printing Info
+                                <%} else {%> Start Printing <%}%>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+            <a
+                class="text-decoration-none text-reset h4 d-inline-block mb-0 w-100"
+                role="button"
+                data-toggle="collapse"
+                href="#collapseTwo"
+                aria-expanded="true"
+                aria-controls="collapseTwo"
+            >
+                Finish Attempt <%if (!print.isStarted) {%>
+                <small class="text-muted">Start an Attempt First!</small> <%}%>
+            </a>
+        </div>
+        <div
+            id="collapseTwo"
+            class="collapse <% if(print.isStarted ){%>show<%}%>"
+            aria-labelledby="headingTwo"
+            data-parent="#accordionExample"
+        >
+            <div class="card-body">
+                <%if(print.isStarted){%>
+                <div class="row">
+                    <div class="col-6">
+                        <button
+                            type="button"
+                            class="btn btn-danger btn-block"
+                            id="failPrint"
+                            fileID="<%=print._id%>"
+                        >
+                            Fail
+                        </button>
+                        <p class="small text-muted">
+                            Stop print without adding completed copies
+                        </p>
+                    </div>
+                    <div class="col-6">
+                        <button
+                            type="button"
+                            class="btn btn-success btn-block"
+                            id="successPrint"
+                            fileID="<%=print._id%>"
+                        >
+                            Success
+                        </button>
+                        <p class="small text-muted">
+                            Add this many completed copies
+                        </p>
+                    </div>
                 </div>
-                <div class="col">
-                    <label>Copies</label>
+                <%} else {%>
+                <p class="mb-0">
+                    Start an attempt first, then come back here when it
+                    finishes!
+                </p>
+                <%}%>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingThree">
+            <a
+                class="text-decoration-none text-reset h4 d-inline-block mb-0 w-100"
+                role="button"
+                data-toggle="collapse"
+                href="#collapseThree"
+                aria-expanded="true"
+                aria-controls="collapseThree"
+            >
+                Mark Completed
+                <small class="text-muted"
+                    ><%=print.printingData.copiesPrinted ||
+                    0%>/<%=print.copies%> Copies Printed</small
+                >
+            </a>
+        </div>
+        <div
+            id="collapseThree"
+            class="collapse <% if(print.printingData.copiesPrinted || 0 >= print.copies) {%>show<%}%>"
+            aria-labelledby="headingThree"
+            data-parent="#accordionExample"
+        >
+            <div class="card-body">
+                <form action="/prints/printfinish" method="POST">
                     <input
-                        class="form-control"
-                        type="number"
-                        placeholder="0"
-                        name="copiesPrinting"
-                        id="copiesPrinting"
-                        required
+                        type="hidden"
+                        name="fileID"
+                        value="<%= print._id %>"
                     />
-                </div>
-            </div>
-            <div class="form-row mb-3">
-                <div class="col">
-                    <label>Printing Location</label>
-                    <select
-                        class="form-control"
-                        id="location-select"
-                        name="location"
-                        required
+
+                    <div class="form-group">
+                        <div class="row mb-3">
+                            <div class="col d-flex flex-row align-items-center">
+                                <label
+                                    class="flex-shrink-0 flex-grow-1 small text-muted pr-2 mb-0"
+                                    >Filament Roll ID</label
+                                >
+                                <input
+                                    type="text"
+                                    class="flex-shrink-1 form-control form-control-sm"
+                                    value="<%=print.printingData.rollID%>"
+                                    id="rollIDSmall"
+                                    name="rollID"
+                                    required
+                                />
+                            </div>
+
+                            <div class="col d-flex flex-row align-items-center">
+                                <label
+                                    class="flex-shrink-0 flex-grow-1 small text-muted pr-2 mb-0"
+                                    >Initial Roll Weight</label
+                                >
+                                <div
+                                    class="flex-shrink-1 input-group input-group-sm"
+                                >
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        value="<%=print.printingData.rollWeight%>"
+                                        name="initialWeight"
+                                        id="initialWeightSmall"
+                                        required
+                                    />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">g</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Final Roll Weight</label>
+                                <div class="input-group mb-0">
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        placeholder="1000"
+                                        id="finalWeight"
+                                        name="finalWeight"
+                                        aria-label="Final weight"
+                                        aria-describedby="basic-addon2"
+                                        required
+                                    />
+                                    <div class="input-group-append">
+                                        <span
+                                            class="input-group-text"
+                                            id="basic-addon2"
+                                            >g</span
+                                        >
+                                    </div>
+                                </div>
+                                <p
+                                    class="small text-muted mb-0"
+                                    id="weightChange"
+                                >
+                                    Total change in roll weight: 0g
+                                </p>
+                            </div>
+                            <div class="col">
+                                <label>Current Location</label>
+
+                                <select
+                                    class="form-control"
+                                    name="location"
+                                    id="exampleFormControlSelect1"
+                                    required
+                                >
+                                    <option value="" selected disabled>
+                                        Where are these objects now?
+                                    </option>
+                                    <option value="willis">
+                                        Willis Library
+                                    </option>
+                                    <option value="dp">Discovery Park</option>
+                                </select>
+                                <!-- <div
+                                    class="btn-group-vertical btn-group-toggle btn-block"
+                                    data-toggle="buttons"
+                                >
+                                    <label
+                                        class="btn btn-sm btn-outline-primary d-flex align-items-center justify-content-center"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="location"
+                                            id="willis"
+                                            value="Willis Library"
+                                            required
+                                        />
+                                        <p class="mb-0">Willis Library</p>
+                                    </label>
+                                    <label
+                                        class="btn btn-sm btn-outline-primary d-flex align-items-center justify-content-center"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="location"
+                                            id="dp"
+                                            value="Discovery Park"
+                                            required
+                                        />
+                                        <p class="mb-0">Discovery Park</p>
+                                    </label>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-block btn-lg btn-success"
+                        formmethod="post"
+                        formaction="/prints/printfinish"
                     >
-                        <option selected disabled value="">Choose...</option>
-                        <option value="willis">Willis Library</option>
-                        <option value="dp">Discovery Park</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label>Printer</label>
-                    <select
-                        class="form-control"
-                        id="printer-select"
-                        name="printer"
-                        required
-                    >
-                        <option selected disabled value="">
-                            Select a location first!
-                        </option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="col">
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <%if (print.isStarted) {%> Update Printing Info <%} else
-                        {%> Start Printing <%}%>
+                        Send Email to Patron!
                     </button>
-                </div>
+                    <small class="text-muted">
+                        If these files are not currently at the requested pickup
+                        location, the patron will be notified via email that
+                        their prints are in transit.
+                    </small>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -104,6 +376,8 @@
         "Aquaman (rolling table)",
         "Megalo",
     ];
+
+    var fileID = `<%= print._id %>`;
 
     function setPrinters(currentLocation) {
         var printerSelect = document.getElementById("printer-select");
@@ -171,4 +445,42 @@
             "printer-select"
         ).value = `<%=print.printingData.printer%>`;
     }
+
+    document.getElementById("finalWeight").onchange = function (e) {
+        console.log(document.getElementById("initialWeightSmall"));
+        var finalWeight = e.target.value;
+        var initialWeight = parseInt(
+            document.getElementById("initialWeightSmall").value
+        );
+        var weightChange = initialWeight - finalWeight;
+        document.getElementById("weightChange").innerHTML =
+            "Total change in roll weight: " + weightChange + "g";
+    };
+
+    document.getElementById("failPrint").onclick = function () {
+        $.ajax({
+            type: "POST",
+            url: "/prints/printfail",
+            data: {
+                fileID: fileID,
+            },
+            dataType: "json",
+        }).done(function () {
+            console.log("done???");
+            location.reload();
+        });
+    };
+    document.getElementById("successPrint").onclick = function () {
+        console.log("here");
+        $.ajax({
+            type: "POST",
+            url: "/prints/printsuccess",
+            data: {
+                fileID: fileID,
+            },
+            dataType: "json",
+        }).done(function () {
+            location.reload();
+        });
+    };
 </script>

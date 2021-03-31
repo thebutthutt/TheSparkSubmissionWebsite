@@ -472,7 +472,7 @@
 
                 <div class="col-xl-4 col-lg-6 col-md-12">
                     <!-- prettier-ignore -->
-                    <% if (print.isPaid) {%> 
+                    <% if (print.isReadyToPrint) {%> 
                         <%- include ("../../partials/PrintDetails/startPrinting", {print:print}) %> 
                     <%}%>
                     <%- include ("../../partials/PrintDetails/requestAndReview", {print:print, filePath:filePath, gcodePath:gcodePath}) %> 
@@ -485,7 +485,9 @@
                     <!-- prettier-ignore -->
                     <%if(isSuperAdmin && print.isPendingWaive) {%> 
                         <%- include ("../../partials/PrintDetails/waiveCard", {print:print}) %> 
-                    <%}%> 
+                    <%}%>
+
+                    <!-- prettier-ignore -->
                     <% if (print.canBeReviewed) { %>
                     <div class="shadow card">
                         <div class="card-body">
@@ -496,21 +498,18 @@
                             {print:print}) %>
                         </div>
                     </div>
-                    <!-- prettier-ignore -->
-                    <% } else { %> 
-                        <%if (print.isPrinted) {%> 
-                            <%- include ("../../partials/PrintDetails/contact", {print:print}) %> 
-                            <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
-                        <%} else { %> 
-                            <%if (!print.isRejected) {%> 
-                                <%- include ("../../partials/PrintDetails/finishPrinting", {print:print}) %> 
-                                <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
-                                
-                            <%} else {%> 
-                                <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
-                            <%}%> 
-                        <%}%> 
                     <% } %>
+                    <!-- prettier-ignore -->
+                    
+                    <%if (print.isPrinted) {%> 
+                        <%- include ("../../partials/PrintDetails/contact", {print:print}) %>
+                    <%}%>
+
+                    <%if (print.isReadyToPrint) {%> 
+                        <%- include ("../../partials/PrintDetails/finishPrinting", {print:print}) %> 
+                    <%}%> 
+
+                    <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                 </div>
             </div>
         </div>
@@ -682,150 +681,6 @@
                         >
                             <span aria-hidden="true">&times;</span>
                         </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="/prints/printfinish" method="POST">
-                            <input
-                                type="hidden"
-                                name="fileID"
-                                value="<%= print._id %>"
-                            />
-
-                            <div class="form-group">
-                                <p style="font-size: 1.5em">
-                                    Weigh This Print!
-                                </p>
-                                <div class="row">
-                                    <div class="col">
-                                        <label
-                                            >How many copies of this print are
-                                            you weighing?</label
-                                        >
-                                        <div class="input-group mb-3">
-                                            <input
-                                                type="number"
-                                                class="form-control"
-                                                placeholder="Copies"
-                                                name="numCopies"
-                                                aria-label="Final weight"
-                                                aria-describedby="basic-addon2"
-                                            />
-                                            <div class="input-group-append">
-                                                <span
-                                                    class="input-group-text"
-                                                    id="basic-addon2"
-                                                    >copies</span
-                                                >
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <label
-                                            >How much does that many copies
-                                            weigh?</label
-                                        >
-                                        <div class="input-group mb-3">
-                                            <input
-                                                type="number"
-                                                class="form-control"
-                                                placeholder="Weight"
-                                                name="weight"
-                                                aria-label="Final weight"
-                                                aria-describedby="basic-addon2"
-                                            />
-                                            <div class="input-group-append">
-                                                <span
-                                                    class="input-group-text"
-                                                    id="basic-addon2"
-                                                    >grams</span
-                                                >
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label
-                                            >All requested copies of this print
-                                            weigh:</label
-                                        >
-                                        <div class="input-group mb-3">
-                                            <input
-                                                type="number"
-                                                class="form-control"
-                                                placeholder="Weight for all copies"
-                                                aria-label="Final weight"
-                                                aria-describedby="basic-addon2"
-                                                readonly
-                                            />
-                                            <div class="input-group-append">
-                                                <span
-                                                    class="input-group-text"
-                                                    id="basic-addon2"
-                                                    >grams</span
-                                                >
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <p style="font-size: 1.5em">
-                                    Where are these objects right now?
-                                </p>
-                                <div
-                                    class="btn-group btn-group-toggle btn-block"
-                                    data-toggle="buttons"
-                                >
-                                    <label
-                                        class="btn btn-outline-primary d-flex align-items-center justify-content-center"
-                                        style="width: 50%"
-                                    >
-                                        <input
-                                            type="radio"
-                                            name="location"
-                                            id="willis"
-                                            value="Willis Library"
-                                            required
-                                        />
-                                        <p class="mb-0" style="font-size: 2em">
-                                            Willis Library
-                                        </p>
-                                    </label>
-                                    <label
-                                        class="btn btn-outline-primary d-flex align-items-center justify-content-center"
-                                        style="width: 50%"
-                                    >
-                                        <input
-                                            type="radio"
-                                            name="location"
-                                            id="dp"
-                                            value="Discovery Park"
-                                            required
-                                        />
-                                        <p class="mb-0" style="font-size: 2em">
-                                            Discovery Park
-                                        </p>
-                                    </label>
-                                </div>
-                            </div>
-                            <small>
-                                If these files are not currently at the
-                                requested pickup location, tell Sean to send the
-                                prints to the other location. The patron will be
-                                notified via email that their prints are in
-                                transit.
-                            </p>
-                            <button
-                                type="submit"
-                                class="btn btn-block btn-lg btn-success"
-                                formmethod="post"
-                                formaction="/prints/printfinish"
-                            >
-                                Send Email to Patron!
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>

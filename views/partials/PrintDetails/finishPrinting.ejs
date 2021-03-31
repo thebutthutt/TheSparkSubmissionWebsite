@@ -7,7 +7,7 @@
 
 <div class="card shadow mb-3">
     <div class="card-body">
-        <h3>Finish Printing</h3>
+        <h3>Printing Status</h3>
         <% console.log((print.printingData.copiesPrinting || 0) /
         parseInt(print.copies))%>
         <div class="row">
@@ -31,8 +31,8 @@
                     ><strong>Printing</strong>
                 </p>
                 <p>
-                    <%=print.printingData.copiesPrinting%>/<%=print.copies%>
-                    copies printing
+                    <%=print.printingData.copiesPrinting ||
+                    0%>/<%=print.copies%> copies printing
                 </p>
             </div>
             <div class="col">
@@ -50,28 +50,18 @@
             </div>
         </div>
         <div class="progress">
-            <div
-                class="progress-bar bg-success"
-                role="progressbar"
-                style="
-                    width: <%=(
-                            (print.printingData.copiesPrinted || 0) /
-                                parseInt(print.copies)
-                        ) * 100 %>%;
-                "
+            <!-- prettier-ignore -->
+            <div class="progress-bar bg-success" role="progressbar"
+                style=" width: <%=( (print.printingData.copiesPrinted || 0) / parseInt(print.copies) ) * 100 %>%"
                 aria-valuenow="<%=(print.printingData.copiesPrinted || 0)%>"
                 aria-valuemin="0"
                 aria-valuemax="<%=print.copies%>"
             ></div>
+            <!-- prettier-ignore -->
             <div
                 class="progress-bar bg-warning"
                 role="progressbar"
-                style="
-                    width: <%=(
-                            (print.printingData.copiesPrinting || 0) /
-                                parseInt(print.copies)
-                        ) * 100%>%;
-                "
+                style=" width: <%=( (print.printingData.copiesPrinting || 0) / parseInt(print.copies) ) * 100%>%"
                 aria-valuenow="<%=(print.printingData.copiesPrinting || 0)%>"
                 aria-valuemin="0"
                 aria-valuemax="<%=print.copies%>"

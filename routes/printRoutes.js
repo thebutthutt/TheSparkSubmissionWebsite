@@ -905,11 +905,7 @@ module.exports = function (app) {
 
     //-----------------------PRINT SUCCESS-----------------------
     app.post("/prints/printsuccess", isLoggedIn, function (req, res) {
-        var fileID = req.body.fileID || req.query.fileID;
-        var copiesPrinting =
-            req.body.copiesPrinting || req.query.copiesPrinting;
-
-        printHandler.printSuccess(fileID, copiesPrinting, function callback() {
+        printHandler.printSuccess(req.body.fileID, function callback() {
             res.json(["done"]);
         });
     });
@@ -923,20 +919,9 @@ module.exports = function (app) {
     });
 
     app.post("/prints/printfinish", isLoggedIn, function (req, res) {
-        var fileID = req.body.fileID || req.query.fileID;
-        var numCopies = req.body.numCopies || req.query.numCopies;
-        var weight = req.body.weight || req.query.weight;
-        var location = req.body.location || req.query.location;
-        console.log(numCopies, weight, location);
-        printHandler.printFinished(
-            fileID,
-            numCopies,
-            weight,
-            location,
-            function callback() {
-                res.redirect("/prints/preview?fileID=" + fileID);
-            }
-        );
+        printHandler.printFinished(req.body, function callback() {
+            res.redirect("/prints/preview?fileID=" + req.body.fileID);
+        });
     });
 
     //-----------------------PRINT FAIL-----------------------
