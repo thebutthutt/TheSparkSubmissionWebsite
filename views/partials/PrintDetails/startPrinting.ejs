@@ -87,8 +87,12 @@
                                 <option selected disabled value="">
                                     Choose...
                                 </option>
-                                <option value="willis">Willis Library</option>
-                                <option value="dp">Discovery Park</option>
+                                <option value="Willis Library">
+                                    Willis Library
+                                </option>
+                                <option value="Discovery Park">
+                                    Discovery Park
+                                </option>
                             </select>
                         </div>
                         <div class="col">
@@ -301,10 +305,12 @@
                                     <option value="" selected disabled>
                                         Where are these objects now?
                                     </option>
-                                    <option value="willis">
+                                    <option value="Willis Library">
                                         Willis Library
                                     </option>
-                                    <option value="dp">Discovery Park</option>
+                                    <option value="Discovery Park">
+                                        Discovery Park
+                                    </option>
                                 </select>
                                 <!-- <div
                                     class="btn-group-vertical btn-group-toggle btn-block"
@@ -382,7 +388,7 @@
     function setPrinters(currentLocation) {
         var printerSelect = document.getElementById("printer-select");
         printerSelect.innerHTML = "";
-        if (currentLocation == "willis") {
+        if (currentLocation == "Willis Library") {
             var none = document.createElement("option");
             none.value = "";
             none.innerHTML = "Select a printer...";
@@ -394,7 +400,7 @@
                 opt.innerHTML = thisPrinter;
                 printerSelect.appendChild(opt);
             }
-        } else if (currentLocation == "dp") {
+        } else if (currentLocation == "Discovery Park") {
             var none = document.createElement("option");
             none.value = "";
             none.innerHTML = "Select a printer...";

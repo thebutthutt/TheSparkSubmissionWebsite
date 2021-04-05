@@ -87,6 +87,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 // routes ======================================================================
 require("./routes/routes.js")(app); // load our routes and pass in our app and fully configured passport
 require("./routes/printRoutes.js")(app); // load our routes and pass in our app and fully configured passport
+require("./routes/getRequests.js")(app); // load our routes and pass in our app and fully configured passport
 require("./routes/userRoutes.js")(app, passport); // load our routes and pass in our app and fully configured passport
 //require("./routes/cleRoutes.js")(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
 //require("./routes/cameraRoutes.js")(app, bookingModel, cameraHandler); // load our routes and pass in our app and fully configured passport

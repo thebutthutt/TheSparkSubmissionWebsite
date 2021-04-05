@@ -13,18 +13,6 @@ var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
 
 module.exports = {
-    //return the number of new prints in the queue
-    metaInfo: function () {},
-
-    calcFileVolume: function (fileID) {
-        printRequestModel.findOne(
-            {
-                "files._id": fileID,
-            },
-            function () {}
-        );
-    },
-
     //function receives the input from filled out request form and saves to the database
     addPrint: function (fields, submissionDetails, prints) {
         var now = new Date();
@@ -308,7 +296,7 @@ module.exports = {
                         .newTechNotes.push(newNoteObject);
                     result.save();
                     //now find the fully updated top level submission so we can check if all the files have been reviewed
-                    module.exports.setFlags(id, function () {
+                    module.exports.checkAllReviewed(id, function () {
                         callback();
                     });
                 }
@@ -339,7 +327,7 @@ module.exports = {
                     }
                     console.log(result);
                     //now find the fully updated top level submission so we can check if all the files have been reviewed
-                    module.exports.setFlags(id, function () {
+                    module.exports.checkAllReviewed(id, function () {
                         callback();
                     });
                 }
@@ -611,14 +599,11 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 }
-                module.exports.setFlags(fileID, function () {});
-                //emailer.readyForPickup(result.patron.email, result.files.id(fileID).realFileName);
                 if (isInTransit) {
                     //newmailer.fileInTransit(result, result.files.id(fileID));
                 } else {
                     newmailer.readyForPickup(result, result.files.id(fileID));
                 }
-                //newmailer.readyForPickup(result, result.files.id(fileID));
             }
         );
     },
@@ -951,7 +936,7 @@ module.exports = {
     },
 
     //set appropriate flags for top level submission
-    setFlags: function (submissionID, callback) {
+    checkAllReviewed: function (submissionID, callback) {
         printRequestModel.findOne(
             {
                 "files._id": submissionID,
@@ -1059,7 +1044,7 @@ module.exports = {
                         //save top level request db entry
                         if (err) console.log(err);
                     });
-                    module.exports.setFlags(
+                    module.exports.checkAllReviewed(
                         result.files[0]._id,
                         function () {}
                     ); //now set all the flags of the updated top level submission

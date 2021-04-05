@@ -8,6 +8,12 @@
             href="../../public/css/prints.css"
         />
         <script src="../public/js/prints.js"></script>
+
+        <style>
+            th {
+                border-top: none !important;
+            }
+        </style>
     </head>
 
     <body>
@@ -20,91 +26,67 @@
                 </div>
                 <div class="col">
                     <div class="shadow card">
-                        <ol class="list-group list-group-flush border-top-0">
-                            <li class="list-group-item">
-                                <div class="row">
-                                    <div class="col-2">
-                                        <strong>Name</strong>
-                                    </div>
-                                    <div class="col-2">
-                                        <strong>Submitted</strong>
-                                    </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th
+                                        scope="col"
+                                        style="width: 10%"
+                                        class="name-col"
+                                    >
+                                        Name
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        style="width: 10%"
+                                        class="date-col"
+                                    >
+                                        Submitted
+                                    </th>
 
+                                    <!-- prettier-ignore -->
+                                    <th scope="col "style="width: 10%">
                                     <%if (printPage == 'newSub') { %>
-                                    <div class="col-2">
-                                        <strong>Send</strong>
-                                    </div>
-                                    <%}%> <%if (printPage == 'pendpay' ||
-                                    printPage == 'pendpaystale') { %>
-                                    <div class="col-2">
-                                        <strong>Reviewed</strong>
-                                    </div>
-                                    <%}%> <%if (printPage == 'ready') { %>
-                                    <div class="col-2">
-                                        <strong>Paid</strong>
-                                    </div>
-                                    <%}%> <% if (printPage == 'rejected') {%>
-                                    <div class="col-2">
-                                        <strong>Reviewed</strong>
-                                    </div>
+                                        Send
+                                    <%} else if (printPage == 'pendpay' || printPage == 'pendpaystale' || printPage == 'rejected') { %>
+                                        Reviewed
+                                    <%} else if (printPage == 'ready') { %>
+                                        Paid
+                                    <%}else if (printPage == 'pickup' || printPage == 'inTransit' || printPage == 'rejected') { %>
+                                        Printed
+                                    <%} else if (printPage == 'completed') { %>
+                                        Picked Up
+                                    <%}else if (printPage == 'all') { %>
+                                        Status
                                     <%}%>
+                                    </th>
 
-                                    <div class="col">
-                                        <div class="row">
-                                            <%if (printPage == 'pickup' ||
-                                            printPage == 'inTransit') {%>
-                                            <div class="col-3">
-                                                <strong>Printed</strong>
-                                            </div>
-                                            <%}%> <%if (printPage ==
-                                            'completed') {%>
-                                            <div class="col-3">
-                                                <strong>Picked Up</strong>
-                                            </div>
-                                            <%}%> <% if (printPage == 'all') {%>
-                                            <div class="col-3">
-                                                <strong>Status</strong>
-                                            </div>
-                                            <%}%>
-
-                                            <div class="col">
-                                                <strong>File</strong>
-                                            </div>
-
-                                            <%if (printPage == 'completed') {%>
-                                            <div class="col text-right">
-                                                <a class="clear-btn" href="">
-                                                    Clear All
-                                                </a>
-                                            </div>
-                                            <%}%> <%if (printPage == 'rejected')
-                                            {%>
-                                            <div class="col text-right">
-                                                <a
-                                                    class="clear-rejected-btn"
-                                                    href=""
-                                                >
-                                                    Clear All
-                                                </a>
-                                            </div>
-                                            <%}%>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <%dbdata.forEach(function (item) {%>
-                            <li class="list-group-item">
-                                <div class="row">
-                                    <div class="col-2">
+                                    <th scope="col" class="big-head-col">
+                                        Files
+                                    </th>
+                                    <th class="little-col"></th>
+                                    <th class="little-col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%dbdata.forEach(function (item) {%> <%i = 0%>
+                                <% item.files.forEach(function (file) {%>
+                                <tr>
+                                    <%if (i==0){%>
+                                    <td rowspan="<%=item.files.length%>">
                                         <%= item.patron.fname %> <%=
                                         item.patron.lname %>
-                                    </div>
-                                    <div class="col-2">
-                                        <%=item.dateSubmitted%>
-                                    </div>
-
-                                    <% if (printPage == 'newSub') {%>
-                                    <div class="col-2">
+                                    </td>
+                                    <td
+                                        class="date-col"
+                                        rowspan="<%=item.files.length%>"
+                                    >
+                                        <%=item.timestampSubmitted.toLocaleDateString('en-US')%>
+                                    </td>
+                                    <%}%>
+                                    <td>
+                                        <!-- prettier-ignore-->
+                                        <%if (printPage == 'newSub' && i==0){%>
                                         <%if(!item.allFilesReviewed){%>
                                         <span
                                             class="d-inline-block"
@@ -167,45 +149,30 @@
                                                 </svg>
                                             </button>
                                         </span>
+                                        <%}%> <%}%>
+                                        <!-- prettier-ignore -->
+                                        <%if (printPage == 'pendpay' || printPage == 'pendpaystale' || printPage == 'rejected') { %>
+                                        <%=file.timestampReviewed.toLocaleDateString('en-US')%>
                                         <%}%>
-                                    </div>
-                                    <%}%> <%if (printPage == 'pendpay' ||
-                                    printPage == 'pendpaystale' || printPage ==
-                                    'rejected') {%>
-                                    <div class="col-2">
-                                        <%=item.datePaymentRequested%>
-                                    </div>
-                                    <%}%> <% if (printPage == 'ready') {%>
-                                    <div class="col-2"><%=item.datePaid%></div>
-                                    <%}%>
 
-                                    <div class="col">
-                                        <!-- prettier-ignore-->
-                                        <%i = 0%> 
-                                            <% item.files.forEach(function (file) {%> 
-                                                
-                                        <%i++%>
-                                        <div
-                                            class="row <%if (i > 1) {%> mt-3 <%}%>"
-                                        >
-                                            <%if (printPage == 'pickup' ||
-                                            printPage == 'inTransit') {%>
-                                            <div class="col-3">
-                                                <%if (file.datePrinted !=
-                                                "Never") {%>
-                                                <%=file.datePrinted%> <%}%>
-                                            </div>
+                                        <!-- prettier-ignore -->
+                                        <%if (printPage == 'ready') { %>
+                                        <%=file.timestampPaid.toLocaleDateString('en-US')%>
+                                        <%}%>
 
-                                            <%}%> <% if (printPage ==
-                                            'completed') {%>
-                                            <div class="col-3">
-                                                <%if (file.datePickedUp !=
-                                                "Never") {%>
-                                                <%=file.datePickedUp%> <%}%>
-                                            </div>
-                                            <%}%> <% if (printPage == 'all') {%>
-                                            <div class="col-3">
-                                                <% if (file.isRejected) { %>
+                                        <!-- prettier-ignore -->
+                                        <%if (printPage == 'pickup' || printPage == 'inTransit' || printPage == 'rejected') { %>
+                                        <%=file.timestampPrinted.toLocaleDateString('en-US')%>
+                                        <%}%>
+
+                                        <!-- prettier-ignore -->
+                                        <%if (printPage == 'completed') { %>
+                                        <%=file.timestampPickedUp.toLocaleDateString('en-US')%>
+                                        <%}%>
+
+                                        <!-- prettier-ignore -->
+                                        <%if (printPage == 'all') { %>
+                                        <% if (file.isRejected) { %>
                                                 Rejected <% } else if
                                                 (file.isNewSubmission) { %> New
                                                 <% } else if
@@ -217,29 +184,28 @@
                                                 !file.isPickedUp) { %> Waiting
                                                 for pickup <% } else { %>
                                                 Complete <% } %>
-                                            </div>
-                                            <%}%>
+                                        <%}%>
+                                    </td>
+                                    <td>
+                                        <a
+                                            class="no font-weight-bold"
+                                            href='<%= "/prints/preview?fileID=" + file._id%>'
+                                        >
+                                            <%=file.realFileName%>
+                                        </a>
+                                        &nbsp; <%- include
+                                        ("../../partials/PrintDetails/flags",
+                                        {file:file, isAll: isall, printPage:
+                                        printPage}) %>
+                                    </td>
+                                    <td>
+                                        <%- include
+                                        ("../../partials/PrintDetails/fileBurger",
+                                        {file:file, item:item}) %>
+                                    </td>
 
-                                            <div class="col">
-                                                <a
-                                                    class="no"
-                                                    href='<%= "/prints/preview?fileID=" + file._id%>'
-                                                >
-                                                    <%=file.realFileName%>
-                                                </a>
-                                                &nbsp; <%- include
-                                                ("../../partials/PrintDetails/flags",
-                                                {file:file, isAll: isall}) %>
-                                            </div>
-                                            <div class="col-1 text-right">
-                                                <%- include
-                                                ("../../partials/PrintDetails/fileBurger",
-                                                {file:file, item:item}) %>
-                                            </div>
-                                        </div>
-                                        <%})%>
-                                    </div>
-                                    <div class="col-auto">
+                                    <%if (i==0){%>
+                                    <td rowspan="<%=item.files.length%>">
                                         <button
                                             type="button"
                                             style="
@@ -265,11 +231,12 @@
                                                 />
                                             </svg>
                                         </button>
-                                    </div>
-                                </div>
-                            </li>
-                            <%})%>
-                        </ol>
+                                    </td>
+                                    <%}%> <%i++%>
+                                </tr>
+                                <%})%> <%})%>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
