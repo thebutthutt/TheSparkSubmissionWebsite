@@ -37,7 +37,9 @@
                                         <div class="col-3">
                                             <strong>EUID</strong>
                                         </div>
-                                        <div class="col"><%=user.local.euid%></div>
+                                        <div class="col">
+                                            <%=user.local.euid%>
+                                        </div>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
@@ -62,7 +64,9 @@
                                             <strong>User Type</strong>
                                         </div>
                                         <div class="col">
-                                            <%if(user.isSuperAdmin) {%> Super Admin <% } else { %> Technician <% } %>
+                                            <%if(user.isSuperAdmin) {%> Super
+                                            Admin <% } else { %> Technician <% }
+                                            %>
                                         </div>
                                     </div>
                                 </li>
@@ -82,43 +86,54 @@
                             </li>
                         </ul>
                     </div>
+                    <%if(user.isSuperAdmin) {%>
                     <div id="allUsers">
                         <div class="shadow card">
                             <div class="card-header border-bottom">
                                 <h4 class="mb-0 float-left">All Users</h4>
                             </div>
-                            <ul class="list-group list-group-flush appendUsersHere"></ul>
+                            <ul
+                                class="list-group list-group-flush appendUsersHere"
+                            ></ul>
                         </div>
                     </div>
+                    <%}%>
                 </div>
 
                 <div class="col">
                     <div class="card shadow mb-4">
                         <div class="card-header">
-                            <h4 class="mb-0">Queue Statuses</h4>
+                            <h4 class="mb-0">In Transit</h4>
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-auto">
-                                    <h5>
-                                        <%=queueData.newPrints.numTotal%> New
-                                        Submission<%if(queueData.newPrints.numTotal != 1){%>s<%}%>
-                                    </h5>
-                                    <p class="mb-0">
-                                        <%=queueData.newPrints.numWillis%> at Willis, <%=queueData.newPrints.numDP%> at
-                                        DP
-                                    </p>
-                                </div>
-                                <div class="col border-right"></div>
-                                <div class="col"></div>
-                                <div class="col-auto">
-                                    <h5><%=queueData.readyPrints.numTotal%> Ready To Print</h5>
-                                    <p class="mb-0">
-                                        <%=queueData.readyPrints.numWillis%> at Willis, <%=queueData.readyPrints.numDP%>
-                                        at DP
-                                    </p>
-                                </div>
-                            </div>
+                            <h5>Going to Willis Library</h5>
+                            <ol class="list-group">
+                                <%for (var submission of inTransit) {%> <%for
+                                (var file of submission.files) {%> <%if
+                                (file.pickupLocation == "Willis Library") {%>
+                                <li class="list-group-item">
+                                    <a
+                                        href='<%= "/prints/preview/?fileID=" + file._id%>'
+                                        ><%=file.realFileName%></a
+                                    >
+                                </li>
+                                <%}%> <%}%> <%}%>
+                            </ol>
+                            <hr />
+                            <h5>Going to Discovery Park</h5>
+
+                            <ol class="list-group">
+                                <%for (var submission of inTransit) {%> <%for
+                                (var file of submission.files) {%> <%if
+                                (file.pickupLocation == "Discovery Park") {%>
+                                <li class="list-group-item">
+                                    <a
+                                        href='<%= "/prints/preview/?fileID=" + file._id%>'
+                                        ><%=file.realFileName%></a
+                                    >
+                                </li>
+                                <%}%> <%}%> <%}%>
+                            </ol>
                         </div>
                     </div>
                     <%if (isSuperAdmin) {%>
@@ -127,16 +142,26 @@
                             <div class="card-header border-bottom">
                                 <h4 class="mb-0">Files Pending Delete</h4>
                             </div>
-                            <ul class="list-group list-group-flush appendDeleteHere">
-                                <li class="list-group-item">No files pending delete</li>
+                            <ul
+                                class="list-group list-group-flush appendDeleteHere"
+                            >
+                                <li class="list-group-item">
+                                    No files pending delete
+                                </li>
                             </ul>
                         </div>
                         <div class="shadow card mb-4">
                             <div class="card-header border-bottom">
-                                <h4 class="mb-0">Files Pending Payment Waive</h4>
+                                <h4 class="mb-0">
+                                    Files Pending Payment Waive
+                                </h4>
                             </div>
-                            <ul class="list-group list-group-flush appendWaiveHere">
-                                <li class="list-group-item">No files pending waive</li>
+                            <ul
+                                class="list-group list-group-flush appendWaiveHere"
+                            >
+                                <li class="list-group-item">
+                                    No files pending waive
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -158,13 +183,26 @@
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="staticBackdropLabel">Edit Account</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <h5
+                                    class="modal-title"
+                                    id="staticBackdropLabel"
+                                >
+                                    Edit Account
+                                </h5>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    aria-label="Close"
+                                >
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form action="/changeName?euid=<%=user.local.euid%>" method="post">
+                                <form
+                                    action="/changeName?euid=<%=user.local.euid%>"
+                                    method="post"
+                                >
                                     <div class="form-group">
                                         <label>Change your screen name</label>
                                         <div class="input-group mb-3">
@@ -189,7 +227,10 @@
                                     </div>
                                 </form>
                                 <hr />
-                                <form action="/changeEmail?euid=<%=user.local.euid%>" method="post">
+                                <form
+                                    action="/changeEmail?euid=<%=user.local.euid%>"
+                                    method="post"
+                                >
                                     <div class="form-group">
                                         <label>Change your email</label>
                                         <div class="input-group mb-3">
@@ -213,7 +254,12 @@
                                         </div>
                                     </div>
                                 </form>
-                                <a type="button" class="btn btn-danger" href="/deleteme">Delete Account</a>
+                                <a
+                                    type="button"
+                                    class="btn btn-danger"
+                                    href="/deleteme"
+                                    >Delete Account</a
+                                >
                             </div>
                         </div>
                     </div>

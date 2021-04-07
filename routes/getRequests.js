@@ -67,7 +67,6 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
-                console.log(data);
                 res.render("pages/prints/allPrints", {
                     pgnum: 4, //prints
                     dbdata: data,
@@ -125,7 +124,19 @@ module.exports = function (app) {
                             $filter: {
                                 input: "$files",
                                 as: "item",
-                                cond: { $eq: ["$$item.isReadyToPrint", true] },
+                                cond: {
+                                    $and: [
+                                        {
+                                            $eq: [
+                                                "$$item.isReadyToPrint",
+                                                true,
+                                            ],
+                                        },
+                                        {
+                                            $eq: ["$$item.isStarted", false],
+                                        },
+                                    ],
+                                },
                             },
                         },
                     },
@@ -164,6 +175,9 @@ module.exports = function (app) {
                                                 "$$item.isReadyToPrint",
                                                 true,
                                             ],
+                                        },
+                                        {
+                                            $eq: ["$$item.isStarted", false],
                                         },
                                         {
                                             $eq: [
@@ -213,6 +227,9 @@ module.exports = function (app) {
                                             ],
                                         },
                                         {
+                                            $eq: ["$$item.isStarted", false],
+                                        },
+                                        {
                                             $eq: [
                                                 "$$item.printLocation",
                                                 "Discovery Park",
@@ -232,6 +249,120 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "ready",
+                    location: "Discovery Park",
+                    isAdmin: true,
+                    isSuperAdmin: req.user.isSuperAdmin,
+                });
+            }
+        );
+    });
+
+    app.get("/prints/printing", isLoggedIn, function (req, res) {
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: { $eq: ["$$item.isStarted", true] },
+                            },
+                        },
+                    },
+                },
+                { $match: { "files.0": { $exists: true } } },
+            ],
+            function (err, data) {
+                //loading every single top level request FOR NOW
+                res.render("pages/prints/allPrints", {
+                    pgnum: 4, //tells the navbar what page to highlight
+                    dbdata: data,
+                    printPage: "printing",
+                    location: "all",
+                    isAdmin: true,
+                    isSuperAdmin: req.user.isSuperAdmin,
+                });
+            }
+        );
+    });
+
+    app.get("/prints/printingwillis", isLoggedIn, function (req, res) {
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $and: [
+                                        {
+                                            $eq: ["$$item.isStarted", true],
+                                        },
+                                        {
+                                            $eq: [
+                                                "$$item.printingData.location",
+                                                "Willis Library",
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+                { $match: { "files.0": { $exists: true } } },
+            ],
+            function (err, data) {
+                //loading every single top level request FOR NOW
+                res.render("pages/prints/allPrints", {
+                    pgnum: 4, //tells the navbar what page to highlight
+                    dbdata: data,
+                    printPage: "printing",
+                    location: "Willis Library",
+                    isAdmin: true,
+                    isSuperAdmin: req.user.isSuperAdmin,
+                });
+            }
+        );
+    });
+
+    app.get("/prints/printingdp", isLoggedIn, function (req, res) {
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $and: [
+                                        {
+                                            $eq: ["$$item.isStarted", true],
+                                        },
+                                        {
+                                            $eq: [
+                                                "$$item.printingData.location",
+                                                "Discovery Park",
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+                { $match: { "files.0": { $exists: true } } },
+            ],
+            function (err, data) {
+                //loading every single top level request FOR NOW
+                res.render("pages/prints/allPrints", {
+                    pgnum: 4, //tells the navbar what page to highlight
+                    dbdata: data,
+                    printPage: "printing",
                     location: "Discovery Park",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,

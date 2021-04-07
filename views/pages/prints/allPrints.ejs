@@ -50,7 +50,7 @@
                                         Send
                                     <%} else if (printPage == 'pendpay' || printPage == 'pendpaystale' || printPage == 'rejected') { %>
                                         Reviewed
-                                    <%} else if (printPage == 'ready') { %>
+                                    <%} else if (printPage == 'ready' || printPage == 'printing') { %>
                                         Paid
                                     <%}else if (printPage == 'pickup' || printPage == 'inTransit' || printPage == 'rejected') { %>
                                         Printed
@@ -71,7 +71,10 @@
                             <tbody>
                                 <%dbdata.forEach(function (item) {%> <%i = 0%>
                                 <% item.files.forEach(function (file) {%>
-                                <tr>
+
+                                <tr
+                                    class="<%if(item.allFilesReviewed && printPage=='newSub'){%>table-warning<%}%>"
+                                >
                                     <%if (i==0){%>
                                     <td rowspan="<%=item.files.length%>">
                                         <%= item.patron.fname %> <%=
@@ -156,7 +159,7 @@
                                         <%}%>
 
                                         <!-- prettier-ignore -->
-                                        <%if (printPage == 'ready') { %>
+                                        <%if (printPage == 'ready' || printPage=="printing") { %>
                                         <%=file.timestampPaid.toLocaleDateString('en-US')%>
                                         <%}%>
 

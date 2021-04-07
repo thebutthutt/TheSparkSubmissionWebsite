@@ -81,6 +81,16 @@ var singlePrintSchema = mongoose.Schema({
     timeHours: { type: Number, default: 0 },
     timeMinutes: { type: Number, default: 0 },
     grams: { type: Number, default: 0 },
+    estimations: {
+        slicedHours: { type: Number, default: 0 },
+        slicedMinutes: { type: Number, default: 0 },
+        slicedGrams: { type: Number, default: 0 },
+        slicedCopies: { type: Number, default: 0 },
+        totalHours: { type: Number, default: 0 },
+        totalMinutes: { type: Number, default: 0 },
+        totalGrams: { type: Number, default: 0 },
+    },
+
     realGrams: { type: Number, default: 0 }, //actual grams entered after printing is finished
     completedLocation: { type: String, default: "" },
 

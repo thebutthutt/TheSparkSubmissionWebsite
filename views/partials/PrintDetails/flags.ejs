@@ -17,39 +17,52 @@
 <!-- prettier-ignore -->
 <%} %>
 
-<% if (printPage == 'ready') { %>
-    <% if (file.isStarted) { %> <%if (file.printingData) {%>
+<!-- ---------------------------- <Ready files ----------------------------- -->
+
+<% if (printPage == 'ready') { %> <% if (file.isStarted) { %> <%if
+(file.printingData) {%>
 <span class="badge font-weight-normal alert-success"
     >Printing at <%=file.printingData.location%></span
 >
 <%} else {%>
 <span class="badge font-weight-normal alert-success">Printing</span>
 <%}%> <%} else {%>
-<span class="badge font-weight-normal alert-info"
+<span class="badge font-weight-normal alert-light"
     >Print at <%=file.printLocation%></span
 >
 <%}%>
-
 <span class="badge font-weight-normal alert-primary"
-    ><%=file.printingData.copiesPrinted || 0%>/<%=file.copies%> printed</span
+    ><%=file.printingData.copiesPrinted%>/<%=file.copies%> printed</span
 >
 
+<%}%>
+
+<!-- --------------------------- Printing Files ---------------------------- -->
+
+<%if(printPage == 'printing') {%>
+<span class="badge font-weight-normal alert-success"
+    >Printing at <%=file.printingData.location%></span
+>
+<span class="badge font-weight-normal alert-primary"
+    ><%=file.printingData.copiesPrinted%>/<%=file.copies%> printed</span
+>
 <%}%> <% if (printPage == 'pickup') { %>
 <span class="badge font-weight-normal alert-info"
     >Pickup at <%=file.printLocation%></span
 >
-<!-- prettier-ignore -->
 <%} %>
+
+<!-- ----------------------------- In transit ------------------------------ -->
 
 <% if (printPage == 'inTransit') { %>
 <span class="badge font-weight-normal alert-warning"
     >In transit to <%=file.pickupLocation%></span
 >
-<!-- prettier-ignore -->
 <%}%>
 
-<%if (printPage == 'all') {%>
-    <% if (!file.isReviewed) { %>
+<!-- ------------------------------ all files ------------------------------ -->
+
+<%if (printPage == 'all') {%> <% if (!file.isReviewed) { %>
 <span class="badge font-weight-normal alert-primary">Unreviewed</span>
 <% } %> <% if (file.isReadyToPrint) { %> <% if (file.isStarted) { %> <%if
 (file.printingData) {%>

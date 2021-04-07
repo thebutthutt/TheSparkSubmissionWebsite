@@ -83,9 +83,9 @@ module.exports = {
         var inputData = files.map(function (file) {
             return {
                 fileName: file.realFileName,
-                grams: file.grams,
-                timeHours: file.timeHours,
-                timeMinutes: file.timeMinutes,
+                grams: file.estimations.totalGrams,
+                timeHours: file.estimations.totalHours,
+                timeMinutes: file.estimations.totalMinutes,
                 notes: file.patronNotes,
             };
         });
@@ -113,9 +113,9 @@ module.exports = {
             if (file.isRejected == false) {
                 result.push({
                     fileName: file.realFileName,
-                    grams: file.grams,
-                    timeHours: file.timeHours,
-                    timeMinutes: file.timeMinutes,
+                    grams: file.estimations.totalGrams,
+                    timeHours: file.estimations.totalHours,
+                    timeMinutes: file.estimations.totalMinutes,
                     notes: file.patronNotes,
                 });
             }
@@ -198,6 +198,21 @@ module.exports = {
                 },
             })
             .then(console.log("sent payment waived email to", recipient))
+            .catch(console.error);
+    },
+    inTransit: function (submission, readyFile) {
+        var recipient = submission.patron.email;
+        email
+            .send({
+                template: path.join(__dirname, "emails", "inTransit"),
+                message: {
+                    to: recipient,
+                },
+                locals: {
+                    submission: submission,
+                    readyFile: readyFile,
+                },
+            })
             .catch(console.error);
     },
     readyForPickup: function (submission, readyFile) {

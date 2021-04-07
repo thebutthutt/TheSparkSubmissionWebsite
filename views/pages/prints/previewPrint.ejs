@@ -377,7 +377,7 @@
                                         Patron notified on
                                         <%=print.timestampPrinted.toLocaleDateString('en-US')%>
                                     </small>
-                                    <%if(!print.isPrinted){%>
+                                    <%if(print.isPrinted && !print.isPickedUp){%>
                                     <button
                                         data-toggle="modal"
                                         data-target="#modalPickup"
@@ -407,26 +407,7 @@
                                     <small>Not ready yet!</small>
                                     <%}%>
                                 </div>
-                                <div class="sep"></div>
-                                <div class="col timeline-col">
-                                    <h6>Status</h6>
-                                    <% if (print.timestampOfFirstWarning > new
-                                    Date("1971")) { %>
-                                    <small>
-                                        First warning:
-                                        <%=print.timestampOfFirstWarning.toLocaleDateString('en-US')%>
-                                        <br />
-                                        <%}%> <% if
-                                        (print.timestampOfSecondWarning > new
-                                        Date("1971")) { %> Final warning:
-                                        <%=print.timestampOfSecondWarning.toLocaleDateString('en-US')%><br />
-                                        <%}%> <% if
-                                        (print.timestampOfConfiscation > new
-                                        Date("1971")) { %> Reposessed:
-                                        <%=print.timestampOfConfiscation.toLocaleDateString('en-US')%>
-                                        <%}%>
-                                    </small>
-                                </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -487,6 +468,11 @@
                     <%}%>
 
                     <!-- prettier-ignore -->
+                    <%if(print.isInTransit) {%> 
+                        <%- include ("../../partials/PrintDetails/transitCard", {print:print}) %> 
+                    <%}%>
+
+                    <!-- prettier-ignore -->
                     <% if (print.canBeReviewed) { %>
                     <div class="shadow card">
                         <div class="card-body">
@@ -508,7 +494,9 @@
                         <%- include ("../../partials/PrintDetails/finishPrinting", {print:print}) %> 
                     <%}%> 
 
-                    <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
+                    <%if (!print.isNewSubmission ) {%> 
+                        <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
+                    <%}%>
                 </div>
             </div>
         </div>

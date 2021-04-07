@@ -47,45 +47,67 @@ module.exports = function (app, passport) {
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get("/profile", isLoggedIn, function (req, res) {
-        printRequestModel.deleteMany({ files: { $size: 0 } }, function (err, res) {
-            if (err) {
-                console.log(err);
-            } else {
-                //done
-            }
-        });
         //database cleanup
-        var numNew;
-        var numPrint;
-        var whitelist = null;
-        if (req.user.isSuperAdmin) {
-            let rawdata = fs.readFileSync(path.join(__dirname, "../app/whitelist.txt"));
-            whitelist = JSON.parse(rawdata);
-        }
+        // var numNew;
+        // var numPrint;
+        // var whitelist = null;
+        // if (req.user.isSuperAdmin) {
+        //     let rawdata = fs.readFileSync(
+        //         path.join(__dirname, "../app/whitelist.txt")
+        //     );
+        //     whitelist = JSON.parse(rawdata);
+        // }
 
-        //nested callbacks because I'm shit at event driven systems kill me
-        getNumNew(printRequestModel, function (numNewReturn) {
-            numNew = numNewReturn;
-            getNumPrint(printRequestModel, function (numPrintReturn) {
-                numPrint = numPrintReturn;
-                var prints = {
-                    newPrints: numNew,
-                    readyPrints: numPrint,
-                };
-
-                var size = getTotalSize("/home/hcf0018/webserver/Uploads");
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: { $eq: ["$$item.isInTransit", true] },
+                            },
+                        },
+                    },
+                },
+                { $match: { "files.0": { $exists: true } } },
+            ],
+            function (err, data) {
                 res.render("pages/users/profile", {
                     message: req.flash("logoutMessage"),
                     pgnum: 3, //tells the navbar what page to highlight
                     user: req.user, // get the user out of session and pass to template
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
-                    queueData: prints,
-                    sizeData: size,
-                    whitelist: whitelist,
+                    inTransit: data,
                 });
-            });
-        });
+            }
+        );
+
+        //nested callbacks because I'm shit at event driven systems kill me
+        // getNumNew(printRequestModel, function (numNewReturn) {
+        //     numNew = numNewReturn;
+        //     getNumPrint(printRequestModel, function (numPrintReturn) {
+        //         numPrint = numPrintReturn;
+        //         var prints = {
+        //             newPrints: numNew,
+        //             readyPrints: numPrint,
+        //         };
+
+        //         var size = getTotalSize("/home/hcf0018/webserver/Uploads");
+        //         res.render("pages/users/profile", {
+        //             message: req.flash("logoutMessage"),
+        //             pgnum: 3, //tells the navbar what page to highlight
+        //             user: req.user, // get the user out of session and pass to template
+        //             isAdmin: true,
+        //             isSuperAdmin: req.user.isSuperAdmin,
+        //             queueData: prints,
+        //             sizeData: size,
+        //             whitelist: whitelist,
+        //         });
+        //     });
+        // });
     });
 
     app.post("/users/delete", function (req, res) {
@@ -183,18 +205,24 @@ module.exports = function (app, passport) {
     app.post("/users/addWhitelist", function (req, res) {
         var newEUID = req.body.newEUID || req.query.newEUID;
         if (newEUID != null) {
-            let rawdata = fs.readFileSync(path.join(__dirname, "../app/whitelist.txt"));
+            let rawdata = fs.readFileSync(
+                path.join(__dirname, "../app/whitelist.txt")
+            );
             whitelist = JSON.parse(rawdata);
             console.log(whitelist);
             whitelist.push(newEUID);
             console.log(whitelist);
-            fs.writeFile(path.join(__dirname, "../app/whitelist.txt"), JSON.stringify(whitelist), function (err) {
-                if (err) {
-                    console.log("JSON write error", err);
-                } else {
-                    res.redirect("back");
+            fs.writeFile(
+                path.join(__dirname, "../app/whitelist.txt"),
+                JSON.stringify(whitelist),
+                function (err) {
+                    if (err) {
+                        console.log("JSON write error", err);
+                    } else {
+                        res.redirect("back");
+                    }
                 }
-            });
+            );
         }
     });
 
@@ -254,7 +282,10 @@ module.exports = function (app, passport) {
                         fileIDs = []; //clear fileids array
                         singleSubmission.push(submission._id); //submission[i][0] = itemID
                         submission.files.forEach((file) => {
-                            if (file.isPendingWaive == true && file.isRejected == false) {
+                            if (
+                                file.isPendingWaive == true &&
+                                file.isRejected == false
+                            ) {
                                 filenames.push(file.realFileName);
                                 fileIDs.push(file._id);
                             }
@@ -455,13 +486,32 @@ function getNumNew(printRequestModel, callback) {
                 });
             });
 
-            var data = {
+            var aggData = {
                 numTotal: num,
                 numWillis: numW,
                 numDP: numDP,
             };
 
-            callback(data);
+            printRequestModel.aggregate(
+                [
+                    {
+                        $set: {
+                            files: {
+                                $filter: {
+                                    input: "$files",
+                                    as: "item",
+                                    cond: { $eq: ["$$item.isInTransit", true] },
+                                },
+                            },
+                        },
+                    },
+                    { $match: { "files.0": { $exists: true } } },
+                ],
+                function (err, data) {
+                    aggData.transit = data;
+                    callback(aggData);
+                }
+            );
         }
     );
 }

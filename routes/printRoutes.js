@@ -362,6 +362,12 @@ module.exports = function (app) {
         });
     });
 
+    app.post("/prints/arrived", isLoggedIn, function (req, res) {
+        printHandler.markAtPickupLocation(req.body, function callback() {
+            res.json(["done"]);
+        });
+    });
+
     // app.post("/prints/printcomplete", isLoggedIn, function (req, res) {
     //     var fileID = req.body.fileID || req.query.fileID;
     //     var realGrams = req.body.realGrams || req.query.realGrams;

@@ -8,6 +8,7 @@ var fs = require("fs");
 var path = require("path");
 var printRequestModel = require("../app/models/printRequest");
 const NodeStl = require("node-stl");
+const { ConstraintViolationError } = require("ldapjs");
 
 var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
@@ -143,7 +144,6 @@ module.exports = {
     //handles the data for a new top level print request with possibly multiple low level file submissions
     handleSubmission: function (req, callback) {
         //arrays of each files specifications (will only hold one entry each if patron submits only one file)
-        console.log(req.files);
 
         var submissionDetails = {
             classDetails: {
@@ -223,7 +223,7 @@ module.exports = {
         }
         var maker = req.user.name;
         var id = req.body.fileID;
-
+        console.log(req.body);
         printRequestModel.findOne(
             {
                 "files._id": req.body.fileID,
@@ -253,7 +253,6 @@ module.exports = {
         //update the low level print according to the form data
         if (req.body.decision == "accepted") {
             //if the technician accepted the print, update accordingly
-
             printRequestModel.findOneAndUpdate(
                 {
                     "files._id": req.body.fileID,
@@ -267,6 +266,14 @@ module.exports = {
                         "files.$.timeHours": req.body.hours,
                         "files.$.timeMinutes": req.body.minutes,
                         "files.$.grams": req.body.grams,
+                        "files.$.estimations.slicedHours": req.body.hours,
+                        "files.$.estimations.slicedMinutes": req.body.minutes,
+                        "files.$.estimations.slicedGrams": req.body.grams,
+                        "files.$.estimations.slicedCopies": req.body.copies,
+                        "files.$.estimations.totalHours": req.body.totalHours,
+                        "files.$.estimations.totalMinutes":
+                            req.body.totalMinutes,
+                        "files.$.estimations.totalGrams": req.body.totalGrams,
                         "files.$.patronNotes": req.body.patronNotes,
                         //"files.$.techNotes": req.body.technotes,
                         "files.$.approvedBy": maker,
@@ -395,22 +402,19 @@ module.exports = {
                             //print is accepted
                             result.files[i].isPendingPayment = true;
                             if (
-                                result.files[i].timeHours <= 0 &&
-                                result.files[i].timeMinutes <= 59
+                                result.files[i].estimations.totalHours <= 0 &&
+                                result.files[i].estimations.totalMinutes <= 59
                             ) {
                                 //if its less than an hour, just charge one dollar
-                                var thisCopy = 1;
-                                var allCopies =
-                                    thisCopy * result.files[i].copies;
-                                amount += allCopies;
+                                amount += 1;
                             } else {
                                 //charge hours plus minutes out of 60 in cents
-                                var thisCopy = result.files[i].timeHours;
-                                thisCopy += result.files[i].timeMinutes / 60;
-                                var allCopies =
-                                    thisCopy * result.files[i].copies;
-                                amount += allCopies;
+                                amount +=
+                                    result.files[i].estimations.totalHours +
+                                    result.files[i].estimations.totalMinutes /
+                                        60;
                             }
+                            console.log(amount);
                             acceptedFiles.push(result.files[i]._id);
                             if (shouldBeWaived) {
                                 result.files[i].isPendingWaive = true;
@@ -756,24 +760,24 @@ module.exports = {
         );
     },
 
-    printCompleted: function (fileID, realGrams, callback) {
-        printRequestModel.findOne(
-            {
-                "files._id": fileID,
-            },
-            function (err, result) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    module.exports.markCompleted(fileID, realGrams);
-                    console.log("here");
-                    if (typeof callback == "function") {
-                        callback();
-                    }
-                }
-            }
-        );
-    },
+    // printCompleted: function (fileID, realGrams, callback) {
+    //     printRequestModel.findOne(
+    //         {
+    //             "files._id": fileID,
+    //         },
+    //         function (err, result) {
+    //             if (err) {
+    //                 console.log(err);
+    //             } else {
+    //                 module.exports.markCompleted(fileID, realGrams);
+    //                 console.log("here");
+    //                 if (typeof callback == "function") {
+    //                     callback();
+    //                 }
+    //             }
+    //         }
+    //     );
+    // },
 
     printFinished: function (body, callback) {
         var fileID = body.fileID;
@@ -807,12 +811,11 @@ module.exports = {
 
                     if (thisFile.pickupLocation != body.location) {
                         thisFile.isInTransit = true;
-                        //newmailer.fileInTransit(result, thisFile);
+                        newmailer.inTransit(result, thisFile);
                     } else {
                         thisFile.isInTransit = false;
                         newmailer.readyForPickup(result, thisFile);
                     }
-
                     result.save(function (err, res) {
                         if (err) {
                             console.log(err);
@@ -824,6 +827,28 @@ module.exports = {
                         }
                     });
                 }
+            }
+        );
+    },
+
+    markAtPickupLocation: function (body, callback) {
+        printRequestModel.findOne(
+            { "files._id": body.fileID },
+            function (err, submission) {
+                submission.files.id(body.fileID).isInTransit = false;
+                newmailer.readyForPickup(
+                    submission,
+                    submission.files.id(body.fileID)
+                );
+                submission.save(function (err, res) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        if (typeof callback == "function") {
+                            callback();
+                        }
+                    }
+                });
             }
         );
     },

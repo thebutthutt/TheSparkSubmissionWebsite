@@ -213,7 +213,7 @@
         </div>
         <div
             id="collapseThree"
-            class="collapse <% if(print.printingData.copiesPrinted || 0 >= print.copies) {%>show<%}%>"
+            class="collapse <% if(print.printingData.copiesPrinted >= print.copies) {%>show<%}%>"
             aria-labelledby="headingThree"
             data-parent="#accordionExample"
         >
