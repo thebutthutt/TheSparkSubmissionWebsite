@@ -64,16 +64,16 @@ function STLViewer(model, elementID) {
     var onProgress = function (xhr) {
         if (xhr.lengthComputable) {
             var percentComplete = (xhr.loaded / xhr.total) * 100;
-            $(".progress-bar").attr(
+            $("#progress-bar").attr(
                 "aria-valuenow",
                 Math.round(percentComplete, 2)
             );
-            $(".progress-bar").attr(
+            $("#progress-bar").attr(
                 "style",
                 "width: " + Math.round(percentComplete, 2) + "%"
             );
             if (Math.round(percentComplete, 2) == 100) {
-                $(".progress").remove();
+                $("#progress").remove();
             }
         }
     };

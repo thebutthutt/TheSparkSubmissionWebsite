@@ -1,5 +1,4 @@
 <!-- @format -->
-<!-- @format -->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -107,11 +106,6 @@
                 margin-bottom: 20px;
             }
 
-            th {
-                color: #71bc37;
-                text-align: left;
-            }
-
             .container {
                 display: block !important;
                 clear: both !important;
@@ -181,7 +175,7 @@
                     <table>
                         <tr>
                             <td align="center" class="masthead">
-                                <h1>All your files have been approved!</h1>
+                                <h1>One of your files has been printed!</h1>
                             </td>
                         </tr>
                         <tr>
@@ -189,93 +183,34 @@
                                 <h2>Hello <%= submission.patron.fname%>,</h2>
 
                                 <p>
-                                    The Spark is happy to inform you that your
-                                    3D print request has been reviewed and all
-                                    of your requested files have met the
-                                    guidelines for being printed. Here are the
-                                    review notes for each of your files:
+                                    One of your files has been printed, and is
+                                    now waiting to be transfered to your
+                                    selected pickup location. You will recieve
+                                    another email when your file has arrived at
+                                    your requested location. Thank you!
                                 </p>
 
-                                <table style="table-layout: fixed">
+                                <table>
                                     <tr class="nopadding">
-                                        <th style="width: 66%">
-                                            <p>File Name</p>
-                                        </th>
-                                        <th>
-                                            <p>Weight</p>
-                                        </th>
-                                        <th>
-                                            <p>Print Time</p>
-                                        </th>
-                                    </tr>
-                                    <% allFiles.forEach(function(file){ %>
-                                    <tr>
                                         <td>
-                                            <p style="margin-bottom: 0px">
-                                                <strong
-                                                    ><%= file.fileName
-                                                    %></strong
-                                                >
-                                            </p>
+                                            <p>File Name:</p>
                                         </td>
-                                        <td>
-                                            <p style="margin-bottom: 0px">
-                                                <%= file.grams %>g
-                                            </p>
-                                        </td>
-                                        <td>
-                                            <p style="margin-bottom: 0px">
-                                                <%= file.timeHours %>:<%=
-                                                file.timeMinutes %>
-                                            </p>
+                                        <td class="bold">
+                                            <p><%= readyFile.realFileName%></p>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3">
+                                        <td>
+                                            <p>Pickup Location:</p>
+                                        </td>
+                                        <td class="bold">
                                             <p>
-                                                Reviewer notes:
-                                                <i>"<%= file.notes %>"</i>
+                                                <%= readyFile.pickupLocation%>
                                             </p>
                                         </td>
                                     </tr>
-                                    <% }); %>
                                 </table>
-                                <p>
-                                    Our payment rate is $1.00 per hour of
-                                    estimated print time, so the total cost for
-                                    this submission is
-                                    <strong>$<%= amount %></strong>, and you can
-                                    pay for this submission online at the
-                                    following link. If you mentioned in the
-                                    submission notes that this submission is for
-                                    educational purposes, you may safely ignore
-                                    this payment link; our team will request a
-                                    payment waive for your submission shortly.
-                                </p>
-                                <p style="text-align: center">
-                                    <a class="button" href="<%=url%>"
-                                        >Pay Online!</a
-                                    >
-                                </p>
 
-                                <p>
-                                    Often prints will require support, and we
-                                    will confirm in the notes above whether or
-                                    not your print will need support to print
-                                    sucessfully. If you would like to read more
-                                    about what this means, here is an overview
-                                    of support for FDM 3D printing:
-                                    <a
-                                        href="https://www.3dhubs.com/knowledge-base/supports-3d-printing-technology-overview/#fdm"
-                                        >Link!</a
-                                    >
-                                </p>
-                                <p>
-                                    Please not that we do not remove support
-                                    from your prints; the support will still be
-                                    attached to your files when you come to pick
-                                    them up.
-                                </p>
                                 <p>
                                     If you have any questions, please reach out
                                     to us at

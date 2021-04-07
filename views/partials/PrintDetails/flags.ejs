@@ -1,27 +1,96 @@
-<% if (file.isNewSubmission || isAll) { %> <% if (file.isReviewed) { %> <% if (file.isRejected) { %>
-<span class="badge badge-danger">Rejected</span>
+<!-- prettier-ignore -->
+<%if (printPage == 'newSub') { %>
+    <% if (file.isReviewed) { %> 
+        <% if (file.isRejected) { %>
+<span class="badge font-weight-normal alert-danger">Rejected</span>
 <% } else { %>
-<span class="badge badge-success">Accepted</span>
+<span class="badge font-weight-normal alert-success">Accepted</span>
 <% } %> <% } else { %>
-<span class="badge badge-primary">Unreviewed</span>
-<% } %> <% } %> <% if (file.isPrinted || isAll) { %> <% if (file.pickupLocation == "Willis Library") { %>
-<span class="badge badge-info">Willis</span>
-<% } else { %>
-<span class="badge badge-info">DP</span>
-<% } %> <% } else { %> <% if (file.printLocation == "Willis Library") { %>
-<span class="badge badge-info">Willis</span>
-<% } else { %>
-<span class="badge badge-info">DP</span>
-<% } %> <% } %> <%if (!file.isPickedUp) {%> <% if (file.dateOfConfiscation != 'Not yet sent') {%>
-<span class="badge badge-danger">Reposessed</span>
+<span class="badge font-weight-normal alert-primary">Unreviewed</span>
+<% } %> <%}%>
+
+<!-- prettier-ignore -->
+<% if (printPage == 'pendpay' || printPage == 'pendpaystale') { %>
+<span class="badge font-weight-normal alert-light"
+    >Print at <%=file.printLocation%></span
+>
+<!-- prettier-ignore -->
+<%} %>
+
+<!-- ---------------------------- <Ready files ----------------------------- -->
+
+<% if (printPage == 'ready') { %> <% if (file.isStarted) { %> <%if
+(file.printingData) {%>
+<span class="badge font-weight-normal alert-success"
+    >Printing at <%=file.printingData.location%></span
+>
+<%} else {%>
+<span class="badge font-weight-normal alert-success">Printing</span>
+<%}%> <%} else {%>
+<span class="badge font-weight-normal alert-light"
+    >Print at <%=file.printLocation%></span
+>
+<%}%>
+<span class="badge font-weight-normal alert-primary"
+    ><%=file.printingData.copiesPrinted%>/<%=file.copies%> printed</span
+>
+
+<%}%>
+
+<!-- --------------------------- Printing Files ---------------------------- -->
+
+<%if(printPage == 'printing') {%>
+<span class="badge font-weight-normal alert-success"
+    >Printing at <%=file.printingData.location%></span
+>
+<span class="badge font-weight-normal alert-primary"
+    ><%=file.printingData.copiesPrinted%>/<%=file.copies%> printed</span
+>
+<%}%> <% if (printPage == 'pickup') { %>
+<span class="badge font-weight-normal alert-info"
+    >Pickup at <%=file.printLocation%></span
+>
+<%} %>
+
+<!-- ----------------------------- In transit ------------------------------ -->
+
+<% if (printPage == 'inTransit') { %>
+<span class="badge font-weight-normal alert-warning"
+    >In transit to <%=file.pickupLocation%></span
+>
+<%}%>
+
+<!-- ------------------------------ all files ------------------------------ -->
+
+<%if (printPage == 'all') {%> <% if (!file.isReviewed) { %>
+<span class="badge font-weight-normal alert-primary">Unreviewed</span>
+<% } %> <% if (file.isReadyToPrint) { %> <% if (file.isStarted) { %> <%if
+(file.printingData) {%>
+<span class="badge font-weight-normal alert-success"
+    >Printing at <%=file.printingData.location%></span
+>
+<%} else {%>
+<span class="badge font-weight-normal alert-success">Printing</span>
+<%}%> <%} else {%>
+<span class="badge font-weight-normal alert-info"
+    >Print at <%=file.printLocation%></span
+>
+<%}%> <%}%> <%if (file.isPrinted && !file.isPickedUp) {%>
+<span class="badge font-weight-normal alert-info"
+    >Pickup at <%=file.printLocation%></span
+>
+<%}%> <%}%>
+
+<!-- ----------------------------- always show ----------------------------- -->
+
+<% if (file.isPendingWaive) { %>
+<span class="badge font-weight-normal alert-warning">Pending Waive</span>
+<% } %> <% if (file.isPendingDelete) { %>
+<span class="badge font-weight-normal alert-danger">Pending Delete</span>
+<% } %> <% if (file.dateOfConfiscation != 'Not yet sent') {%>
+<span class="badge font-weight-normal alert-danger">Reposessed</span>
 <% } else if (file.dateOfSecondWarning != 'Not yet sent') { %>
-<span class="badge badge-warning">Final Warning</span>
+<span class="badge font-weight-normal alert-warning">Final Warning</span>
 <% } else if (file.dateOfFirstWarning != 'Not yet sent') {%>
-<span class="badge badge-warning">First Warning</span>
-<% } %> <%}%> <% if (file.isPendingDelete) { %>
-<span class="badge badge-danger">Pending Delete</span>
-<% } %> <% if (file.isStarted) { %>
-<span class="badge badge-success">Printing</span>
-<% } %> <% if (file.isPendingWaive) { %>
-<span class="badge badge-warning">Pending Waive</span>
+<span class="badge font-weight-normal alert-warning">First Warning</span>
 <% } %>

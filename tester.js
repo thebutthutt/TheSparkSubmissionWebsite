@@ -7,25 +7,48 @@ var payment = require("./app/payment.js");
 var path = require("path");
 
 console.log("here");
-
-printRequestModel.find({}, function (err, result) {
-    for (var submission of result) {
-        if (submission.dateSubmitted != null) {
-            submission.timestampSubmitted = new Date(submission.dateSubmitted);
-        }
-        if (submission.datePaymentRequested != null) {
-            submission.timestampPaymentRequested = new Date(
-                submission.datePaymentRequested
-            );
-        }
-        if (submission.datePaid != null) {
-            submission.timestampPaid = new Date(submission.datePaid);
+/*
+printRequestModel.find({ "files.isStarted": true }, function (err, results) {
+    for (var submission of results) {
+        for (var file of submission.files) {
+            console.log(file.printingData.location.length);
+            console.log(file.printLocation);
+            if (file.printingData.location.length < 1) {
+                file.printingData.location = file.printLocation;
+            }
         }
         submission.save();
     }
 });
-/*
-printRequestModel.find({}, function (err, result) {
+
+
+printRequestModel.find(
+    { "files.printingData": { $exists: false } },
+    function (err, result) {
+        for (var submission of result) {
+            for (var file of submission.files) {
+                console.log(file.printingData);
+                if (file.printingData) {
+                    file.printingData = {
+                        rollID: "",
+                        rollWeight: 0,
+                        finalWeight: 0,
+                        weightChange: 0,
+                        copiesPrinting: 0,
+                        copiesPrinted: 0,
+                        location: "",
+                        printer: "",
+                        numAttempts: 0,
+                        numFailedAttempts: 0,
+                    };
+                }
+            }
+            submission.save();
+        }
+    }
+);
+
+printRequestModel.find({, function (err, result) {
     for (var submission of result) {
         for (var file of submission.files) {
             var dateSubParsed = new Date(file.dateSubmitted);
@@ -71,7 +94,7 @@ function isValidDate(d) {
 }
 
 
-printRequestModel.find({}, function (err, result) {
+printRequestModel.find({, function (err, result) {
     for (var submission of result) {
         console.log(submission.dateSubmitted);
         console.log(submission.datePaymentRequested);
@@ -92,7 +115,7 @@ printRequestModel.find({}, function (err, result) {
 });
 
 
-printRequestModel.find({}, function (err, result) {
+printRequestModel.find({, function (err, result) {
     for (var submission of result) {
         for (var file of submission.files) {
             if (file.isReviewed) {

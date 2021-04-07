@@ -1,87 +1,104 @@
-<ul class="nav nav-tabs card-header-tabs">
-    <li class="nav-item">
-        <a
-            class="nav-link <% if (printPage == "newSub") { %> active <%}%>"
-            href="/prints/new"
-            >New Submissions</a
-        >
-    </li>
-    <li class="nav-item">
-        <a
-            class="nav-link <% if (printPage == "pendpay") { %> active <%}%>"
-            href="/prints/pendpay"
-            >Pending Payment</a
-        >
-    </li>
-    
-    <li class="nav-item dropdown">
-        <a
-            class="nav-link <% if (printPage == "ready") { %> active <%}%> dropdown-toggle"
-            data-toggle="dropdown"
-            href="#"
-            role="button"
-            aria-haspopup="true"
-            aria-expanded="false"
-        >
-            Ready to Print <% if (printPage == "ready") { %> <% if (location ==
-            "all") { %> (all) <%}%> <% if (location == "willis") { %> (Willis)
-            <%}%> <% if (location == "dp") { %> (DP) <%}%> <% } %>
-        </a>
-        <div class="dropdown-menu">
-            <a class="dropdown-item" href="/prints/ready">All</a>
-            <a class="dropdown-item" href="/prints/readywillis"
-                >Willis Library</a
-            >
-            <a class="dropdown-item" href="/prints/readydp">Discovery Park</a>
-        </div>
-    </li>
-    <li class="nav-item dropdown">
-        <a
-            class="nav-link <% if (printPage == "pickup") { %> active <%}%> dropdown-toggle"
-            data-toggle="dropdown"
-            href="#"
-            role="button"
-            aria-haspopup="true"
-            aria-expanded="false"
-        >
-            Ready for Pickup <% if (printPage == "pickup") { %> <% if (location
-            == "all") { %> (all) <%}%> <% if (location == "willis") { %>
-            (Willis) <%}%> <% if (location == "dp") { %> (DP) <%}%> <% } %>
-        </a>
-        <div class="dropdown-menu">
-            <a class="dropdown-item" href="/prints/pickup">All</a>
-            <a class="dropdown-item" href="/prints/pickupwillis"
-                >Willis Library</a
-            >
-            <a class="dropdown-item" href="/prints/pickupdp">Discovery Park</a>
-        </div>
-    </li>
-    <li class="nav-item">
-        <a
-            class="nav-link <% if (printPage == "completed") { %> active <%}%>"
-            href="/prints/completed"
-            >Completed</a
-        >
-    </li>
-    <li class="nav-item">
-        <a
-            class="nav-link <% if (printPage == "rejected") { %> active <%}%>"
-            href="/prints/rejected"
-            >Rejected</a
-        >
-    </li>
-    <li class="nav-item">
-        <a
-            class="nav-link <% if (printPage == "pendpaystale") { %> active <%}%>"
-            href="/prints/pendpaystale"
-            >Stale On Payment</a
-        >
-    </li>
-    <li class="nav-item">
-        <a
-            class="nav-link <% if (printPage == "all") { %> active <%}%>"
-            href="/prints/all"
-            >All</a
-        >
-    </li>
-</ul>
+<div class="list-group shadow">
+    <a
+        href="/prints/new"
+        class="list-group-item list-group-item-action <% if (printPage == 'newSub') { %> active <%}%>"
+    >
+        New Submissions</a
+    >
+    <a
+        href="/prints/pendpay"
+        class="list-group-item list-group-item-action <% if (printPage == 'pendpay') { %> active <%}%>"
+    >
+        Pending Payment</a
+    >
+    <a
+        href="/prints/ready"
+        class="list-group-item list-group-item-action <% if (printPage == 'ready' && location == 'all') { %> active <%}%>"
+    >
+        Ready To Print</a
+    >
+    <a
+        href="/prints/readywillis"
+        class="list-group-item list-group-item-action <% if (printPage == 'ready' && location == 'Willis Library') { %> active <%}%>"
+    >
+        Ready To Print Willis</a
+    >
+    <a
+        href="/prints/readydp"
+        class="list-group-item list-group-item-action <% if (printPage == 'ready' && location == 'Discovery Park') { %> active <%}%>"
+    >
+        Ready To Print DP</a
+    >
+    <a
+        href="/prints/printing"
+        class="list-group-item list-group-item-action <% if (printPage == 'printing' && location == 'all') { %> active <%}%>"
+    >
+        Printing</a
+    >
+    <a
+        href="/prints/printingwillis"
+        class="list-group-item list-group-item-action <% if (printPage == 'printing' && location == 'Willis Library') { %> active <%}%>"
+    >
+        Printing Willis</a
+    >
+    <a
+        href="/prints/printingdp"
+        class="list-group-item list-group-item-action <% if (printPage == 'printing' && location == 'Discovery Park') { %> active <%}%>"
+    >
+        Printing DP</a
+    >
+    <a
+        href="/prints/intransit"
+        class="list-group-item list-group-item-action <% if (printPage == 'inTransit') { %> active <%}%>"
+    >
+        In Transit</a
+    >
+    <a
+        href="/prints/pickup"
+        class="list-group-item list-group-item-action <% if (printPage == 'pickup' && location == 'all') { %> active <%}%>"
+    >
+        Waiting for Pickup</a
+    >
+    <a
+        href="/prints/pickupwillis"
+        class="list-group-item list-group-item-action <% if (printPage == 'pickup' && location == 'Willis Library') { %> active <%}%>"
+    >
+        Waiting for Pickup Willis</a
+    >
+    <a
+        href="/prints/pickupdp"
+        class="list-group-item list-group-item-action <% if (printPage == 'pickup' && location == 'Discovery Park') { %> active <%}%>"
+    >
+        Waiting for Pickup DP</a
+    >
+    <a
+        href="/prints/completed"
+        class="list-group-item list-group-item-action <% if (printPage == 'completed') { %> active <%}%>"
+    >
+        Completed</a
+    >
+    <a
+        href="/prints/rejected"
+        class="list-group-item list-group-item-action <% if (printPage == 'rejected') { %> active <%}%>"
+    >
+        Rejected</a
+    >
+    <a
+        href="/prints/pendpaystale"
+        class="list-group-item list-group-item-action <% if (printPage == 'pendpaystale') { %> active <%}%>"
+    >
+        Stale on Payment</a
+    >
+    <a
+        href="/prints/pickupstale"
+        class="list-group-item list-group-item-action <% if (printPage == 'pickupstale') { %> active <%}%>"
+    >
+        Stale on Pickup</a
+    >
+    <a
+        href="/prints/all"
+        class="list-group-item list-group-item-action <% if (printPage == 'all') { %> active <%}%>"
+    >
+        All</a
+    >
+</div>

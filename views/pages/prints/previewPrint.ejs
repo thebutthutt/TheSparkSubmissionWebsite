@@ -4,7 +4,6 @@
         <%- include ("../../partials/head") %>
         <script src="/public/js/details.js"></script>
         <script type="module" src="/public/js/stldisplay.js"></script>
-        <script type="text/javascript" src="/qrcode/qrcode.js"></script>
         <link type="text/css" rel="stylesheet" href="/public/css/details.css" />
         <!--
         <style>
@@ -25,9 +24,9 @@
             }
         </style>-->
         <style>
-            .bi {
-                width: 3rem;
-                height: 3rem;
+            .timeline-col .bi {
+                width: 2rem;
+                height: 2rem;
                 vertical-align: baseline;
             }
 
@@ -46,19 +45,29 @@
             .bi-circle {
                 color: #aaa;
             }
+
+            .timeline-col {
+                min-width: 8.5em;
+            }
+
+            .sep {
+                
+                width: 0px;
+                background-color: #aaa;
+            }
         </style>
     </head>
 
     <body>
         <%- include ("../../partials/header") %>
-        <div class="container-flush mx-5 mt-5" style="margin-bottom: 100px">
+        <div class="container-flush mx-5 mt-4" style="margin-bottom: 100px">
             <div class="row mb-3">
                 <div class="col">
                     <div class="card shadow text-center">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col">
-                                    <h5>Initial Submission</h5>
+                                <div class="col timeline-col">
+                                    <h6>Request</h6>
                                     <div>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -76,13 +85,14 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        This file was submitted on
+                                    <small>
+                                        File submitted on
                                         <%=print.timestampSubmitted.toLocaleDateString('en-US')%>
-                                    </p>
+                                    </small>
                                 </div>
-                                <div class="col">
-                                    <h5>File Review</h5>
+                                <div class="sep"></div>
+                                <div class="col timeline-col">
+                                    <h6>File</h6>
                                     <% if (print.isReviewed) { %>
                                     <div>
                                         <svg
@@ -101,10 +111,10 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        This file was reviewed on
+                                    <small>
+                                        File reviewed on
                                         <%=print.timestampReviewed.toLocaleDateString('en-US')%>
-                                    </p>
+                                    </small>
                                     <% } else { %>
                                     <div>
                                         <svg
@@ -123,11 +133,12 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>This file still needs to be reviewed</p>
+                                    <small>File needs review</small>
                                     <% } %>
                                 </div>
-                                <div class="col">
-                                    <h5>Submission Review</h5>
+                                <div class="sep"></div>
+                                <div class="col timeline-col">
+                                    <h6>Submission</h6>
                                     <% if (submission.timestampPaymentRequested
                                     > new Date("1971") ) { %>
                                     <div>
@@ -147,10 +158,10 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        This submission was reviewed on
+                                    <small>
+                                        Submission reviewed on
                                         <%=submission.timestampPaymentRequested.toLocaleDateString('en-US')%>
-                                    </p>
+                                    </small>
                                     <%} else { %>
                                     <div>
                                         <svg
@@ -169,14 +180,14 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        This submission has not been fully
-                                        reviewed
-                                    </p>
+                                    <small>
+                                        Submission not reviewed
+                                    </small>
                                     <% } %>
                                 </div>
-                                <div class="col">
-                                    <h5>Payment</h5>
+                                <div class="sep"></div>
+                                <div class="col timeline-col">
+                                    <h6>Payment</h6>
                                     <% if (print.isPendingPayment &&
                                     !print.isPendingWaive ) { %>
                                     <div>
@@ -196,7 +207,7 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>Waiting for the patron to pay</p>
+                                    <small>Waiting for payment</small>
                                     <%} else if (print.isPendingWaive) { %>
                                     <div>
                                         <svg
@@ -215,10 +226,9 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        Waiting for a manager to approve a
-                                        payment waive
-                                    </p>
+                                    <small>
+                                        Waiting for waive
+                                    </small>
                                     <% } else if (print.isPaid) { %>
                                     <div>
                                         <svg
@@ -237,10 +247,10 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        This submission was paid on
+                                    <small>
+                                        Submission paid on
                                         <%=submission.timestampPaid.toLocaleDateString('en-US')%>
-                                    </p>
+                                    </small>
                                     <%} else {%>
                                     <div>
                                         <svg
@@ -256,11 +266,12 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>Not ready yet!</p>
+                                    <small>Not ready yet!</small>
                                     <%}%>
                                 </div>
-                                <div class="col">
-                                    <h5>Printing</h5>
+                                <div class="sep"></div>
+                                <div class="col timeline-col">
+                                    <h6>Printing</h6>
                                     <% if (print.isReadyToPrint &&
                                     !print.isStarted ) { %>
                                     <div>
@@ -280,7 +291,7 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>Waiting to be printed</p>
+                                    <small>Waiting to be printed</small>
                                     <%} else if (print.isStarted) { %>
                                     <div>
                                         <svg
@@ -299,7 +310,7 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>Currently on a printer</p>
+                                    <small>Currently on a printer</small>
                                     <% } else if (print.isPrinted){%>
                                     <div>
                                         <svg
@@ -318,10 +329,10 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        This file was printed on
+                                    <small>
+                                        File printed on
                                         <%=print.timestampPrinted.toLocaleDateString('en-US')%>
-                                    </p>
+                                    </small>
                                     <%} else { %>
                                     <div>
                                         <svg
@@ -337,11 +348,12 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>Not ready yet!</p>
+                                    <small>Not ready yet!</small>
                                     <%}%>
                                 </div>
-                                <div class="col">
-                                    <h5>Pickup</h5>
+                                <div class="sep"></div>
+                                <div class="col timeline-col">
+                                    <h6>Pickup</h6>
                                     <% if (print.timestampPrinted > new
                                     Date("1971")) { %>
                                     <div>
@@ -361,13 +373,14 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>
-                                        Patron was notified on
+                                    <small>
+                                        Patron notified on
                                         <%=print.timestampPrinted.toLocaleDateString('en-US')%>
-                                    </p>
+                                    </small>
+                                    <%if(print.isPrinted && !print.isPickedUp){%>
                                     <button
                                         data-toggle="modal"
-                                        data-target=".modal"
+                                        data-target="#modalPickup"
                                         data-backdrop="static"
                                         data-keyboard="false"
                                         fileName="<%=print.realFileName%>"
@@ -376,7 +389,7 @@
                                     >
                                         Picking Up
                                     </button>
-                                    <%} else { %>
+                                    <%}%> <%} else { %>
                                     <div>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -391,28 +404,10 @@
                                             />
                                         </svg>
                                     </div>
-                                    <p>Not ready yet!</p>
+                                    <small>Not ready yet!</small>
                                     <%}%>
                                 </div>
-                                <div class="col">
-                                    <h5>Status</h5>
-                                    <% if (print.timestampOfFirstWarning > new
-                                    Date("1971")) { %>
-                                    <p>
-                                        First warning:
-                                        <%=print.timestampOfFirstWarning.toLocaleDateString('en-US')%>
-                                        <br />
-                                        <%}%> <% if
-                                        (print.timestampOfSecondWarning > new
-                                        Date("1971")) { %> Final warning:
-                                        <%=print.timestampOfSecondWarning.toLocaleDateString('en-US')%><br />
-                                        <%}%> <% if
-                                        (print.timestampOfConfiscation > new
-                                        Date("1971")) { %> Reposessed:
-                                        <%=print.timestampOfConfiscation.toLocaleDateString('en-US')%>
-                                        <%}%>
-                                    </p>
-                                </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -431,9 +426,10 @@
                     {print:print, submission:submission}) %>
                     <div class="shadow card mb-3">
                         <div class="card-img-top">
-                            <div class="progress">
+                            <div class="progress" id="progress">
                                 <div
                                     class="progress-bar"
+                                    id="progress-bar"
                                     role="progressbar"
                                     style="width: 0%"
                                     aria-valuenow="0"
@@ -456,6 +452,9 @@
 
                 <div class="col-xl-4 col-lg-6 col-md-12">
                     <!-- prettier-ignore -->
+                    <% if (print.isReadyToPrint) {%> 
+                        <%- include ("../../partials/PrintDetails/startPrinting", {print:print}) %> 
+                    <%}%>
                     <%- include ("../../partials/PrintDetails/requestAndReview", {print:print, filePath:filePath, gcodePath:gcodePath}) %> 
                     <%if (print.isNewSubmission ) {%> 
                         <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
@@ -466,7 +465,14 @@
                     <!-- prettier-ignore -->
                     <%if(isSuperAdmin && print.isPendingWaive) {%> 
                         <%- include ("../../partials/PrintDetails/waiveCard", {print:print}) %> 
-                    <%}%> 
+                    <%}%>
+
+                    <!-- prettier-ignore -->
+                    <%if(print.isInTransit) {%> 
+                        <%- include ("../../partials/PrintDetails/transitCard", {print:print}) %> 
+                    <%}%>
+
+                    <!-- prettier-ignore -->
                     <% if (print.canBeReviewed) { %>
                     <div class="shadow card">
                         <div class="card-body">
@@ -477,29 +483,25 @@
                             {print:print}) %>
                         </div>
                     </div>
-                    <!-- prettier-ignore -->
-                    <% } else { %> 
-                        <%if (print.isPrinted) {%> 
-                            <%- include ("../../partials/PrintDetails/contact", {print:print}) %> 
-                            <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
-                        <%} else { %> 
-                            <%if (!print.isRejected) {%> 
-                                <% if (print.isPaid) {%> 
-                                    <%- include ("../../partials/PrintDetails/status", {print:print}) %> 
-                                <%}%> 
-                                <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
-                            <%} else {%> 
-                                <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
-                                <%- include ("../../partials/PrintDetails/patron", {print:print}) %> 
-                                <%- include ("../../partials/PrintDetails/requestAndReview", {print:print, file:filePath}) %> 
-                            <%}%> 
-                        <%}%> 
                     <% } %>
+                    <!-- prettier-ignore -->
+                    
+                    <%if (print.isPrinted) {%> 
+                        <%- include ("../../partials/PrintDetails/contact", {print:print}) %>
+                    <%}%>
+
+                    <%if (print.isReadyToPrint) {%> 
+                        <%- include ("../../partials/PrintDetails/finishPrinting", {print:print}) %> 
+                    <%}%> 
+
+                    <%if (!print.isNewSubmission ) {%> 
+                        <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
+                    <%}%>
                 </div>
             </div>
         </div>
 
-        <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal fade" id="modalPickup" tabindex="-1" role="dialog">
             <div
                 class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
             >
@@ -524,7 +526,7 @@
                             <div class="row my-3">
                                 <div class="col-7">
                                     <h4>Check the patron's ID</h4>
-                                    <p>
+                                    <small>
                                         Next, you'll be directing them to an
                                         iPad to complete a digital signature.
                                         Have the iPad connected to the
@@ -584,7 +586,7 @@
                                 >
                                 to get started.
                             </p>
-                            <p>
+                            <small>
                                 In the future, these links will be pinned on the
                                 home screen of all our iPads for easy access.
                                 For now we must suffer.
@@ -642,6 +644,30 @@
                                 That didn't work. Try again?
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="modal fade"
+            id="modalPrintFinish"
+            tabindex="-1"
+            role="dialog"
+        >
+            <div
+                class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+            >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                 </div>
             </div>

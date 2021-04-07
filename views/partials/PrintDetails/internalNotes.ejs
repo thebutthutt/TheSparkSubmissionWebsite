@@ -1,14 +1,15 @@
 <div class="card shadow">
     <div class="card-body">
         <h4>Technician Notes</h4>
+        <p class="small text-muted"><%= print.overrideNotes%></p>
         <%for (var thisTechNote of print.newTechNotes) {%>
-        <p>
+        <p class="mb-0"><%=thisTechNote.notes%></p>
+        <p class="small text-muted">
             <%=thisTechNote.techName%> -
-            <%=thisTechNote.dateAdded.toLocaleString()%>:<br />
-            <%=thisTechNote.notes%>
+            <%=thisTechNote.dateAdded.toLocaleString()%>
         </p>
         <%}%>
-        <p><%= print.overrideNotes%></p>
+
         <form action="/prints/appendNotes" method="post">
             <div class="hiddenExtras" style="display: none">
                 <input type="text" name="fileID" value="<%= print._id%>" />

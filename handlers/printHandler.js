@@ -8,23 +8,12 @@ var fs = require("fs");
 var path = require("path");
 var printRequestModel = require("../app/models/printRequest");
 const NodeStl = require("node-stl");
+const { ConstraintViolationError } = require("ldapjs");
 
 var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
 
 module.exports = {
-    //return the number of new prints in the queue
-    metaInfo: function () {},
-
-    calcFileVolume: function (fileID) {
-        printRequestModel.findOne(
-            {
-                "files._id": fileID,
-            },
-            function () {}
-        );
-    },
-
     //function receives the input from filled out request form and saves to the database
     addPrint: function (fields, submissionDetails, prints) {
         var now = new Date();
@@ -155,7 +144,6 @@ module.exports = {
     //handles the data for a new top level print request with possibly multiple low level file submissions
     handleSubmission: function (req, callback) {
         //arrays of each files specifications (will only hold one entry each if patron submits only one file)
-        console.log(req.files);
 
         var submissionDetails = {
             classDetails: {
@@ -235,7 +223,7 @@ module.exports = {
         }
         var maker = req.user.name;
         var id = req.body.fileID;
-
+        console.log(req.body);
         printRequestModel.findOne(
             {
                 "files._id": req.body.fileID,
@@ -265,7 +253,6 @@ module.exports = {
         //update the low level print according to the form data
         if (req.body.decision == "accepted") {
             //if the technician accepted the print, update accordingly
-
             printRequestModel.findOneAndUpdate(
                 {
                     "files._id": req.body.fileID,
@@ -279,6 +266,14 @@ module.exports = {
                         "files.$.timeHours": req.body.hours,
                         "files.$.timeMinutes": req.body.minutes,
                         "files.$.grams": req.body.grams,
+                        "files.$.estimations.slicedHours": req.body.hours,
+                        "files.$.estimations.slicedMinutes": req.body.minutes,
+                        "files.$.estimations.slicedGrams": req.body.grams,
+                        "files.$.estimations.slicedCopies": req.body.copies,
+                        "files.$.estimations.totalHours": req.body.totalHours,
+                        "files.$.estimations.totalMinutes":
+                            req.body.totalMinutes,
+                        "files.$.estimations.totalGrams": req.body.totalGrams,
                         "files.$.patronNotes": req.body.patronNotes,
                         //"files.$.techNotes": req.body.technotes,
                         "files.$.approvedBy": maker,
@@ -308,7 +303,7 @@ module.exports = {
                         .newTechNotes.push(newNoteObject);
                     result.save();
                     //now find the fully updated top level submission so we can check if all the files have been reviewed
-                    module.exports.setFlags(id, function () {
+                    module.exports.checkAllReviewed(id, function () {
                         callback();
                     });
                 }
@@ -339,7 +334,7 @@ module.exports = {
                     }
                     console.log(result);
                     //now find the fully updated top level submission so we can check if all the files have been reviewed
-                    module.exports.setFlags(id, function () {
+                    module.exports.checkAllReviewed(id, function () {
                         callback();
                     });
                 }
@@ -407,22 +402,19 @@ module.exports = {
                             //print is accepted
                             result.files[i].isPendingPayment = true;
                             if (
-                                result.files[i].timeHours <= 0 &&
-                                result.files[i].timeMinutes <= 59
+                                result.files[i].estimations.totalHours <= 0 &&
+                                result.files[i].estimations.totalMinutes <= 59
                             ) {
                                 //if its less than an hour, just charge one dollar
-                                var thisCopy = 1;
-                                var allCopies =
-                                    thisCopy * result.files[i].copies;
-                                amount += allCopies;
+                                amount += 1;
                             } else {
                                 //charge hours plus minutes out of 60 in cents
-                                var thisCopy = result.files[i].timeHours;
-                                thisCopy += result.files[i].timeMinutes / 60;
-                                var allCopies =
-                                    thisCopy * result.files[i].copies;
-                                amount += allCopies;
+                                amount +=
+                                    result.files[i].estimations.totalHours +
+                                    result.files[i].estimations.totalMinutes /
+                                        60;
                             }
+                            console.log(amount);
                             acceptedFiles.push(result.files[i]._id);
                             if (shouldBeWaived) {
                                 result.files[i].isPendingWaive = true;
@@ -582,9 +574,13 @@ module.exports = {
     },
 
     //mark that a file has finished printing, this moves it to the piickup queue
-    markCompleted: function (fileID, realGrams) {
+    markCompleted: function (fileID, totalWeight, location, pickupLocation) {
         var time = moment();
         var now = new Date();
+        var isInTransit = false;
+        if (pickupLocation != location) {
+            isInTransit = true;
+        }
         printRequestModel.findOneAndUpdate(
             {
                 "files._id": fileID,
@@ -595,7 +591,9 @@ module.exports = {
                     "files.$.datePrinted": time.format(constants.format),
                     "files.$.timestampPrinted": now,
                     "files.$.isReadyToPrint": false,
-                    "files.$.realGrams": realGrams,
+                    "files.$.realGrams": totalWeight,
+                    "files.$.completedLocation": location,
+                    "files.$.isInTransit": isInTransit,
                 },
             },
             {
@@ -605,9 +603,11 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 }
-                module.exports.setFlags(fileID, function () {});
-                //emailer.readyForPickup(result.patron.email, result.files.id(fileID).realFileName);
-                newmailer.readyForPickup(result, result.files.id(fileID));
+                if (isInTransit) {
+                    //newmailer.fileInTransit(result, result.files.id(fileID));
+                } else {
+                    newmailer.readyForPickup(result, result.files.id(fileID));
+                }
             }
         );
     },
@@ -627,6 +627,7 @@ module.exports = {
                         result.files.id(fileID).numAttempts = 0;
                     }
                     result.files.id(fileID).numAttempts += 1;
+                    result.files.id(fileID).copiesPrinting = 1;
                     result.save();
                     if (typeof callback == "function") {
                         callback();
@@ -636,8 +637,13 @@ module.exports = {
         );
     },
 
-    markPrinting: function (fileID, copiesPrinting, callback) {
-        copiesPrinting = parseInt(copiesPrinting);
+    markPrinting: function (body, callback) {
+        var fileID = body.fileID;
+        var copiesPrinting = parseInt(body.copiesPrinting);
+        var location = body.location;
+        var printer = body.printer;
+        var rollID = body.rollID;
+        var rollWeight = parseInt(body.rollWeight);
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -646,16 +652,40 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
-                    result.files.id(fileID).isStarted = true;
-                    if (result.files.id(fileID).numAttempts == null) {
-                        result.files.id(fileID).numAttempts = 0;
-                    }
-                    result.files.id(fileID).numAttempts += 1;
+                    var thisFile = result.files.id(fileID);
+                    thisFile.isStarted = true;
+                    thisFile.printingData.copiesPrinting = copiesPrinting;
+                    thisFile.printingData.location = location;
+                    thisFile.printingData.printer = printer;
+                    thisFile.printingData.rollID = rollID;
+                    thisFile.printingData.rollWeight = rollWeight;
 
-                    if (result.files.id(fileID).copiesPrinting == null) {
-                        result.files.id(fileID).copiesPrinting = 0;
+                    result.save();
+                    if (typeof callback == "function") {
+                        callback();
                     }
-                    result.files.id(fileID).copiesPrinting += copiesPrinting;
+                }
+            }
+        );
+    },
+
+    changePrintCopyStatus: function (fileID, copiesPrinting, copiesPrinted) {
+        copiesPrinting = parseInt(copiesPrinting);
+        copiesPrinted = parseInt(copiesPrinted);
+        printRequestModel.findOne(
+            {
+                "files._id": fileID,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    result.files.id(
+                        fileID
+                    ).printingData.copiesPrinting = copiesPrinting;
+                    result.files.id(
+                        fileID
+                    ).printingData.copiesPrinted = copiesPrinted;
 
                     result.save();
                     if (typeof callback == "function") {
@@ -667,8 +697,7 @@ module.exports = {
     },
 
     //mark that a print succeeded, this then calls mark completed
-    printSuccess: function (fileID, copiesPrinting, callback) {
-        copiesPrinting = parseInt(copiesPrinting);
+    printSuccess: function (fileID, callback) {
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -678,11 +707,18 @@ module.exports = {
                     console.log(err);
                 } else {
                     result.files.id(fileID).isStarted = false;
-                    if (result.files.id(fileID).copiesPrinted == null) {
-                        result.files.id(fileID).copiesPrinted = 0;
+                    if (
+                        result.files.id(fileID).printingData.copiesPrinted ==
+                        null
+                    ) {
+                        result.files.id(fileID).printingData.copiesPrinted = 0;
                     }
-                    result.files.id(fileID).copiesPrinted += copiesPrinting;
-                    result.files.id(fileID).copiesPrinting = 0;
+                    result.files.id(
+                        fileID
+                    ).printingData.copiesPrinted += result.files.id(
+                        fileID
+                    ).printingData.copiesPrinting;
+                    result.files.id(fileID).printingData.copiesPrinting = 0;
                     result.save();
                     //module.exports.markCompleted(fileID);
                     if (typeof callback == "function") {
@@ -693,7 +729,8 @@ module.exports = {
         );
     },
 
-    printCompleted: function (fileID, realGrams, callback) {
+    //notify that a print attempt has failed
+    printFail: function (fileID, callback) {
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -702,12 +739,116 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
-                    module.exports.markCompleted(fileID, realGrams);
-                    console.log("here");
+                    result.files.id(fileID).isStarted = false; //not started anymore
+                    if (
+                        result.files.id(fileID).printingData
+                            .numFailedAttempts == null
+                    ) {
+                        result.files.id(
+                            fileID
+                        ).printingData.numFailedAttempts = 0;
+                    }
+                    result.files.id(fileID).printingData.numFailedAttempts += 1; //add a failed attempt
+
+                    result.files.id(fileID).printingData.copiesPrinting = 0;
+                    result.save();
                     if (typeof callback == "function") {
                         callback();
                     }
                 }
+            }
+        );
+    },
+
+    // printCompleted: function (fileID, realGrams, callback) {
+    //     printRequestModel.findOne(
+    //         {
+    //             "files._id": fileID,
+    //         },
+    //         function (err, result) {
+    //             if (err) {
+    //                 console.log(err);
+    //             } else {
+    //                 module.exports.markCompleted(fileID, realGrams);
+    //                 console.log("here");
+    //                 if (typeof callback == "function") {
+    //                     callback();
+    //                 }
+    //             }
+    //         }
+    //     );
+    // },
+
+    printFinished: function (body, callback) {
+        var fileID = body.fileID;
+        var now = new Date();
+        printRequestModel.findOne(
+            {
+                "files._id": fileID,
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    var thisFile = result.files.id(fileID);
+                    if (thisFile.isStarted) {
+                        result.isStarted = false;
+                        thisFile.printingData.copiesPrinted +=
+                            thisFile.printingData.copiesPrinting;
+                        thisFile.printingData.copiesPrinting = 0;
+                        thisFile.printingData.numAttempts++;
+                    }
+                    thisFile.printingData.rollID = body.rollID;
+                    thisFile.printingData.rollWeight = body.initialWeight;
+                    thisFile.printingData.finalWeight = body.finalWeight;
+                    thisFile.printingData.weightChange =
+                        body.initialWeight - body.finalWeight;
+                    thisFile.printingData.location = body.location;
+
+                    thisFile.isPrinted = true;
+                    thisFile.timestampPrinted = now;
+                    thisFile.isReadyToPrint = false;
+
+                    if (thisFile.pickupLocation != body.location) {
+                        thisFile.isInTransit = true;
+                        newmailer.inTransit(result, thisFile);
+                    } else {
+                        thisFile.isInTransit = false;
+                        newmailer.readyForPickup(result, thisFile);
+                    }
+                    result.save(function (err, res) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log("here");
+                            if (typeof callback == "function") {
+                                callback();
+                            }
+                        }
+                    });
+                }
+            }
+        );
+    },
+
+    markAtPickupLocation: function (body, callback) {
+        printRequestModel.findOne(
+            { "files._id": body.fileID },
+            function (err, submission) {
+                submission.files.id(body.fileID).isInTransit = false;
+                newmailer.readyForPickup(
+                    submission,
+                    submission.files.id(body.fileID)
+                );
+                submission.save(function (err, res) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        if (typeof callback == "function") {
+                            callback();
+                        }
+                    }
+                });
             }
         );
     },
@@ -758,32 +899,6 @@ module.exports = {
                     result.files.id(fileID).datePickedUp = time;
                     result.files.id(fileID).timestampPickedUp = now;
                     result.save();
-                }
-            }
-        );
-    },
-
-    //notify that a print attempt has failed
-    printFail: function (fileID, callback) {
-        printRequestModel.findOne(
-            {
-                "files._id": fileID,
-            },
-            function (err, result) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    result.files.id(fileID).isStarted = false; //not started anymore
-                    if (result.files.id(fileID).numFailedAttempts == null) {
-                        result.files.id(fileID).numFailedAttempts = 0;
-                    }
-                    result.files.id(fileID).numFailedAttempts += 1; //add a failed attempt
-
-                    result.files.id(fileID).copiesPrinting = 0;
-                    result.save();
-                    if (typeof callback == "function") {
-                        callback();
-                    }
                 }
             }
         );
@@ -846,7 +961,7 @@ module.exports = {
     },
 
     //set appropriate flags for top level submission
-    setFlags: function (submissionID, callback) {
+    checkAllReviewed: function (submissionID, callback) {
         printRequestModel.findOne(
             {
                 "files._id": submissionID,
@@ -954,7 +1069,7 @@ module.exports = {
                         //save top level request db entry
                         if (err) console.log(err);
                     });
-                    module.exports.setFlags(
+                    module.exports.checkAllReviewed(
                         result.files[0]._id,
                         function () {}
                     ); //now set all the flags of the updated top level submission

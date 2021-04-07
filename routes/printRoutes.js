@@ -22,27 +22,6 @@ module.exports = function (app) {
         });
     });
 
-    //-----------------------NEW PRINTS-----------------------
-    // show the new prints queue
-    app.get("/prints/new", isLoggedIn, function (req, res) {
-        //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                "files.isNewSubmission": true,
-            },
-            function (err, data) {
-                //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
-                    pgnum: 4, //prints
-                    dbdata: data,
-                    printPage: "newSub",
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                });
-            }
-        );
-    });
-
     //-----------------------REVIEW FILE----------------------------
 
     //send technician to reveiw page for a specific low level print file
@@ -56,7 +35,10 @@ module.exports = function (app) {
             function (err, result) {
                 var finalGcode = "";
                 if (result.files.id(fileID).gcodeName) {
-                    finalGcode = path.join(gcodePath, result.files.id(fileID).gcodeName);
+                    finalGcode = path.join(
+                        gcodePath,
+                        result.files.id(fileID).gcodeName
+                    );
                 }
                 res.render("pages/prints/previewPrint", {
                     //render the review page
@@ -68,295 +50,14 @@ module.exports = function (app) {
                     print: result.files.id(fileID), //send the review page the file to review
                     patron: result.patron,
                     submission: result,
-                    filePath: path.join(stlPath, result.files.id(fileID).fileName.replace("#", "%23")),
+                    filePath: path.join(
+                        stlPath,
+                        result.files.id(fileID).fileName.replace("#", "%23")
+                    ),
                     gcodePath: finalGcode,
                 });
             }
         );
-    });
-
-    //-----------------------PENDING PAYMENT-----------------------
-
-    //show pending payment prints
-    app.get("/prints/pendpay", isLoggedIn, function (req, res) {
-        //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                "files.isPendingPayment": true,
-                "files.isStaleOnPayment": { $ne: true },
-            },
-            function (err, data) {
-                //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
-                    pgnum: 4, //prints
-                    dbdata: data,
-                    printPage: "pendpay",
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                });
-            }
-        );
-    });
-
-    //show pending payment prints
-    app.get("/prints/pendpaystale", isLoggedIn, function (req, res) {
-        //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                "files.isPendingPayment": true,
-                "files.isStaleOnPayment": true,
-            },
-            function (err, data) {
-                //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
-                    pgnum: 4, //prints
-                    dbdata: data,
-                    printPage: "pendpaystale",
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                });
-            }
-        );
-    });
-
-    //-------------READY TO PRINT------------------------
-
-    //show pready to print all locations
-    app.get("/prints/ready", isLoggedIn, function (req, res) {
-        //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                "files.isReadyToPrint": true,
-            },
-            function (err, data) {
-                //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
-                    pgnum: 4, //tells the navbar what page to highlight
-                    dbdata: data,
-                    printPage: "ready",
-                    location: "all",
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                });
-            }
-        );
-    });
-
-    //show ready to print at willis
-    app.get("/prints/readywillis", isLoggedIn, function (req, res) {
-        //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isReadyToPrint: true,
-                        printLocation: "Willis Library",
-                    },
-                },
-            },
-            function (err, data) {
-                //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
-                    pgnum: 4, //tells the navbar what page to highlight
-                    dbdata: data,
-                    printPage: "ready",
-                    location: "Willis Library",
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                });
-            }
-        );
-    });
-
-    //show ready to print at dp
-    app.get("/prints/readydp", isLoggedIn, function (req, res) {
-        //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isReadyToPrint: true,
-                        printLocation: "Discovery Park",
-                    },
-                },
-            },
-            function (err, data) {
-                //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
-                    pgnum: 4, //tells the navbar what page to highlight
-                    dbdata: data,
-                    printPage: "ready",
-                    location: "Discovery Park",
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                });
-            }
-        );
-    });
-
-    //---------------PICKUP-----------------------------------
-
-    //show pickup all locations
-    app.get("/prints/pickup", isLoggedIn, function (req, res) {
-        //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isPrinted: true,
-                        isPickedUp: false,
-                        isStaleOnPickup: false,
-                    },
-                },
-            },
-            function (err, data) {
-                //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
-                    pgnum: 4, //tells the navbar what page to highlight
-                    dbdata: data,
-                    printPage: "pickup",
-                    location: "all",
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                });
-            }
-        );
-    });
-
-    //show pickup at willis
-    app.get("/prints/pickupwillis", isLoggedIn, function (req, res) {
-        //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isPrinted: true,
-                        isPickedUp: false,
-                        pickupLocation: "Willis Library",
-                        isStaleOnPickup: false,
-                    },
-                },
-            },
-            function (err, data) {
-                //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
-                    pgnum: 4, //tells the navbar what page to highlight
-                    dbdata: data,
-                    printPage: "pickup",
-                    location: "Willis Library",
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                });
-            }
-        );
-    });
-
-    //show pickip at dp
-    app.get("/prints/pickupdp", isLoggedIn, function (req, res) {
-        //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isPrinted: true,
-                        isPickedUp: false,
-                        pickupLocation: "Discovery Park",
-                        isStaleOnPickup: false,
-                    },
-                },
-            },
-            function (err, data) {
-                //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
-                    pgnum: 4, //tells the navbar what page to highlight
-                    dbdata: data,
-                    printPage: "pickup",
-                    location: "Discovery Park",
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                });
-            }
-        );
-    });
-
-    app.get("/prints/completed", isLoggedIn, function (req, res) {
-        //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isPickedUp: true,
-                    },
-                },
-            },
-            function (err, data) {
-                //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
-                    pgnum: 4, //tells the navbar what page to highlight
-                    dbdata: data,
-                    printPage: "completed",
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                });
-            }
-        );
-    });
-
-    //-----------------------REJECTED-----------------------
-    app.get("/prints/rejected", isLoggedIn, function (req, res) {
-        //load the submission page and flash any messages
-        printRequestModel.find(
-            {
-                files: {
-                    $elemMatch: {
-                        isNewSubmission: false,
-                        isRejected: true,
-                    },
-                },
-            },
-            function (err, data) {
-                //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
-                    pgnum: 4, //tells the navbar what page to highlight
-                    dbdata: data,
-                    printPage: "rejected",
-                    location: "willis",
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                });
-            }
-        );
-    });
-
-    //-----------------------ALL-----------------------
-    app.get("/prints/all", isLoggedIn, function (req, res) {
-        //load the submission page and flash any messages
-
-        printRequestModel.find({}, function (err, data) {
-            //loading every single top level request FOR NOW
-            res.render("pages/prints/allPrints", {
-                pgnum: 4, //tells the navbar what page to highlight
-                dbdata: data,
-                printPage: "all",
-                isAdmin: true,
-                isSuperAdmin: req.user.isSuperAdmin,
-            });
-        });
-    });
-
-    app.get("/prints/allp", isLoggedIn, async function (req, res) {
-        //load the submission page and flash any messages
-        var page = req.query.page;
-        var skip = (page - 1) * numPerPage;
-        var submissions = await printRequestModel.find({}).skip(skip).limit(numPerPage);
-
-        res.render("pages/prints/allPrints", {
-            pgnum: 4, //tells the navbar what page to highlight
-            dbdata: submissions,
-            printPage: "all",
-            isAdmin: true,
-            isSuperAdmin: req.user.isSuperAdmin,
-        });
     });
 
     //-----------------------LANDING AFTER PAYMENT-----------------------
@@ -373,7 +74,12 @@ module.exports = function (app) {
         payment.handlePaymentComplete(req, function (success, submissionID) {
             //tell the payment handler to update our databases
             if (success == true) {
-                printHandler.recievePayment(submissionID, false, "", function callback() {});
+                printHandler.recievePayment(
+                    submissionID,
+                    false,
+                    "",
+                    function callback() {}
+                );
                 res.render("pages/prints/thankyoupayment", {
                     //render the success page
                     data: req.query,
@@ -412,16 +118,26 @@ module.exports = function (app) {
     //-----------------------WAIVE PAYMENT-----------------------
     app.post("/prints/waive", isLoggedIn, function (req, res, next) {
         var submissionID = req.body.submissionID || req.query.submissionID;
-        printHandler.recievePayment(submissionID, true, req.user.local.euid, function callback() {
-            res.json(["done"]); //tell the front end the request is done
-        });
+        printHandler.recievePayment(
+            submissionID,
+            true,
+            req.user.local.euid,
+            function callback() {
+                res.json(["done"]); //tell the front end the request is done
+            }
+        );
     });
 
     app.post("/prints/waiveByFile", isLoggedIn, function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
-        printHandler.recievePaymentByFile(fileID, true, req.user.local.euid, function callback() {
-            res.json(["done"]); //tell the front end the request is done
-        });
+        printHandler.recievePaymentByFile(
+            fileID,
+            true,
+            req.user.local.euid,
+            function callback() {
+                res.json(["done"]); //tell the front end the request is done
+            }
+        );
     });
 
     app.post("/prints/requestwaive", isLoggedIn, function (req, res, next) {
@@ -467,42 +183,61 @@ module.exports = function (app) {
         res.download(newLocation); //send the download
     });
 
-    app.get("/prints/downloadSubmission", isLoggedIn, async function (req, res) {
-        var thisSubmission = await printRequestModel.findById(req.query.submissionID);
-        if (thisSubmission) {
-            var zipName =
-                thisSubmission.patron.fname +
-                "_" +
-                thisSubmission.patron.lname +
-                "_" +
-                thisSubmission.dateSubmitted.replace("/", "-").replace("/", "-") +
-                ".zip";
+    app.get(
+        "/prints/downloadSubmission",
+        isLoggedIn,
+        async function (req, res) {
+            var thisSubmission = await printRequestModel.findById(
+                req.query.submissionID
+            );
+            if (thisSubmission) {
+                var zipName =
+                    thisSubmission.patron.fname +
+                    "_" +
+                    thisSubmission.patron.lname +
+                    "_" +
+                    thisSubmission.dateSubmitted
+                        .replace("/", "-")
+                        .replace("/", "-") +
+                    ".zip";
 
-            var zipLocation = path.join(__dirname, "..", "..", "Uploads", "Zips", zipName);
-            const output = fs.createWriteStream(zipLocation);
+                var zipLocation = path.join(
+                    __dirname,
+                    "..",
+                    "..",
+                    "Uploads",
+                    "Zips",
+                    zipName
+                );
+                const output = fs.createWriteStream(zipLocation);
 
-            const archive = archiver("zip", {
-                zlib: { level: 9 }, // Sets the compression level.
-            });
+                const archive = archiver("zip", {
+                    zlib: { level: 9 }, // Sets the compression level.
+                });
 
-            output.on("close", function () {
-                console.log(archive.pointer() + " total bytes");
-                console.log("archiver has been finalized and the output file descriptor has closed.");
-                res.download(zipLocation);
-            });
+                output.on("close", function () {
+                    console.log(archive.pointer() + " total bytes");
+                    console.log(
+                        "archiver has been finalized and the output file descriptor has closed."
+                    );
+                    res.download(zipLocation);
+                });
 
-            archive.pipe(output);
+                archive.pipe(output);
 
-            for (var file of thisSubmission.files) {
-                var thisFile = path.join(stlPath, file.fileName);
-                archive.append(fs.createReadStream(thisFile), { name: file.realFileName });
+                for (var file of thisSubmission.files) {
+                    var thisFile = path.join(stlPath, file.fileName);
+                    archive.append(fs.createReadStream(thisFile), {
+                        name: file.realFileName,
+                    });
+                }
+
+                archive.finalize();
+            } else {
+                res.send(404);
             }
-
-            archive.finalize();
-        } else {
-            res.send(404);
         }
-    });
+    );
 
     //-----------------------PUSH REVIEW-----------------------
     //handle technician updating file by reviewing print file
@@ -516,7 +251,13 @@ module.exports = function (app) {
 
                 // By default, multer removes file extensions so let's add them back
                 filename: function (req, file, cb) {
-                    cb(null, Date.now() + "-" + file.originalname.split(".")[0] + path.extname(file.originalname));
+                    cb(
+                        null,
+                        Date.now() +
+                            "-" +
+                            file.originalname.split(".")[0] +
+                            path.extname(file.originalname)
+                    );
                 },
             }),
         }).any(),
@@ -546,10 +287,15 @@ module.exports = function (app) {
                 if (err) {
                     console.log(err);
                 } else {
-                    if (result.files.id(fileID).printLocation == "Willis Library") {
-                        result.files.id(fileID).printLocation = "Discovery Park";
+                    if (
+                        result.files.id(fileID).printLocation ==
+                        "Willis Library"
+                    ) {
+                        result.files.id(fileID).printLocation =
+                            "Discovery Park";
                     } else {
-                        result.files.id(fileID).printLocation = "Willis Library";
+                        result.files.id(fileID).printLocation =
+                            "Willis Library";
                     }
                     result.save();
                 }
@@ -569,52 +315,88 @@ module.exports = function (app) {
     //-----------------------HANDLE PAYMENT INCOME-----------------------
     app.post("/prints/recievePayment", isLoggedIn, function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
-        printHandler.recievePayment(submissionID, false, "", function callback() {
-            res.json(["done"]); //tell the front end the request is done
-        });
+        printHandler.recievePayment(
+            submissionID,
+            false,
+            "",
+            function callback() {
+                res.json(["done"]); //tell the front end the request is done
+            }
+        );
     });
 
-    //-----------------------START PRINT-----------------------
-    app.post("/prints/startprint", isLoggedIn, function (req, res) {
-        var fileID = req.body.fileID || req.query.fileID;
-        printHandler.startPrint(fileID, function callback() {
-            res.json(["done"]);
-        });
-    });
+    /* -------------------------------------------------------------------------- */
+    /*                    Manage single file printing attempts                    */
+    /* -------------------------------------------------------------------------- */
+
+    /* ----------------------- Start an attempt on a file ----------------------- */
 
     app.post("/prints/markPrinting", isLoggedIn, function (req, res) {
-        var fileID = req.body.fileID || req.query.fileID;
-        var copiesPrinting = req.body.copiesPrinting || req.query.copiesPrinting;
-        printHandler.markPrinting(fileID, copiesPrinting, function callback() {
-            res.json(["done"]);
+        printHandler.markPrinting(req.body, function callback() {
+            res.redirect("/prints/preview?fileID=" + req.body.fileID);
         });
     });
 
-    //-----------------------PRINT SUCCESS-----------------------
+    /* ------------------- Close current attempt as a success ------------------- */
+
     app.post("/prints/printsuccess", isLoggedIn, function (req, res) {
-        var fileID = req.body.fileID || req.query.fileID;
-        var copiesPrinting = req.body.copiesPrinting || req.query.copiesPrinting;
-
-        printHandler.printSuccess(fileID, copiesPrinting, function callback() {
+        printHandler.printSuccess(req.body.fileID, function callback() {
             res.json(["done"]);
         });
     });
 
-    app.post("/prints/printcomplete", isLoggedIn, function (req, res) {
-        var fileID = req.body.fileID || req.query.fileID;
-        var realGrams = req.body.realGrams || req.query.realGrams;
-        printHandler.printCompleted(fileID, realGrams, function callback() {
-            res.json(["done"]);
-        });
-    });
+    /* ------------------- Close current attempt as a failure ------------------- */
 
-    //-----------------------PRINT FAIL-----------------------
     app.post("/prints/printfail", isLoggedIn, function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
         printHandler.printFail(fileID, function callback() {
             res.json(["done"]);
         });
     });
+
+    /* ----------- End attempt process as all copies have been printed ---------- */
+
+    app.post("/prints/printfinish", isLoggedIn, function (req, res) {
+        printHandler.printFinished(req.body, function callback() {
+            res.redirect("/prints/preview?fileID=" + req.body.fileID);
+        });
+    });
+
+    app.post("/prints/arrived", isLoggedIn, function (req, res) {
+        printHandler.markAtPickupLocation(req.body, function callback() {
+            res.json(["done"]);
+        });
+    });
+
+    // app.post("/prints/printcomplete", isLoggedIn, function (req, res) {
+    //     var fileID = req.body.fileID || req.query.fileID;
+    //     var realGrams = req.body.realGrams || req.query.realGrams;
+    //     printHandler.printCompleted(fileID, realGrams, function callback() {
+    //         res.json(["done"]);
+    //     });
+    // });
+    // app.post("/prints/changeCopies", isLoggedIn, function (req, res) {
+    //     console.log(req.body);
+    //     console.log(req.query);
+    //     var fileID = req.body.fileID || req.query.fileID;
+    //     var copiesPrinting =
+    //         req.body.copiesPrinting || req.query.copiesPrinting;
+    //     var copiesPrinted = req.body.copiesPrinted || req.query.copiesPrinted;
+    //     printHandler.changePrintCopyStatus(
+    //         fileID,
+    //         copiesPrinting,
+    //         copiesPrinted,
+    //         function callback() {
+    //             res.json(["done"]);
+    //         }
+    //     );
+    // });
+    // app.post("/prints/startprint", isLoggedIn, function (req, res) {
+    //     var fileID = req.body.fileID || req.query.fileID;
+    //     printHandler.startPrint(fileID, function callback() {
+    //         res.json(["done"]);
+    //     });
+    // });
 
     //-----------------------CLEAR ALL COMPLETED PRINTS-----------------------
     app.post("/prints/clearAllCompleted", isLoggedIn, function (req, res) {

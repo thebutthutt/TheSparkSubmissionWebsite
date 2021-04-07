@@ -1,4 +1,4 @@
-<div class="shadow card">
+<div class="shadow card mb-3">
     <div class="card-body">
         <div class="row row-cols-4">
             <div class="col-12">
@@ -48,8 +48,10 @@
                         ><%=print.realGcodeName%></a
                     >
                 </h5>
+                <!-- prettier-ignore -->
                 <p class="lead">
-                    This GCODE file contains [#] copies of this object!
+                    
+                    This GCODE file contains <%= print.estimations.slicedCopies%> copies of this object!
                 </p>
             </div>
             <div class="col">
@@ -70,12 +72,26 @@
             </div>
             <div class="col-6"></div>
             <div class="col-6">
-                <p class="small text-muted">
-                    These estimates are for [#] copies
+                <p class="small text-muted mb-0">
+                    These estimates are for <%= print.estimations.slicedCopies%>
+                    copies
                 </p>
             </div>
 
-            <% } %>
+            <div class="col-12">
+                <hr />
+            </div>
+
+            <div class="col-6">
+                <h5>Total Print Time</h5>
+                <%=print.estimations.totalHours%> hours
+                <%=print.estimations.totalMinutes%> minutes
+            </div>
+            <div class="col-6">
+                <h5>Total Print Weight</h5>
+                <%=print.estimations.totalGrams%> grams
+            </div>
+            <%}%>
         </div>
     </div>
 </div>
