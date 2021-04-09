@@ -17,8 +17,16 @@ var getUrlParameter = function getUrlParameter(sParam) {
 
 $(document).ready(function () {
     //initial form to show is an accepted ptint
-    $(".accepted-controls").show();
-    $(".accepted-controls input").prop("required", true);
+    var initDecision = $("#decision").children("option:selected").val();
+    console.log(initDecision);
+    if (initDecision == "accepted") {
+        $(".accepted-controls").show();
+        $(".accepted-controls input").prop("required", true);
+    } else {
+        $(".accepted-controls").hide();
+        $(".accepted-controls input").prop("required", false);
+    }
+
     $('[data-toggle="tooltip"]').tooltip();
     $('[data-toggle="popover"]').popover();
 

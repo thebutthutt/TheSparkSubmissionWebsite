@@ -16,6 +16,7 @@ var http = require("http");
 var fs = require("fs");
 var app = express();
 var port = process.env.PORT;
+const cors = require("cors");
 
 var mongoose = require("mongoose");
 var passport = require("passport");
@@ -83,10 +84,12 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
+app.use(cors());
 
 // routes ======================================================================
 require("./routes/routes.js")(app); // load our routes and pass in our app and fully configured passport
 require("./routes/printRoutes.js")(app); // load our routes and pass in our app and fully configured passport
+require("./routes/selfServiceRoutes.js")(app); // load our routes and pass in our app and fully configured passport
 require("./routes/getRequests.js")(app); // load our routes and pass in our app and fully configured passport
 require("./routes/userRoutes.js")(app, passport); // load our routes and pass in our app and fully configured passport
 //require("./routes/cleRoutes.js")(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
@@ -96,6 +99,10 @@ require("./routes/userRoutes.js")(app, passport); // load our routes and pass in
 require("./app/jobs.js")(constants); //make the job scheduler go
 //bookingModel.remove({}, function(){})
 // launch ======================================================================
+app.post("/test", function (req, res) {
+    console.log(req.body);
+    res.send("okay");
+});
 
 var server = https.createServer(
     {

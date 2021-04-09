@@ -477,6 +477,9 @@
                     <div class="shadow card">
                         <div class="card-body">
                             <h4>Review Print</h4>
+                            <%if (print.isReviewed) {%>
+                                <p class="mb-0">Previous review by <%= print.approvedBy%></p>
+                            <%}%>
                             <hr />
                             <%- include
                             ("../../partials/PrintDetails/printReviewForm",

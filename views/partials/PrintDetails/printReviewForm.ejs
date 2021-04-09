@@ -13,8 +13,14 @@
                     name="decision"
                     required
                 >
+                    <%if (print.isRejected) {%>
+                    <option value="rejected">Rejected</option>
+                    <option value="accepted">Accepted</option>
+
+                    <%} else {%>
                     <option value="accepted">Accepted</option>
                     <option value="rejected">Rejected</option>
+                    <%}%>
                 </select>
             </div>
         </div>
@@ -31,22 +37,27 @@
                 <div class="col">
                     <div class="form-row">
                         <div class="col mb-2">
+                            <label class="text-muted">Hours</label>
                             <input
                                 type="number"
                                 id="hoursInput"
                                 class="form-control"
                                 name="hours"
                                 placeholder="Hours"
+                                value="<%=print.estimations.slicedHours || 0%>"
                                 required
                             />
                         </div>
                         <div class="col">
+                            <label class="text-muted">Minutes</label>
+
                             <input
                                 type="number"
                                 id="minutesInput"
                                 class="form-control"
                                 name="minutes"
                                 placeholder="Minutes"
+                                value="<%=print.estimations.slicedMinutes || 0%>"
                                 required
                             />
                         </div>
@@ -60,6 +71,7 @@
                                     class="form-control"
                                     name="grams"
                                     placeholder="Weight"
+                                    value="<%=print.estimations.slicedGrams || 0%>"
                                     required
                                 />
                                 <div class="input-group-append">
@@ -69,7 +81,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-auto">
+                <div class="col-auto d-flex flex-column">
+                    <label>&nbsp;</label>
                     <svg
                         style="
                             width: 2em;
@@ -90,12 +103,14 @@
                 </div>
 
                 <div class="col-4">
+                    <label class="text-muted">Copies</label>
                     <input
                         type="number"
                         id="copiesInput"
                         class="form-control"
                         name="copies"
                         placeholder="Copies"
+                        value="<%= print.estimations.slicedCopies || 0%>"
                         required
                     />
                 </div>
@@ -236,19 +251,20 @@
                 name="technotes"
                 placeholder="These are internal notes for other team members, and will not be sent to the patron. It might be helpful to include details on how you sliced this file!"
                 class="form-control"
-                rows="3"
+                rows="5"
             ></textarea>
         </div>
     </div>
 
     <div class="form-group">
         <label for="patronNotes">Notes to Patron</label>
+        <!-- prettier-ignore -->
         <textarea
             name="patronNotes"
             placeholder="This is what will be sent to the patron."
             class="form-control"
-            rows="2"
-        ></textarea>
+            rows="5"
+        ><%= print.patronNotes%></textarea>
     </div>
 
     <button type="submit" class="btn btn-block btn-success submit-btn">

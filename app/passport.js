@@ -65,13 +65,22 @@ module.exports = function (passport) {
             function (req, euid, password, done) {
                 // callback with euid and password from our form
                 //var searchDN = "(" + euid + "@unt.ad.unt.edu)";
-
+                console.log("trying");
                 var employment = ldap.createClient({
                     url: process.env.LDAP_URL,
                     bindDN: process.env.BIND_DN,
                     bindCredentials: process.env.BIND_CRED,
                     tlsOptions: {
-                        ca: [fs.readFileSync(path.join(__dirname, "..", "config", "UNTADRootCA.pem"))],
+                        ca: [
+                            fs.readFileSync(
+                                path.join(
+                                    __dirname,
+                                    "..",
+                                    "config",
+                                    "UNTADRootCA.pem"
+                                )
+                            ),
+                        ],
                     },
                 });
 
@@ -97,47 +106,62 @@ module.exports = function (passport) {
                             ) {
                                 //user is a member of the spark so we can go ahead and log them in maybe
                                 employment.unbind();
-                                login.bind(loginDN, password, function (err, res) {
-                                    if (err) {
-                                        login.unbind();
-                                        done(null, false, {
-                                            message: "Password not recognised. Try again?",
-                                        });
-                                    } else {
-                                        login.unbind();
-                                        //let only me have two accounts
-                                        if (euid.toLowerCase() != "hcf0018") {
-                                            euid = euid.toLowerCase();
-                                        }
-                                        User.findOne(
-                                            {
-                                                "local.euid": euid,
-                                            },
-                                            function (err, localUser) {
-                                                // if there are any errors, return the error before anything else
-                                                if (err) return done(err);
-
-                                                // if no user is found, return the message
-                                                if (!localUser) {
-                                                    var newUser = new User();
-
-                                                    // set the user's local credentials
-                                                    newUser.local.euid = euid;
-                                                    newUser.name = euid;
-                                                    newUser.isSuperAdmin = false;
-
-                                                    // save the user
-                                                    newUser.save(function (err) {
-                                                        if (err) throw err;
-                                                        return done(null, newUser); //makes new local user that matches UNT user cred
-                                                    });
-                                                } else {
-                                                    return done(null, localUser); //return the user in our database matching the UNT user
-                                                }
+                                login.bind(
+                                    loginDN,
+                                    password,
+                                    function (err, res) {
+                                        if (err) {
+                                            login.unbind();
+                                            done(null, false, {
+                                                message:
+                                                    "Password not recognised. Try again?",
+                                            });
+                                        } else {
+                                            login.unbind();
+                                            //let only me have two accounts
+                                            if (
+                                                euid.toLowerCase() != "hcf0018"
+                                            ) {
+                                                euid = euid.toLowerCase();
                                             }
-                                        );
+                                            User.findOne(
+                                                {
+                                                    "local.euid": euid,
+                                                },
+                                                function (err, localUser) {
+                                                    // if there are any errors, return the error before anything else
+                                                    if (err) return done(err);
+
+                                                    // if no user is found, return the message
+                                                    if (!localUser) {
+                                                        var newUser = new User();
+
+                                                        // set the user's local credentials
+                                                        newUser.local.euid = euid;
+                                                        newUser.name = euid;
+                                                        newUser.isSuperAdmin = false;
+
+                                                        // save the user
+                                                        newUser.save(function (
+                                                            err
+                                                        ) {
+                                                            if (err) throw err;
+                                                            return done(
+                                                                null,
+                                                                newUser
+                                                            ); //makes new local user that matches UNT user cred
+                                                        });
+                                                    } else {
+                                                        return done(
+                                                            null,
+                                                            localUser
+                                                        ); //return the user in our database matching the UNT user
+                                                    }
+                                                }
+                                            );
+                                        }
                                     }
-                                });
+                                );
                             } else {
                                 employment.unbind();
                                 done(null, false, {

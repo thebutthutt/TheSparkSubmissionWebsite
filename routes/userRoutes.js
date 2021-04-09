@@ -27,6 +27,14 @@ module.exports = function (app, passport) {
         })
     );
 
+    app.post(
+        "/react-login",
+        passport.authenticate("local-login"),
+        function (req, res) {
+            res.send(req.user);
+        }
+    );
+
     app.post("/verify", function (req, res, next) {
         console.log("me");
         passport.authenticate("verification", function (err, user) {

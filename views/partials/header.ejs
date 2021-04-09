@@ -27,28 +27,6 @@
                 <a class="nav-link" href="/submit">Submit</a>
             </li>
 
-            <!--
-            <li class="nav-item dropdown">
-                <a
-                    class="nav-link dropdown-toggle <% if (pgnum == 6) { %> active <%}%>"
-                    href="/cameras"
-                    id="navbarDropdown"
-                    role="button"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                >
-                    Cameras
-                </a>
-                <div
-                    class="dropdown-menu shadow"
-                    aria-labelledby="navbarDropdown"
-                >
-                    <a class="dropdown-item" href="/cameras">Availability</a>
-                    <a class="dropdown-item" href="/book">Booking Request</a>
-                </div>
-            </li>
-            -->
             <% if (isAdmin) { %>
             <li class="nav-item">
                 <a
@@ -65,48 +43,9 @@
             <li class="nav-item <% if (pgnum == 4) { %> active <%}%>">
                 <a class="nav-link" href="/prints/new">Prints</a>
             </li>
-
-            <!--
-            <li class="nav-item <% if (pgnum == 5) { %> active <%}%>">
-                <a class="nav-link" href="/workrequests/progress"
-                    >Work Requests</a
-                >
+            <li class="nav-item <% if (pgnum == 6) { %> active <%}%>">
+                <a class="nav-link" href="/selfservice">Self Service</a>
             </li>
-
-            <li class="nav-item dropdown">
-                <a
-                    class="nav-link dropdown-toggle <% if (pgnum == 7) { %> active <%}%>"
-                    href="/prints/new"
-                    id="navbarDropdown"
-                    role="button"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                >
-                    Booking Requests
-                </a>
-                <div
-                    class="dropdown-menu shadow"
-                    aria-labelledby="navbarDropdown"
-                >
-                    <a class="dropdown-item" href="/bookings/new"
-                        >New Requests</a
-                    >
-                    <a class="dropdown-item" href="/bookings/accepted"
-                        >Confirmed</a
-                    >
-                    <a class="dropdown-item" href="/bookings/rejected"
-                        >Rejected</a
-                    >
-                    <%if (isSuperAdmin) {%>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/bookings/overrides"
-                        >Overrides</a
-                    >
-                    <%}%>
-                </div>
-            </li>
-            -->
             <li class="nav-item <% if (pgnum == 3) { %> active <%}%>">
                 <a class="nav-link" href="/profile">Profile</a>
             </li>
