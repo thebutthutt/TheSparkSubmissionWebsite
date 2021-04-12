@@ -6,6 +6,8 @@ var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
 var printRequestModel = require("../app/models/printRequest");
 var printHandler = require("../handlers/printHandler.js");
 var adminRequestHandler = require("../handlers/adminRequestHandler.js");
+var fullServicePrinterModel = require("../app/models/fullServicePrinter");
+var selfServicePrinterModel = require("../app/models/selfServicePrinter");
 var payment = require("../app/payment.js");
 const archiver = require("archiver");
 var fs = require("fs");
@@ -25,20 +27,56 @@ module.exports = function (app) {
     //-----------------------REVIEW FILE----------------------------
 
     //send technician to reveiw page for a specific low level print file
-    app.get("/prints/preview", isLoggedIn, function (req, res) {
+    app.get("/prints/preview", isLoggedIn, async function (req, res) {
         var fileID = req.body.fileID || req.query.fileID;
         printRequestModel.findOne(
             {
                 //find the top level submission from the low level file id
                 "files._id": fileID,
             },
-            function (err, result) {
+            async function (err, result) {
                 var finalGcode = "";
                 if (result.files.id(fileID).gcodeName) {
                     finalGcode = path.join(
                         gcodePath,
                         result.files.id(fileID).gcodeName
                     );
+                }
+
+                var willisPrinters = await fullServicePrinterModel.find({
+                    printerLocation: "Willis Library",
+                });
+                var willisList = [];
+                for (const thisPrinter of willisPrinters) {
+                    var newPrinter =
+                        thisPrinter.printerType +
+                        " " +
+                        thisPrinter.printerName +
+                        " (" +
+                        thisPrinter.printerHelpText +
+                        ")";
+                    willisList.push(newPrinter);
+                }
+                var dpPrinters = await fullServicePrinterModel.find({
+                    printerLocation: "Discovery Park",
+                });
+                var dpList = [];
+                for (const thisPrinter of dpPrinters) {
+                    var newPrinter =
+                        thisPrinter.printerType +
+                        " " +
+                        thisPrinter.printerName +
+                        " (" +
+                        thisPrinter.printerHelpText +
+                        ")";
+                    dpList.push(newPrinter);
+                }
+                var selfServicePrinters = await selfServicePrinterModel
+                    .find({})
+                    .sort({ printerBarcode: 1 });
+                var selfList = [];
+                for (const thisPrinter of selfServicePrinters) {
+                    selfList.push(thisPrinter.printerName);
                 }
                 res.render("pages/prints/previewPrint", {
                     //render the review page
@@ -49,6 +87,9 @@ module.exports = function (app) {
                     name: req.user.name,
                     print: result.files.id(fileID), //send the review page the file to review
                     patron: result.patron,
+                    willisPrinters: willisList,
+                    dpPrinters: dpList,
+                    selfServicePrinters: selfList,
                     submission: result,
                     filePath: path.join(
                         stlPath,

@@ -365,26 +365,12 @@
 </div>
 
 <script>
-    var willisPrinters = [
-        "Scooby (top shelf)",
-        "Shaggy (middle shelf)",
-        "Velma (botttom shelf)",
-        "Lady Lavendar",
-        "Ms. White",
-        "Ms. Scarlet",
-        "Prusa",
-    ];
-    var dpPrinters = [
-        "Fred (left)",
-        "Daphne (right)",
-        "Hot Buttered Biscuit",
-        "Shazam (desk)",
-        "Aquaman (rolling table)",
-        "Megalo",
-    ];
-
+    var willisPrinters = `<%= willisPrinters%>`.split(",");
+    var dpPrinters = `<%= dpPrinters%>`.split(",");
+    var selfServicePrinters = `<%= selfServicePrinters%>`.split(",");
     var fileID = `<%= print._id %>`;
 
+    console.log(willisPrinters);
     function setPrinters(currentLocation) {
         var printerSelect = document.getElementById("printer-select");
         printerSelect.innerHTML = "";
@@ -395,6 +381,12 @@
             none.disabled = true;
             printerSelect.appendChild(none);
             for (const thisPrinter of willisPrinters) {
+                var opt = document.createElement("option");
+                opt.value = thisPrinter;
+                opt.innerHTML = thisPrinter;
+                printerSelect.appendChild(opt);
+            }
+            for (const thisPrinter of selfServicePrinters) {
                 var opt = document.createElement("option");
                 opt.value = thisPrinter;
                 opt.innerHTML = thisPrinter;

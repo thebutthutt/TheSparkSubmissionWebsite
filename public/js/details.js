@@ -18,7 +18,6 @@ var getUrlParameter = function getUrlParameter(sParam) {
 $(document).ready(function () {
     //initial form to show is an accepted ptint
     var initDecision = $("#decision").children("option:selected").val();
-    console.log(initDecision);
     if (initDecision == "accepted") {
         $(".accepted-controls").show();
         $(".accepted-controls input").prop("required", true);
