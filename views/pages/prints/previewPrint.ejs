@@ -452,6 +452,9 @@
 
                 <div class="col-xl-4 col-lg-6 col-md-12">
                     <!-- prettier-ignore -->
+                    <%if (print.isPrinted) {%> 
+                        <%- include ("../../partials/PrintDetails/printingDetails", {print:print}) %>
+                    <%}%>
                     <% if (print.isReadyToPrint) {%> 
                         <%- include ("../../partials/PrintDetails/startPrinting", {print:print, willisPrinters: willisPrinters, dpPrinters: dpPrinters, selfServicePrinters: selfServicePrinters}) %> 
                     <%}%>

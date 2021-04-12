@@ -1,0 +1,36 @@
+<div class="card shadow mb-3">
+    <div class="card-body">
+        <h5 class="font-weight-normal">
+            Printed at <strong><%=print.printingData.location%></strong> on the
+            <strong><%=print.printingData.printer%></strong>
+        </h5>
+        <hr />
+        <h5><%= print.printingData.rollID%></h5>
+        <div class="row">
+            <div class="col">
+                <p class="mb-0"><%=print.printingData.rollWeight%> g</p>
+                <small class="text-muted">Initial roll weight</small>
+            </div>
+            <div class="col-auto">
+                <p>-</p>
+            </div>
+            <div class="col">
+                <p class="mb-0"><%=print.printingData.finalWeight%> g</p>
+                <small class="text-muted">Final roll weight</small>
+            </div>
+            <div class="col-auto">
+                <p>=</p>
+            </div>
+            <div class="col">
+                <p class="mb-0"><%=print.printingData.weightChange%> g</p>
+                <small class="text-muted">Total fillament used</small>
+            </div>
+        </div>
+        <hr />
+        <p>
+            Finished on <%=print.timestampPrinted.toLocaleDateString('en-US')%>
+            at <%= print.timestampPrinted.toLocaleTimeString('en-US', {
+            timeStyle: "short" })%>
+        </p>
+    </div>
+</div>
