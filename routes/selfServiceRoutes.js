@@ -7,7 +7,7 @@ module.exports = function (app) {
         console.log(logs);
         var printers = await selfServicePrinterModel
             .find()
-            .sort({ printerName: -1 });
+            .sort({ printerBarcode: 1 });
         res.render("pages/selfService/eaglesCurrent", {
             pgnum: 6, //prints'
             data: logs,
@@ -72,6 +72,12 @@ module.exports = function (app) {
                 );
             });
         });
+    });
+
+    app.post("/selfservice/delete", isLoggedIn, async function (req, res) {
+        var logID = req.body.logID;
+        await selfServiceLogModel.deleteOne({ _id: logID });
+        res.redirect("/selfservice");
     });
 };
 

@@ -2,192 +2,213 @@
 <html>
     <head>
         <%- include ("../../partials/head") %>
+        <style>
+            .form-control {
+                border: none !important;
+                padding: 0px !important;
+                height: 1.5em !important;
+            }
+        </style>
     </head>
     <body>
         <%- include ("../../partials/header") %>
         <div class="container-flush mx-5 mt-4" style="margin-bottom: 100px">
             <div class="row">
-                <div class="col-3">
-                    <div class="card shadow">
-                        <div class="card-body">
-                            <table class="table mt-3">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Printer</th>
-                                        <th scope="col">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% for (var thisPrinter of printers) {%>
-                                    <tr>
-                                        <td><%= thisPrinter.printerName%></td>
-                                        <td><%= thisPrinter.isCheckedOut%></td>
-                                    </tr>
-                                    <%}%>
-                                </tbody>
-                            </table>
+                <div class="col-xl-3">
+                    <div class="card shadow mb-5">
+                        <div class="card-header border-bottom-0">
+                            <h4 class="mb-0">Self Service Printers</h4>
                         </div>
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Printer</th>
+                                    <th scope="col">Barcode</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for (var thisPrinter of printers) {%>
+                                <tr>
+                                    <td><%= thisPrinter.printerName%></td>
+                                    <td><%= thisPrinter.printerBarcode%></td>
+                                    <td>
+                                        <%if
+                                        (thisPrinter.isCheckedOut){%>Checked
+                                        Out<%} else {%>Available<%}%>
+                                    </td>
+                                </tr>
+                                <%}%>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-xl-9">
                     <div class="card shadow">
-                        <div class="card-body">
-                            <form
-                                class="row"
-                                action="/selfservice/checkout"
-                                method="POST"
-                            >
-                                <div class="col">
-                                    <label>Patron Name </label>
-
-                                    <input
-                                        class="form-control"
-                                        type="text"
-                                        name="patronName"
-                                        required
-                                    />
-                                </div>
-                                <div class="col">
-                                    <label>Printer Name </label>
-                                    <select
-                                        class="form-control"
-                                        name="printerName"
-                                        required
-                                    >
-                                        <option>Eagles: E</option>
-                                        <option>Eagles: A</option>
-                                        <option>Eagles: G</option>
-                                        <option>Eagles: L</option>
-                                        <option>Eagles: e</option>
-                                        <option>Eagles: S</option>
-                                    </select>
-                                </div>
-
-                                <div class="col">
-                                    <label>Roll ID </label>
-
-                                    <input
-                                        class="form-control"
-                                        type="text"
-                                        name="rollID"
-                                        placeholder="SS-PLA-1-001"
-                                        required
-                                    />
-                                </div>
-                                <div class="col">
-                                    <label>Date Checked Out </label>
-
-                                    <input
-                                        class="form-control"
-                                        type="date"
-                                        name="checkedOut"
-                                        required
-                                    />
-                                </div>
-
-                                <div class="col">
-                                    <label>Starting Roll Weight </label>
-
-                                    <input
-                                        class="form-control"
-                                        type="number"
-                                        name="rollStartWeight"
-                                        required
-                                    />
-                                </div>
-                                <div class="col-auto">
-                                    <button class="btn btn-primary">
-                                        Submit
-                                    </button>
-                                </div>
-                            </form>
-                            <table class="table mt-3">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" style="width: 13%">
-                                            Patron
-                                        </th>
-                                        <th scope="col" style="width: 13%">
-                                            Printer
-                                        </th>
-                                        <th scope="col" style="width: 13%">
-                                            Roll ID
-                                        </th>
-                                        <th scope="col" style="width: 13%">
-                                            Check Out
-                                        </th>
-                                        <th scope="col" style="width: 13%">
-                                            Start Weight
-                                        </th>
-                                        <th scope="col" style="width: 13%">
-                                            Check In
-                                        </th>
-                                        <th scope="col" style="width: 13%">
-                                            End Weight
-                                        </th>
-                                        <th scope="col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% for (var thisLog of data) {%>
-                                    <tr>
-                                        <td><%= thisLog.patronName%></td>
-                                        <td><%= thisLog.printerName%></td>
-
-                                        <td><%= thisLog.rollID%></td>
-                                        <td>
-                                            <%=
-                                            thisLog.checkedOut.toLocaleDateString('en-US')%>
-                                        </td>
-                                        <td><%= thisLog.rollStartWeight%></td>
-                                        <% if (thisLog.checkedIn > "1971") {%>
-                                        <td>
-                                            <%=
-                                            thisLog.checkedIn.toLocaleDateString('en-US')%>
-                                        </td>
-                                        <td><%= thisLog.rollEndWeight%></td>
-                                        <%} else {%>
-                                        <form
-                                            action="/selfservice/checkin"
-                                            method="POST"
-                                        >
-                                            <input
-                                                type="hidden"
-                                                name="logid"
-                                                value="<%= thisLog._id%>"
-                                            />
-                                            <td>
-                                                <input
-                                                    class="form-control"
-                                                    type="date"
-                                                    name="checkedin"
-                                                    required
-                                                />
-                                            </td>
-                                            <td>
-                                                <input
-                                                    class="form-control"
-                                                    type="number"
-                                                    name="rollendweight"
-                                                    required
-                                                />
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-primary">
-                                                    !
-                                                </button>
-                                            </td>
-                                        </form>
-                                        <%}%>
-                                    </tr>
-                                    <%}%>
-                                </tbody>
-                            </table>
+                        <div class="card-header border-bottom-0">
+                            <h4 class="mb-0">Self Service Record</h4>
                         </div>
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Patron</th>
+                                    <th scope="col">Printer</th>
+                                    <th scope="col">Roll ID</th>
+                                    <th scope="col">Check Out</th>
+                                    <th scope="col">Start Weight</th>
+                                    <th scope="col">Check In</th>
+                                    <th scope="col">End Weight</th>
+                                    <th scope="col" style="width: 6.3em"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <form
+                                        action="/selfservice/checkout"
+                                        method="POST"
+                                    >
+                                        <td>
+                                            <input
+                                                class="form-control"
+                                                type="text"
+                                                name="patronName"
+                                                placeholder="Patron Name"
+                                                required
+                                            />
+                                        </td>
+                                        <td>
+                                            <select
+                                                class="form-control"
+                                                name="printerName"
+                                                required
+                                            >
+                                                <% for (const thisPrinter of
+                                                printers) {%>
+                                                <option>
+                                                    <%=
+                                                    thisPrinter.printerName%>
+                                                </option>
+                                                <%}%>
+                                            </select>
+                                        </td>
+
+                                        <td>
+                                            <input
+                                                class="form-control"
+                                                type="text"
+                                                name="rollID"
+                                                placeholder="SS-PLA-1-001"
+                                                required
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="form-control"
+                                                type="date"
+                                                name="checkedOut"
+                                                required
+                                            />
+                                        </td>
+
+                                        <td>
+                                            <input
+                                                class="form-control"
+                                                type="number"
+                                                name="rollStartWeight"
+                                                placeholder="Start Weight"
+                                                required
+                                            />
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <button class="btn btn-link p-0">
+                                                Check Out
+                                            </button>
+                                        </td>
+                                    </form>
+                                </tr>
+                                <% for (var thisLog of data) {%>
+                                <tr>
+                                    <td><%= thisLog.patronName%></td>
+                                    <td><%= thisLog.printerName%></td>
+
+                                    <td><%= thisLog.rollID%></td>
+                                    <td>
+                                        <%=
+                                        thisLog.checkedOut.toLocaleDateString('en-US')%>
+                                    </td>
+                                    <td><%= thisLog.rollStartWeight%></td>
+                                    <% if (thisLog.checkedIn > "1971") {%>
+                                    <td>
+                                        <%=
+                                        thisLog.checkedIn.toLocaleDateString('en-US')%>
+                                    </td>
+                                    <td><%= thisLog.rollEndWeight%></td>
+                                    <td>
+                                        <button
+                                            class="btn btn-link p-0 text-danger delete-log"
+                                            logID="<%=thisLog._id%>"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                    <%} else {%>
+                                    <form
+                                        action="/selfservice/checkin"
+                                        method="POST"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="logid"
+                                            value="<%= thisLog._id%>"
+                                        />
+                                        <td>
+                                            <input
+                                                class="form-control"
+                                                type="date"
+                                                name="checkedin"
+                                                required
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="form-control"
+                                                type="number"
+                                                name="rollendweight"
+                                                placeholder="End Weight"
+                                                required
+                                            />
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-link p-0">
+                                                Check In
+                                            </button>
+                                        </td>
+                                    </form>
+                                    <%}%>
+                                </tr>
+                                <%}%>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
+        <script>
+            $(".delete-log").click(function () {
+                var logID = $(this).attr("logID");
+                $.ajax({
+                    type: "POST",
+                    url: "/selfservice/delete",
+                    data: {
+                        logID: logID,
+                    },
+                }).done(function () {
+                    location.reload();
+                });
+            });
+        </script>
         <%- include ("../../partials/footer") %>
     </body>
 </html>
