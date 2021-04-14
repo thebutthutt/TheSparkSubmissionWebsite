@@ -41,10 +41,13 @@
                                     <th scope="col">Printer Type</th>
                                     <th scope="col">Help Text</th>
                                     <th scope="col">Printer Location</th>
+                                    <%if (isSuperAdmin) {%>
                                     <th scope="col"></th>
+                                    <%}%>
                                 </tr>
                             </thead>
                             <tbody>
+                                <%if (isSuperAdmin) {%>
                                 <tr>
                                     <form
                                         class="row"
@@ -57,6 +60,7 @@
                                                 type="text"
                                                 name="printerName"
                                                 placeholder="New Printer Name"
+                                                
                                                 required
                                             />
                                         </td>
@@ -102,6 +106,7 @@
                                         </td>
                                     </form>
                                 </tr>
+                                <%}%>
                                 <% for (var thisPrinter of fullService) {%>
                                 <tr>
                                     <form
@@ -119,7 +124,12 @@
                                                 type="text"
                                                 name="printerName"
                                                 value="<%=thisPrinter.printerName%>"
-                                                required
+                                                
+                                                <%if (isSuperAdmin) {%>
+                                                    required
+                                                <%}else {%>
+                                                    disabled
+                                                <%}%>
                                             />
                                         </td>
                                         <td>
@@ -128,7 +138,11 @@
                                                 class="form-control"
                                                 name="printerType"
                                                 value='<%=thisPrinter.printerType%>'
-                                                required
+                                                <%if (isSuperAdmin) {%>
+                                                    required
+                                                <%}else {%>
+                                                    disabled
+                                                <%}%>
                                             />
                                         </td>
                                         
@@ -138,7 +152,11 @@
                                                 type="text"
                                                 name="printerHelpText"
                                                 value="<%=thisPrinter.printerHelpText%>"
-                                                required
+                                                <%if (isSuperAdmin) {%>
+                                                    required
+                                                <%}else {%>
+                                                    disabled
+                                                <%}%>
                                             />
                                         </td>
                                         <td>
@@ -146,7 +164,11 @@
                                             <select
                                                 class="form-control"
                                                 name="printerLocation"
-                                                required
+                                                <%if (isSuperAdmin) {%>
+                                                    required
+                                                <%}else {%>
+                                                    disabled
+                                                <%}%>
                                             >
                                                 <!-- prettier-ignore -->
                                                 <option value="Willis Library" <%if (thisPrinter.printerLocation == 'Willis Library'){%>selected<%}%>>Willis Library</option>
@@ -154,6 +176,7 @@
                                                 <option value="Discovery Park" <%if (thisPrinter.printerLocation == 'Discovery Park'){%>selected<%}%>>Discovery Park</option>
                                             </select>
                                         </td>
+                                        <%if (isSuperAdmin) {%>
                                         <td>
                                             <button class="btn ico-btn text-primary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-square" viewBox="0 0 16 16">
@@ -167,6 +190,7 @@
                                                 </svg>
                                             </span>
                                         </td>
+                                        <%}%>
                                     </form>
                                 </tr>
                                 <%}%>
@@ -184,10 +208,13 @@
                                 <tr>
                                     <th scope="col">Printer Name</th>
                                     <th scope="col">Printer Barcode</th>
+                                    <%if (isSuperAdmin) {%>
                                     <th scope="col"></th>
+                                    <%}%>
                                 </tr>
                             </thead>
                             <tbody>
+                                <%if (isSuperAdmin) {%>
                                 <tr>
                                     <form
                                         class="row"
@@ -221,6 +248,7 @@
                                         </td>
                                     </form>
                                 </tr>
+                                <%}%>
                                 <% for (var thisPrinter of selfService) {%>
                                 <tr>
                                     <form
@@ -238,7 +266,11 @@
                                                 type="text"
                                                 name="printerName"
                                                 value="<%= thisPrinter.printerName%>"
-                                                required
+                                                <%if (isSuperAdmin) {%>
+                                                    required
+                                                <%}else {%>
+                                                    disabled
+                                                <%}%>
                                             />
                                         </td>
                                         <td>
@@ -247,9 +279,14 @@
                                                 type="number"
                                                 name="printerBarcode"
                                                 value="<%= thisPrinter.printerBarcode%>"
-                                                required
+                                                <%if (isSuperAdmin) {%>
+                                                    required
+                                                <%}else {%>
+                                                    disabled
+                                                <%}%>
                                             />
                                         </td>
+                                        <%if (isSuperAdmin) {%>
                                         <td>
                                             <button class="btn ico-btn text-primary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-square" viewBox="0 0 16 16">
@@ -263,6 +300,7 @@
                                                 </svg>
                                             </span>
                                         </td>
+                                        <%}%>
                                     </form>
                                 </tr>
                                 <%}%>
