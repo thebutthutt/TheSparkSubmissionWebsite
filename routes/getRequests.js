@@ -377,16 +377,16 @@ module.exports = function (app) {
             [
                 {
                     $set: {
-                        files: {
+                        "files.completedCopies": {
                             $filter: {
-                                input: "$files",
+                                input: "$files.completedCopies",
                                 as: "item",
                                 cond: { $eq: ["$$item.isInTransit", true] },
                             },
                         },
                     },
                 },
-                { $match: { "files.0": { $exists: true } } },
+                { $match: { "files.completedCopies.0": { $exists: true } } },
             ],
             function (err, data) {
                 res.render("pages/prints/allPrints", {
@@ -399,24 +399,6 @@ module.exports = function (app) {
                 });
             }
         );
-        /**
-        printRequestModel.find(
-            {
-                "files.isInTransit": true,
-            },
-            function (err, data) {
-                //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
-                    pgnum: 4, //tells the navbar what page to highlight
-                    dbdata: data,
-                    printPage: "inTransit",
-                    location: "all",
-                    isAdmin: true,
-                    isSuperAdmin: req.user.isSuperAdmin,
-                });
-            }
-        );
-         */
     });
 
     //---------------PICKUP-----------------------------------
@@ -428,31 +410,18 @@ module.exports = function (app) {
             [
                 {
                     $set: {
-                        files: {
+                        "files.completedCopies": {
                             $filter: {
-                                input: "$files",
+                                input: "$files.completedCopies",
                                 as: "item",
                                 cond: {
-                                    $and: [
-                                        {
-                                            $eq: ["$$item.isPrinted", true],
-                                        },
-                                        {
-                                            $eq: ["$$item.isPickedUp", false],
-                                        },
-                                        {
-                                            $eq: [
-                                                "$$item.isStaleOnPickup",
-                                                false,
-                                            ],
-                                        },
-                                    ],
+                                    $eq: ["$$item.isInTransit", false],
                                 },
                             },
                         },
                     },
                 },
-                { $match: { "files.0": { $exists: true } } },
+                { $match: { "files.completedCopies.0": { $exists: true } } },
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
@@ -475,28 +444,19 @@ module.exports = function (app) {
             [
                 {
                     $set: {
-                        files: {
+                        "files.completedCopies": {
                             $filter: {
-                                input: "$files",
+                                input: "$files.completedCopies",
                                 as: "item",
                                 cond: {
                                     $and: [
                                         {
-                                            $eq: ["$$item.isPrinted", true],
-                                        },
-                                        {
-                                            $eq: ["$$item.isPickedUp", false],
+                                            $eq: ["$$item.isInTransit", false],
                                         },
                                         {
                                             $eq: [
                                                 "$$item.pickupLocation",
                                                 "Willis Library",
-                                            ],
-                                        },
-                                        {
-                                            $eq: [
-                                                "$$item.isStaleOnPickup",
-                                                false,
                                             ],
                                         },
                                     ],
@@ -505,7 +465,7 @@ module.exports = function (app) {
                         },
                     },
                 },
-                { $match: { "files.0": { $exists: true } } },
+                { $match: { "files.completedCopies.0": { $exists: true } } },
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
@@ -528,28 +488,19 @@ module.exports = function (app) {
             [
                 {
                     $set: {
-                        files: {
+                        "files.completedCopies": {
                             $filter: {
-                                input: "$files",
+                                input: "$files.completedCopies",
                                 as: "item",
                                 cond: {
                                     $and: [
                                         {
-                                            $eq: ["$$item.isPrinted", true],
-                                        },
-                                        {
-                                            $eq: ["$$item.isPickedUp", false],
+                                            $eq: ["$$item.isInTransit", false],
                                         },
                                         {
                                             $eq: [
                                                 "$$item.pickupLocation",
                                                 "Discovery Park",
-                                            ],
-                                        },
-                                        {
-                                            $eq: [
-                                                "$$item.isStaleOnPickup",
-                                                false,
                                             ],
                                         },
                                     ],
@@ -558,7 +509,7 @@ module.exports = function (app) {
                         },
                     },
                 },
-                { $match: { "files.0": { $exists: true } } },
+                { $match: { "files.completedCopies.0": { $exists: true } } },
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW

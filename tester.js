@@ -7,6 +7,68 @@ var payment = require("./app/payment.js");
 var path = require("path");
 
 console.log("here");
+
+// printRequestModel.find(
+//     {
+//         "files.printingData.copiesPrinted": { $gt: 0 },
+//         "files.completedCopies": { $exists: false },
+//     },
+//     function (err, res) {
+//         for (var submission of res) {
+//             for (var file of submission.files) {
+//                 var completedCopies = [];
+//                 for (var i = 0; i < file.printingData.copiesPrinted; i++) {
+//                     completedCopies.push({
+//                         isInTransit: false,
+//                         pickupLocation: "Willis Library",
+//                     });
+//                 }
+//                 file.completedCopies = completedCopies;
+//             }
+//             submission.save();
+//         }
+//     }
+// );
+
+printRequestModel.aggregate(
+    [
+        { $unwind: "$files" },
+        {
+            $set: {
+                "files.completedCopies": {
+                    $filter: {
+                        input: "$files.completedCopies",
+                        as: "item",
+                        cond: { $eq: ["$$item.isInTransit", false] },
+                    },
+                },
+            },
+        },
+        { $match: { "files.completedCopies.0": { $exists: true } } },
+        {
+            $group: {
+                _id: "$_id",
+                doc: { $first: "$$ROOT" },
+                files: { $addToSet: "$files" },
+            },
+        },
+        {
+            $replaceRoot: {
+                newRoot: { $mergeObjects: ["$doc", { files: "$files" }] },
+            },
+        },
+    ],
+    function (err, data) {
+        for (var submission of data) {
+            if (submission.patron.fname == "DUMMY") {
+                for (var file of submission.files) {
+                    console.log(file.completedCopies);
+                }
+            }
+        }
+    }
+);
+
 /*
 printRequestModel.find({ "files.isStarted": true }, function (err, results) {
     for (var submission of results) {
