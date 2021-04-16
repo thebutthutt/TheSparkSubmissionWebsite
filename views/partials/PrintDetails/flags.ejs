@@ -18,28 +18,14 @@
 <%} %>
 
 <!-- ---------------------------- <Ready files ----------------------------- -->
-
-<% if (printPage == 'ready') { %> <% if (file.isStarted) { %> <%if
-(file.printingData) {%>
-<span class="badge font-weight-normal alert-success"
-    >Printing at <%=file.printingData.location%></span
->
-<%} else {%>
-<span class="badge font-weight-normal alert-success">Printing</span>
-<%}%> <%} else {%>
+<% if (printPage == 'ready') { %>
 <span class="badge font-weight-normal alert-light"
-    >Print at <%=file.printLocation%></span
->
-<%}%>
-<span class="badge font-weight-normal alert-primary"
-    ><%=file.printingData.copiesPrinted%>/<%=file.copies%> printed</span
+    >Reviewed for <%=file.printLocation%></span
 >
 
 <%}%>
-
 <!-- --------------------------- Printing Files ---------------------------- -->
-
-<%if(printPage == 'printing') {%>
+<% /* %> <%if(printPage == 'printing') {%>
 <span class="badge font-weight-normal alert-success"
     >Printing at <%=file.printingData.location%></span
 >
@@ -50,8 +36,7 @@
 <span class="badge font-weight-normal alert-info"
     >Pickup at <%=file.printLocation%></span
 >
-<%} %>
-
+<%} %> <% */ %>
 <!-- ----------------------------- In transit ------------------------------ -->
 
 <% if (printPage == 'inTransit') { %>

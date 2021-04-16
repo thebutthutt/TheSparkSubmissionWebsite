@@ -13,6 +13,14 @@
             th {
                 border-top: none !important;
             }
+
+            .spacer-row {
+                background-color: #f0f0f0;
+            }
+
+            .spacer-row td {
+                padding: 5px;
+            }
         </style>
     </head>
 
@@ -25,24 +33,18 @@
                     <%- include ("../../partials/PrintDetails/printNav") %>
                 </div>
                 <div class="col">
-                    <div class="shadow card">
+                    <div class="card shadow">
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th
                                         scope="col"
-                                        style="width: 10%"
+                                        style="width: 15%"
                                         class="name-col"
                                     >
                                         Name
                                     </th>
-                                    <th
-                                        scope="col"
-                                        style="width: 10%"
-                                        class="date-col"
-                                    >
-                                        Submitted
-                                    </th>
+                                    <th scope="col"></th>
 
                                     <!-- prettier-ignore -->
                                     <th scope="col "style="width: 10%">
@@ -71,25 +73,25 @@
                             <tbody>
                                 <%dbdata.forEach(function (item) {%> <%i = 0%>
                                 <% item.files.forEach(function (file) {%>
-
+                                <!-- prettier-ignore -->
+                                <%if (i==0) {%>
+                                <tr class="spacer-row">
+                                    <td colspan="5"></td>
+                                </tr>
+                                <%}%>
                                 <tr
-                                    class="<%if(item.allFilesReviewed && printPage=='newSub'){%>table-warning<%}%>"
+                                    class="<%if(item.allFilesReviewed && printPage=='newSub'){%>table-warning<%}%> <%if(i==0){%><%}%>"
                                 >
                                     <%if (i==0){%>
                                     <td rowspan="<%=item.files.length%>">
-                                        <%= item.patron.fname %> <%=
-                                        item.patron.lname %>
-                                    </td>
-                                    <td
-                                        class="date-col"
-                                        rowspan="<%=item.files.length%>"
-                                    >
+                                        <strong>
+                                            <%= item.patron.fname %> <%=
+                                            item.patron.lname %> </strong
+                                        ><br />
+                                        Submitted on:
                                         <%=item.timestampSubmitted.toLocaleDateString('en-US')%>
-                                    </td>
-                                    <%}%>
-                                    <td>
-                                        <!-- prettier-ignore-->
-                                        <%if (printPage == 'newSub' && i==0){%>
+                                        <br />
+                                        <%if (printPage == 'newSub'){%>
                                         <%if(!item.allFilesReviewed){%>
                                         <span
                                             class="d-inline-block"
@@ -153,6 +155,22 @@
                                             </button>
                                         </span>
                                         <%}%> <%}%>
+                                    </td>
+
+                                    <%}%>
+
+                                    <td class="border-top-0">
+                                        <a
+                                            class="no font-weight-bold"
+                                            href='<%= "/prints/preview?fileID=" + file._id%>'
+                                        >
+                                            <%=file.realFileName%>
+                                        </a>
+                                        <%- include
+                                        ("../../partials/PrintDetails/flags",
+                                        {file:file, isAll: isall, printPage:
+                                        printPage}) %>
+                                        <br />
                                         <!-- prettier-ignore -->
                                         <%if (printPage == 'pendpay' || printPage == 'pendpaystale' || printPage == 'rejected') { %>
                                         <%=file.timestampReviewed.toLocaleDateString('en-US')%>
@@ -190,18 +208,12 @@
                                         <%}%>
                                     </td>
                                     <td>
-                                        <a
-                                            class="no font-weight-bold"
-                                            href='<%= "/prints/preview?fileID=" + file._id%>'
-                                        >
-                                            <%=file.realFileName%>
-                                        </a>
-                                        &nbsp; <%- include
-                                        ("../../partials/PrintDetails/flags",
+                                        <%- include
+                                        ("../../partials/PrintDetails/copyFlags",
                                         {file:file, isAll: isall, printPage:
                                         printPage}) %>
                                     </td>
-                                    <td>
+                                    <td class="border-top-0">
                                         <%- include
                                         ("../../partials/PrintDetails/fileBurger",
                                         {file:file, item:item}) %>

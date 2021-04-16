@@ -83,19 +83,22 @@ var singlePrintSchema = mongoose.Schema({
         numFailedAttempts: { type: Number, default: 0 },
     },
 
-    completedCopies: [
-        {
-            isInTransit: { type: Boolean, default: false },
-            pickupLocation: { type: String, default: "" },
-            printedBy: { type: String, default: "" },
-            timestampPrinted: { type: Date, default: "1970" },
-            timestampArrived: { type: Date, default: "1970" },
-            timestampPickedUp: { type: Date, default: "1970" },
-            timestampOfFirstWarning: { type: Date, default: "1970" },
-            timestampOfSecondWarning: { type: Date, default: "1970" },
-            timestampOfConfiscation: { type: Date, default: "1970" },
-        },
-    ],
+    completedCopies: {
+        type: [
+            {
+                isInTransit: { type: Boolean, default: false },
+                pickupLocation: { type: String, default: "" },
+                printedBy: { type: String, default: "" },
+                timestampPrinted: { type: Date, default: "1970" },
+                timestampArrived: { type: Date, default: "1970" },
+                timestampPickedUp: { type: Date, default: "1970" },
+                timestampOfFirstWarning: { type: Date, default: "1970" },
+                timestampOfSecondWarning: { type: Date, default: "1970" },
+                timestampOfConfiscation: { type: Date, default: "1970" },
+            },
+        ],
+        default: [],
+    },
     isStarted: { type: Boolean, default: false },
 
     techNotes: { type: String, default: "" },
