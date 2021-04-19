@@ -11,15 +11,41 @@ console.log("here");
 printRequestModel.find({}, function (err, res) {
     for (var submission of res) {
         for (file of submission.files) {
-            if (
-                file.printingData.copiesPrinted > 0 &&
-                file.completedCopies.length == 0
-            ) {
-                console.log(file.printingData);
+            if (file.isInTransit == false) {
+                for (var thisCopy of file.completedCopies) {
+                    if (thisCopy.isInTransit) {
+                        thisCopy.isInTransit = false;
+                    }
+                }
             }
         }
+        submission.save();
     }
 });
+
+// printRequestModel.find({}, function (err, res) {
+//     for (var submission of res) {
+//         for (file of submission.files) {
+//             if (
+//                 file.printingData.copiesPrinted > 0 &&
+//                 file.completedCopies.length == 0
+//             ) {
+//                 console.log(file.printingData);
+//                 var completedCopies = [];
+//                 for (var i = 0; i < file.printingData.copiesPrinted; i++) {
+//                     completedCopies.push({
+//                         isInTransit:
+//                             file.printingData.location == file.pickupLocation
+//                                 ? false
+//                                 : true,
+//                     });
+//                 }
+//                 file.completedCopies = completedCopies;
+//             }
+//         }
+//         submission.save();
+//     }
+// });
 
 // printRequestModel.find(
 //     {

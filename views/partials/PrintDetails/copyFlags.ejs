@@ -1,42 +1,61 @@
-<div class="card-group mt-1">
-    <div class="card">
-        <div class="card-body p-1">
-            <p class="small text-muted mb-0">Unprinted</p>
-            <%var unprinted = file.copies -
-            (file.printingData?file.printingData.copiesPrinted:0) -
-            (file.printingData?file.printingData.copiesPrinting:0)%>
-            <!-- prettier-ignore -->
-            <%for (var i = 0; i < unprinted; i++) {%>
-            <span class="badge font-weight-normal alert-primary"
-                >Copy <%=i+1%></span
-            >
-            <%}%>
-        </div>
+<!-- prettier-ignore -->
+<%var unprinted = file.copies -
+        (file.printingData?file.printingData.copiesPrinted:0) -
+        (file.printingData?file.printingData.copiesPrinting:0)%>
+<!-- prettier-ignore -->
+<%var printing  = (file.printingData?file.printingData.copiesPrinting:0)%>
+<!-- prettier-ignore -->
+<%var inTransit = file.completedCopies?file.completedCopies.filter(function(copy) { return copy.isInTransit}).length:0%>
+<!-- prettier-ignore -->
+<%var completed = file.completedCopies?file.completedCopies.filter(function(copy) { return (!copy.isInTransit && copy.timestampPickedUp < new Date("2000"))}).length:0%>
+        <%var pickedUp = file.completedCopies?file.completedCopies.filter(function(copy) { return (!copy.isInTransit && copy.timestampPickedUp > new Date("1980"))}).length:0%>
+
+<td style="width: 10%">
+    <div class="d-flex flex-row flex-wrap" style="margin: -1px">
+        <%for (var i = 0; i < unprinted; i++) {%>
+        <span
+            class="badge font-weight-normal alert-secondary"
+            style="margin: 1px"
+            >Copy <%=i+1+completed+printing+inTransit+pickedUp%></span
+        >
+        <%}%>
     </div>
-    <div class="card">
-        <div class="card-body p-1">
-            <p class="small text-muted mb-0">Printing</p>
-            <!-- prettier-ignore -->
-            <%var printing = (file.printingData?file.printingData.copiesPrinting:0)%>
-            <!-- prettier-ignore -->
-            <%for (var i = 0; i < printing; i++) {%>
-            <span class="badge font-weight-normal alert-warning"
-                >Copy <%=i+unprinted+1%></span
-            >
-            <%}%>
-        </div>
+</td>
+<td style="width: 10%">
+    <div class="d-flex flex-row flex-wrap" style="margin: -1px">
+        <%for (var i = 0; i < printing; i++) {%>
+        <span class="badge font-weight-normal alert-primary" style="margin: 1px"
+            >Copy <%=i+1+completed+inTransit+pickedUp%></span
+        >
+        <%}%>
     </div>
-    <div class="card">
-        <div class="card-body p-1">
-            <p class="small text-muted mb-0">Completed</p>
-            <!-- prettier-ignore -->
-            <%var completed = (file.printingData?file.printingData.copiesPrinted:0)%>
-            <!-- prettier-ignore -->
-            <%for (var i = 0; i < completed; i++) {%>
-            <span class="badge font-weight-normal alert-success"
-                >Copy <%=i+unprinted+printing+1%></span
-            >
-            <%}%>
-        </div>
+</td>
+
+<td style="width: 10%">
+    <div class="d-flex flex-row flex-wrap" style="margin: -1px">
+        <%for (var i = 0; i < inTransit; i++) {%>
+        <span class="badge font-weight-normal alert-warning" style="margin: 1px"
+            >Copy <%=i+1+completed+pickedUp%></span
+        >
+        <%}%>
     </div>
-</div>
+</td>
+<td style="width: 10%">
+    <div class="d-flex flex-row flex-wrap" style="margin: -1px">
+        <%for (var i = 0; i < completed; i++) {%>
+        <span class="badge font-weight-normal alert-success" style="margin: 1px"
+            >Copy <%=i+1+pickedUp%></span
+        >
+        <%}%>
+    </div>
+</td>
+
+<td style="width: 10%">
+    <div class="d-flex flex-row flex-wrap" style="margin: -1px">
+        <%for (var i = 0; i < pickedUp; i++) {%>
+        <span class="badge font-weight-normal alert-light" style="margin: 1px"
+            >Copy <%=i+1%></span
+        >
+        <%}%>
+    </div>
+</td>

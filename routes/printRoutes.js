@@ -194,18 +194,18 @@ module.exports = function (app) {
     });
 
     //-----------------------MARK COMPLETED-----------------------
-    app.post("/prints/finishPrinting", isLoggedIn, function (req, res) {
-        var fileID = req.body.fileID || req.query.fileID;
-        printHandler.markCompleted(fileID);
-        res.json(["done"]);
-    });
+    // app.post("/prints/finishPrinting", isLoggedIn, function (req, res) {
+    //     var fileID = req.body.fileID || req.query.fileID;
+    //     printHandler.markCompleted(fileID);
+    //     res.json(["done"]);
+    // });
 
     //-----------------------MARK PICKEFD UP-----------------------
-    app.post("/prints/markPickedUp", isLoggedIn, function (req, res) {
-        var fileID = req.body.fileID || req.query.fileID;
-        printHandler.markPickedUp(fileID);
-        res.json(["done"]);
-    });
+    // app.post("/prints/markPickedUp", isLoggedIn, function (req, res) {
+    //     var fileID = req.body.fileID || req.query.fileID;
+    //     printHandler.markPickedUp(fileID);
+    //     res.json(["done"]);
+    // });
 
     //-----------------------DOWNLOAD-----------------------
     //downloads file specified in the parameter
@@ -405,7 +405,7 @@ module.exports = function (app) {
 
     app.post("/prints/arrived", isLoggedIn, function (req, res) {
         printHandler.markAtPickupLocation(req.body, function callback() {
-            res.json(["done"]);
+            res.redirect("/prints/preview?fileID=" + req.body.fileID);
         });
     });
 

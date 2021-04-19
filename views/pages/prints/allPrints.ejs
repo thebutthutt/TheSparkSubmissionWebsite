@@ -33,79 +33,124 @@
                     <%- include ("../../partials/PrintDetails/printNav") %>
                 </div>
                 <div class="col">
-                    <div class="card shadow">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th
-                                        scope="col"
-                                        style="width: 15%"
-                                        class="name-col"
-                                    >
-                                        Name
-                                    </th>
-                                    <th scope="col"></th>
-
-                                    <!-- prettier-ignore -->
-                                    <th scope="col "style="width: 10%">
-                                    <%if (printPage == 'newSub') { %>
-                                        Send
-                                    <%} else if (printPage == 'pendpay' || printPage == 'pendpaystale' || printPage == 'rejected') { %>
-                                        Reviewed
-                                    <%} else if (printPage == 'ready' || printPage == 'printing') { %>
-                                        Paid
-                                    <%}else if (printPage == 'pickup' || printPage == 'inTransit' || printPage == 'rejected') { %>
-                                        Printed
-                                    <%} else if (printPage == 'completed') { %>
-                                        Picked Up
-                                    <%}else if (printPage == 'all') { %>
-                                        Status
-                                    <%}%>
-                                    </th>
-
-                                    <th scope="col" class="big-head-col">
-                                        Files
-                                    </th>
-                                    <th class="little-col"></th>
-                                    <th class="little-col"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <%dbdata.forEach(function (item) {%> <%i = 0%>
-                                <% item.files.forEach(function (file) {%>
-                                <!-- prettier-ignore -->
-                                <%if (i==0) {%>
-                                <tr class="spacer-row">
-                                    <td colspan="5"></td>
-                                </tr>
-                                <%}%>
-                                <tr
-                                    class="<%if(item.allFilesReviewed && printPage=='newSub'){%>table-warning<%}%> <%if(i==0){%><%}%>"
+                    <%dbdata.forEach(function (item) {%>
+                    <div class="card shadow mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <%= item.patron.fname %> <%= item.patron.lname
+                                %> &nbsp; &nbsp;
+                                <button
+                                    type="button"
+                                    style="
+                                        border: none;
+                                        background: transparent;
+                                    "
+                                    data-toggle="tooltip"
+                                    data-placement="right"
+                                    title="Download all files in this submission"
+                                    class="zip-btn p-0"
+                                    id="<%= item._id%>"
                                 >
-                                    <%if (i==0){%>
-                                    <td rowspan="<%=item.files.length%>">
-                                        <strong>
-                                            <%= item.patron.fname %> <%=
-                                            item.patron.lname %> </strong
-                                        ><br />
-                                        Submitted on:
-                                        <%=item.timestampSubmitted.toLocaleDateString('en-US')%>
-                                        <br />
-                                        <%if (printPage == 'newSub'){%>
-                                        <%if(!item.allFilesReviewed){%>
-                                        <span
-                                            class="d-inline-block"
-                                            tabindex="0"
-                                            data-toggle="tooltip"
-                                            data-placement="top"
-                                            title="<% if (!item.allFilesReviewed) { %> Please review all files first! <%} else {%>Send to Patron<% } %>"
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        style="vertical-align: unset"
+                                        width="16"
+                                        height="16"
+                                        fill="currentColor"
+                                        class="bi bi-save"
+                                        viewBox="0 0 16 16"
+                                    >
+                                        <path
+                                            d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"
+                                        />
+                                    </svg>
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-2">
+                                    <table
+                                        class="table table-borderless table-sm"
+                                    >
+                                        <tr>
+                                            <td class="pl-0 text-muted">
+                                                Submitted
+                                            </td>
+                                            <td>
+                                                <%=item.timestampSubmitted.toLocaleDateString('en-US')%>
+                                            </td>
+                                        </tr>
+                                        <!-- prettier-ignore -->
+                                        <%if (printPage != "newSub") { %>
+                                        <tr>
+                                            <td class="pl-0 text-muted">
+                                                Reviewed
+                                            </td>
+                                            <td>
+                                                <%=item.timestampPaymentRequested.toLocaleDateString('en-US')%>
+                                            </td>
+                                        </tr>
+                                        <%}%>
+
+                                        <!-- prettier-ignore -->
+                                        <%if (printPage != "newSub" && printPage != "pendpay") { %>
+                                        <tr>
+                                            <td class="pl-0 text-muted">
+                                                Paid
+                                            </td>
+                                            <td>
+                                                <%=item.timestampPaid.toLocaleDateString('en-US')%>
+                                            </td>
+                                        </tr>
+                                        <%}%>
+                                    </table>
+                                    <%if (printPage == 'newSub'){%>
+                                    <%if(!item.allFilesReviewed){%>
+                                    <span
+                                        class="d-inline-block"
+                                        tabindex="0"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="<% if (!item.allFilesReviewed) { %> Please review all files first! <%} else {%>Send to Patron<% } %>"
+                                    >
+                                        <svg
+                                            class="bi bi-person-check"
+                                            width="25px"
+                                            height="25px"
+                                            viewBox="0 0 16 16"
+                                            fill="#aaa"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z"
+                                            />
+                                            <rect
+                                                width="3"
+                                                height="3"
+                                                x="2"
+                                                y="9"
+                                                rx="1"
+                                            />
+                                            <path d="M1 5h14v2H1z" />
+                                        </svg>
+                                        <%} else {%>
+                                        <button
+                                            type="button"
+                                            style="
+                                                border: none;
+                                                background: transparent;
+                                            "
+                                            class="submit-btn p-0"
+                                            id="<%= item._id%>"
                                         >
                                             <svg
                                                 class="bi bi-person-check"
                                                 width="25px"
                                                 height="25px"
                                                 viewBox="0 0 16 16"
-                                                fill="#aaa"
+                                                fill="#000"
                                                 xmlns="http://www.w3.org/2000/svg"
                                             >
                                                 <path
@@ -121,136 +166,98 @@
                                                 />
                                                 <path d="M1 5h14v2H1z" />
                                             </svg>
-                                            <%} else {%>
-                                            <button
-                                                type="button"
-                                                style="
-                                                    border: none;
-                                                    background: transparent;
-                                                "
-                                                class="submit-btn p-0"
-                                                id="<%= item._id%>"
-                                            >
-                                                <svg
-                                                    class="bi bi-person-check"
-                                                    width="25px"
-                                                    height="25px"
-                                                    viewBox="0 0 16 16"
-                                                    fill="#000"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        fill-rule="evenodd"
-                                                        d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z"
-                                                    />
-                                                    <rect
-                                                        width="3"
-                                                        height="3"
-                                                        x="2"
-                                                        y="9"
-                                                        rx="1"
-                                                    />
-                                                    <path d="M1 5h14v2H1z" />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                        <%}%> <%}%>
-                                    </td>
-
-                                    <%}%>
-
-                                    <td class="border-top-0">
-                                        <a
-                                            class="no font-weight-bold"
-                                            href='<%= "/prints/preview?fileID=" + file._id%>'
-                                        >
-                                            <%=file.realFileName%>
-                                        </a>
-                                        <%- include
-                                        ("../../partials/PrintDetails/flags",
-                                        {file:file, isAll: isall, printPage:
-                                        printPage}) %>
-                                        <br />
-                                        <!-- prettier-ignore -->
-                                        <%if (printPage == 'pendpay' || printPage == 'pendpaystale' || printPage == 'rejected') { %>
-                                        <%=file.timestampReviewed.toLocaleDateString('en-US')%>
-                                        <%}%>
-
-                                        <!-- prettier-ignore -->
-                                        <%if (printPage == 'ready' || printPage=="printing") { %>
-                                        <%=item.timestampPaid.toLocaleDateString('en-US')%>
-                                        <%}%>
-
-                                        <!-- prettier-ignore -->
-                                        <%if (printPage == 'pickup' || printPage == 'inTransit' || printPage == 'rejected') { %>
-                                        <%=file.timestampPrinted.toLocaleDateString('en-US')%>
-                                        <%}%>
-
-                                        <!-- prettier-ignore -->
-                                        <%if (printPage == 'completed') { %>
-                                        <%=file.timestampPickedUp.toLocaleDateString('en-US')%>
-                                        <%}%>
-
-                                        <!-- prettier-ignore -->
-                                        <%if (printPage == 'all') { %>
-                                        <% if (file.isRejected) { %>
-                                                Rejected <% } else if
-                                                (file.isNewSubmission) { %> New
-                                                <% } else if
-                                                (file.isPendingPayment) { %>
-                                                Pending payment <% } else if
-                                                (file.isReadyToPrint) { %> In
-                                                Queue <% } else if
-                                                (file.isPrinted &&
-                                                !file.isPickedUp) { %> Waiting
-                                                for pickup <% } else { %>
-                                                Complete <% } %>
-                                        <%}%>
-                                    </td>
-                                    <td>
-                                        <%- include
-                                        ("../../partials/PrintDetails/copyFlags",
-                                        {file:file, isAll: isall, printPage:
-                                        printPage}) %>
-                                    </td>
-                                    <td class="border-top-0">
-                                        <%- include
-                                        ("../../partials/PrintDetails/fileBurger",
-                                        {file:file, item:item}) %>
-                                    </td>
-
-                                    <%if (i==0){%>
-                                    <td rowspan="<%=item.files.length%>">
-                                        <button
-                                            type="button"
-                                            style="
-                                                border: none;
-                                                background: transparent;
-                                            "
-                                            data-toggle="tooltip"
-                                            data-placement="left"
-                                            title="Download all files in this submission"
-                                            class="zip-btn p-0"
-                                            id="<%= item._id%>"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="16"
-                                                height="16"
-                                                fill="currentColor"
-                                                class="bi bi-save"
-                                                viewBox="0 0 16 16"
-                                            >
-                                                <path
-                                                    d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"
-                                                />
-                                            </svg>
                                         </button>
-                                    </td>
-                                    <%}%> <%i++%>
+                                    </span>
+                                    <%}%> <%}%>
+                                </div>
+                                <div class="col">
+                                    <table
+                                        class="table"
+                                        style="margin-top: -0.75rem"
+                                    >
+                                        <thead>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Unprinted</th>
+                                                <th>Printing</th>
+                                                <th>In Transit</th>
+                                                <th>Completed</th>
+                                                <th>Picked Up</th>
+                                                <th>More</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <%i = 0%> <%
+                                            item.files.forEach(function (file)
+                                            {%>
+                                            <tr>
+                                                <td style="width: 45%">
+                                                    <a
+                                                        class="no font-weight-bold"
+                                                        href='<%= "/prints/preview?fileID=" + file._id%>'
+                                                    >
+                                                        <%=file.realFileName%> </a
+                                                    ><%- include
+                                                    ("../../partials/PrintDetails/flags",
+                                                    {file:file, isAll: isall,
+                                                    printPage: printPage}) %>
+                                                </td>
+
+                                                <%- include
+                                                ("../../partials/PrintDetails/copyFlags",
+                                                {file:file, isAll: isall,
+                                                printPage: printPage}) %>
+
+                                                <td style="width: 11%">
+                                                    <%- include
+                                                    ("../../partials/PrintDetails/fileBurger",
+                                                    {file:file, item:item}) %>
+                                                </td>
+                                            </tr>
+
+                                            <%i++%> <%})%>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <%})%>
+
+                    <div class="card shadow">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th
+                                        scope="col"
+                                        style="width: 15%"
+                                        class="name-col"
+                                    >
+                                        Patron
+                                    </th>
+
+                                    <!-- prettier-ignore -->
+                                    <th scope="col">
+                                    <%if (printPage == 'newSub') { %>
+                                        Send
+                                    <%} else if (printPage == 'pendpay' || printPage == 'pendpaystale' || printPage == 'rejected') { %>
+                                        Reviewed
+                                    <%} else if (printPage == 'ready' || printPage == 'printing') { %>
+                                        Paid
+                                    <%}else if (printPage == 'pickup' || printPage == 'inTransit' || printPage == 'rejected') { %>
+                                        Printed
+                                    <%} else if (printPage == 'completed') { %>
+                                        Picked Up
+                                    <%}else if (printPage == 'all') { %>
+                                        Status
+                                    <%}%>
+                                    </th>
+
+                                    <th scope="col"></th>
+                                    <th scope="col"></th>
                                 </tr>
-                                <%})%> <%})%>
-                            </tbody>
+                            </thead>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>

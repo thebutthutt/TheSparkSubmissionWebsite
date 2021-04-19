@@ -2,6 +2,7 @@
 var printHandler = require("../handlers/printHandler.js");
 const WebSocket = require("ws");
 module.exports = function (server) {
+    console.log("loaded");
     //=========================================
     //				WEB SOCKET
     //	Makes signature pad talk to browsers
@@ -18,8 +19,10 @@ module.exports = function (server) {
     var currentDPRequestingID = -1;
     var currentWillisRequestingIndex = -1;
     var currentDPRequestingIndex = -1;
+    var numPickup = 0;
 
     wss.on("connection", function connection(ws) {
+        console.log("connection");
         /*
 messageStructure: {
 	sender: messiah | tech | dptech | server
@@ -85,33 +88,18 @@ messageStructure: {
                         })
                     );
                 }
-            } else if (data == "DPSignaturePad") {
-                console.log("dp sigpad connected");
-                dp = clientData.yourID; //this is the ID of the messiah
-                iamdp = true;
-                for (var i = 0; i < CLIENTS.length; i++) {
-                    var newData = {
-                        yourID: i,
-                        willisID: willis,
-                        dpID: dp,
-                    };
-                    CLIENTS[i].send(
-                        JSON.stringify({
-                            sender: "server",
-                            command: "sendClientInfo",
-                            data: newData,
-                        })
-                    );
-                }
             } else {
                 var obj = JSON.parse(data);
 
                 //if a tech asks for a signature, tell the signature pad to work
-                if (obj.sender == "tech" && obj.command == "requestPatronSignature") {
+                if (
+                    obj.sender == "tech" &&
+                    obj.command == "requestPatronSignature"
+                ) {
                     if (obj.location == "willis") {
                         currentWillisRequestingIndex = clientData.yourID; //mark what client is interacting with the signature pad
                         currentWillisRequestingID = obj.data.fileID; //the ID of the file being signed for
-
+                        numPickup = obj.data.numPickup;
                         console.log(
                             "willis is asking patron to sign",
                             currentWillisRequestingIndex,
@@ -129,7 +117,12 @@ messageStructure: {
                     } else {
                         currentDPRequestingIndex = clientData.yourID; //mark what client is interacting with the signature pad
                         currentDPRequestingID = obj.data.fileID; //the ID of the file being signed for
-                        console.log("dp is asking patron to sign", currentDPRequestingIndex, currentDPRequestingID);
+                        numPickup = obj.data.numPickup;
+                        console.log(
+                            "dp is asking patron to sign",
+                            currentDPRequestingIndex,
+                            currentDPRequestingID
+                        );
 
                         //send the signature pad the request for a signaturee
                         CLIENTS[dp].send(
@@ -141,7 +134,10 @@ messageStructure: {
                             })
                         );
                     }
-                } else if (obj.sender == "messiah" && obj.command == "recievePatronSignature") {
+                } else if (
+                    obj.sender == "messiah" &&
+                    obj.command == "recievePatronSignature"
+                ) {
                     if (obj.location == "willis") {
                         if (obj.data.fileID == currentWillisRequestingID) {
                             //send request for login to the technicians screen
@@ -166,6 +162,7 @@ messageStructure: {
                         }
                     } else {
                         if (obj.data.fileID == currentDPRequestingID) {
+                            console.log("over here");
                             //send request for login to the technicians screen
                             CLIENTS[currentDPRequestingIndex].send(
                                 JSON.stringify({
@@ -187,7 +184,10 @@ messageStructure: {
                             );
                         }
                     }
-                } else if (obj.sender == "tech" && obj.command == "recieveAdminLogin") {
+                } else if (
+                    obj.sender == "tech" &&
+                    obj.command == "recieveAdminLogin"
+                ) {
                     if (obj.location == "willis") {
                         CLIENTS[willis].send(
                             JSON.stringify({
@@ -195,8 +195,15 @@ messageStructure: {
                                 command: "resetScreen",
                             })
                         );
-                        console.log("picking up at willis", currentWillisRequestingIndex, currentWillisRequestingID);
-                        printHandler.markPickedUp(currentWillisRequestingID);
+                        console.log(
+                            "picking up at willis",
+                            currentWillisRequestingIndex,
+                            currentWillisRequestingID
+                        );
+                        printHandler.markPickedUp(
+                            currentWillisRequestingID,
+                            numPickup
+                        );
                         currentWillisRequestingID = -1;
                         currentWillisRequestingIndex = -1;
                     } else {
@@ -206,8 +213,15 @@ messageStructure: {
                                 command: "resetScreen",
                             })
                         );
-                        console.log("picking up at dp", currentDPRequestingIndex, currentDPRequestingID);
-                        printHandler.markPickedUp(currentDPRequestingID);
+                        console.log(
+                            "picking up at dp",
+                            currentDPRequestingIndex,
+                            currentDPRequestingID
+                        );
+                        printHandler.markPickedUp(
+                            currentDPRequestingID,
+                            numPickup
+                        );
                         currentDPRequestingID = -1;
                         currentDPRequestingIndex = -1;
                     }

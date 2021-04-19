@@ -19,7 +19,7 @@ if (typeof document.hidden !== "undefined") {
 }
 
 function connectWebSocket() {
-    ws = new WebSocket("wss://sparkorders.library.unt.edu");
+    ws = new WebSocket("wss://sparkorders.library.unt.edu:8080");
     ws.onopen = () => {
         if (signlocation == "willis") {
             ws.send("WillisSignaturePad");

@@ -380,6 +380,7 @@
                                     <%if(print.isPrinted && !print.isPickedUp){%>
                                     <button
                                         data-toggle="modal"
+                                        data-numcopies="<%=print.printingData.copiesPrinted%>"
                                         data-target="#modalPickup"
                                         data-backdrop="static"
                                         data-keyboard="false"
@@ -470,10 +471,6 @@
                         <%- include ("../../partials/PrintDetails/waiveCard", {print:print}) %> 
                     <%}%>
 
-                    <!-- prettier-ignore -->
-                    <%if(print.isInTransit) {%> 
-                        <%- include ("../../partials/PrintDetails/transitCard", {print:print}) %> 
-                    <%}%>
 
                     <!-- prettier-ignore -->
                     <% if (print.canBeReviewed) { %>
@@ -496,7 +493,7 @@
                         <%- include ("../../partials/PrintDetails/contact", {print:print}) %>
                     <%}%>
 
-                    <%if (print.isReadyToPrint) {%> 
+                    <%if (!print.isNewSubmission ) {%> 
                         <%- include ("../../partials/PrintDetails/finishPrinting", {print:print}) %> 
                     <%}%> 
 
