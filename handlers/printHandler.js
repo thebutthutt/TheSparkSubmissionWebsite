@@ -500,6 +500,7 @@ module.exports = {
                         result.files[i].isPendingPayment = false;
                         if (result.files[i].isRejected == false) {
                             result.files[i].isPaid = true;
+                            result.files[i].timestampPaid = now;
                             result.files[i].isReadyToPrint = true;
                             result.files[i].isPendingWaive = false;
                             if (wasWaived) {
@@ -544,6 +545,7 @@ module.exports = {
                         result.files[i].isPendingPayment = false;
                         if (result.files[i].isRejected == false) {
                             result.files[i].isPaid = true;
+                            result.files[i].timestampPaid = now;
                             result.files[i].isReadyToPrint = true;
                             result.files[i].isPendingWaive = false;
                             if (wasWaived) {
