@@ -606,7 +606,7 @@ module.exports = {
                     console.log(err);
                 }
                 if (isInTransit) {
-                    //newmailer.fileInTransit(result, result.files.id(fileID));
+                    newmailer.inTransit(result, result.files.id(fileID));
                 } else {
                     newmailer.readyForPickup(result, result.files.id(fileID));
                 }
@@ -708,19 +708,37 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
+                    var now = new Date();
+                    var printingData = result.files.id(fileID).printingData;
+                    var numNewFinished = printingData.copiesPrinting;
+                    var completedCopies = result.files.id(fileID)
+                        .completedCopies;
                     result.files.id(fileID).isStarted = false;
-                    if (
-                        result.files.id(fileID).printingData.copiesPrinted ==
-                        null
-                    ) {
-                        result.files.id(fileID).printingData.copiesPrinted = 0;
+                    if (printingData.copiesPrinted == null) {
+                        printingData.copiesPrinted = 0;
                     }
-                    result.files.id(
-                        fileID
-                    ).printingData.copiesPrinted += result.files.id(
-                        fileID
-                    ).printingData.copiesPrinting;
-                    result.files.id(fileID).printingData.copiesPrinting = 0;
+                    printingData.copiesPrinted += printingData.copiesPrinting;
+                    printingData.copiesPrinting = 0;
+                    console.log(printingData.location);
+                    console.log(result.files.id(fileID).pickupLocation);
+
+                    for (var i = 0; i < numNewFinished; i++) {
+                        var newCompleted = {
+                            isInTransit:
+                                printingData.location ==
+                                result.files.id(fileID).pickupLocation
+                                    ? false
+                                    : true,
+                            pickupLocation: result.files.id(fileID)
+                                .pickupLocation,
+                            timestampPrinted: now,
+                        };
+                        completedCopies.push(newCompleted);
+                    }
+
+                    result.files.id(fileID).printingData = printingData;
+                    result.files.id(fileID).completedCopies = completedCopies;
+
                     result.save();
                     //module.exports.markCompleted(fileID);
                     if (typeof callback == "function") {
@@ -813,6 +831,9 @@ module.exports = {
 
                     if (thisFile.pickupLocation != body.location) {
                         thisFile.isInTransit = true;
+                        for (var thisCopy of thisFile.completedCopies) {
+                            if (thisCopy.timestampPickedUp < new Date("2000"))
+                        }
                         newmailer.inTransit(result, thisFile);
                     } else {
                         thisFile.isInTransit = false;
@@ -834,10 +855,20 @@ module.exports = {
     },
 
     markAtPickupLocation: function (body, callback) {
+        var now = new Date();
         printRequestModel.findOne(
             { "files._id": body.fileID },
             function (err, submission) {
-                submission.files.id(body.fileID).isInTransit = false;
+                //submission.files.id(body.fileID).isInTransit = false;
+                var numArrived = body.numArrived;
+                for (var thisCopy of submission.files.id(body.fileID)
+                    .completedCopies) {
+                    if (numArrived > 0 && thisCopy.isInTransit) {
+                        thisCopy.isInTransit = false;
+                        thisCopy.timestampArrived = now;
+                        numArrived--;
+                    }
+                }
                 newmailer.readyForPickup(
                     submission,
                     submission.files.id(body.fileID)
@@ -885,7 +916,7 @@ module.exports = {
     },
 
     //the print has been picked up by the patron
-    markPickedUp: function (fileID) {
+    markPickedUp: function (fileID, numPickup) {
         console.log("was picked up");
         var time = moment().format(constants.format);
         var now = new Date();
@@ -897,9 +928,34 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
-                    result.files.id(fileID).isPickedUp = true;
-                    result.files.id(fileID).datePickedUp = time;
-                    result.files.id(fileID).timestampPickedUp = now;
+                    var thisFile = result.files.id(fileID);
+                    var numLeft = numPickup;
+                    for (var thisCopy of thisFile.completedCopies) {
+                        if (
+                            numLeft > 0 &&
+                            !thisCopy.isInTransit &&
+                            thisCopy.timestampPickedUp < now
+                        ) {
+                            thisCopy.timestampPickedUp = now;
+                            numLeft--;
+                        }
+                    }
+
+                    var numPickedUp = thisFile.completedCopies.filter(function (
+                        thisCopy
+                    ) {
+                        return thisCopy.timestampPickedUp > new Date("1971");
+                    });
+                    if (numPickedUp >= thisFile.copies) {
+                        result.files.id(fileID).isPickedUp = true;
+                        result.files.id(fileID).timestampPickedUp = now;
+                    }
+
+                    console.log(result);
+                    console.log(thisFile);
+                    //result.files.id(fileID).isPickedUp = true;
+                    //result.files.id(fileID).datePickedUp = time;
+                    //result.files.id(fileID).timestampPickedUp = now;
                     result.save();
                 }
             }
