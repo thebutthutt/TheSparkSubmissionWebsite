@@ -9,6 +9,8 @@
     <div class="card-body">
         <h3 class="mb-3">Copies Breakdown</h3>
 
+        
+
         <!-- prettier-ignore -->
         <%var unprinted = print.copies -
         (print.printingData?print.printingData.copiesPrinted:0) -
@@ -20,6 +22,23 @@
         <!-- prettier-ignore -->
         <%var completed = print.completedCopies?print.completedCopies.filter(function(copy) { return (!copy.isInTransit && copy.timestampPickedUp < new Date("2000"))}).length:0%>
         <%var pickedUp = print.completedCopies?print.completedCopies.filter(function(copy) { return (!copy.isInTransit && copy.timestampPickedUp > new Date("1980"))}).length:0%>
+
+        <%if (unprinted + printing == 0 && completed > 0) {%>
+            <p>All copies printed!</p>
+            <button
+                data-toggle="modal"
+                data-target="#modalPickup"
+                data-backdrop="static"
+                data-keyboard="false"
+                data-numpickup="<%=completed%>"
+                id="partialPickup"
+                fileName="<%=print.realFileName%>"
+                fileID="<%=print._id%>"
+                class="btn btn-primary btn-block mb-3 modal-button"
+            >
+                Pick Up All <%=completed%>
+            </button>
+        <%}%>
 
         <table class="table table-sm table-bordered">
             <thead>
@@ -156,6 +175,38 @@
                 </div>
             </div>
         </form>
+        <%}%>
+        <%if(completed + pickedUp + inTransit > 0) {%>
+            <hr>
+            <h4>Printed Copies</h4>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Copy</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%i = 1%>
+                    <%for (var thisCopy of print.completedCopies) {%>
+                        <tr>
+                            <td>
+                                Copy <%=i%>
+                            </td>
+                            <td>
+                                <%if (thisCopy.isInTransit) {%>
+                                    <span class="badge font-weight-normal alert-warning">In Transit</span>
+                                <%} else if (thisCopy.timestampPrinted > thisCopy.timestampPickedUp) {%>
+                                    <span class="badge font-weight-normal alert-success">Printed on <%=thisCopy.timestampPrinted.toLocaleDateString('en-US')%></span>
+                                <%} else {%>
+                                    <span class="badge font-weight-normal alert-light">Picked Up on <%=thisCopy.timestampPickedUp.toLocaleDateString('en-US')%></span>
+                                <%}%>
+                            </td>
+                        </tr>
+                        <%i++%>
+                    <%}%>
+                </tbody>
+            </table>
         <%}%>
     </div>
 </div>

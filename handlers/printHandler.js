@@ -832,7 +832,8 @@ module.exports = {
                     if (thisFile.pickupLocation != body.location) {
                         thisFile.isInTransit = true;
                         for (var thisCopy of thisFile.completedCopies) {
-                            if (thisCopy.timestampPickedUp < new Date("2000"))
+                            if (thisCopy.timestampPickedUp < new Date("2000")) {
+                            }
                         }
                         newmailer.inTransit(result, thisFile);
                     } else {
@@ -930,14 +931,21 @@ module.exports = {
                 } else {
                     var thisFile = result.files.id(fileID);
                     var numLeft = numPickup;
+                    console.log(numLeft);
                     for (var thisCopy of thisFile.completedCopies) {
+                        console.log(
+                            numLeft > 0 &&
+                                !thisCopy.isInTransit &&
+                                thisCopy.timestampPickedUp < new Date("1980")
+                        );
                         if (
                             numLeft > 0 &&
                             !thisCopy.isInTransit &&
-                            thisCopy.timestampPickedUp < now
+                            thisCopy.timestampPickedUp < new Date("1980")
                         ) {
                             thisCopy.timestampPickedUp = now;
                             numLeft--;
+                            console.log(thisCopy);
                         }
                     }
 
@@ -950,8 +958,6 @@ module.exports = {
                         result.files.id(fileID).isPickedUp = true;
                         result.files.id(fileID).timestampPickedUp = now;
                     }
-
-                    console.log(result);
                     console.log(thisFile);
                     //result.files.id(fileID).isPickedUp = true;
                     //result.files.id(fileID).datePickedUp = time;

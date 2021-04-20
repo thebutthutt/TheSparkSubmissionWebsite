@@ -488,16 +488,9 @@
                     </div>
                     <% } %>
                     <!-- prettier-ignore -->
-                    
-                    <%if (print.isPrinted) {%> 
-                        <%- include ("../../partials/PrintDetails/contact", {print:print}) %>
-                    <%}%>
 
                     <%if (!print.isNewSubmission ) {%> 
                         <%- include ("../../partials/PrintDetails/finishPrinting", {print:print}) %> 
-                    <%}%> 
-
-                    <%if (!print.isNewSubmission ) {%> 
                         <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                     <%}%>
                 </div>

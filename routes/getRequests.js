@@ -133,7 +133,24 @@ module.exports = function (app) {
                                             ],
                                         },
                                         {
-                                            $eq: ["$$item.isStarted", false],
+                                            $eq: ["$$item.isPrinted", false],
+                                        },
+                                        {
+                                            $lt: [
+                                                {
+                                                    $add: [
+                                                        {
+                                                            $toInt:
+                                                                "$$item.printingData.copiesPrinting",
+                                                        },
+                                                        {
+                                                            $toInt:
+                                                                "$$item.printingData.copiesPrinted",
+                                                        },
+                                                    ],
+                                                },
+                                                { $toInt: "$$item.copies" },
+                                            ],
                                         },
                                     ],
                                 },
@@ -177,7 +194,24 @@ module.exports = function (app) {
                                             ],
                                         },
                                         {
-                                            $eq: ["$$item.isStarted", false],
+                                            $eq: ["$$item.isPrinted", false],
+                                        },
+                                        {
+                                            $lt: [
+                                                {
+                                                    $add: [
+                                                        {
+                                                            $toInt:
+                                                                "$$item.printingData.copiesPrinting",
+                                                        },
+                                                        {
+                                                            $toInt:
+                                                                "$$item.printingData.copiesPrinted",
+                                                        },
+                                                    ],
+                                                },
+                                                { $toInt: "$$item.copies" },
+                                            ],
                                         },
                                         {
                                             $eq: [
@@ -227,7 +261,24 @@ module.exports = function (app) {
                                             ],
                                         },
                                         {
-                                            $eq: ["$$item.isStarted", false],
+                                            $eq: ["$$item.isPrinted", false],
+                                        },
+                                        {
+                                            $lt: [
+                                                {
+                                                    $add: [
+                                                        {
+                                                            $toInt:
+                                                                "$$item.printingData.copiesPrinting",
+                                                        },
+                                                        {
+                                                            $toInt:
+                                                                "$$item.printingData.copiesPrinted",
+                                                        },
+                                                    ],
+                                                },
+                                                { $toInt: "$$item.copies" },
+                                            ],
                                         },
                                         {
                                             $eq: [
@@ -492,7 +543,17 @@ module.exports = function (app) {
                             $filter: {
                                 input: "$files.completedCopies",
                                 as: "item",
-                                cond: { $eq: ["$$item.isInTransit", false] },
+                                cond: {
+                                    $and: [
+                                        { $eq: ["$$item.isInTransit", false] },
+                                        {
+                                            $lt: [
+                                                "$$item.timestampPickedUp",
+                                                new Date("1980"),
+                                            ],
+                                        },
+                                    ],
+                                },
                             },
                         },
                     },
@@ -584,6 +645,12 @@ module.exports = function (app) {
                                 cond: {
                                     $and: [
                                         { $eq: ["$$item.isInTransit", false] },
+                                        {
+                                            $lt: [
+                                                "$$item.timestampPickedUp",
+                                                new Date("1980"),
+                                            ],
+                                        },
                                         {
                                             $eq: [
                                                 "$$item.pickupLocation",
@@ -684,6 +751,12 @@ module.exports = function (app) {
                                     $and: [
                                         { $eq: ["$$item.isInTransit", false] },
                                         {
+                                            $lt: [
+                                                "$$item.timestampPickedUp",
+                                                new Date("1980"),
+                                            ],
+                                        },
+                                        {
                                             $eq: [
                                                 "$$item.pickupLocation",
                                                 "Discovery Park",
@@ -743,6 +816,7 @@ module.exports = function (app) {
                     },
                 },
                 { $match: { "files.0": { $exists: true } } },
+                { $sort: { timestampSubmitted: -1 } },
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
@@ -776,6 +850,7 @@ module.exports = function (app) {
                     },
                 },
                 { $match: { "files.0": { $exists: true } } },
+                { $sort: { timestampSubmitted: -1 } },
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW

@@ -223,43 +223,6 @@
                         </div>
                     </div>
                     <%})%>
-
-                    <div class="card shadow">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th
-                                        scope="col"
-                                        style="width: 15%"
-                                        class="name-col"
-                                    >
-                                        Patron
-                                    </th>
-
-                                    <!-- prettier-ignore -->
-                                    <th scope="col">
-                                    <%if (printPage == 'newSub') { %>
-                                        Send
-                                    <%} else if (printPage == 'pendpay' || printPage == 'pendpaystale' || printPage == 'rejected') { %>
-                                        Reviewed
-                                    <%} else if (printPage == 'ready' || printPage == 'printing') { %>
-                                        Paid
-                                    <%}else if (printPage == 'pickup' || printPage == 'inTransit' || printPage == 'rejected') { %>
-                                        Printed
-                                    <%} else if (printPage == 'completed') { %>
-                                        Picked Up
-                                    <%}else if (printPage == 'all') { %>
-                                        Status
-                                    <%}%>
-                                    </th>
-
-                                    <th scope="col"></th>
-                                    <th scope="col"></th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
         </div>

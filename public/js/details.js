@@ -57,7 +57,7 @@ $(document).ready(function () {
 
     $(".connect-button").on("click", function () {
         var location = $(this).attr("location");
-        const ws = new WebSocket("wss://sparkorders.library.unt.edu");
+        const ws = new WebSocket("wss://sparkorders.library.unt.edu:8080");
 
         var printData = {
             fileName: $(".modal-button").attr("fileName"),
