@@ -11,15 +11,52 @@ console.log("here");
 printRequestModel.find({}, function (err, res) {
     for (var submission of res) {
         for (file of submission.files) {
-            if (file.isInTransit == false) {
-                for (var thisCopy of file.completedCopies) {
-                    if (thisCopy.isInTransit) {
-                        thisCopy.isInTransit = false;
+            if (file.printingData.rollID.length > 1) {
+                if (!file.attempts || file.attempts.length < 1) {
+                    if (file.printingData.copiesPrinted > 0) {
+                        var newAttempt = {
+                            copies: file.printingData.copiesPrinted,
+                            location: file.printingData.location,
+                            printer: file.printingData.printer,
+                            isFinished: true,
+                            isSuccess: true,
+                        };
+                        file.attempts.push(newAttempt);
+                    }
+
+                    if (file.printingData.copiesPrinting > 0) {
+                        var newAttempt = {
+                            copies: file.printingData.copiesPrinting,
+                            location: file.printingData.location,
+                            printer: file.printingData.printer,
+                        };
+                        file.attempts.push(newAttempt);
+                    }
+
+                    if (file.printingData.rollID) {
+                        if (!file.filaments || file.filaments.length < 1) {
+                            file.filaments.push({
+                                rollID: file.printingData.rollID,
+                                startWeight: file.printingData.rollWeight,
+                                endWeight: file.printingData.finalWeight,
+                            });
+                        }
                     }
                 }
+                // console.log("---------------------------");
+                // console.log(file.realFileName);
+                // console.log("attempts", file.attempts);
+                // console.log("filaments", file.filaments);
             }
+            file.copiesData = {};
+            file.copiesData.printing = file.printingData.copiesPrinting;
+            file.copiesData.unprinted =
+                file.copies -
+                (file.printingData.copiesPrinting +
+                    file.printingData.copiesPrinted);
+            file.copiesData.completed = file.printingData.copiesPrinted;
         }
-        submission.save();
+        //submission.save();
     }
 });
 

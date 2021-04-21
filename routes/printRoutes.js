@@ -452,6 +452,46 @@ module.exports = function (app) {
             res.json("done");
         });
     });
+
+    app.post("/prints/addAttempt", isLoggedIn, function (req, res) {
+        /**
+         * fileID
+         * location
+         * printer
+         * copies
+         * rollID
+         */
+        console.log(req.body);
+        printHandler.addAttempt(req.body, function callback() {
+            res.redirect("/prints/preview?fileID=" + req.body.fileID);
+        });
+    });
+    app.post("/prints/editAttempt", isLoggedIn, function (req, res) {
+        printHandler.editAttempt(req.body, function callback() {
+            res.redirect("/prints/preview?fileID=" + req.body.fileID);
+        });
+    });
+    app.post("/prints/deleteAttempt", isLoggedIn, function (req, res) {
+        printHandler.deleteAttempt(req.body, function callback() {
+            res.redirect("/prints/preview?fileID=" + req.body.fileID);
+        });
+    });
+
+    app.post("/prints/addFilament", isLoggedIn, function (req, res) {
+        printHandler.addFilament(req.body, function callback() {
+            res.redirect("/prints/preview?fileID=" + req.body.fileID);
+        });
+    });
+    app.post("/prints/editFilament", isLoggedIn, function (req, res) {
+        printHandler.editFilament(req.body, function callback() {
+            res.redirect("/prints/preview?fileID=" + req.body.fileID);
+        });
+    });
+    app.post("/prints/deleteFilament", isLoggedIn, function (req, res) {
+        printHandler.deleteFilament(req.body, function callback() {
+            res.redirect("/prints/preview?fileID=" + req.body.fileID);
+        });
+    });
 };
 
 // route middleware to make sure a user is logged in

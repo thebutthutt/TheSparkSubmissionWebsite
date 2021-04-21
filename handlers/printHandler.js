@@ -60,6 +60,12 @@ module.exports = {
 
         //loop through the arrays of file details possibly more than one file
         for (let i = 0; i < prints[0].length; i++) {
+            var copiesData = [];
+            for (var j = 0; j < prints[5][i]; j++) {
+                copiesData.push({
+                    copyNumber: i + 1,
+                });
+            }
             request.files.push({
                 fileName: prints[0][i],
                 realFileName: prints[1][i],
@@ -84,6 +90,10 @@ module.exports = {
                 canBeReviewed: true,
                 isStarted: false,
                 isStaleOnPickup: false,
+
+                copiesData: {
+                    unprinted: prints[5][i],
+                },
 
                 dateSubmitted: prints[8], //always holds the date submitted
                 timestampSubmitted: now,
@@ -615,29 +625,29 @@ module.exports = {
     },
 
     //park that a print has been started, adds an attempt
-    startPrint: function (fileID, callback) {
-        printRequestModel.findOne(
-            {
-                "files._id": fileID,
-            },
-            function (err, result) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    result.files.id(fileID).isStarted = true;
-                    if (result.files.id(fileID).numAttempts == null) {
-                        result.files.id(fileID).numAttempts = 0;
-                    }
-                    result.files.id(fileID).numAttempts += 1;
-                    result.files.id(fileID).copiesPrinting = 1;
-                    result.save();
-                    if (typeof callback == "function") {
-                        callback();
-                    }
-                }
-            }
-        );
-    },
+    // startPrint: function (fileID, callback) {
+    //     printRequestModel.findOne(
+    //         {
+    //             "files._id": fileID,
+    //         },
+    //         function (err, result) {
+    //             if (err) {
+    //                 console.log(err);
+    //             } else {
+    //                 result.files.id(fileID).isStarted = true;
+    //                 if (result.files.id(fileID).numAttempts == null) {
+    //                     result.files.id(fileID).numAttempts = 0;
+    //                 }
+    //                 result.files.id(fileID).numAttempts += 1;
+    //                 result.files.id(fileID).copiesPrinting = 1;
+    //                 result.save();
+    //                 if (typeof callback == "function") {
+    //                     callback();
+    //                 }
+    //             }
+    //         }
+    //     );
+    // },
 
     markPrinting: function (body, callback) {
         var fileID = body.fileID;
@@ -670,6 +680,100 @@ module.exports = {
             }
         );
     },
+
+    addAttempt: function (body, callback) {
+        /**
+         * fileID
+         * location
+         * printer
+         * copies
+         * rollID
+         */
+        var now = new Date();
+        var fileID = body.fileID;
+        var copies = parseInt(body.copies);
+        var location = body.location;
+        var printer = body.printer;
+        var rollID = body.rollID;
+
+        printRequestModel.findOne(
+            { "files._id": fileID },
+            function (err, result) {
+                var thisFile = result.files.id(fileID);
+                thisFile.attempts.push({
+                    timestampStarted: now,
+                    copies: copies,
+                    location: location,
+                    printer: printer,
+                });
+
+                var hasFilament = false;
+                for (var thisRoll of thisFile.filaments) {
+                    if (thisRoll.rollID == rollID) {
+                        hasFilament = true;
+                    }
+                }
+
+                if (!hasFilament) {
+                    thisFile.filaments.push({
+                        rollID: rollID,
+                    });
+                }
+
+                thisFile.copiesData.unprinted -= copies;
+                thisFile.copiesData.printing += copies;
+
+                thisFile.isStarted = true;
+
+                result.save();
+                if (typeof callback == "function") {
+                    callback();
+                }
+            }
+        );
+    },
+    editAttempt: function (body, callback) {
+        var now = new Date();
+        var fileID = body.fileID;
+        var attemptID = body.attemptID;
+        if (body.hasOwnProperty("action")) {
+            var action = body.action;
+            printRequestModel.findOne(
+                { "files._id": fileID },
+                function (err, result) {
+                    var thisFile = result.files.id(fileID);
+                    var thisAttempt = thisFile.attempts.id(attemptID);
+                    thisAttempt.isFinished = true;
+                    if (action == "markSuccess") {
+                        thisAttempt.isSuccess = true;
+                        thisFile.copiesData.printing -= thisAttempt.copies;
+                        if (thisAttempt.location == thisFile.pickupLocation) {
+                            thisFile.copiesData.completed += thisAttempt.copies;
+                        } else {
+                            thisFile.copiesData.inTransit += thisAttempt.copies;
+                        }
+                    } else {
+                        thisAttempt.isSuccess = false;
+                        thisFile.copiesData.printing -= thisAttempt.copies;
+                        thisFile.copiesData.unprinted += thisAttempt.copies;
+                    }
+                    result.save();
+                    if (typeof callback == "function") {
+                        callback();
+                    }
+                }
+            );
+        } else {
+            var copies = parseInt(body.copies);
+            var location = body.location;
+            var printer = body.printer;
+        }
+    },
+    deleteAttempt: function (body, callback) {},
+
+    addFilament: function (body, callback) {},
+    editFilament: function (body, callback) {},
+    deleteFilament: function (body, callback) {},
 
     changePrintCopyStatus: function (fileID, copiesPrinting, copiesPrinted) {
         copiesPrinting = parseInt(copiesPrinting);

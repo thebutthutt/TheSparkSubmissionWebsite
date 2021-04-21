@@ -422,36 +422,6 @@ module.exports = function (app) {
         );
     });
 
-    // app.get("/prints/intransit", isLoggedIn, function (req, res) {
-    //     //load the submission page and flash any messages
-    //     printRequestModel.aggregate(
-    //         [
-    //             {
-    //                 $set: {
-    //                     "files.completedCopies": {
-    //                         $filter: {
-    //                             input: "$files.completedCopies",
-    //                             as: "item",
-    //                             cond: { $eq: ["$$item.isInTransit", true] },
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //             { $match: { "files.completedCopies.0": { $exists: true } } },
-    //         ],
-    //         function (err, data) {
-    //             res.render("pages/prints/allPrints", {
-    //                 pgnum: 4, //tells the navbar what page to highlight
-    //                 dbdata: data,
-    //                 printPage: "inTransit",
-    //                 location: "all",
-    //                 isAdmin: true,
-    //                 isSuperAdmin: req.user.isSuperAdmin,
-    //             });
-    //         }
-    //     );
-    // });
-
     app.get("/prints/intransit", isLoggedIn, function (req, res) {
         printRequestModel.aggregate(
             [
@@ -496,42 +466,6 @@ module.exports = function (app) {
             }
         );
     });
-
-    //---------------PICKUP-----------------------------------
-
-    //show pickup all locations
-    // app.get("/prints/pickup", isLoggedIn, function (req, res) {
-    //     //load the submission page and flash any messages
-    //     printRequestModel.aggregate(
-    //         [
-    //             {
-    //                 $set: {
-    //                     "files.completedCopies": {
-    //                         $filter: {
-    //                             input: "$files.completedCopies",
-    //                             as: "item",
-    //                             cond: {
-    //                                 $eq: ["$$item.isInTransit", false],
-    //                             },
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //             { $match: { "files.completedCopies.0": { $exists: true } } },
-    //         ],
-    //         function (err, data) {
-    //             //loading every single top level request FOR NOW
-    //             res.render("pages/prints/allPrints", {
-    //                 pgnum: 4, //tells the navbar what page to highlight
-    //                 dbdata: data,
-    //                 printPage: "pickup",
-    //                 location: "all",
-    //                 isAdmin: true,
-    //                 isSuperAdmin: req.user.isSuperAdmin,
-    //             });
-    //         }
-    //     );
-    // });
 
     app.get("/prints/pickup", isLoggedIn, function (req, res) {
         printRequestModel.aggregate(
@@ -587,50 +521,6 @@ module.exports = function (app) {
             }
         );
     });
-
-    //show pickup at willis
-    // app.get("/prints/pickupwillis", isLoggedIn, function (req, res) {
-    //     //load the submission page and flash any messages
-    //     printRequestModel.aggregate(
-    //         [
-    //             {
-    //                 $set: {
-    //                     "files.completedCopies": {
-    //                         $filter: {
-    //                             input: "$files.completedCopies",
-    //                             as: "item",
-    //                             cond: {
-    //                                 $and: [
-    //                                     {
-    //                                         $eq: ["$$item.isInTransit", false],
-    //                                     },
-    //                                     {
-    //                                         $eq: [
-    //                                             "$$item.pickupLocation",
-    //                                             "Willis Library",
-    //                                         ],
-    //                                     },
-    //                                 ],
-    //                             },
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //             { $match: { "files.completedCopies.0": { $exists: true } } },
-    //         ],
-    //         function (err, data) {
-    //             //loading every single top level request FOR NOW
-    //             res.render("pages/prints/allPrints", {
-    //                 pgnum: 4, //tells the navbar what page to highlight
-    //                 dbdata: data,
-    //                 printPage: "pickup",
-    //                 location: "Willis Library",
-    //                 isAdmin: true,
-    //                 isSuperAdmin: req.user.isSuperAdmin,
-    //             });
-    //         }
-    //     );
-    // });
 
     app.get("/prints/pickupwillis", isLoggedIn, function (req, res) {
         printRequestModel.aggregate(
@@ -692,50 +582,6 @@ module.exports = function (app) {
             }
         );
     });
-
-    //show pickip at dp
-    // app.get("/prints/pickupdp", isLoggedIn, function (req, res) {
-    //     //load the submission page and flash any messages
-    //     printRequestModel.aggregate(
-    //         [
-    //             {
-    //                 $set: {
-    //                     "files.completedCopies": {
-    //                         $filter: {
-    //                             input: "$files.completedCopies",
-    //                             as: "item",
-    //                             cond: {
-    //                                 $and: [
-    //                                     {
-    //                                         $eq: ["$$item.isInTransit", false],
-    //                                     },
-    //                                     {
-    //                                         $eq: [
-    //                                             "$$item.pickupLocation",
-    //                                             "Discovery Park",
-    //                                         ],
-    //                                     },
-    //                                 ],
-    //                             },
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //             { $match: { "files.completedCopies.0": { $exists: true } } },
-    //         ],
-    //         function (err, data) {
-    //             //loading every single top level request FOR NOW
-    //             res.render("pages/prints/allPrints", {
-    //                 pgnum: 4, //tells the navbar what page to highlight
-    //                 dbdata: data,
-    //                 printPage: "pickup",
-    //                 location: "Discovery Park",
-    //                 isAdmin: true,
-    //                 isSuperAdmin: req.user.isSuperAdmin,
-    //             });
-    //         }
-    //     );
-    // });
 
     app.get("/prints/pickupdp", isLoggedIn, function (req, res) {
         printRequestModel.aggregate(

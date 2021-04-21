@@ -1,0 +1,461 @@
+<div class="accordion shadow mb-3" id="accordionExample">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <a
+                class="text-decoration-none text-reset h4 d-inline-block mb-0 w-100"
+                role="button"
+                data-toggle="collapse"
+                href="#collapseOne"
+                aria-expanded="true"
+                aria-controls="collapseOne"
+            >
+                New Attempt
+            </a>
+        </div>
+
+        <div
+            id="collapseOne"
+            class="collapse <% if(!print.isStarted && (print.printingData.copiesPrinted || 0) < print.copies){%>show<%}%>"
+            aria-labelledby="headingOne"
+            data-parent="#accordionExample"
+        >
+            <div class="card-body">
+                <form action="/prints/addAttempt" method="POST">
+                    <input type="hidden" name="fileID" value="<%=print._id%>" />
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label>Location</label>
+                            <select
+                                class="form-control"
+                                name="location"
+                                id="newLocation"
+                                required
+                            >
+                                <option selected disabled value="">
+                                    Choose...
+                                </option>
+                                <option value="Willis Library">
+                                    Willis Library
+                                </option>
+                                <option value="Discovery Park">
+                                    Discovery Park
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label>Printer</label>
+                            <select
+                                class="form-control"
+                                name="printer"
+                                id="newPrinter"
+                                required
+                            >
+                                <option selected disabled value="">
+                                    Select a location first!
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label>Copies</label>
+                            <input
+                                type="number"
+                                value="1"
+                                class="form-control"
+                                name="copies"
+                                required
+                            />
+                        </div>
+                        <div class="col">
+                            <label>Filament</label>
+                            <input
+                                type="text"
+                                placeholder="FS-PLA-01-001"
+                                class="form-control"
+                                name="rollID"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-block"
+                            >
+                                Add Attempt
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+            <a
+                class="text-decoration-none text-reset h4 d-inline-block mb-0 w-100"
+                role="button"
+                data-toggle="collapse"
+                href="#collapseTwo"
+                aria-expanded="true"
+                aria-controls="collapseTwo"
+            >
+                All Attempts
+            </a>
+        </div>
+
+        <div
+            id="collapseTwo"
+            class="collapse <% if(print.isStarted){%>show<%}%>"
+            aria-labelledby="headingTwo"
+            data-parent="#accordionExample"
+        >
+            <ul class="border-top list-group list-group-flush">
+                <%var index = 1%> <%for (var thisAttempt of print.attempts) {%>
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col">
+                            <p class="mb-0">
+                                <strong>Attempt <%=index%></strong> -
+                                <%=thisAttempt.location%>
+                                
+                                <br />
+                                <%=thisAttempt.copies%> copies
+                                <!-- prettier-ignore -->
+                                <%=(thisAttempt.isFinished?(thisAttempt.isSuccess?'Success':'Failure'):'InProgress')%>
+                            </p>
+                        </div>
+                        <div class="col-auto text-right">
+                            <%if (!thisAttempt.isFinished) {%>
+                            <button type="button" class="btn btn-success success-attempt" attempt-id="<%=thisAttempt._id%>">Success</button>
+                            <button type="button" class="btn btn-danger fail-attempt" attempt-id="<%=thisAttempt._id%>">Fail</button>
+                            <%}%>
+                            <button type="button" class="btn btn-info" data-toggle="collapse" aria-expanded="false" data-target="#form<%=thisAttempt._id%>">Edit</button>
+                        </div>
+                    </div>
+                
+                    <form
+                        action="/editAttempt"
+                        method="post"
+                        id="form<%=thisAttempt._id%>"
+                        class="collapse"
+                    >
+                        <hr />
+                        <input
+                            type="hidden"
+                            name="attemptID"
+                            value="<%=thisAttempt._id%>"
+                        />
+
+                        <input
+                            type="hidden"
+                            name="fileID"
+                            value="<%=print._id%>"
+                        />
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label>Location</label>
+                                <select
+                                    class="form-control attempt-select"
+                                    name="location"
+                                    printer-select="<%=thisAttempt._id%>printer"
+                                    required
+                                >
+                                    <!-- prettier-ignore -->
+                                    <%if (thisAttempt.location == "Willis Library") {%>
+                                    <option selected value="Willis Library">
+                                        Willis Library
+                                    </option>
+                                    <option value="Discovery Park">
+                                        Discovery Park
+                                    </option>
+                                    <%} else {%>
+                                    <option value="Willis Library">
+                                        Willis Library
+                                    </option>
+                                    <option selected value="Discovery Park">
+                                        Discovery Park
+                                    </option>
+                                    <%}%>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label>Printer</label>
+                                <select
+                                    class="form-control"
+                                    name="printer"
+                                    id="<%=thisAttempt._id%>printer"
+                                    required
+                                >
+                                    <%var wP = (willisPrinters + " ").split(",")%>
+                                    <%var sP = (selfServicePrinters + " ").split(",")%>
+                                    <%var dP = (dpPrinters + " ").split(",")%>
+                                    <%if (thisAttempt.location == "Willis Library") {%>
+                                        <%for (var thisPrinter of wP) {%> <option value="<%=thisPrinter%>" <%=(thisAttempt.printer == thisPrinter?'selected':'')%>><%=thisPrinter%></option><%}%> 
+                                        <%for (var selfServicePrinters of sP) {%><option value="<%=thisPrinter%>" <%=(thisAttempt.printer == thisPrinter?'selected':'')%>><%=thisPrinter%></option><%}%> 
+                                    <%} else {%> 
+                                        <%for (var thisPrinter of dP) {%><option value="<%=thisPrinter%>" <%=(thisAttempt.printer == thisPrinter?'selected':'')%>><%=thisPrinter%></option><%}%> 
+                                    <%}%>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label>Copies</label>
+                                <input
+                                    type="number"
+                                    value="<%=thisAttempt.copies%>"
+                                    class="form-control"
+                                    name="copies"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-2 col-form-label">Started</label>
+                            <div class="col">
+                                <div class="input-group">
+                                    <input
+                                        class="form-control"
+                                        type="date"
+                                        name="startDate"
+                                        value="<%=thisAttempt.timestampStarted.toISOString().split('T')[0]%>"
+                                    />
+                                    <input
+                                        class="form-control"
+                                        type="time"
+                                        value="<%=thisAttempt.timestampStarted.toISOString().split('T')[1].slice(0,5)%>"
+                                        name="startTime"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <%if (thisAttempt.isFinished) {%>
+                            <div class="row mb-3">
+                                <label class="col-2 col-form-label"
+                                    >Ended</label
+                                >
+                                <div class="col">
+                                    <div class="input-group">
+                                        <input
+                                            class="form-control"
+                                            type="date"
+                                            name="endDate"
+                                        />
+                                        <input
+                                            class="form-control"
+                                            type="time"
+                                            name="endTime"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-2 col-form-label"
+                                    >Status</label
+                                >
+
+                                <div class="col">
+                                    <select class="form-control" name="status">
+                                        <option selected value="success">
+                                            Succeeded
+                                        </option>
+                                        <option value="failure">Failed</option>
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn btn-primary">
+                                        Save
+                                    </button>
+                                </div>
+                            </div>
+                        <%} else {%>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <button class="btn btn-primary btn-block">
+                                        Save
+                                    </button>
+                                </div>
+                            </div>
+                        <%}%>
+                    </form>
+                    <%index++%> <%}%>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    var willisPrinters = `<%= willisPrinters%>`.split(",");
+    var dpPrinters = `<%= dpPrinters%>`.split(",");
+    var selfServicePrinters = `<%= selfServicePrinters%>`.split(",");
+    var fileID = `<%= print._id %>`;
+
+    console.log(willisPrinters);
+    function setPrinters(currentLocation, printerSelect) {
+        printerSelect.innerHTML = "";
+        if (currentLocation == "Willis Library") {
+            var none = document.createElement("option");
+            none.value = "";
+            none.innerHTML = "Select a printer...";
+            none.disabled = true;
+            printerSelect.appendChild(none);
+            for (const thisPrinter of willisPrinters) {
+                var opt = document.createElement("option");
+                opt.value = thisPrinter;
+                opt.innerHTML = thisPrinter;
+                printerSelect.appendChild(opt);
+            }
+            for (const thisPrinter of selfServicePrinters) {
+                var opt = document.createElement("option");
+                opt.value = thisPrinter;
+                opt.innerHTML = thisPrinter;
+                printerSelect.appendChild(opt);
+            }
+        } else if (currentLocation == "Discovery Park") {
+            var none = document.createElement("option");
+            none.value = "";
+            none.innerHTML = "Select a printer...";
+            none.disabled = true;
+            printerSelect.appendChild(none);
+            for (const thisPrinter of dpPrinters) {
+                var opt = document.createElement("option");
+                opt.value = thisPrinter;
+                opt.innerHTML = thisPrinter;
+                printerSelect.appendChild(opt);
+            }
+        } else {
+            var opt = document.createElement("option");
+            opt.value = "";
+            opt.innerHTML = "Select a location first!";
+            opt.disabled = true;
+            printerSelect.appendChild(opt);
+        }
+    }
+
+    document
+        .getElementById("newLocation")
+        .addEventListener("change", function (e) {
+            var currentLocation = e.target.value;
+            setPrinters(currentLocation, document.getElementById("newPrinter"));
+        });
+
+    var attemptLocations = document.getElementsByClassName("attempt-select");
+
+    for (var thisLocation of attemptLocations) {
+        thisLocation.addEventListener("change", function (e) {
+            var currentLocation = e.target.value;
+            var relatedPrinters = e.target.getAttribute("printer-select");
+            setPrinters(
+                currentLocation,
+                document.getElementById(relatedPrinters)
+            );
+        });
+    }
+
+    var successes = document.getElementsByClassName("success-attempt");
+
+    for (var thisButton of successes) {
+        thisButton.addEventListener("click", function (e) {
+            console.log('success')
+            var attemptID = e.target.getAttribute("attempt-id");
+            $.ajax({
+                type: "POST",
+                url: "/prints/editAttempt",
+                data: {
+                    fileID: fileID,
+                    attemptID: attemptID,
+                    action: "markSuccess"
+                },
+            }).done(function () {
+                console.log("done???");
+                location.reload();
+            });
+        });
+    }
+
+    var failures = document.getElementsByClassName("fail-attempt");
+
+    for (var thisButton of failures) {
+        thisButton.addEventListener("click", function (e) {
+            var attemptID = e.target.getAttribute("attempt-id");
+            $.ajax({
+                type: "POST",
+                url: "/prints/editAttempt",
+                data: {
+                    fileID: fileID,
+                    attemptID: attemptID,
+                    action: "markFailure"
+                },
+            }).done(function () {
+                console.log("done???");
+                location.reload();
+            });
+        });
+    }
+
+    if (`<%= print.isStarted %>`) {
+        document.getElementById(
+            "rollID"
+        ).value = `<%=print.printingData.rollID%>`;
+
+        document.getElementById(
+            "rollWeight"
+        ).value = `<%=print.printingData.rollWeight%>`;
+
+        document.getElementById(
+            "copiesPrinting"
+        ).value = `<%=print.printingData.copiesPrinting%>`;
+
+        document.getElementById(
+            "location-select"
+        ).value = `<%=print.printingData.location%>`;
+
+        setPrinters(`<%=print.printingData.location%>`);
+
+        document.getElementById(
+            "printer-select"
+        ).value = `<%=print.printingData.printer%>`;
+    }
+
+    document.getElementById("finalWeight").onchange = function (e) {
+        console.log(document.getElementById("initialWeightSmall"));
+        var finalWeight = e.target.value;
+        var initialWeight = parseInt(
+            document.getElementById("initialWeightSmall").value
+        );
+        var weightChange = initialWeight - finalWeight;
+        document.getElementById("weightChange").innerHTML =
+            "Total change in roll weight: " + weightChange + "g";
+    };
+
+    document.getElementById("failPrint").onclick = function () {
+        $.ajax({
+            type: "POST",
+            url: "/prints/printfail",
+            data: {
+                fileID: fileID,
+            },
+            dataType: "json",
+        }).done(function () {
+            console.log("done???");
+            location.reload();
+        });
+    };
+    document.getElementById("successPrint").onclick = function () {
+        console.log("here");
+        $.ajax({
+            type: "POST",
+            url: "/prints/printsuccess",
+            data: {
+                fileID: fileID,
+            },
+            dataType: "json",
+        }).done(function () {
+            location.reload();
+        });
+    };
+</script>

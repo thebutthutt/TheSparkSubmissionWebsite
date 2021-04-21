@@ -457,7 +457,7 @@
                         <%- include ("../../partials/PrintDetails/printingDetails", {print:print}) %>
                     <%}%>
                     <% if (print.isReadyToPrint) {%> 
-                        <%- include ("../../partials/PrintDetails/startPrinting", {print:print, willisPrinters: willisPrinters, dpPrinters: dpPrinters, selfServicePrinters: selfServicePrinters}) %> 
+                        <%- include ("../../partials/PrintDetails/printAttempts", {print:print, willisPrinters: willisPrinters, dpPrinters: dpPrinters, selfServicePrinters: selfServicePrinters}) %> 
                     <%}%>
                     <%- include ("../../partials/PrintDetails/requestAndReview", {print:print, filePath:filePath, gcodePath:gcodePath}) %> 
                     <%if (print.isNewSubmission ) {%> 

@@ -33,8 +33,17 @@
                     <%- include ("../../partials/PrintDetails/printNav") %>
                 </div>
                 <div class="col">
-                    <%dbdata.forEach(function (item) {%>
-                    <div class="card shadow mb-3">
+                    <%if (dbdata.length < 1) {%>
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <h5 class="mb-0">No Items</h5>
+                        </div>
+                        <div class="card-body">Nothing here</div>
+                    </div>
+                    <%}%> <%dbdata.forEach(function (item) {%>
+                    <div
+                        class="card shadow mb-3 <%=(item.allFilesReviewed && printPage=='newSub'?' alert p-0 alert-warning':'')%>"
+                    >
                         <div class="card-header">
                             <h5 class="mb-0">
                                 <%= item.patron.fname %> <%= item.patron.lname
@@ -172,7 +181,7 @@
                                 </div>
                                 <div class="col">
                                     <table
-                                        class="table"
+                                        class="table <%=(item.allFilesReviewed && printPage=='newSub'?'table-warning bg-transparent':'')%>"
                                         style="margin-top: -0.75rem"
                                     >
                                         <thead>

@@ -83,6 +83,40 @@ var singlePrintSchema = mongoose.Schema({
         numFailedAttempts: { type: Number, default: 0 },
     },
 
+    attempts: {
+        type: [
+            {
+                timestampStarted: { type: Date, default: "1970" },
+                timestampEnded: { type: Date, default: "1970" },
+                copies: { type: Number, default: 0 },
+                location: { type: String, default: "" },
+                printer: { type: String, default: "" },
+                isFinished: { type: Boolean, default: false },
+                isSuccess: { type: Boolean, default: false },
+            },
+        ],
+        default: [],
+    },
+
+    filaments: {
+        type: [
+            {
+                rollID: { type: String, default: "" },
+                startWeight: { type: Number, default: 0 },
+                endWeight: { type: Number, default: 0 },
+            },
+        ],
+        default: [],
+    },
+
+    copiesData: {
+        unprinted: { type: Number, default: 0 },
+        printing: { type: Number, default: 0 },
+        inTransit: { type: Number, default: 0 },
+        completed: { type: Number, default: 0 },
+        pickedUp: { type: Number, default: 0 },
+    },
+
     completedCopies: {
         type: [
             {
