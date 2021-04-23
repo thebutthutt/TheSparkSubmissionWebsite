@@ -483,6 +483,7 @@ module.exports = function (app) {
         });
     });
     app.post("/prints/editFilament", isLoggedIn, function (req, res) {
+        console.log(req.body);
         printHandler.editFilament(req.body, function callback() {
             res.redirect("/prints/preview?fileID=" + req.body.fileID);
         });

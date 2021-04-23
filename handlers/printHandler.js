@@ -695,6 +695,7 @@ module.exports = {
         var location = body.location;
         var printer = body.printer;
         var rollID = body.rollID;
+        var startWeight = body.startWeight;
 
         printRequestModel.findOne(
             { "files._id": fileID },
@@ -705,20 +706,9 @@ module.exports = {
                     copies: copies,
                     location: location,
                     printer: printer,
+                    rollID: rollID,
+                    startWeight: startWeight,
                 });
-
-                var hasFilament = false;
-                for (var thisRoll of thisFile.filaments) {
-                    if (thisRoll.rollID == rollID) {
-                        hasFilament = true;
-                    }
-                }
-
-                if (!hasFilament) {
-                    thisFile.filaments.push({
-                        rollID: rollID,
-                    });
-                }
 
                 thisFile.copiesData.unprinted -= copies;
                 thisFile.copiesData.printing += copies;
@@ -744,6 +734,7 @@ module.exports = {
                     var thisFile = result.files.id(fileID);
                     var thisAttempt = thisFile.attempts.id(attemptID);
                     thisAttempt.isFinished = true;
+                    thisAttempt.timestampEnded = now;
                     if (action == "markSuccess") {
                         thisAttempt.isSuccess = true;
                         thisFile.copiesData.printing -= thisAttempt.copies;
@@ -772,7 +763,26 @@ module.exports = {
     deleteAttempt: function (body, callback) {},
 
     addFilament: function (body, callback) {},
-    editFilament: function (body, callback) {},
+    editFilament: function (body, callback) {
+        var fileID = body.fileID;
+        var filamentID = body.filamentID;
+        printRequestModel.findOne(
+            { "files._id": fileID },
+            function (err, result) {
+                var thisFile = result.files.id(fileID);
+                var thisFilament = thisFile.filaments.id(filamentID);
+
+                thisFilament.rollID = body.rollID;
+                thisFilament.startWeight = body.startWeight;
+                thisFilament.endWeight = body.endWeight;
+
+                result.save();
+                if (typeof callback == "function") {
+                    callback();
+                }
+            }
+        );
+    },
     deleteFilament: function (body, callback) {},
 
     changePrintCopyStatus: function (fileID, copiesPrinting, copiesPrinted) {

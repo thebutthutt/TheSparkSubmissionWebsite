@@ -23,6 +23,9 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
+                for (var submission of data) {
+                    console.log(submission.files);
+                }
                 res.render("pages/prints/allPrints", {
                     pgnum: 4, //prints
                     dbdata: data,

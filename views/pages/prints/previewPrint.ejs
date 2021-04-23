@@ -423,8 +423,14 @@
 
             <div class="row">
                 <div class="col-xl-4 col-lg-6 col-md-12">
+
+                    <%if (!print.isNewSubmission) {%>
+                        <%- include ("../../partials/PrintDetails/finishPrinting", {print:print}) %> 
+                    <%}%>
+                    
                     <%- include ("../../partials/PrintDetails/patron",
                     {print:print, submission:submission}) %>
+                    
                     <div class="shadow card mb-3">
                         <div class="card-img-top">
                             <div class="progress" id="progress">
@@ -470,7 +476,10 @@
                     <%if(isSuperAdmin && print.isPendingWaive) {%> 
                         <%- include ("../../partials/PrintDetails/waiveCard", {print:print}) %> 
                     <%}%>
-
+                    
+                    <% if (print.isReadyToPrint) {%> 
+                        <%- include ("../../partials/PrintDetails/filamentAndNotify", {print:print}) %> 
+                    <%}%>
 
                     <!-- prettier-ignore -->
                     <% if (print.canBeReviewed) { %>
@@ -490,7 +499,7 @@
                     <!-- prettier-ignore -->
 
                     <%if (!print.isNewSubmission ) {%> 
-                        <%- include ("../../partials/PrintDetails/finishPrinting", {print:print}) %> 
+                        
                         <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                     <%}%>
                 </div>

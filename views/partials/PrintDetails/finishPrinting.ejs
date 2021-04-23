@@ -7,7 +7,7 @@
 
 <div class="card shadow mb-3">
     <div class="card-body">
-        <h3 class="mb-3">Copies Breakdown</h3>
+        <h4 class="mb-3">Copies Breakdown</h4>
 
         
 
@@ -51,23 +51,22 @@
             <tbody>
                 <td>
                     <div class="d-flex flex-row flex-wrap" style="margin: -1px">
-                        <%for (var i = 0; i < unprinted; i++) {%>
+                        <%for (var i = 0; i < print.copiesData.unprinted; i++) {%>
                         <span
                             class="badge font-weight-normal alert-secondary"
                             style="margin: 1px"
-                            >Copy
-                            <%=i+1+completed+printing+inTransit+pickedUp%></span
+                            ><%=i+1+print.copiesData.printing+print.copiesData.inTransit+print.copiesData.completed+print.copiesData.pickedUp%></span
                         >
                         <%}%>
                     </div>
                 </td>
                 <td>
                     <div class="d-flex flex-row flex-wrap" style="margin: -1px">
-                        <%for (var i = 0; i < printing; i++) {%>
+                        <%for (var i = 0; i < print.copiesData.printing; i++) {%>
                         <span
                             class="badge font-weight-normal alert-primary"
                             style="margin: 1px"
-                            >Copy <%=i+1+completed+inTransit+pickedUp%></span
+                            ><%=i+1+print.copiesData.inTransit+print.copiesData.completed+print.copiesData.pickedUp%></span
                         >
                         <%}%>
                     </div>
@@ -75,22 +74,22 @@
 
                 <td>
                     <div class="d-flex flex-row flex-wrap" style="margin: -1px">
-                        <%for (var i = 0; i < inTransit; i++) {%>
+                        <%for (var i = 0; i < print.copiesData.inTransit; i++) {%>
                         <span
                             class="badge font-weight-normal alert-warning"
                             style="margin: 1px"
-                            >Copy <%=i+1+completed+pickedUp%></span
+                            ><%=i+1+print.copiesData.completed+print.copiesData.pickedUp%></span
                         >
                         <%}%>
                     </div>
                 </td>
                 <td>
                     <div class="d-flex flex-row flex-wrap" style="margin: -1px">
-                        <%for (var i = 0; i < completed; i++) {%>
+                        <%for (var i = 0; i < print.copiesData.completed; i++) {%>
                         <span
                             class="badge font-weight-normal alert-success"
                             style="margin: 1px"
-                            >Copy <%=i+1+pickedUp%></span
+                            ><%=i+1+print.copiesData.pickedUp%></span
                         >
                         <%}%>
                     </div>
@@ -98,11 +97,11 @@
 
                 <td>
                     <div class="d-flex flex-row flex-wrap" style="margin: -1px">
-                        <%for (var i = 0; i < pickedUp; i++) {%>
+                        <%for (var i = 0; i < print.copiesData.pickedUp; i++) {%>
                         <span
                             class="badge font-weight-normal alert-light"
                             style="margin: 1px"
-                            >Copy <%=i+1%></span
+                            ><%=i+1%></span
                         >
                         <%}%>
                     </div>
