@@ -1,4 +1,4 @@
-<div class="card h-100">
+<div class="card h-100 <%=thisPrinter.runningJobID!=null?'alert-success':''%>">
     <img
         src="<%=(thisPrinter.printerBarcode!=null||thisPrinter.printerType.toLowerCase().includes('ender')&&thisPrinter.printerType.includes('3')?'/public/images/ender3.jpg'
             :thisPrinter.printerType.toLowerCase().includes('ender')&&thisPrinter.printerType.includes('5')?'/public/images/ender5.jpg'
@@ -37,7 +37,7 @@
         <%}%>
         <button
             type="button"
-            class="btn btn-primary btn-block"
+            class="btn btn-success btn-block"
             data-toggle="modal"
             data-target="#finishJob"
         >
