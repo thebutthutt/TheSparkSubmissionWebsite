@@ -83,9 +83,9 @@ module.exports = {
         var inputData = files.map(function (file) {
             return {
                 fileName: file.realFileName,
-                grams: file.estimations.totalGrams,
-                timeHours: file.estimations.totalHours,
-                timeMinutes: file.estimations.totalMinutes,
+                grams: file.slicedGrams,
+                timeHours: file.slicedHours,
+                timeMinutes: file.slicedMinutes,
                 notes: file.patronNotes,
             };
         });
@@ -113,9 +113,9 @@ module.exports = {
             if (file.isRejected == false) {
                 result.push({
                     fileName: file.realFileName,
-                    grams: file.estimations.totalGrams,
-                    timeHours: file.estimations.totalHours,
-                    timeMinutes: file.estimations.totalMinutes,
+                    grams: file.slicedGrams,
+                    timeHours: file.slicedHours,
+                    timeMinutes: file.slicedMinutes,
                     notes: file.patronNotes,
                 });
             }

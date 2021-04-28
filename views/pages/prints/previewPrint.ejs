@@ -423,10 +423,6 @@
 
             <div class="row">
                 <div class="col-xl-4 col-lg-6 col-md-12">
-
-                    <%if (!print.isNewSubmission) {%>
-                        <%- include ("../../partials/PrintDetails/finishPrinting", {print:print}) %> 
-                    <%}%>
                     
                     <%- include ("../../partials/PrintDetails/patron",
                     {print:print, submission:submission}) %>
@@ -459,14 +455,12 @@
 
                 <div class="col-xl-4 col-lg-6 col-md-12">
                     <!-- prettier-ignore -->
-                    <%if (print.isPrinted) {%> 
-                        <%- include ("../../partials/PrintDetails/printingDetails", {print:print}) %>
-                    <%}%>
+
                     <% if (print.isReadyToPrint) {%> 
                         <%- include ("../../partials/PrintDetails/printAttempts", {print:print, willisPrinters: willisPrinters, dpPrinters: dpPrinters, selfServicePrinters: selfServicePrinters}) %> 
                     <%}%>
                     <%- include ("../../partials/PrintDetails/requestAndReview", {print:print, filePath:filePath, gcodePath:gcodePath}) %> 
-                    <%if (print.isNewSubmission ) {%> 
+                    <% if (print.timestampPaymentRequested < new Date("1980")) { %>
                         <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                     <%}%>
                 </div>
@@ -482,7 +476,7 @@
                     <%}%>
 
                     <!-- prettier-ignore -->
-                    <% if (print.canBeReviewed) { %>
+                    <% if (print.timestampPaymentRequested < new Date("1980")) { %>
                     <div class="shadow card">
                         <div class="card-body">
                             <h4>Review Print</h4>
@@ -498,8 +492,7 @@
                     <% } %>
                     <!-- prettier-ignore -->
 
-                    <%if (!print.isNewSubmission ) {%> 
-                        
+                    <% if (print.timestampPaymentRequested > new Date("1980")) { %>
                         <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
                     <%}%>
                 </div>

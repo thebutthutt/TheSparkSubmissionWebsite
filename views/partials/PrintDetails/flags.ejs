@@ -72,10 +72,4 @@
 <span class="badge font-weight-normal alert-warning">Pending Waive</span>
 <% } %> <% if (file.isPendingDelete) { %>
 <span class="badge font-weight-normal alert-danger">Pending Delete</span>
-<% } %> <% if (file.dateOfConfiscation != 'Not yet sent') {%>
-<span class="badge font-weight-normal alert-danger">Reposessed</span>
-<% } else if (file.dateOfSecondWarning != 'Not yet sent') { %>
-<span class="badge font-weight-normal alert-warning">Final Warning</span>
-<% } else if (file.dateOfFirstWarning != 'Not yet sent') {%>
-<span class="badge font-weight-normal alert-warning">First Warning</span>
 <% } %>

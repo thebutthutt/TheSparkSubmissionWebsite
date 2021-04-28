@@ -41,6 +41,7 @@
                         <div class="card-body">Nothing here</div>
                     </div>
                     <%}%> <%dbdata.forEach(function (item) {%>
+                    <%console.log(item)%>
                     <div
                         class="card shadow mb-3 <%=(item.allFilesReviewed && printPage=='newSub'?' alert p-0 alert-warning':'')%>"
                     >
@@ -187,11 +188,8 @@
                                         <thead>
                                             <tr>
                                                 <th>Filename</th>
-                                                <th>Unprinted</th>
-                                                <th>Printing</th>
-                                                <th>In Transit</th>
-                                                <th>Completed</th>
-                                                <th>Picked Up</th>
+                                                <th>Status</th>
+                                                <th>Pickup Location</th>
                                                 <th>More</th>
                                             </tr>
                                         </thead>
@@ -200,22 +198,22 @@
                                             item.files.forEach(function (file)
                                             {%>
                                             <tr>
-                                                <td style="width: 45%">
+                                                <td style="width: 30%">
                                                     <a
                                                         class="no font-weight-bold"
                                                         href='<%= "/prints/preview?fileID=" + file._id%>'
                                                     >
-                                                        <%=file.realFileName%> </a
-                                                    ><%- include
-                                                    ("../../partials/PrintDetails/flags",
-                                                    {file:file, isAll: isall,
-                                                    printPage: printPage}) %>
+                                                        <%=file.originalFileName%>
+                                                    </a>
                                                 </td>
-
-                                                <%- include
-                                                ("../../partials/PrintDetails/copyFlags",
-                                                {file:file, isAll: isall,
-                                                printPage: printPage}) %>
+                                                <td>
+                                                    <%- include
+                                                    ("../../partials/PrintDetails/flags",
+                                                    {file:file}) %>
+                                                </td>
+                                                <td>
+                                                    <%=file.pickupLocation%>
+                                                </td>
 
                                                 <td style="width: 11%">
                                                     <%- include

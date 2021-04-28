@@ -31,7 +31,7 @@ var constants = require("./app/constants.js");
 console.log(process.pid);
 
 // configuration ===============================================================
-mongoose.connect(constants.url, {
+mongoose.connect(process.env.MONGO_URI + process.env.DATABASE, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
@@ -89,6 +89,7 @@ app.use(cors());
 // routes ======================================================================
 require("./routes/routes.js")(app);
 require("./routes/printRoutes.js")(app);
+require("./routes/printJobRoutes.js")(app);
 require("./routes/selfServiceRoutes.js")(app);
 require("./routes/managementRoutes.js")(app);
 require("./routes/getRequests.js")(app);

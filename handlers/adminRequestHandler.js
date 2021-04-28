@@ -1,6 +1,6 @@
 const moment = require("moment");
 const constants = require("../app/constants");
-var printRequestModel = require("../app/models/printRequest");
+var printRequestModel = require("../app/models/newPrintRequest");
 //var cleRequestModel = require("../app/models/cleRequest");
 
 module.exports = {
@@ -11,6 +11,7 @@ module.exports = {
                 "files._id": itemID,
             },
             function (err, result) {
+                console.log(result);
                 if (err) {
                     console.log(err);
                 } else {

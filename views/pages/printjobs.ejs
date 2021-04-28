@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ("../partials/head") %>
+        <style>
+            .card-body {
+                padding: 0.7em;
+            }
+        </style>
+    </head>
+    <body>
+        <%- include ("../partials/header") %>
+        <div class="container-flush mx-5 mt-4" style="margin-bottom: 100px">
+            <div class="row">
+                <div class="col-md-4 col-xl-2">
+                    <div class="card shadow mb-3">
+                        <div class="card-header">
+                            <strong>Select Files</strong>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <% for (var thisPrint of readyPrints){%>
+                            <!-- prettier-ignore -->
+                            <%for (var thisFile of thisPrint.files){%>
+                            <li
+                                class="list-group-item file-select"
+                                fileID="<%=thisFile._id%>"
+                            >
+                                <%=thisFile.originalFileName%>
+                            </li>
+                            <%}%> <%}%>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-8 col-xl-10">
+                    <div class="row">
+                        <div class="col-lg-6 col-xl-4">
+                            <div class="card shadow mb-3">
+                                <div class="card-header">
+                                    <strong>Discovery Park</strong>
+                                    <a
+                                        href="/printers"
+                                        class="text-muted float-right"
+                                        >Manage</a
+                                    >
+                                </div>
+                                <div class="card-body">
+                                    <div
+                                        class="row row-cols-1 row-cols-sm-2 mx-n2"
+                                    >
+                                        <%for (var thisPrinter of dpFull) {%>
+                                        <div class="col px-2 mb-3">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">
+                                                        <%=thisPrinter.printerName%>
+                                                        <img
+                                                            src="<%=(thisPrinter.printerType=='Ender 3'?'/public/images/ender3.jpg':thisPrinter.printerType=='Ender 5'?'/public/images/ender5.jpg':'')%>"
+                                                            class="float-right"
+                                                            style="
+                                                                width: 5em;
+                                                                height: 5em;
+                                                            "
+                                                            alt="printer image"
+                                                        />
+                                                    </h5>
+                                                    <!-- prettier-ignore -->
+                                                    <%if (!thisPrinter.runningJobID) {%>
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-light btn-block start-job"
+                                                        data-toggle="modal"
+                                                        data-target="#exampleModal"
+                                                        data-printer="<%=thisPrinter.printerName%>"
+                                                        data-printer-id="<%=thisPrinter._id%>"
+                                                        data-printer-location="<%=thisPrinter.printerLocation%>"
+                                                    >
+                                                        Start New Attempt
+                                                    </button>
+                                                    <%} else {%>
+                                                    <!-- prettier-ignore -->
+                                                    <%for (var thisFile of thisPrinter.printJob[0].fileNames) {%>
+                                                    <p><%=thisFile%></p>
+                                                    <%}%>
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-primary btn-block"
+                                                        data-toggle="modal"
+                                                        data-target="#finishJob"
+                                                    >
+                                                        Finish Job
+                                                    </button>
+                                                    <%}%>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <%}%>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-xl-4">
+                            <div class="card shadow mb-3">
+                                <div class="card-header">
+                                    <strong>Willis Full Service</strong>
+                                    <a
+                                        href="/printers"
+                                        class="text-muted float-right"
+                                        >Manage</a
+                                    >
+                                </div>
+                                <div class="card-body">
+                                    <div
+                                        class="row row-cols-1 row-cols-sm-2 mx-n2"
+                                    >
+                                        <!-- prettier-ignore -->
+                                        <%for (var thisPrinter of willisFull) {%>
+                                        <div class="col px-2 mb-3">
+                                            <div class="card h-100">
+                                                <img
+                                                    src="<%=(thisPrinter.printerType=='Ender 3'?'/public/images/ender3.jpg':thisPrinter.printerType=='Ender 5'?'/public/images/ender5.jpg':'')%>"
+                                                    class="card-img-top"
+                                                    alt="printer image"
+                                                />
+                                                <div class="card-body">
+                                                    <h5 class="card-title">
+                                                        <%=thisPrinter.printerName%>
+                                                    </h5>
+                                                    <!-- prettier-ignore -->
+                                                    <%if (!thisPrinter.runningJobID) {%>
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-light btn-block start-job"
+                                                        data-toggle="modal"
+                                                        data-target="#exampleModal"
+                                                        data-printer="<%=thisPrinter.printerName%>"
+                                                        data-printer-id="<%=thisPrinter._id%>"
+                                                        data-printer-location="<%=thisPrinter.printerLocation%>"
+                                                    >
+                                                        Start New Attempt
+                                                    </button>
+                                                    <%} else {%>
+                                                    <!-- prettier-ignore -->
+                                                    <%for (var thisFile of thisPrinter.printJob[0].fileNames) {%>
+                                                    <p><%=thisFile%></p>
+                                                    <%}%>
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-primary btn-block"
+                                                        data-toggle="modal"
+                                                        data-target="#finishJob"
+                                                    >
+                                                        Finish Job
+                                                    </button>
+                                                    <%}%>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <%}%>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-xl-4">
+                            <div class="card shadow mb-3">
+                                <div class="card-header">
+                                    <strong>Self Service</strong>
+                                    <a
+                                        href="/printers"
+                                        class="text-muted float-right"
+                                        >Manage</a
+                                    >
+                                </div>
+                                <div class="card-body">
+                                    <div
+                                        class="row row-cols-1 row-cols-sm-2 mx-n2"
+                                    >
+                                        <!-- prettier-ignore -->
+                                        <%for (var thisPrinter of selfService) {%>
+                                        <div class="col px-2 mb-3">
+                                            <div class="card h-100">
+                                                <img
+                                                    src="/public/images/ender3.jpg"
+                                                    class="card-img-top"
+                                                    alt="printer image"
+                                                />
+                                                <div class="card-body">
+                                                    <h5 class="card-title">
+                                                        <%=thisPrinter.printerName%>
+                                                    </h5>
+                                                    <p>
+                                                        <%=(thisPrinter.runningJobID?"Running":"Free")%>
+                                                    </p>
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-light btn-block start-job"
+                                                        data-toggle="modal"
+                                                        data-target="#exampleModal"
+                                                        data-printer="<%=thisPrinter.printerName%>"
+                                                        data-printer-id="<%=thisPrinter._id%>"
+                                                    >
+                                                        Start New Attempt
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <%}%>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div
+            class="modal fade"
+            id="exampleModal"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <form action="/attempts/start" method="POST">
+                            <input
+                                type="hidden"
+                                name="printerID"
+                                id="printerID"
+                            />
+                            <input
+                                type="hidden"
+                                name="selectedFileIDs"
+                                id="fileList"
+                            />
+                            <input
+                                type="hidden"
+                                name="selectedFileNames"
+                                id="nameList"
+                            />
+                            <div class="row">
+                                <div class="col-5">
+                                    <h5>Selected Files</h5>
+                                    <ul
+                                        class="list-group mb-3"
+                                        id="selected-files"
+                                    ></ul>
+                                </div>
+                                <div class="col">
+                                    <h5>Printing Data</h5>
+                                    <div class="row mb-3">
+                                        <label class="col-4 col-form-label"
+                                            >Printer</label
+                                        >
+                                        <div class="col">
+                                            <input
+                                                type="text"
+                                                readonly
+                                                class="form-control-plaintext"
+                                                id="printerName"
+                                                name="printerName"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label class="col-4 col-form-label"
+                                            >Location</label
+                                        >
+                                        <div class="col">
+                                            <input
+                                                type="text"
+                                                readonly
+                                                class="form-control-plaintext"
+                                                id="printerLocation"
+                                                name="printerLocation"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label class="col-4 col-form-label"
+                                            >Filament Roll ID</label
+                                        >
+                                        <div class="col">
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                name="rollID"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label class="col-4 col-form-label"
+                                            >Inital Weight</label
+                                        >
+                                        <div class="col">
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                name="startWeight"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <button
+                                                type="submit"
+                                                class="btn btn-success float-right"
+                                            >
+                                                Start Job
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="modal fade"
+            id="finishJob"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">
+                            Finish Printing Attempt
+                        </h5>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/attempts/finish" method="POST">
+                            <div class="row mb-3">
+                                <label class="col-4 col-form-label"
+                                    >Final Roll Weight</label
+                                >
+                                <div class="col">
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        name="startWeight"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-4 col-form-label"
+                                    >Attempt Status</label
+                                >
+                                <div class="col">
+                                    <div
+                                        class="btn-group w-100 btn-group-toggle"
+                                        data-toggle="buttons"
+                                    >
+                                        <label
+                                            class="btn btn-outline-success active"
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="status"
+                                                id="option1"
+                                                value="success"
+                                                checked
+                                            />
+                                            Success
+                                        </label>
+                                        <label class="btn btn-outline-danger">
+                                            <input
+                                                type="radio"
+                                                name="status"
+                                                value="failure"
+                                                id="option2"
+                                            />
+                                            Failure
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <div class="form-check">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            name="autonotify"
+                                            value=""
+                                            id="defaultCheck1"
+                                        />
+                                        <label
+                                            class="form-check-label"
+                                            for="defaultCheck1"
+                                        >
+                                            Automatically email patron if all
+                                            their files have been printed?
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-block btn-primary"
+                                    >
+                                        Complete
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include ("../partials/footer") %>
+    </body>
+    <script>
+        var selectedFileIDs = [];
+        var selectedFileNames = [];
+        $(".start-job").prop("disabled", true);
+
+        $("#exampleModal").on("show.bs.modal", function (event) {
+            var button = $(event.relatedTarget);
+            var printerName = button.data("printer");
+            var printerID = button.data("printer-id");
+            var printerLocation = button.data("printer-location");
+            console.log(printerName);
+            console.log(printerLocation);
+            var modal = $(this);
+            console.log($("#printerName"));
+            $("#printerName").attr("value", printerName);
+            $("#printerLocation").attr("value", printerLocation);
+            $("#printerID").attr("value", printerID);
+            $("#fileList").attr("value", selectedFileIDs.join(","));
+            $("#nameList").attr("value", selectedFileNames.join(","));
+            var chosenFiles = modal.find("#selected-files");
+            chosenFiles.empty();
+            for (var i = 0; i < selectedFileIDs.length; i++) {
+                chosenFiles.append(
+                    $("<li>")
+                        .html(selectedFileNames[i])
+                        .addClass("list-group-item")
+                );
+            }
+        });
+
+        $(".file-select").click(function () {
+            var thisFileID = $(this).attr("fileID");
+            var thisFileName = $(this).html();
+            if ($(this).hasClass("active")) {
+                $(this).removeClass("active");
+
+                const indexID = selectedFileIDs.indexOf(thisFileID);
+                if (indexID > -1) {
+                    selectedFileIDs.splice(indexID, 1);
+                }
+
+                const indexName = selectedFileNames.indexOf(thisFileName);
+                if (indexName > -1) {
+                    selectedFileNames.splice(indexName, 1);
+                }
+            } else {
+                $(this).addClass("active");
+                selectedFileIDs.push(thisFileID);
+                selectedFileNames.push(thisFileName);
+            }
+
+            if (selectedFileIDs.length > 0) {
+                $(".start-job").prop("disabled", false);
+            } else {
+                $(".start-job").prop("disabled", true);
+            }
+        });
+    </script>
+</html>

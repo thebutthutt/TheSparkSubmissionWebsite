@@ -2,7 +2,7 @@
     <div class="card-body">
         <h4>Technician Notes</h4>
         <p class="small text-muted"><%= print.overrideNotes%></p>
-        <%for (var thisTechNote of print.newTechNotes) {%>
+        <%for (var thisTechNote of print.internalNotes) {%>
         <p class="mb-0"><%=thisTechNote.notes%></p>
         <p class="small text-muted">
             <%=thisTechNote.techName%> -

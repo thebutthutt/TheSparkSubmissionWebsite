@@ -3,7 +3,7 @@ var path = require("path");
 var numPerPage = 10;
 var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
-var printRequestModel = require("../app/models/printRequest");
+var printRequestModel = require("../app/models/newPrintRequest");
 var printHandler = require("../handlers/printHandler.js");
 var adminRequestHandler = require("../handlers/adminRequestHandler.js");
 var fullServicePrinterModel = require("../app/models/fullServicePrinter");
@@ -145,6 +145,7 @@ module.exports = function (app) {
     //request superadmin to delete
     app.post("/prints/requestdelete", isLoggedIn, function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
+        console.log(fileID);
         adminRequestHandler.addDelete(fileID, "print");
         res.json(["done"]); //tell the front end the request is done
     });

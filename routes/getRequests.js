@@ -1,5 +1,5 @@
 var numPerPage = 10;
-var printRequestModel = require("../app/models/printRequest");
+var printRequestModel = require("../app/models/newPrintRequest");
 
 module.exports = function (app) {
     app.get("/prints/new", isLoggedIn, function (req, res) {
@@ -13,7 +13,10 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $eq: ["$$item.isNewSubmission", true],
+                                    $lt: [
+                                        "$$item.timestampPaymentRequested",
+                                        new Date("1980"),
+                                    ],
                                 },
                             },
                         },
@@ -22,10 +25,7 @@ module.exports = function (app) {
                 { $match: { "files.0": { $exists: true } } },
             ],
             function (err, data) {
-                //loading every single top level request FOR NOW
-                for (var submission of data) {
-                    console.log(submission.files);
-                }
+                //loading every single top level request FOR now
                 res.render("pages/prints/allPrints", {
                     pgnum: 4, //prints
                     dbdata: data,
@@ -49,9 +49,19 @@ module.exports = function (app) {
                                 cond: {
                                     $and: [
                                         {
-                                            $eq: [
-                                                "$$item.isPendingPayment",
-                                                true,
+                                            $or: [
+                                                {
+                                                    $eq: [
+                                                        "$$item.isPendingPayment",
+                                                        true,
+                                                    ],
+                                                },
+                                                {
+                                                    $eq: [
+                                                        "$$item.isPendingWaive",
+                                                        true,
+                                                    ],
+                                                },
                                             ],
                                         },
                                         {
@@ -128,34 +138,7 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $and: [
-                                        {
-                                            $eq: [
-                                                "$$item.isReadyToPrint",
-                                                true,
-                                            ],
-                                        },
-                                        {
-                                            $eq: ["$$item.isPrinted", false],
-                                        },
-                                        {
-                                            $lt: [
-                                                {
-                                                    $add: [
-                                                        {
-                                                            $toInt:
-                                                                "$$item.printingData.copiesPrinting",
-                                                        },
-                                                        {
-                                                            $toInt:
-                                                                "$$item.printingData.copiesPrinted",
-                                                        },
-                                                    ],
-                                                },
-                                                { $toInt: "$$item.copies" },
-                                            ],
-                                        },
-                                    ],
+                                    $eq: ["$$item.isReadyToPrint", true],
                                 },
                             },
                         },
@@ -194,26 +177,6 @@ module.exports = function (app) {
                                             $eq: [
                                                 "$$item.isReadyToPrint",
                                                 true,
-                                            ],
-                                        },
-                                        {
-                                            $eq: ["$$item.isPrinted", false],
-                                        },
-                                        {
-                                            $lt: [
-                                                {
-                                                    $add: [
-                                                        {
-                                                            $toInt:
-                                                                "$$item.printingData.copiesPrinting",
-                                                        },
-                                                        {
-                                                            $toInt:
-                                                                "$$item.printingData.copiesPrinted",
-                                                        },
-                                                    ],
-                                                },
-                                                { $toInt: "$$item.copies" },
                                             ],
                                         },
                                         {
@@ -264,26 +227,6 @@ module.exports = function (app) {
                                             ],
                                         },
                                         {
-                                            $eq: ["$$item.isPrinted", false],
-                                        },
-                                        {
-                                            $lt: [
-                                                {
-                                                    $add: [
-                                                        {
-                                                            $toInt:
-                                                                "$$item.printingData.copiesPrinting",
-                                                        },
-                                                        {
-                                                            $toInt:
-                                                                "$$item.printingData.copiesPrinted",
-                                                        },
-                                                    ],
-                                                },
-                                                { $toInt: "$$item.copies" },
-                                            ],
-                                        },
-                                        {
                                             $eq: [
                                                 "$$item.printLocation",
                                                 "Discovery Park",
@@ -320,7 +263,7 @@ module.exports = function (app) {
                             $filter: {
                                 input: "$files",
                                 as: "item",
-                                cond: { $eq: ["$$item.isStarted", true] },
+                                cond: { $eq: ["$$item.isPrinting", true] },
                             },
                         },
                     },
@@ -351,17 +294,7 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $and: [
-                                        {
-                                            $eq: ["$$item.isStarted", true],
-                                        },
-                                        {
-                                            $eq: [
-                                                "$$item.printingData.location",
-                                                "Willis Library",
-                                            ],
-                                        },
-                                    ],
+                                    $eq: ["$$item.isPrintingWillis", true],
                                 },
                             },
                         },
@@ -393,17 +326,7 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $and: [
-                                        {
-                                            $eq: ["$$item.isStarted", true],
-                                        },
-                                        {
-                                            $eq: [
-                                                "$$item.printingData.location",
-                                                "Discovery Park",
-                                            ],
-                                        },
-                                    ],
+                                    $eq: ["$$item.isPrintingDP", true],
                                 },
                             },
                         },
@@ -428,34 +351,20 @@ module.exports = function (app) {
     app.get("/prints/intransit", isLoggedIn, function (req, res) {
         printRequestModel.aggregate(
             [
-                { $unwind: "$files" },
                 {
                     $set: {
-                        "files.completedCopies": {
+                        files: {
                             $filter: {
-                                input: "$files.completedCopies",
+                                input: "$files",
                                 as: "item",
-                                cond: { $eq: ["$$item.isInTransit", true] },
+                                cond: {
+                                    $eq: ["$$item.isInTransit", true],
+                                },
                             },
                         },
                     },
                 },
-                { $match: { "files.completedCopies.0": { $exists: true } } },
-                {
-                    $group: {
-                        _id: "$_id",
-                        doc: { $first: "$$ROOT" },
-                        files: { $addToSet: "$files" },
-                    },
-                },
-                {
-                    $replaceRoot: {
-                        newRoot: {
-                            $mergeObjects: ["$doc", { files: "$files" }],
-                        },
-                    },
-                },
-                { $sort: { timestampSubmitted: -1 } },
+                { $match: { "files.0": { $exists: true } } },
             ],
             function (err, data) {
                 res.render("pages/prints/allPrints", {
@@ -473,44 +382,20 @@ module.exports = function (app) {
     app.get("/prints/pickup", isLoggedIn, function (req, res) {
         printRequestModel.aggregate(
             [
-                { $unwind: "$files" },
                 {
                     $set: {
-                        "files.completedCopies": {
+                        files: {
                             $filter: {
-                                input: "$files.completedCopies",
+                                input: "$files",
                                 as: "item",
                                 cond: {
-                                    $and: [
-                                        { $eq: ["$$item.isInTransit", false] },
-                                        {
-                                            $lt: [
-                                                "$$item.timestampPickedUp",
-                                                new Date("1980"),
-                                            ],
-                                        },
-                                    ],
+                                    $eq: ["$$item.isWaitingForPickup", true],
                                 },
                             },
                         },
                     },
                 },
-                { $match: { "files.completedCopies.0": { $exists: true } } },
-                {
-                    $group: {
-                        _id: "$_id",
-                        doc: { $first: "$$ROOT" },
-                        files: { $addToSet: "$files" },
-                    },
-                },
-                {
-                    $replaceRoot: {
-                        newRoot: {
-                            $mergeObjects: ["$doc", { files: "$files" }],
-                        },
-                    },
-                },
-                { $sort: { timestampSubmitted: -1 } },
+                { $match: { "files.0": { $exists: true } } },
             ],
             function (err, data) {
                 res.render("pages/prints/allPrints", {
@@ -528,20 +413,18 @@ module.exports = function (app) {
     app.get("/prints/pickupwillis", isLoggedIn, function (req, res) {
         printRequestModel.aggregate(
             [
-                { $unwind: "$files" },
                 {
                     $set: {
-                        "files.completedCopies": {
+                        files: {
                             $filter: {
-                                input: "$files.completedCopies",
+                                input: "$files",
                                 as: "item",
                                 cond: {
                                     $and: [
-                                        { $eq: ["$$item.isInTransit", false] },
                                         {
-                                            $lt: [
-                                                "$$item.timestampPickedUp",
-                                                new Date("1980"),
+                                            $eq: [
+                                                "$$item.isWaitingForPickup",
+                                                true,
                                             ],
                                         },
                                         {
@@ -556,22 +439,7 @@ module.exports = function (app) {
                         },
                     },
                 },
-                { $match: { "files.completedCopies.0": { $exists: true } } },
-                {
-                    $group: {
-                        _id: "$_id",
-                        doc: { $first: "$$ROOT" },
-                        files: { $addToSet: "$files" },
-                    },
-                },
-                {
-                    $replaceRoot: {
-                        newRoot: {
-                            $mergeObjects: ["$doc", { files: "$files" }],
-                        },
-                    },
-                },
-                { $sort: { timestampSubmitted: -1 } },
+                { $match: { "files.0": { $exists: true } } },
             ],
             function (err, data) {
                 res.render("pages/prints/allPrints", {
@@ -589,20 +457,18 @@ module.exports = function (app) {
     app.get("/prints/pickupdp", isLoggedIn, function (req, res) {
         printRequestModel.aggregate(
             [
-                { $unwind: "$files" },
                 {
                     $set: {
-                        "files.completedCopies": {
+                        files: {
                             $filter: {
-                                input: "$files.completedCopies",
+                                input: "$files",
                                 as: "item",
                                 cond: {
                                     $and: [
-                                        { $eq: ["$$item.isInTransit", false] },
                                         {
-                                            $lt: [
-                                                "$$item.timestampPickedUp",
-                                                new Date("1980"),
+                                            $eq: [
+                                                "$$item.isWaitingForPickup",
+                                                true,
                                             ],
                                         },
                                         {
@@ -617,22 +483,7 @@ module.exports = function (app) {
                         },
                     },
                 },
-                { $match: { "files.completedCopies.0": { $exists: true } } },
-                {
-                    $group: {
-                        _id: "$_id",
-                        doc: { $first: "$$ROOT" },
-                        files: { $addToSet: "$files" },
-                    },
-                },
-                {
-                    $replaceRoot: {
-                        newRoot: {
-                            $mergeObjects: ["$doc", { files: "$files" }],
-                        },
-                    },
-                },
-                { $sort: { timestampSubmitted: -1 } },
+                { $match: { "files.0": { $exists: true } } },
             ],
             function (err, data) {
                 res.render("pages/prints/allPrints", {

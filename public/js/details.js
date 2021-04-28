@@ -17,14 +17,6 @@ var getUrlParameter = function getUrlParameter(sParam) {
 
 $(document).ready(function () {
     //initial form to show is an accepted ptint
-    var initDecision = $("#decision").children("option:selected").val();
-    if (initDecision == "accepted") {
-        $(".accepted-controls").show();
-        $(".accepted-controls input").prop("required", true);
-    } else {
-        $(".accepted-controls").hide();
-        $(".accepted-controls input").prop("required", false);
-    }
 
     $('[data-toggle="tooltip"]').tooltip();
     $('[data-toggle="popover"]').popover();
@@ -180,40 +172,6 @@ $(document).ready(function () {
     });
 
     //which set of form items to show based on accepted or rejected print
-    $("#decision").change(function () {
-        var requestType = $(this).children("option:selected").val();
-        if (requestType == "accepted") {
-            $(".accepted-controls").show();
-            $(".accepted-controls input").prop("required", true);
-        } else {
-            $(".accepted-controls").hide();
-            $(".accepted-controls input").prop("required", false);
-        }
-        //may change if other request types need extra options
-    });
-
-    $(".custom-file-input").on("change", function () {
-        if (
-            $(this)
-                .val()
-                .substring($(this).val().length - 6)
-                .toUpperCase() != ".GCODE"
-        ) {
-            $(this).attr("type", "text");
-            $(this).attr("type", "file");
-            $(this).popover({
-                trigger: "focus",
-            });
-            $(this).popover("show");
-        } else {
-            $(this).popover("hide");
-            let fileName = $(this).val().split("\\").pop();
-            $(this)
-                .siblings(".custom-file-label")
-                .addClass("selected")
-                .html(fileName);
-        }
-    });
 
     $(".change-btn").on("click", function () {
         let fileID = $(this).attr("fileid");

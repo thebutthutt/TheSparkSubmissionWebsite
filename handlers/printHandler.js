@@ -6,7 +6,7 @@ var payment = require("../app/payment.js");
 var newmailer = require("../app/emailer.js");
 var fs = require("fs");
 var path = require("path");
-var printRequestModel = require("../app/models/printRequest");
+var printRequestModel = require("../app/models/newPrintRequest");
 const NodeStl = require("node-stl");
 const { ConstraintViolationError } = require("ldapjs");
 
@@ -14,147 +14,9 @@ var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
 
 module.exports = {
-    //function receives the input from filled out request form and saves to the database
-    addPrint: function (fields, submissionDetails, prints) {
-        var now = new Date();
-        var request = new printRequestModel(); //new instance of a request
-        //fill the patron details
-        request.patron = {
-            fname: fields.first,
-            lname: fields.last,
-            email: fields.email,
-            euid: fields.euid,
-            phone: fields.phone,
-        };
-
-        //if at least one class detail field is filled
-        if (
-            Object.values(submissionDetails.classDetails).some(
-                (x) => x !== null && x !== ""
-            )
-        ) {
-            request.isForClass = true;
-            request.isForDepartment = false;
-            request.classDetails = submissionDetails.classDetails;
-        }
-        //if at least one department detail is filled
-        else if (
-            Object.values(submissionDetails.classDetails).some(
-                (x) => x !== null && x !== ""
-            )
-        ) {
-            request.isForDepartment = true;
-            request.isForClass = false;
-            request.internalDetails = submissionDetails.internalDetails;
-        }
-
-        request.dateSubmitted = prints[8]; //always the date submitted
-        request.timestampSubmitted = now;
-        request.numFiles = prints[9]; //always the number of files
-
-        //set intitial parameters of the printRequest schema
-        request.allFilesReviewed = false;
-        request.hasStaleOnPayment = false;
-        request.hasStaleOnPickup = false;
-        request.isPendingDelete = false;
-
-        //loop through the arrays of file details possibly more than one file
-        for (let i = 0; i < prints[0].length; i++) {
-            var copiesData = [];
-            for (var j = 0; j < prints[5][i]; j++) {
-                copiesData.push({
-                    copyNumber: i + 1,
-                });
-            }
-            request.files.push({
-                fileName: prints[0][i],
-                realFileName: prints[1][i],
-                material: prints[2][i],
-                infill: prints[3][i],
-                color: prints[4][i],
-                copies: prints[5][i],
-                notes: prints[7][i],
-                printLocation: prints[6][i],
-                pickupLocation: prints[6][i],
-
-                isNewSubmission: true,
-                isReviewed: false,
-                isRejected: false,
-                isPendingPayment: false,
-                isPendingWaive: false,
-                isPaid: false,
-                isReadyToPrint: false,
-                isPrinted: false,
-                isPickedUp: false,
-                isPendingDelete: false,
-                canBeReviewed: true,
-                isStarted: false,
-                isStaleOnPickup: false,
-
-                copiesData: {
-                    unprinted: prints[5][i],
-                },
-
-                dateSubmitted: prints[8], //always holds the date submitted
-                timestampSubmitted: now,
-                dateReviewed: "Never",
-                datePaid: "Never",
-                datePrinted: "Never",
-                datePickedUp: "Never",
-                dateOfFirstWarning: "Not yet sent",
-                dateOfSecondWarning: "Not yet sent",
-                dateOfConfiscation: "Not yet sent",
-
-                numAttempts: 0,
-                numFailedAttempts: 0,
-
-                overrideNotes: "",
-            });
-        }
-
-        //save the top level submission and low level files to the database
-
-        //calculate the estimated volume for each submitted file
-        for (var file of request.files) {
-            try {
-                var stl = new NodeStl(
-                    path.join(
-                        stlPath,
-                        file.fileName.replace(
-                            "/home/hcf0018/webserver/Uploads/STLs/",
-                            ""
-                        )
-                    ),
-                    {
-                        density: 1.04,
-                    }
-                );
-                console.log(
-                    file.fileName.replace(
-                        "/home/hcf0018/webserver/Uploads/STLs/",
-                        ""
-                    )
-                );
-                console.log(stl.volume + "cm^3"); // 21cm^3
-                file.calculatedVolumeCm = stl.volume;
-            } catch (error) {
-                console.log(error);
-            }
-        }
-
-        request.save(function (err, document) {
-            if (err) {
-                return console.error(err);
-            } else {
-                newmailer.newSubmission(request);
-            }
-        });
-    },
-
     //handles the data for a new top level print request with possibly multiple low level file submissions
     handleSubmission: function (req, callback) {
         //arrays of each files specifications (will only hold one entry each if patron submits only one file)
-
         var submissionDetails = {
             classDetails: {
                 classCode: req.body.classCode,
@@ -167,63 +29,107 @@ module.exports = {
             },
         };
 
-        var filenames = [],
-            realFileNames = [],
-            materials = Array.isArray(req.body.material)
+        var materials = Array.isArray(req.body.material)
                 ? req.body.material
                 : Array.of(req.body.material),
             infills = Array.isArray(req.body.infill)
                 ? req.body.infill
                 : Array.of(req.body.infill),
-            colors = Array.isArray(req.body.color)
-                ? req.body.color
-                : Array.of(req.body.color),
             copies = Array.isArray(req.body.copies)
                 ? req.body.copies
                 : Array.of(req.body.copies),
+            colors = Array.isArray(req.body.color)
+                ? req.body.color
+                : Array.of(req.body.color),
             notes = Array.isArray(req.body.notes)
                 ? req.body.notes
                 : Array.of(req.body.notes),
             pickups = Array.isArray(req.body.pickup)
                 ? req.body.pickup
                 : Array.of(req.body.pickup),
-            prints = [],
             patron = {
-                first: req.body.first,
-                last: req.body.last,
+                fname: req.body.first,
+                lname: req.body.last,
                 email: req.body.email,
                 euid: req.body.euid,
                 phone: req.body.phone,
             },
-            numFiles = req.files.length,
-            time = moment();
-        if (numFiles <= 0) {
-            //bad
-            callback("failure");
-        } else {
-            req.files.forEach(function (file) {
-                filenames.push(file.filename);
-                realFileNames.push(file.originalname);
-            });
-            prints.push(filenames);
-            prints.push(realFileNames);
-            prints.push(materials);
-            prints.push(infills);
-            prints.push(colors);
-            prints.push(copies);
-            prints.push(pickups);
-            prints.push(notes);
-            prints.push(time.format(constants.format));
-            prints.push(numFiles);
+            numFiles = 0;
 
-            module.exports.addPrint(patron, submissionDetails, prints);
-            callback("success"); //tell calling function we got it
+        var now = new Date();
+        var submittedFiles = [];
+        //for each file
+        for (var index = 0; index < req.files.length; index++) {
+            //for each copy of this file
+            for (var thisCopy = 0; thisCopy < copies[index]; thisCopy++) {
+                numFiles++;
+                var calcVolume = 0;
+                try {
+                    var stl = new NodeStl(req.files[index].path, {
+                        density: 1.04,
+                    });
+                    calcVolume = stl.volume;
+                } catch (error) {
+                    console.log(error);
+                }
+                submittedFiles.push({
+                    fileName: req.files[index].filename,
+                    originalFileName: req.files[index].originalname,
+                    isReviewed: false,
+                    isPendingWaive: Object.values(
+                        submissionDetails.classDetails
+                    ).some((x) => x !== null && x !== "")
+                        ? true
+                        : false,
+                    material: materials[index],
+                    infill: infills[index],
+                    color: colors[index],
+                    notes: notes[index],
+                    pickupLocation: pickups[index],
+                    calculatedVolumeCm: calcVolume,
+                    timestampSubmitted: now,
+                });
+            }
         }
+
+        var newSubmission = {
+            patron: patron,
+            files: submittedFiles,
+            numFiles: numFiles,
+            timestampSubmitted: now,
+        };
+        if (
+            Object.values(submissionDetails.classDetails).some(
+                (x) => x !== null && x !== ""
+            )
+        ) {
+            newSubmission.isForClass = true;
+            newSubmission.isForDepartment = false;
+            newSubmission.classDetails = submissionDetails.classDetails;
+        }
+        //if at least one department detail is filled
+        else if (
+            Object.values(submissionDetails.classDetails).some(
+                (x) => x !== null && x !== ""
+            )
+        ) {
+            newSubmission.isForDepartment = true;
+            newSubmission.isForClass = false;
+            newSubmission.internalDetails = submissionDetails.internalDetails;
+        }
+        var newDatabaseObject = new printRequestModel(newSubmission);
+        newDatabaseObject.save(function (err, result) {
+            if (err) {
+                console.log(err);
+                callback("failure"); //tell calling function we got it
+            } else {
+                callback("success");
+            }
+        });
     },
 
     //this function handles when a technician is reviewing a print file within a top level submission
     updateSingle: function (req, callback) {
-        var time = moment();
         var now = new Date();
         var shouldUpload = false;
         if (req.files[0]) {
@@ -233,7 +139,6 @@ module.exports = {
         }
         var maker = req.user.name;
         var id = req.body.fileID;
-        console.log(req.body);
         printRequestModel.findOne(
             {
                 "files._id": req.body.fileID,
@@ -242,114 +147,51 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
-                    if (result.files.id(id).gcodeName != null) {
-                        //delete gcode from disk if it exists
-                        console.log(
-                            "Submission had old GCODE file! deleting..."
-                        );
-                        var thisGcodePath = path.join(
-                            gcodePath,
-                            result.files.id(req.body.fileID).gcodeName
-                        );
-                        fs.unlink(thisGcodePath, function (err) {
-                            if (err) {
-                                console.log(err);
+                    var fileName = result.files.id(id).fileName;
+                    var allFilesReviewed = true;
+                    for (var thisFile of result.files) {
+                        if (thisFile.fileName == fileName) {
+                            thisFile.patronNotes = req.body.patronNotes;
+                            thisFile.reviewedBy = maker;
+                            thisFile.isReviewed = true;
+                            thisFile.timestampReviewed = now;
+                            var newNoteObject = {
+                                techName: maker,
+                                dateAdded: now,
+                                notes: req.body.technotes,
+                            };
+
+                            thisFile.internalNotes.push(newNoteObject);
+                            if (req.body.decision == "accepted") {
+                                if (shouldUpload) {
+                                    thisFile.gcodeName = gcode;
+                                    thisFile.realGcodeName = realGcodeName;
+                                }
+
+                                thisFile.slicedPrinter = req.body.printer;
+                                thisFile.slicedMaterial = req.body.material;
+                                thisFile.slicedHours = req.body.hours;
+                                thisFile.slicedMinutes = req.body.minutes;
+                                thisFile.slicedGrams = req.body.grams;
+                                thisFile.printLocation = req.body.printLocation;
+                                thisFile.isRejected = false;
+                            } else {
+                                thisFile.isRejected = true;
+                                thisFile.isPendingPayment = false;
+                                thisFile.isPendingWaive = false;
                             }
-                        });
+                        }
+                        if (!thisFile.isReviewed) {
+                            allFilesReviewed = false;
+                        }
                     }
+                    result.allFilesReviewed = allFilesReviewed;
+                    result.save(function () {
+                        callback();
+                    });
                 }
             }
         );
-        //update the low level print according to the form data
-        if (req.body.decision == "accepted") {
-            //if the technician accepted the print, update accordingly
-            printRequestModel.findOneAndUpdate(
-                {
-                    "files._id": req.body.fileID,
-                },
-                {
-                    $set: {
-                        "files.$.gcodeName": gcode,
-                        "files.$.realGcodeName": realGcodeName,
-                        "files.$.slicedPrinter": req.body.printer,
-                        "files.$.slicedMaterial": req.body.material,
-                        "files.$.timeHours": req.body.hours,
-                        "files.$.timeMinutes": req.body.minutes,
-                        "files.$.grams": req.body.grams,
-                        "files.$.estimations.slicedHours": req.body.hours,
-                        "files.$.estimations.slicedMinutes": req.body.minutes,
-                        "files.$.estimations.slicedGrams": req.body.grams,
-                        "files.$.estimations.slicedCopies": req.body.copies,
-                        "files.$.estimations.totalHours": req.body.totalHours,
-                        "files.$.estimations.totalMinutes":
-                            req.body.totalMinutes,
-                        "files.$.estimations.totalGrams": req.body.totalGrams,
-                        "files.$.patronNotes": req.body.patronNotes,
-                        //"files.$.techNotes": req.body.technotes,
-                        "files.$.approvedBy": maker,
-                        "files.$.printLocation": req.body.printLocation,
-                        "files.$.isReviewed": true,
-                        "files.$.isRejected": false,
-                        //"files.$.dateReviewed": time.format(constants.format),
-                        //"files.$.dateReviewed": time.format(constants.format),
-                        "files.$.timestampReviewed": now,
-                    },
-                },
-                {
-                    new: true,
-                },
-                function (err, result) {
-                    if (err) {
-                        console.log(err);
-                    }
-                    console.log(result);
-                    var newNoteObject = {
-                        techName: maker,
-                        dateAdded: now,
-                        notes: req.body.technotes,
-                    };
-                    result.files
-                        .id(req.body.fileID)
-                        .newTechNotes.push(newNoteObject);
-                    result.save();
-                    //now find the fully updated top level submission so we can check if all the files have been reviewed
-                    module.exports.checkAllReviewed(id, function () {
-                        callback();
-                    });
-                }
-            );
-        } else {
-            //the tecnicican rejected the print, so update differently
-            printRequestModel.findOneAndUpdate(
-                {
-                    "files._id": req.body.fileID,
-                },
-                {
-                    $set: {
-                        "files.$.isReviewed": true,
-                        "files.$.isRejected": true,
-                        "files.$.isPendingPayment": false,
-                        "files.$.dateReviewed": time.format(constants.format),
-                        "files.$.approvedBy": maker,
-                        "files.$.patronNotes": req.body.patronNotes,
-                        "files.$.timestampReviewed": now,
-                    },
-                },
-                {
-                    new: true,
-                },
-                function (err, result) {
-                    if (err) {
-                        console.log(err);
-                    }
-                    console.log(result);
-                    //now find the fully updated top level submission so we can check if all the files have been reviewed
-                    module.exports.checkAllReviewed(id, function () {
-                        callback();
-                    });
-                }
-            );
-        }
     },
 
     //------------------------Add new technician notes without a full file review------------------------
@@ -370,7 +212,7 @@ module.exports = {
                         };
                         result.files
                             .id(req.body.fileID)
-                            .newTechNotes.push(newNoteObject);
+                            .internalNotes.push(newNoteObject);
                         result.save();
                     }
                 }
@@ -402,33 +244,31 @@ module.exports = {
                     //calculate paumet amount
                     var amount = 0.0;
                     for (var i = 0; i < result.files.length; i++) {
-                        result.files[i].canBeReviewed = false;
-                        result.files[i].isNewSubmission = false;
-
                         if (
                             result.files[i].isRejected == false &&
                             result.files[i].isReviewed == true
                         ) {
-                            //print is accepted
-                            result.files[i].isPendingPayment = true;
                             if (
-                                result.files[i].estimations.totalHours <= 0 &&
-                                result.files[i].estimations.totalMinutes <= 59
+                                result.files[i].slicedHours <= 0 &&
+                                result.files[i].slicedMinutes <= 59
                             ) {
                                 //if its less than an hour, just charge one dollar
                                 amount += 1;
                             } else {
                                 //charge hours plus minutes out of 60 in cents
                                 amount +=
-                                    result.files[i].estimations.totalHours +
-                                    result.files[i].estimations.totalMinutes /
-                                        60;
+                                    result.files[i].slicedHours +
+                                    result.files[i].slicedMinutes / 60;
                             }
                             console.log(amount);
                             acceptedFiles.push(result.files[i]._id);
                             if (shouldBeWaived) {
                                 result.files[i].isPendingWaive = true;
+                            } else {
+                                result.files[i].isPendingPayment = true;
                             }
+
+                            result.files[i].timestampPaymentRequested = now;
                         } else {
                             rejectedFiles.push(result.files[i]._id);
                         }
@@ -473,11 +313,6 @@ module.exports = {
                             result.isPendingWaive = true;
                         }
                     } else {
-                        //dont ask for payment, just move to the rejected queue
-                        //none of the prints were accepted
-                        result.datePaymentRequested = time.format(
-                            constants.format
-                        ); //still capture review time
                         result.timestampPaymentRequested = now;
                         newmailer.allRejected(result);
                     }
@@ -514,6 +349,7 @@ module.exports = {
                             result.files[i].isReadyToPrint = true;
                             result.files[i].isPendingWaive = false;
                             if (wasWaived) {
+                                result.files[i].wasWaived = true;
                                 result.files[i].overrideNotes =
                                     "Payment was waived by " +
                                     waivingEUID +
@@ -542,7 +378,6 @@ module.exports = {
 
     recievePaymentByFile: function (fileID, wasWaived, waivingEUID, callback) {
         var now = new Date();
-        var time = moment();
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -559,6 +394,7 @@ module.exports = {
                             result.files[i].isReadyToPrint = true;
                             result.files[i].isPendingWaive = false;
                             if (wasWaived) {
+                                result.files[i].wasWaived = true;
                                 result.files[i].overrideNotes =
                                     "Payment was waived by " +
                                     waivingEUID +
@@ -566,7 +402,6 @@ module.exports = {
                             }
                         }
                     }
-                    result.datePaid = time.format(constants.format);
                     result.timestampPaid = now;
                     if (wasWaived) {
                         //emailer.paymentWaived(result.patron.email);
@@ -600,7 +435,6 @@ module.exports = {
             {
                 $set: {
                     "files.$.isPrinted": true,
-                    "files.$.datePrinted": time.format(constants.format),
                     "files.$.timestampPrinted": now,
                     "files.$.isReadyToPrint": false,
                     "files.$.realGrams": totalWeight,
@@ -651,11 +485,7 @@ module.exports = {
 
     markPrinting: function (body, callback) {
         var fileID = body.fileID;
-        var copiesPrinting = parseInt(body.copiesPrinting);
         var location = body.location;
-        var printer = body.printer;
-        var rollID = body.rollID;
-        var rollWeight = parseInt(body.rollWeight);
         printRequestModel.findOne(
             {
                 "files._id": fileID,
@@ -665,12 +495,11 @@ module.exports = {
                     console.log(err);
                 } else {
                     var thisFile = result.files.id(fileID);
-                    thisFile.isStarted = true;
-                    thisFile.printingData.copiesPrinting = copiesPrinting;
-                    thisFile.printingData.location = location;
-                    thisFile.printingData.printer = printer;
-                    thisFile.printingData.rollID = rollID;
-                    thisFile.printingData.rollWeight = rollWeight;
+                    thisFile.isPrinting = true;
+                    thisFile.isPrintingWillis =
+                        location == "Willis Library" ? true : false;
+                    thisFile.isPrintingDP =
+                        location == "Discovery Park" ? true : false;
 
                     result.save();
                     if (typeof callback == "function") {
@@ -833,8 +662,6 @@ module.exports = {
                     }
                     printingData.copiesPrinted += printingData.copiesPrinting;
                     printingData.copiesPrinting = 0;
-                    console.log(printingData.location);
-                    console.log(result.files.id(fileID).pickupLocation);
 
                     for (var i = 0; i < numNewFinished; i++) {
                         var newCompleted = {
@@ -1059,7 +886,6 @@ module.exports = {
                         ) {
                             thisCopy.timestampPickedUp = now;
                             numLeft--;
-                            console.log(thisCopy);
                         }
                     }
 
@@ -1072,7 +898,6 @@ module.exports = {
                         result.files.id(fileID).isPickedUp = true;
                         result.files.id(fileID).timestampPickedUp = now;
                     }
-                    console.log(thisFile);
                     //result.files.id(fileID).isPickedUp = true;
                     //result.files.id(fileID).datePickedUp = time;
                     //result.files.id(fileID).timestampPickedUp = now;
@@ -1148,21 +973,18 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
-                    var numFiles = result.numFiles;
-                    var numReviewed = 0;
+                    var isGood = true;
 
-                    //count number of reviewed files and see if any are rejected
-                    for (var i = 0; i < result.files.length; i++) {
-                        if (result.files[i].isReviewed == true) {
-                            numReviewed += 1;
+                    for (var thisFile of result.files) {
+                        if (!thisFile.isReviewed) {
+                            isGood = false;
                         }
                     }
 
-                    //if they are the same we can allow the top level submission to be processed
-                    if (numReviewed == numFiles) {
-                        result.allFilesReviewed = true;
-                    }
+                    console.log(isGood);
 
+                    result.allFilesReviewed = isGood;
+                    console.log(result.allFilesReviewed);
                     result.save();
                     callback();
                 }
