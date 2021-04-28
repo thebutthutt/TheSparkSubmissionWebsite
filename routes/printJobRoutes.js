@@ -56,7 +56,7 @@ module.exports = function (app) {
             },
             { $match: { "files.0": { $exists: true } } },
         ]);
-        res.render("pages/printjobs", {
+        res.render("pages/printJobs/printjobs", {
             pgnum: 7, //printers'
             selfService: allSelf,
             willisFull: willisFull,

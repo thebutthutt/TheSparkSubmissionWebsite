@@ -424,7 +424,7 @@
             <div class="row">
                 <div class="col-xl-4 col-lg-6 col-md-12">
                     
-                    <%- include ("../../partials/PrintDetails/patron",
+                    <%- include ("./patron",
                     {print:print, submission:submission}) %>
                     
                     <div class="shadow card mb-3">
@@ -457,22 +457,22 @@
                     <!-- prettier-ignore -->
 
                     <% if (print.isReadyToPrint) {%> 
-                        <%- include ("../../partials/PrintDetails/printAttempts", {print:print, willisPrinters: willisPrinters, dpPrinters: dpPrinters, selfServicePrinters: selfServicePrinters}) %> 
+                        <%- include ("./printAttempts", {print:print, willisPrinters: willisPrinters, dpPrinters: dpPrinters, selfServicePrinters: selfServicePrinters}) %> 
                     <%}%>
-                    <%- include ("../../partials/PrintDetails/requestAndReview", {print:print, filePath:filePath, gcodePath:gcodePath}) %> 
+                    <%- include ("./requestAndReview", {print:print, filePath:filePath, gcodePath:gcodePath}) %> 
                     <% if (print.timestampPaymentRequested < new Date("1980")) { %>
-                        <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
+                        <%- include ("./internalNotes", {print:print, file:gcodePath}) %> 
                     <%}%>
                 </div>
 
                 <div class="col-xl-4 col-lg-6 col-md-12">
                     <!-- prettier-ignore -->
                     <%if(isSuperAdmin && print.isPendingWaive) {%> 
-                        <%- include ("../../partials/PrintDetails/waiveCard", {print:print}) %> 
+                        <%- include ("./waiveCard", {print:print}) %> 
                     <%}%>
                     
                     <% if (print.isReadyToPrint) {%> 
-                        <%- include ("../../partials/PrintDetails/filamentAndNotify", {print:print}) %> 
+                        <%- include ("./filamentAndNotify", {print:print}) %> 
                     <%}%>
 
                     <!-- prettier-ignore -->
@@ -485,7 +485,7 @@
                             <%}%>
                             <hr />
                             <%- include
-                            ("../../partials/PrintDetails/printReviewForm",
+                            ("./printReviewForm",
                             {print:print}) %>
                         </div>
                     </div>
@@ -493,7 +493,7 @@
                     <!-- prettier-ignore -->
 
                     <% if (print.timestampPaymentRequested > new Date("1980")) { %>
-                        <%- include ("../../partials/PrintDetails/internalNotes", {print:print, file:gcodePath}) %> 
+                        <%- include ("./internalNotes", {print:print, file:gcodePath}) %> 
                     <%}%>
                 </div>
             </div>

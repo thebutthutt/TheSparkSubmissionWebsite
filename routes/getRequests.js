@@ -26,7 +26,7 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR now
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //prints
                     dbdata: data,
                     printPage: "newSub",
@@ -80,7 +80,7 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //prints
                     dbdata: data,
                     printPage: "pendpay",
@@ -113,7 +113,7 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //prints
                     dbdata: data,
                     printPage: "pendpaystale",
@@ -148,7 +148,7 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "ready",
@@ -195,7 +195,7 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "ready",
@@ -242,7 +242,7 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "ready",
@@ -272,7 +272,7 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "printing",
@@ -304,7 +304,7 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "printing",
@@ -336,7 +336,7 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "printing",
@@ -367,7 +367,7 @@ module.exports = function (app) {
                 { $match: { "files.0": { $exists: true } } },
             ],
             function (err, data) {
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "inTransit",
@@ -398,7 +398,7 @@ module.exports = function (app) {
                 { $match: { "files.0": { $exists: true } } },
             ],
             function (err, data) {
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "pickup",
@@ -442,7 +442,7 @@ module.exports = function (app) {
                 { $match: { "files.0": { $exists: true } } },
             ],
             function (err, data) {
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "pickup",
@@ -486,7 +486,7 @@ module.exports = function (app) {
                 { $match: { "files.0": { $exists: true } } },
             ],
             function (err, data) {
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "pickup",
@@ -520,7 +520,7 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "completed",
@@ -554,7 +554,7 @@ module.exports = function (app) {
             ],
             function (err, data) {
                 //loading every single top level request FOR NOW
-                res.render("pages/prints/allPrints", {
+                res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "rejected",
@@ -572,7 +572,7 @@ module.exports = function (app) {
 
         printRequestModel.find({}, function (err, data) {
             //loading every single top level request FOR NOW
-            res.render("pages/prints/allPrints", {
+            res.render("pages/printList/allPrints", {
                 pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "all",
@@ -591,7 +591,7 @@ module.exports = function (app) {
             .skip(skip)
             .limit(numPerPage);
 
-        res.render("pages/prints/allPrints", {
+        res.render("pages/printList/allPrints", {
             pgnum: 4, //tells the navbar what page to highlight
             dbdata: submissions,
             printPage: "all",

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <%- include ("../partials/head") %>
+        <%- include ("../../partials/head") %>
         <style>
             .card-body {
                 padding: 0.7em;
@@ -9,7 +9,7 @@
         </style>
     </head>
     <body>
-        <%- include ("../partials/header") %>
+        <%- include ("../../partials/header") %>
         <div class="container-flush mx-5 mt-4" style="margin-bottom: 100px">
             <div class="row">
                 <div class="col-md-4 col-xl-2">
@@ -49,49 +49,8 @@
                                     >
                                         <%for (var thisPrinter of dpFull) {%>
                                         <div class="col px-2 mb-3">
-                                            <div class="card h-100">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">
-                                                        <%=thisPrinter.printerName%>
-                                                        <img
-                                                            src="<%=(thisPrinter.printerType=='Ender 3'?'/public/images/ender3.jpg':thisPrinter.printerType=='Ender 5'?'/public/images/ender5.jpg':'')%>"
-                                                            class="float-right"
-                                                            style="
-                                                                width: 5em;
-                                                                height: 5em;
-                                                            "
-                                                            alt="printer image"
-                                                        />
-                                                    </h5>
-                                                    <!-- prettier-ignore -->
-                                                    <%if (!thisPrinter.runningJobID) {%>
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-light btn-block start-job"
-                                                        data-toggle="modal"
-                                                        data-target="#exampleModal"
-                                                        data-printer="<%=thisPrinter.printerName%>"
-                                                        data-printer-id="<%=thisPrinter._id%>"
-                                                        data-printer-location="<%=thisPrinter.printerLocation%>"
-                                                    >
-                                                        Start New Attempt
-                                                    </button>
-                                                    <%} else {%>
-                                                    <!-- prettier-ignore -->
-                                                    <%for (var thisFile of thisPrinter.printJob[0].fileNames) {%>
-                                                    <p><%=thisFile%></p>
-                                                    <%}%>
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-primary btn-block"
-                                                        data-toggle="modal"
-                                                        data-target="#finishJob"
-                                                    >
-                                                        Finish Job
-                                                    </button>
-                                                    <%}%>
-                                                </div>
-                                            </div>
+                                            <%- include('./singlePrinter.ejs',
+                                            {thisPrinter: thisPrinter})%>
                                         </div>
                                         <%}%>
                                     </div>
@@ -115,45 +74,8 @@
                                         <!-- prettier-ignore -->
                                         <%for (var thisPrinter of willisFull) {%>
                                         <div class="col px-2 mb-3">
-                                            <div class="card h-100">
-                                                <img
-                                                    src="<%=(thisPrinter.printerType=='Ender 3'?'/public/images/ender3.jpg':thisPrinter.printerType=='Ender 5'?'/public/images/ender5.jpg':'')%>"
-                                                    class="card-img-top"
-                                                    alt="printer image"
-                                                />
-                                                <div class="card-body">
-                                                    <h5 class="card-title">
-                                                        <%=thisPrinter.printerName%>
-                                                    </h5>
-                                                    <!-- prettier-ignore -->
-                                                    <%if (!thisPrinter.runningJobID) {%>
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-light btn-block start-job"
-                                                        data-toggle="modal"
-                                                        data-target="#exampleModal"
-                                                        data-printer="<%=thisPrinter.printerName%>"
-                                                        data-printer-id="<%=thisPrinter._id%>"
-                                                        data-printer-location="<%=thisPrinter.printerLocation%>"
-                                                    >
-                                                        Start New Attempt
-                                                    </button>
-                                                    <%} else {%>
-                                                    <!-- prettier-ignore -->
-                                                    <%for (var thisFile of thisPrinter.printJob[0].fileNames) {%>
-                                                    <p><%=thisFile%></p>
-                                                    <%}%>
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-primary btn-block"
-                                                        data-toggle="modal"
-                                                        data-target="#finishJob"
-                                                    >
-                                                        Finish Job
-                                                    </button>
-                                                    <%}%>
-                                                </div>
-                                            </div>
+                                            <%- include('./singlePrinter.ejs',
+                                            {thisPrinter: thisPrinter})%>
                                         </div>
                                         <%}%>
                                     </div>
@@ -177,31 +99,8 @@
                                         <!-- prettier-ignore -->
                                         <%for (var thisPrinter of selfService) {%>
                                         <div class="col px-2 mb-3">
-                                            <div class="card h-100">
-                                                <img
-                                                    src="/public/images/ender3.jpg"
-                                                    class="card-img-top"
-                                                    alt="printer image"
-                                                />
-                                                <div class="card-body">
-                                                    <h5 class="card-title">
-                                                        <%=thisPrinter.printerName%>
-                                                    </h5>
-                                                    <p>
-                                                        <%=(thisPrinter.runningJobID?"Running":"Free")%>
-                                                    </p>
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-light btn-block start-job"
-                                                        data-toggle="modal"
-                                                        data-target="#exampleModal"
-                                                        data-printer="<%=thisPrinter.printerName%>"
-                                                        data-printer-id="<%=thisPrinter._id%>"
-                                                    >
-                                                        Start New Attempt
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            <%- include('./singlePrinter.ejs',
+                                            {thisPrinter: thisPrinter})%>
                                         </div>
                                         <%}%>
                                     </div>
@@ -426,7 +325,7 @@
                 </div>
             </div>
         </div>
-        <%- include ("../partials/footer") %>
+        <%- include ("../../partials/footer") %>
     </body>
     <script>
         var selectedFileIDs = [];

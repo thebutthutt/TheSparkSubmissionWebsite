@@ -78,7 +78,7 @@ module.exports = function (app) {
                 for (const thisPrinter of selfServicePrinters) {
                     selfList.push(thisPrinter.printerName);
                 }
-                res.render("pages/prints/previewPrint", {
+                res.render("pages/singlePrint/previewPrint", {
                     //render the review page
                     pgnum: 4, //prints  `
                     isAdmin: true,

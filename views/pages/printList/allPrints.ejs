@@ -29,9 +29,7 @@
         isall = true} else {var isall = false}%> <%var i = 0%>
         <div class="container-fluid mt-5 px-5" style="margin-bottom: 100px">
             <div class="row">
-                <div class="col-auto">
-                    <%- include ("../../partials/PrintDetails/printNav") %>
-                </div>
+                <div class="col-auto"><%- include ("./printNav") %></div>
                 <div class="col">
                     <%if (dbdata.length < 1) {%>
                     <div class="card shadow">
@@ -207,8 +205,7 @@
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <%- include
-                                                    ("../../partials/PrintDetails/flags",
+                                                    <%- include ("./flags",
                                                     {file:file}) %>
                                                 </td>
                                                 <td>
@@ -216,8 +213,7 @@
                                                 </td>
 
                                                 <td style="width: 11%">
-                                                    <%- include
-                                                    ("../../partials/PrintDetails/fileBurger",
+                                                    <%- include ("./fileBurger",
                                                     {file:file, item:item}) %>
                                                 </td>
                                             </tr>
