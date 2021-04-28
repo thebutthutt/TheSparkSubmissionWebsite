@@ -1,17 +1,6 @@
-var multer = require("multer");
-var path = require("path");
-var numPerPage = 10;
-var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
-var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
-var printRequestModel = require("../app/models/newPrintRequest");
 var attemptModel = require("../app/models/attempt");
-var printHandler = require("../handlers/printHandler.js");
-var adminRequestHandler = require("../handlers/adminRequestHandler.js");
 var fullServicePrinterModel = require("../app/models/fullServicePrinter");
 var selfServicePrinterModel = require("../app/models/selfServicePrinter");
-var payment = require("../app/payment.js");
-const archiver = require("archiver");
-var fs = require("fs");
 
 module.exports = function (app) {
     app.get("/printers/jobs", isLoggedIn, async function (req, res) {
@@ -81,7 +70,7 @@ module.exports = function (app) {
             printerID: req.body.printerID,
             rollID: req.body.rollID,
             startWeight: req.body.startWeight,
-            technicianID: req.user.id,
+            startedBy: req.user.local.euid,
             fileIDs: selectedFiles,
             fileNames: selectedFileNames,
         });
@@ -104,9 +93,54 @@ module.exports = function (app) {
                 req.body.printerLocation == "Willis Library" ? true : false;
             thisFile.isPrintingDP =
                 req.body.printerLocation == "Discovery Park" ? true : false;
+
+            thisFile.attemptIDs.push(newAttempt._id);
             await thisSubmission.save();
         }
 
+        res.redirect("/printers/jobs");
+    });
+
+    app.post("/attempts/finish", isLoggedIn, async function (req, res) {
+        //attemptID, endWeght, status, autonotify
+        var now = new Date();
+        var thisAttempt = await attemptModel.findById(req.body.attemptID);
+        thisAttempt.isFinished = true;
+        if (req.body.status == "success") {
+            thisAttempt.isSuccess = true;
+        } else {
+            thisAttempt.isFailure = true;
+        }
+        thisAttempt.finishedBy = req.user.local.euid;
+        thisAttempt.endWeight = req.body.endWeight;
+        thisAttempt.timestampEnded = now;
+        await thisAttempt.save();
+
+        var relatedPrinter = await fullServicePrinterModel.findOne({
+            runningJobID: thisAttempt._id,
+        });
+        relatedPrinter.runningJobID = null;
+        await relatedPrinter.save();
+
+        for await (var thisFileID of thisAttempt.fileIDs) {
+            var thisSubmission = await printRequestModel.findOne({
+                "files._id": thisFileID,
+            });
+            var thisFile = thisSubmission.files.id(thisFileID);
+            thisFile.isPrinting = false;
+            thisFile.isPrintingWillis = false;
+            thisFile.isPrintingDP = false;
+
+            if (req.body.status == "success") {
+                thisFile.isPrinted = true;
+                thisFile.timesstampPrinted = now;
+                if (thisAttempt.location != thisFile.pickupLocation) {
+                    thisFile.isInTransit = true;
+                    thisFile.timestampArrivedAtPickup = now;
+                }
+            }
+            await thisSubmission.save();
+        }
         res.redirect("/printers/jobs");
     });
 };
