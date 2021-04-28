@@ -23,8 +23,7 @@ var attemptSchema = mongoose.Schema({
     },
     printerID: {
         type: mongoose.Schema.ObjectId,
-        default: "",
-        required: true,
+        default: null,
     },
     isFinished: {
         type: Boolean,
@@ -56,21 +55,22 @@ var attemptSchema = mongoose.Schema({
         default: 0,
         required: true,
     },
-    technicianID: {
-        type: mongoose.Schema.ObjectId,
+    startedBy: {
+        type: String,
         default: "",
-        required: true,
+    },
+    finishedBy: {
+        type: String,
+        default: "",
     },
     fileIDs: {
         type: [
             {
                 type: mongoose.Schema.ObjectId,
-                default: "",
-                required: true,
+                default: null,
             },
         ],
         default: [],
-        required: true,
     },
     fileNames: {
         type: [{ type: String, default: "" }],

@@ -5,24 +5,6 @@
         <script src="/public/js/details.js"></script>
         <script type="module" src="/public/js/stldisplay.js"></script>
         <link type="text/css" rel="stylesheet" href="/public/css/details.css" />
-        <!--
-        <style>
-            p strong {
-                width: 12rem;
-                float: left;
-                clear: right;
-            }
-
-            span.data {
-                width: calc(100% - 12rem);
-                float: right;
-            }
-
-            p {
-                clear: both;
-                overflow: auto;
-            }
-        </style>-->
         <style>
             .timeline-col .bi {
                 width: 2rem;
@@ -51,7 +33,6 @@
             }
 
             .sep {
-                
                 width: 0px;
                 background-color: #aaa;
             }
@@ -61,372 +42,10 @@
     <body>
         <%- include ("../../partials/header") %>
         <div class="container-flush mx-5 mt-4" style="margin-bottom: 100px">
-            <div class="row mb-3">
-                <div class="col">
-                    <div class="card shadow text-center">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col timeline-col">
-                                    <h6>Request</h6>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-plus-circle"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-                                            />
-                                            <path
-                                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>
-                                        File submitted on
-                                        <%=print.timestampSubmitted.toLocaleDateString('en-US')%>
-                                    </small>
-                                </div>
-                                <div class="sep"></div>
-                                <div class="col timeline-col">
-                                    <h6>File</h6>
-                                    <% if (print.isReviewed) { %>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-check-circle"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-                                            />
-                                            <path
-                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>
-                                        File reviewed on
-                                        <%=print.timestampReviewed.toLocaleDateString('en-US')%>
-                                    </small>
-                                    <% } else { %>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-clock"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
-                                            />
-                                            <path
-                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>File needs review</small>
-                                    <% } %>
-                                </div>
-                                <div class="sep"></div>
-                                <div class="col timeline-col">
-                                    <h6>Submission</h6>
-                                    <% if (submission.timestampPaymentRequested
-                                    > new Date("1971") ) { %>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-check-circle"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-                                            />
-                                            <path
-                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>
-                                        Submission reviewed on
-                                        <%=submission.timestampPaymentRequested.toLocaleDateString('en-US')%>
-                                    </small>
-                                    <%} else { %>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-clock"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
-                                            />
-                                            <path
-                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>
-                                        Submission not reviewed
-                                    </small>
-                                    <% } %>
-                                </div>
-                                <div class="sep"></div>
-                                <div class="col timeline-col">
-                                    <h6>Payment</h6>
-                                    <% if (print.isPendingPayment &&
-                                    !print.isPendingWaive ) { %>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-clock"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
-                                            />
-                                            <path
-                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>Waiting for payment</small>
-                                    <%} else if (print.isPendingWaive) { %>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-clock"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
-                                            />
-                                            <path
-                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>
-                                        Waiting for waive
-                                    </small>
-                                    <% } else if (print.isPaid) { %>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-check-circle"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-                                            />
-                                            <path
-                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>
-                                        Submission paid on
-                                        <%=submission.timestampPaid.toLocaleDateString('en-US')%>
-                                    </small>
-                                    <%} else {%>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-circle"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>Not ready yet!</small>
-                                    <%}%>
-                                </div>
-                                <div class="sep"></div>
-                                <div class="col timeline-col">
-                                    <h6>Printing</h6>
-                                    <% if (print.isReadyToPrint &&
-                                    !print.isStarted ) { %>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-clock"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
-                                            />
-                                            <path
-                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>Waiting to be printed</small>
-                                    <%} else if (print.isStarted) { %>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-clock"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
-                                            />
-                                            <path
-                                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>Currently on a printer</small>
-                                    <% } else if (print.isPrinted){%>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-check-circle"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-                                            />
-                                            <path
-                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>
-                                        File printed on
-                                        <%=print.timestampPrinted.toLocaleDateString('en-US')%>
-                                    </small>
-                                    <%} else { %>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-circle"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>Not ready yet!</small>
-                                    <%}%>
-                                </div>
-                                <div class="sep"></div>
-                                <div class="col timeline-col">
-                                    <h6>Pickup</h6>
-                                    <% if (print.timestampPrinted > new
-                                    Date("1971")) { %>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-check-circle"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-                                            />
-                                            <path
-                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>
-                                        Patron notified on
-                                        <%=print.timestampPrinted.toLocaleDateString('en-US')%>
-                                    </small>
-                                    <%if(print.isPrinted && !print.isPickedUp){%>
-                                    <button
-                                        data-toggle="modal"
-                                        data-numcopies="<%=print.printingData.copiesPrinted%>"
-                                        data-target="#modalPickup"
-                                        data-backdrop="static"
-                                        data-keyboard="false"
-                                        fileName="<%=print.realFileName%>"
-                                        fileID="<%=print._id%>"
-                                        class="shadow btn btn-lg btn-primary btn-block modal-button"
-                                    >
-                                        Picking Up
-                                    </button>
-                                    <%}%> <%} else { %>
-                                    <div>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                            class="bi bi-circle"
-                                            viewBox="0 0 16 16"
-                                        >
-                                            <path
-                                                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <small>Not ready yet!</small>
-                                    <%}%>
-                                </div>
-                                
-                            </div>
-                        </div>
-                    </div>
-
-                    <%if (print.isPrinted && !print.isPickedUp) {%>
-                    <div class="row">
-                        <div class="col"></div>
-                    </div>
-                    <%}%>
-                </div>
-            </div>
+            <%- include ("./timeline", {print:print, submission:submission}) %>
 
             <div class="row">
                 <div class="col-xl-4 col-lg-6 col-md-12">
-                    
-                    <%- include ("./patron",
-                    {print:print, submission:submission}) %>
-                    
                     <div class="shadow card mb-3">
                         <div class="card-img-top">
                             <div class="progress" id="progress">
@@ -451,15 +70,20 @@
                             </div>
                         </div>
                     </div>
+
+                    <%- include ("./patron", {print:print,
+                    submission:submission}) %>
                 </div>
 
                 <div class="col-xl-4 col-lg-6 col-md-12">
                     <!-- prettier-ignore -->
 
-                    <% if (print.isReadyToPrint) {%> 
-                        <%- include ("./printAttempts", {print:print, willisPrinters: willisPrinters, dpPrinters: dpPrinters, selfServicePrinters: selfServicePrinters}) %> 
+                    <% if (print.timestampPaymentRequested < new Date("1980") && print.timestampPaid > new Date("1980")) {%> 
+                        <%- include ("./printAttempts", {print:print, attempts: attempts}) %> 
                     <%}%>
+
                     <%- include ("./requestAndReview", {print:print, filePath:filePath, gcodePath:gcodePath}) %> 
+                    
                     <% if (print.timestampPaymentRequested < new Date("1980")) { %>
                         <%- include ("./internalNotes", {print:print, file:gcodePath}) %> 
                     <%}%>
@@ -471,8 +95,8 @@
                         <%- include ("./waiveCard", {print:print}) %> 
                     <%}%>
                     
-                    <% if (print.isReadyToPrint) {%> 
-                        <%- include ("./filamentAndNotify", {print:print}) %> 
+                    <% if (print.timestampPaymentRequested > new Date("1980") && print.timestampPaid > new Date("1980")) {%> 
+                        <%- include ("./printAttempts", {print:print, attempts: attempts}) %> 
                     <%}%>
 
                     <!-- prettier-ignore -->
@@ -481,12 +105,12 @@
                         <div class="card-body">
                             <h4>Review Print</h4>
                             <%if (print.isReviewed) {%>
-                                <p class="mb-0">Previous review by <%= print.approvedBy%></p>
+                            <p class="mb-0">
+                                Previous review by <%= print.approvedBy%>
+                            </p>
                             <%}%>
                             <hr />
-                            <%- include
-                            ("./printReviewForm",
-                            {print:print}) %>
+                            <%- include ("./printReviewForm", {print:print}) %>
                         </div>
                     </div>
                     <% } %>
@@ -499,154 +123,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="modalPickup" tabindex="-1" role="dialog">
-            <div
-                class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
-            >
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button
-                            type="button"
-                            class="close"
-                            data-dismiss="modal"
-                            aria-label="Close"
-                        >
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="asklocation">
-                            <h1 class="display-4">Ready for Pickup?</h1>
-                            <p class="lead">
-                                Check the patron's ID card and get an iPad ready
-                                for them to sign on!
-                            </p>
-                            <div class="row my-3">
-                                <div class="col-7">
-                                    <h4>Check the patron's ID</h4>
-                                    <small>
-                                        Next, you'll be directing them to an
-                                        iPad to complete a digital signature.
-                                        Have the iPad connected to the
-                                        appropriate URL for the location the
-                                        print is being picked up at. For willis,
-                                        this is
-                                        <a href="/signaturewillis"
-                                            >sparkorders.library.unt.edu/signaturewillis</a
-                                        >
-                                        and for Discovery Park this is
-                                        <a href="/signaturedp"
-                                            >sparkorders.library.unt.edu/signaturedp</a
-                                        >
-                                    </p>
-                                </div>
-                                <div class="col-5">
-                                    <img
-                                        src="/public/images/id.jpg"
-                                        style="width: 100%; height: auto"
-                                    />
-                                </div>
-                            </div>
-                            <h4>Select your current location:</h4>
-                            <div class="row">
-                                <div class="col">
-                                    <button
-                                        class="btn btn-lg btn-primary connect-button"
-                                        style="width: 100%"
-                                        location="willis"
-                                    >
-                                        Willis Library
-                                    </button>
-                                </div>
-                                <div class="col">
-                                    <button
-                                        class="btn btn-lg btn-primary connect-button"
-                                        style="width: 100%"
-                                        location="dp"
-                                    >
-                                        Discovery Park
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="nopad" style="display: none">
-                            <h1 class="display-4">
-                                Please Connect a Signature Pad!
-                            </h1>
-                            <p class="lead">
-                                Use an iPad and navigate to
-                                <a href="/signaturewillis"
-                                    >sparkorders.library.unt.edu/signaturewillis</a
-                                >
-                                or
-                                <a href="/signaturedp"
-                                    >sparkorders.library.unt.edu/signaturedp</a
-                                >
-                                to get started.
-                            </p>
-                            <small>
-                                In the future, these links will be pinned on the
-                                home screen of all our iPads for easy access.
-                                For now we must suffer.
-                            </p>
-                        </div>
-                        <div class="asksig" style="display: none">
-                            <h1 class="display-4">
-                                Please Do Not Close This Window!
-                            </h1>
-                            <p class="lead">
-                                Ask the patron to sign on the iPad in front of
-                                them.
-                            </p>
-                        </div>
-                        <div class="verify" style="display: none">
-                            <h1 class="display-4">Verify Your Credentials</h1>
-                            <p class="lead">
-                                Please confirm your password below. By
-                                confirming your password you are signing as a
-                                witness that the patron has picked up their
-                                print.
-                            </p>
-                            <form class="verification">
-                                <div class="form-group">
-                                    <label class="sr-only">EUID</label>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        name="euid"
-                                        placeholder="EUID"
-                                    />
-                                </div>
-                                <div class="form-group">
-                                    <label class="sr-only">Password</label>
-                                    <input
-                                        type="password"
-                                        class="form-control"
-                                        name="password"
-                                        placeholder="Password"
-                                    />
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-lg btn-primary btn-block verification-button"
-                                >
-                                    Submit
-                                </button>
-                            </form>
-                            <div
-                                class="alert alert-danger wrong-password"
-                                role="alert"
-                                style="display: none"
-                            >
-                                That didn't work. Try again?
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <%- include ("./pickupModal") %>
         <div
             class="modal fade"
             id="modalPrintFinish"

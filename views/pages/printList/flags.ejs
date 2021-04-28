@@ -25,18 +25,11 @@
 
 <%}%>
 <!-- --------------------------- Printing Files ---------------------------- -->
-<% /* %> <%if(printPage == 'printing') {%>
+<%if(printPage == 'printing') {%>
 <span class="badge font-weight-normal alert-success"
-    >Printing at <%=file.printingData.location%></span
+    >Printing on <%=file.printerName%></span
 >
-<span class="badge font-weight-normal alert-primary"
-    ><%=file.printingData.copiesPrinted%>/<%=file.copies%> printed</span
->
-<%}%> <% if (printPage == 'pickup') { %>
-<span class="badge font-weight-normal alert-info"
-    >Pickup at <%=file.printLocation%></span
->
-<%} %> <% */ %>
+<%} %>
 <!-- ----------------------------- In transit ------------------------------ -->
 
 <% if (printPage == 'inTransit') { %>

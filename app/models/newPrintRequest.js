@@ -93,6 +93,8 @@ var printSubmissionSchema = mongoose.Schema({
     requestedPrice: { type: Number, default: 0 },
     numFiles: { type: Number, default: 0 },
     allFilesReviewed: { type: Boolean, default: false },
+    allFilesPrinted: { type: Boolean, default: false },
+    allFilesPickedUp: { type: Boolean, default: false },
     isPendingWaive: { type: Boolean, default: false },
     files: [singlePrintSchema], //array of actual print files
 });

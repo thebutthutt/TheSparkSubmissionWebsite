@@ -4,10 +4,9 @@ var numPerPage = 10;
 var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
 var printRequestModel = require("../app/models/newPrintRequest");
+var attemptModel = require("../app/models/attempt");
 var printHandler = require("../handlers/printHandler.js");
 var adminRequestHandler = require("../handlers/adminRequestHandler.js");
-var fullServicePrinterModel = require("../app/models/fullServicePrinter");
-var selfServicePrinterModel = require("../app/models/selfServicePrinter");
 var payment = require("../app/payment.js");
 const archiver = require("archiver");
 var fs = require("fs");
@@ -43,41 +42,12 @@ module.exports = function (app) {
                     );
                 }
 
-                var willisPrinters = await fullServicePrinterModel.find({
-                    printerLocation: "Willis Library",
-                });
-                var willisList = [];
-                for (const thisPrinter of willisPrinters) {
-                    var newPrinter =
-                        thisPrinter.printerType +
-                        " " +
-                        thisPrinter.printerName +
-                        " (" +
-                        thisPrinter.printerHelpText +
-                        ")";
-                    willisList.push(newPrinter);
+                var thisFile = result.files.id(fileID);
+                var attempts = [];
+                for (var thisAttemptID of thisFile.attemptIDs) {
+                    attempts.push(await attemptModel.findById(thisAttemptID));
                 }
-                var dpPrinters = await fullServicePrinterModel.find({
-                    printerLocation: "Discovery Park",
-                });
-                var dpList = [];
-                for (const thisPrinter of dpPrinters) {
-                    var newPrinter =
-                        thisPrinter.printerType +
-                        " " +
-                        thisPrinter.printerName +
-                        " (" +
-                        thisPrinter.printerHelpText +
-                        ")";
-                    dpList.push(newPrinter);
-                }
-                var selfServicePrinters = await selfServicePrinterModel
-                    .find({})
-                    .sort({ printerBarcode: 1 });
-                var selfList = [];
-                for (const thisPrinter of selfServicePrinters) {
-                    selfList.push(thisPrinter.printerName);
-                }
+
                 res.render("pages/singlePrint/previewPrint", {
                     //render the review page
                     pgnum: 4, //prints  `
@@ -85,11 +55,9 @@ module.exports = function (app) {
                     timestamp: fileID.dateSubmitted,
                     isSuperAdmin: req.user.isSuperAdmin,
                     name: req.user.name,
-                    print: result.files.id(fileID), //send the review page the file to review
+                    print: thisFile, //send the review page the file to review
+                    attempts: attempts,
                     patron: result.patron,
-                    willisPrinters: willisList,
-                    dpPrinters: dpList,
-                    selfServicePrinters: selfList,
                     submission: result,
                     filePath: path.join(
                         stlPath,
@@ -193,20 +161,6 @@ module.exports = function (app) {
         adminRequestHandler.undoWaive(submissionID, "print");
         res.json(["done"]); //tell the front end the request is done
     });
-
-    //-----------------------MARK COMPLETED-----------------------
-    // app.post("/prints/finishPrinting", isLoggedIn, function (req, res) {
-    //     var fileID = req.body.fileID || req.query.fileID;
-    //     printHandler.markCompleted(fileID);
-    //     res.json(["done"]);
-    // });
-
-    //-----------------------MARK PICKEFD UP-----------------------
-    // app.post("/prints/markPickedUp", isLoggedIn, function (req, res) {
-    //     var fileID = req.body.fileID || req.query.fileID;
-    //     printHandler.markPickedUp(fileID);
-    //     res.json(["done"]);
-    // });
 
     //-----------------------DOWNLOAD-----------------------
     //downloads file specified in the parameter
@@ -317,6 +271,24 @@ module.exports = function (app) {
         res.redirect("back");
     });
 
+    app.post("/prints/arrived", isLoggedIn, async function (req, res) {
+        console.log("HERE");
+        console.log(req.body);
+        var now = new Date();
+        var thisSubmission = await printRequestModel.findOne({
+            "files._id": req.body.fileID,
+        });
+        console.log(thisSubmission);
+        var thisFile = thisSubmission.files.id(req.body.fileID);
+        console.log(thisFile);
+        thisFile.isInTransit = false;
+        thisFile.isWaitingForPickup = true;
+        thisFile.timestampArrivedAtPickup = now;
+        console.log(thisFile);
+        await thisSubmission.save();
+        res.redirect("/prints/preview?fileID=" + req.body.fileID);
+    });
+
     //-----------------------CHANGE LOCATION-----------------------
     //simple change location without reviewing
     app.post("/prints/changeLocation", isLoggedIn, function (req, res) {
@@ -367,79 +339,6 @@ module.exports = function (app) {
         );
     });
 
-    /* -------------------------------------------------------------------------- */
-    /*                    Manage single file printing attempts                    */
-    /* -------------------------------------------------------------------------- */
-
-    /* ----------------------- Start an attempt on a file ----------------------- */
-
-    app.post("/prints/markPrinting", isLoggedIn, function (req, res) {
-        printHandler.markPrinting(req.body, function callback() {
-            res.redirect("/prints/preview?fileID=" + req.body.fileID);
-        });
-    });
-
-    /* ------------------- Close current attempt as a success ------------------- */
-
-    app.post("/prints/printsuccess", isLoggedIn, function (req, res) {
-        printHandler.printSuccess(req.body.fileID, function callback() {
-            res.json(["done"]);
-        });
-    });
-
-    /* ------------------- Close current attempt as a failure ------------------- */
-
-    app.post("/prints/printfail", isLoggedIn, function (req, res) {
-        var fileID = req.body.fileID || req.query.fileID;
-        printHandler.printFail(fileID, function callback() {
-            res.json(["done"]);
-        });
-    });
-
-    /* ----------- End attempt process as all copies have been printed ---------- */
-
-    app.post("/prints/printfinish", isLoggedIn, function (req, res) {
-        printHandler.printFinished(req.body, function callback() {
-            res.redirect("/prints/preview?fileID=" + req.body.fileID);
-        });
-    });
-
-    app.post("/prints/arrived", isLoggedIn, function (req, res) {
-        printHandler.markAtPickupLocation(req.body, function callback() {
-            res.redirect("/prints/preview?fileID=" + req.body.fileID);
-        });
-    });
-
-    // app.post("/prints/printcomplete", isLoggedIn, function (req, res) {
-    //     var fileID = req.body.fileID || req.query.fileID;
-    //     var realGrams = req.body.realGrams || req.query.realGrams;
-    //     printHandler.printCompleted(fileID, realGrams, function callback() {
-    //         res.json(["done"]);
-    //     });
-    // });
-    // app.post("/prints/changeCopies", isLoggedIn, function (req, res) {
-    //     console.log(req.body);
-    //     console.log(req.query);
-    //     var fileID = req.body.fileID || req.query.fileID;
-    //     var copiesPrinting =
-    //         req.body.copiesPrinting || req.query.copiesPrinting;
-    //     var copiesPrinted = req.body.copiesPrinted || req.query.copiesPrinted;
-    //     printHandler.changePrintCopyStatus(
-    //         fileID,
-    //         copiesPrinting,
-    //         copiesPrinted,
-    //         function callback() {
-    //             res.json(["done"]);
-    //         }
-    //     );
-    // });
-    // app.post("/prints/startprint", isLoggedIn, function (req, res) {
-    //     var fileID = req.body.fileID || req.query.fileID;
-    //     printHandler.startPrint(fileID, function callback() {
-    //         res.json(["done"]);
-    //     });
-    // });
-
     //-----------------------CLEAR ALL COMPLETED PRINTS-----------------------
     app.post("/prints/clearAllCompleted", isLoggedIn, function (req, res) {
         printHandler.clearAllCompleted(function callback() {
@@ -451,47 +350,6 @@ module.exports = function (app) {
     app.post("/prints/clearAllRejected", isLoggedIn, function (req, res) {
         printHandler.clearAllRejected(function callback() {
             res.json("done");
-        });
-    });
-
-    app.post("/prints/addAttempt", isLoggedIn, function (req, res) {
-        /**
-         * fileID
-         * location
-         * printer
-         * copies
-         * rollID
-         */
-        console.log(req.body);
-        printHandler.addAttempt(req.body, function callback() {
-            res.redirect("/prints/preview?fileID=" + req.body.fileID);
-        });
-    });
-    app.post("/prints/editAttempt", isLoggedIn, function (req, res) {
-        printHandler.editAttempt(req.body, function callback() {
-            res.redirect("/prints/preview?fileID=" + req.body.fileID);
-        });
-    });
-    app.post("/prints/deleteAttempt", isLoggedIn, function (req, res) {
-        printHandler.deleteAttempt(req.body, function callback() {
-            res.redirect("/prints/preview?fileID=" + req.body.fileID);
-        });
-    });
-
-    app.post("/prints/addFilament", isLoggedIn, function (req, res) {
-        printHandler.addFilament(req.body, function callback() {
-            res.redirect("/prints/preview?fileID=" + req.body.fileID);
-        });
-    });
-    app.post("/prints/editFilament", isLoggedIn, function (req, res) {
-        console.log(req.body);
-        printHandler.editFilament(req.body, function callback() {
-            res.redirect("/prints/preview?fileID=" + req.body.fileID);
-        });
-    });
-    app.post("/prints/deleteFilament", isLoggedIn, function (req, res) {
-        printHandler.deleteFilament(req.body, function callback() {
-            res.redirect("/prints/preview?fileID=" + req.body.fileID);
         });
     });
 };

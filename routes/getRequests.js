@@ -1,5 +1,5 @@
-var numPerPage = 10;
 var printRequestModel = require("../app/models/newPrintRequest");
+var attemptModel = require("../app/models/attempt");
 
 module.exports = function (app) {
     app.get("/prints/new", isLoggedIn, function (req, res) {
@@ -254,7 +254,7 @@ module.exports = function (app) {
         );
     });
 
-    app.get("/prints/printing", isLoggedIn, function (req, res) {
+    app.get("/prints/printing", isLoggedIn, async function (req, res) {
         printRequestModel.aggregate(
             [
                 {
@@ -270,8 +270,15 @@ module.exports = function (app) {
                 },
                 { $match: { "files.0": { $exists: true } } },
             ],
-            function (err, data) {
-                //loading every single top level request FOR NOW
+            async function (err, data) {
+                for (var thisSubmission of data) {
+                    for (var thisFile of thisSubmission.files) {
+                        var thisAttempt = await attemptModel.findById(
+                            thisFile.attemptIDs[thisFile.attemptIDs.length - 1]
+                        );
+                        thisFile.printerName = thisAttempt.printerName;
+                    }
+                }
                 res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
@@ -284,7 +291,7 @@ module.exports = function (app) {
         );
     });
 
-    app.get("/prints/printingwillis", isLoggedIn, function (req, res) {
+    app.get("/prints/printingwillis", isLoggedIn, async function (req, res) {
         printRequestModel.aggregate(
             [
                 {
@@ -302,8 +309,15 @@ module.exports = function (app) {
                 },
                 { $match: { "files.0": { $exists: true } } },
             ],
-            function (err, data) {
-                //loading every single top level request FOR NOW
+            async function (err, data) {
+                for (var thisSubmission of data) {
+                    for (var thisFile of thisSubmission.files) {
+                        var thisAttempt = await attemptModel.findById(
+                            thisFile.attemptIDs[thisFile.attemptIDs.length - 1]
+                        );
+                        thisFile.printerName = thisAttempt.printerName;
+                    }
+                }
                 res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
@@ -316,7 +330,7 @@ module.exports = function (app) {
         );
     });
 
-    app.get("/prints/printingdp", isLoggedIn, function (req, res) {
+    app.get("/prints/printingdp", isLoggedIn, async function (req, res) {
         printRequestModel.aggregate(
             [
                 {
@@ -334,8 +348,15 @@ module.exports = function (app) {
                 },
                 { $match: { "files.0": { $exists: true } } },
             ],
-            function (err, data) {
-                //loading every single top level request FOR NOW
+            async function (err, data) {
+                for (var thisSubmission of data) {
+                    for (var thisFile of thisSubmission.files) {
+                        var thisAttempt = await attemptModel.findById(
+                            thisFile.attemptIDs[thisFile.attemptIDs.length - 1]
+                        );
+                        thisFile.printerName = thisAttempt.printerName;
+                    }
+                }
                 res.render("pages/printList/allPrints", {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,

@@ -19,7 +19,6 @@ module.exports = function (server) {
     var currentDPRequestingID = -1;
     var currentWillisRequestingIndex = -1;
     var currentDPRequestingIndex = -1;
-    var numPickup = 0;
 
     wss.on("connection", function connection(ws) {
         console.log("connection");
@@ -99,7 +98,6 @@ messageStructure: {
                     if (obj.location == "willis") {
                         currentWillisRequestingIndex = clientData.yourID; //mark what client is interacting with the signature pad
                         currentWillisRequestingID = obj.data.fileID; //the ID of the file being signed for
-                        numPickup = obj.data.numPickup;
                         console.log(
                             "willis is asking patron to sign",
                             currentWillisRequestingIndex,
@@ -117,7 +115,6 @@ messageStructure: {
                     } else {
                         currentDPRequestingIndex = clientData.yourID; //mark what client is interacting with the signature pad
                         currentDPRequestingID = obj.data.fileID; //the ID of the file being signed for
-                        numPickup = obj.data.numPickup;
                         console.log(
                             "dp is asking patron to sign",
                             currentDPRequestingIndex,
@@ -200,10 +197,7 @@ messageStructure: {
                             currentWillisRequestingIndex,
                             currentWillisRequestingID
                         );
-                        printHandler.markPickedUp(
-                            currentWillisRequestingID,
-                            numPickup
-                        );
+                        printHandler.markPickedUp(currentWillisRequestingID);
                         currentWillisRequestingID = -1;
                         currentWillisRequestingIndex = -1;
                     } else {
@@ -218,10 +212,7 @@ messageStructure: {
                             currentDPRequestingIndex,
                             currentDPRequestingID
                         );
-                        printHandler.markPickedUp(
-                            currentDPRequestingID,
-                            numPickup
-                        );
+                        printHandler.markPickedUp(currentDPRequestingID);
                         currentDPRequestingID = -1;
                         currentDPRequestingIndex = -1;
                     }

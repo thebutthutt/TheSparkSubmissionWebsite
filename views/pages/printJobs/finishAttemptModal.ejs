@@ -22,6 +22,12 @@
             </div>
             <div class="modal-body">
                 <form action="/attempts/finish" method="POST">
+                    <input
+                        type="hidden"
+                        class="form-control"
+                        name="attemptID"
+                        id="attemptID"
+                    />
                     <div class="row mb-3">
                         <label class="col-4 col-form-label"
                             >Final Roll Weight</label
@@ -30,7 +36,7 @@
                             <input
                                 type="number"
                                 class="form-control"
-                                name="startWeight"
+                                name="endWeight"
                                 required
                             />
                         </div>
@@ -62,26 +68,6 @@
                                         id="option2"
                                     />
                                     Failure
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col">
-                            <div class="form-check">
-                                <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    name="autonotify"
-                                    value=""
-                                    id="defaultCheck1"
-                                />
-                                <label
-                                    class="form-check-label"
-                                    for="defaultCheck1"
-                                >
-                                    Automatically email patron if all their
-                                    files have been printed?
                                 </label>
                             </div>
                         </div>

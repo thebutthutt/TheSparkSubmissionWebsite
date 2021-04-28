@@ -147,6 +147,13 @@
             }
         });
 
+        $("#finishJob").on("show.bs.modal", function (event) {
+            var button = $(event.relatedTarget);
+            var attemptID = button.data("attempt-id");
+            var modal = $(this);
+            $("#attemptID").attr("value", attemptID);
+        });
+
         $(".file-select").click(function () {
             var thisFileID = $(this).attr("fileID");
             var thisFileName = $(this).html();

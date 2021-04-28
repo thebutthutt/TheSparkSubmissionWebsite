@@ -1,10 +1,65 @@
 <div class="card shadow mb-3">
-    <div class="card-header">
-        <h5 class="mb-0">Print Attempts</h5>
+    <div class="card-body">
+        <h4 class="card-title <%=print.isPrinted?'':'mb-0'%>">
+            Print Attempts
+        </h4>
+        <%if (print.isPrinted) {%> <%if (print.isInTransit) {%>
+        <p>
+            This file has been printed successfully and is currently in transit
+            to the requested pickup location
+        </p>
+        <div class="row">
+            <div class="col">
+                <form action="/prints/arrived" method="POST">
+                    <input type="hidden" name="fileID" value="<%=print._id%>" />
+                    <button
+                        type="submit"
+                        class="btn btn-block btn-outline-info"
+                    >
+                        Mark Arrived At Pickup Location
+                    </button>
+                </form>
+            </div>
+            <div class="col">
+                <button
+                    data-toggle="modal"
+                    data-target="#modalPickup"
+                    data-backdrop="static"
+                    data-keyboard="false"
+                    fileName="<%=print.realFileName%>"
+                    fileID="<%=print._id%>"
+                    class="btn btn-outline-primary btn-block modal-button"
+                >
+                    Picking Up
+                </button>
+            </div>
+        </div>
+        <%} else {%>
+        <p>This file has been printed successfully and is waiting for pickup</p>
+        <button
+            data-toggle="modal"
+            data-target="#modalPickup"
+            data-backdrop="static"
+            data-keyboard="false"
+            fileName="<%=print.realFileName%>"
+            fileID="<%=print._id%>"
+            class="btn btn-outline-primary btn-block modal-button"
+        >
+            Picking Up
+        </button>
+        <%}%> <%}%>
     </div>
+    <%if (attempts.length>0) {%>
+    <ul class="list-group list-group-flush border-top" id="attempts">
+        <%var index = 0%> <%for (var thisAttempt of attempts) {%> <%index++%>
+        <%- include('./singleAttempt', {thisAttempt: thisAttempt, index:
+        index})%> <%}%>
+    </ul>
+    <%}%> <%if (!print.isPrinted) {%>
     <div class="card-body">
         <a class="btn btn-primary btn-block" href="/printers/jobs"
             >Start new attempt</a
         >
     </div>
+    <%}%>
 </div>

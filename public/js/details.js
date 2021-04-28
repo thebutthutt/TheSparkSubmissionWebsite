@@ -41,12 +41,6 @@ $(document).ready(function () {
         });
     });
 
-    var numPickup = 0;
-    $("#modalPickup").on("show.bs.modal", function (e) {
-        console.log(e.relatedTarget);
-        numPickup = e.relatedTarget.getAttribute("data-numpickup");
-    });
-
     $(".connect-button").on("click", function () {
         var location = $(this).attr("location");
         const ws = new WebSocket("wss://sparkorders.library.unt.edu:8080");
@@ -54,7 +48,6 @@ $(document).ready(function () {
         var printData = {
             fileName: $(".modal-button").attr("fileName"),
             fileID: $(".modal-button").attr("fileID"),
-            numPickup: numPickup,
         };
 
         ws.onopen = () => {

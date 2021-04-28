@@ -1,28 +1,66 @@
-<div class="shadow alert alert-success">
-    <h4>Patron Details</h4>
-    <table class="table table-borderless table-sm alert-success rounded mb-0">
-        <tbody>
-            <tr>
-                <th scope="row">Name:</th>
-                <td><%=patron.fname%> <%=patron.lname%></td>
-            </tr>
-            <tr>
-                <th scope="row">Date submitted:</th>
-                <td><%=print.dateSubmitted%></td>
-            </tr>
-            <tr>
-                <th scope="row">Email:</th>
-                <td><%=patron.email%></td>
-            </tr>
-            <tr>
-                <th scope="row">Phone:</th>
-                <td><%=patron.phone%></td>
-            </tr>
-            <tr>
-                <th scope="row">Submission type:</th>
-                <td>
-                    <!-- prettier-ignore -->
-                    <% if (submission.isForClass) {%> 
+<div class="accordion mb-3 shadow" id="accordionExample">
+    <div class="card">
+        <div class="card-header border-bottom-0 bg-transparent" id="headingTwo">
+            <h4 class="mb-0">
+                <button
+                    class="btn btn-block"
+                    style="border: none; background: transparent"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#collapseTwo"
+                    aria-expanded="false"
+                    aria-controls="collapseTwo"
+                >
+                    <h4 class="mb-0 float-left">Patron Details</h4>
+                    <span class="float-right">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-caret-down-fill"
+                            viewBox="0 0 16 16"
+                        >
+                            <path
+                                d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+                            />
+                        </svg>
+                    </span>
+                </button>
+            </h4>
+        </div>
+        <div
+            id="collapseTwo"
+            class="collapse"
+            aria-labelledby="headingTwo"
+            data-parent="#accordionExample"
+        >
+            <div class="card-body">
+                <table class="table table-borderless table-sm rounded mb-0">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Name:</th>
+                            <td><%=patron.fname%> <%=patron.lname%></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Date submitted:</th>
+                            <td>
+                                <%=print.timestampSubmitted.toLocaleDateString('en-US')%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Email:</th>
+                            <td><%=patron.email%></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Phone:</th>
+                            <td><%=patron.phone%></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Submission type:</th>
+                            <td>
+                                <!-- prettier-ignore -->
+                                <% if (submission.isForClass) {%> 
                         Class submission 
                     <%} else {%> 
                         <% if (submission.isForDepartment) {%> 
@@ -31,37 +69,36 @@
                             Personal submission 
                         <%}%> 
                     <%}%>
-                </td>
-            </tr>
-            <% if (submission.isForClass) {%>
-            <tr>
-                <th scope="row">Class Code:</th>
-                <td><%=submission.classDetails.classCode%></td>
-            </tr>
-            <tr>
-                <th scope="row">Professor:</th>
-                <td><%=submission.classDetails.professor%></td>
-            </tr>
-            <tr>
-                <th scope="row">Project type:</th>
-                <td><%=submission.classDetails.projectType%></td>
-            </tr>
-            <!-- prettier-ignore -->
-            <%} else {%> 
-                <% if (submission.isForDepartment) {%>
-            <tr>
-                <th scope="row">Class Code:</th>
-                <td><%=submission.internalDetails.department%></td>
-            </tr>
-            <tr>
-                <th scope="row">Professor:</th>
-                <td><%=submission.internalDetails.project%></td>
-            </tr>
-            <!-- prettier-ignore -->
-            <%} else {%> 
-                Personal submission 
-            <%}%> 
-            <%}%>
-        </tbody>
-    </table>
+                            </td>
+                        </tr>
+                        <% if (submission.isForClass) {%>
+                        <tr>
+                            <th scope="row">Class Code:</th>
+                            <td><%=submission.classDetails.classCode%></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Professor:</th>
+                            <td><%=submission.classDetails.professor%></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Project type:</th>
+                            <td><%=submission.classDetails.projectType%></td>
+                        </tr>
+                        <!-- prettier-ignore -->
+                        <%} else if (submission.isForDepartment) {%>
+                        <tr>
+                            <th scope="row">Class Code:</th>
+                            <td><%=submission.internalDetails.department%></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Professor:</th>
+                            <td><%=submission.internalDetails.project%></td>
+                        </tr>
+
+                        <%}%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
