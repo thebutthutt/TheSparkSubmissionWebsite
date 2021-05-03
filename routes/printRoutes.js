@@ -113,7 +113,6 @@ module.exports = function (app) {
     //request superadmin to delete
     app.post("/prints/requestdelete", isLoggedIn, function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
-        console.log(fileID);
         adminRequestHandler.addDelete(fileID, "print");
         res.json(["done"]); //tell the front end the request is done
     });
@@ -166,7 +165,6 @@ module.exports = function (app) {
     //downloads file specified in the parameter
     app.get("/prints/download", isLoggedIn, function (req, res) {
         var fileLocation = req.body.fileID || req.query.fileID;
-        console.log(fileLocation);
 
         var newLocation;
         if (fileLocation.slice(-5).toUpperCase() == "GCODE") {
@@ -175,7 +173,6 @@ module.exports = function (app) {
             newLocation = path.join(stlPath, fileLocation);
         }
 
-        console.log(newLocation);
         res.download(newLocation); //send the download
     });
 
@@ -272,19 +269,17 @@ module.exports = function (app) {
     });
 
     app.post("/prints/arrived", isLoggedIn, async function (req, res) {
-        console.log("HERE");
-        console.log(req.body);
         var now = new Date();
         var thisSubmission = await printRequestModel.findOne({
             "files._id": req.body.fileID,
         });
-        console.log(thisSubmission);
+
         var thisFile = thisSubmission.files.id(req.body.fileID);
-        console.log(thisFile);
+
         thisFile.isInTransit = false;
         thisFile.isWaitingForPickup = true;
         thisFile.timestampArrivedAtPickup = now;
-        console.log(thisFile);
+
         await thisSubmission.save();
         res.redirect("/prints/preview?fileID=" + req.body.fileID);
     });

@@ -30,6 +30,7 @@ module.exports = function (app) {
                     pgnum: 4, //prints
                     dbdata: data,
                     printPage: "newSub",
+                    sparkLocation: "all",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -84,6 +85,7 @@ module.exports = function (app) {
                     pgnum: 4, //prints
                     dbdata: data,
                     printPage: "pendpay",
+                    sparkLocation: "all",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -117,6 +119,7 @@ module.exports = function (app) {
                     pgnum: 4, //prints
                     dbdata: data,
                     printPage: "pendpaystale",
+                    sparkLocation: "all",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -152,7 +155,7 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "ready",
-                    location: "all",
+                    sparkLocation: "all",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -199,7 +202,7 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "ready",
-                    location: "Willis Library",
+                    sparkLocation: "Willis Library",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -246,7 +249,7 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "ready",
-                    location: "Discovery Park",
+                    sparkLocation: "Discovery Park",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -283,7 +286,7 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "printing",
-                    location: "all",
+                    sparkLocation: "all",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -322,7 +325,7 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "printing",
-                    location: "Willis Library",
+                    sparkLocation: "Willis Library",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -361,7 +364,7 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "printing",
-                    location: "Discovery Park",
+                    sparkLocation: "Discovery Park",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -392,7 +395,7 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "inTransit",
-                    location: "all",
+                    sparkLocation: "all",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -423,7 +426,7 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "pickup",
-                    location: "all",
+                    sparkLocation: "all",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -467,7 +470,7 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "pickup",
-                    location: "Willis Library",
+                    sparkLocation: "Willis Library",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -511,7 +514,7 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "pickup",
-                    location: "Discovery Park",
+                    sparkLocation: "Discovery Park",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -545,6 +548,7 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "completed",
+                    sparkLocation: "all",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -579,7 +583,7 @@ module.exports = function (app) {
                     pgnum: 4, //tells the navbar what page to highlight
                     dbdata: data,
                     printPage: "rejected",
-                    location: "willis",
+                    sparkLocation: "all",
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
                 });
@@ -597,6 +601,7 @@ module.exports = function (app) {
                 pgnum: 4, //tells the navbar what page to highlight
                 dbdata: data,
                 printPage: "all",
+                sparkLocation: "all",
                 isAdmin: true,
                 isSuperAdmin: req.user.isSuperAdmin,
             });
@@ -616,6 +621,7 @@ module.exports = function (app) {
             pgnum: 4, //tells the navbar what page to highlight
             dbdata: submissions,
             printPage: "all",
+            sparkLocation: "all",
             isAdmin: true,
             isSuperAdmin: req.user.isSuperAdmin,
         });

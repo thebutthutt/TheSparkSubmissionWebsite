@@ -11,7 +11,6 @@ module.exports = {
                 "files._id": itemID,
             },
             function (err, result) {
-                console.log(result);
                 if (err) {
                     console.log(err);
                 } else {

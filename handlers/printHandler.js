@@ -981,10 +981,7 @@ module.exports = {
                         }
                     }
 
-                    console.log(isGood);
-
                     result.allFilesReviewed = isGood;
-                    console.log(result.allFilesReviewed);
                     result.save();
                     callback();
                 }
