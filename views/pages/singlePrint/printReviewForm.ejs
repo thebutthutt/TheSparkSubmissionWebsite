@@ -13,7 +13,7 @@
                     name="decision"
                     required
                 >
-                    <%if (print.isRejected) {%>
+                    <%if (print.review.decision == "Rejected") {%>
                     <option value="rejected">Rejected</option>
                     <option value="accepted">Accepted</option>
 
@@ -48,7 +48,7 @@
                         class="form-control"
                         name="hours"
                         placeholder="Hours"
-                        value="<%=print.slicedHours || 0%>"
+                        value="<%=print.review.slicedHours || 0%>"
                         required
                     />
                 </div>
@@ -62,7 +62,7 @@
                         class="form-control"
                         name="minutes"
                         placeholder="Minutes"
-                        value="<%=print.slicedMinutes || 0%>"
+                        value="<%=print.review.slicedMinutes || 0%>"
                         required
                     />
                 </div>
@@ -75,7 +75,7 @@
                         class="form-control"
                         name="grams"
                         placeholder="Weight"
-                        value="<%=print.slicedGrams || 0%>"
+                        value="<%=print.review.slicedGrams || 0%>"
                         required
                     />
                 </div>
@@ -93,10 +93,10 @@
                         required
                     >
                         <!-- prettier-ignore -->
-                        <% if (print.isReviewed) { %>
+                        <% if (print.status == "REVIEWED") { %>
                         <!-- prettier-ignore -->
 
-                        <% if (print.printLocation == "Willis Library") { %>
+                        <% if (print.review.printLocation == "Willis Library") { %>
                         <option value="Willis Library">Willis Library</option>
                         <option value="Discovery Park">Discovery Park</option>
                         <%} else {%>
@@ -108,7 +108,7 @@
                         <% } else {%>
                         <!-- prettier-ignore -->
 
-                        <% if (print.pickupLocation == "Willis Library") { %>
+                        <% if (print.review.pickupLocation == "Willis Library") { %>
                         <option value="Willis Library">Willis Library</option>
                         <option value="Discovery Park">Discovery Park</option>
                         <%} else {%>
@@ -130,11 +130,11 @@
                         name="printer"
                         required
                     >
-                        <option <%=(print.slicedPrinter=='Ender 5 Pro'?'selected':'')%>>Ender 5 Pro</option>
-                        <option <%=(print.slicedPrinter=='Ender 3'?'selected':'')%>>Ender 3</option>
-                        <option <%=(print.slicedPrinter=='Prusa i3 MK3'?'selected':'')%>>Prusa i3 MK3</option>
-                        <option <%=(print.slicedPrinter=='PolyPrinter 229'?'selected':'')%>>PolyPrinter 229</option>
-                        <option <%=(print.slicedPrinter=='Other (write in technician notes)'?'selected':'')%>>Other (write in technician notes)</option>
+                        <option <%=(print.review.slicedPrinter=='Ender 5 Pro'?'selected':'')%>>Ender 5 Pro</option>
+                        <option <%=(print.review.slicedPrinter=='Ender 3'?'selected':'')%>>Ender 3</option>
+                        <option <%=(print.review.slicedPrinter=='Prusa i3 MK3'?'selected':'')%>>Prusa i3 MK3</option>
+                        <option <%=(print.review.slicedPrinter=='PolyPrinter 229'?'selected':'')%>>PolyPrinter 229</option>
+                        <option <%=(print.review.slicedPrinter=='Other (write in technician notes)'?'selected':'')%>>Other (write in technician notes)</option>
                     </select>
                 </div>
                 <div class="col">
@@ -143,7 +143,7 @@
                         class="form-control"
                         name="material"
                         placeholder="Sliced for material..."
-                        value="<%=print.slicedMaterial%>"
+                        value="<%=print.review.slicedMaterial%>"
                         required
                     />
                 </div>
@@ -161,7 +161,7 @@
                             type="file"
                             class="custom-file-input" 
                             id="gcodeFile"
-                            previous-gcode="<%=print.realGcodeName%>"
+                            previous-gcode="<%=print.review.gcodeName%>"
                             aria-describedby="fileHelp" 
                             data-toggle="popover"
                             data-placement="right" 
@@ -169,8 +169,8 @@
                             data-content="File must be a GCODE file!"
                         />
                         <label class="custom-file-label" for="gcodeFile">
-                            <%=(print.realGcodeName.length >
-                            1?print.realGcodeName:"Upload GCODE")%>
+                            <%=(print.review.gcodeName.length >
+                            1?print.review.gcodeName:"Upload GCODE")%>
                         </label>
                     </div>
                 </div>
@@ -197,7 +197,7 @@
             placeholder="This is what will be sent to the patron."
             class="form-control"
             rows="5"
-        ><%= print.patronNotes%></textarea>
+        ><%= print.review.patronNotes%></textarea>
     </div>
 
     <button type="submit" class="btn btn-block btn-success submit-btn">
@@ -207,7 +207,7 @@
 
 <script>
     var initDecision = $("#decision").children("option:selected").val();
-    var originalGcode = `<%=print.gcodeName%>`;
+    var originalGcode = `<%=print.review.gcodeName%>`;
     changeDecision(initDecision);
 
     $("#decision").change(function () {

@@ -151,39 +151,43 @@ module.exports = {
                     var allFilesReviewed = true;
                     for (var thisFile of result.files) {
                         if (thisFile.fileName == fileName) {
-                            thisFile.patronNotes = req.body.patronNotes;
-                            thisFile.reviewedBy = maker;
-                            thisFile.isReviewed = true;
-                            thisFile.timestampReviewed = now;
+                            thisFile.review.patronNotes = req.body.patronNotes;
+                            thisFile.review.reviewedBy = maker;
+                            thisFile.review.timestampReviewed = now;
+                            thisFile.status = "REVIEWED";
                             var newNoteObject = {
                                 techName: maker,
                                 dateAdded: now,
                                 notes: req.body.technotes,
                             };
 
-                            thisFile.internalNotes.push(newNoteObject);
+                            thisFile.review.internalNotes.push(newNoteObject);
                             if (req.body.decision == "accepted") {
+                                thisFile.review.descision = "Accepted";
                                 if (shouldUpload) {
-                                    thisFile.gcodeName = gcode;
-                                    thisFile.realGcodeName = realGcodeName;
+                                    thisFile.review.originalGcodeName = gcode;
+                                    thisFile.review.gcodeName = realGcodeName;
                                 }
 
-                                thisFile.slicedPrinter = req.body.printer;
-                                thisFile.slicedMaterial = req.body.material;
-                                thisFile.slicedHours = req.body.hours;
-                                thisFile.slicedMinutes = req.body.minutes;
-                                thisFile.slicedGrams = req.body.grams;
-                                thisFile.printLocation = req.body.printLocation;
-                                thisFile.isRejected = false;
+                                thisFile.review.slicedPrinter =
+                                    req.body.printer;
+                                thisFile.review.slicedMaterial =
+                                    req.body.material;
+                                thisFile.review.slicedHours = req.body.hours;
+                                thisFile.review.slicedMinutes =
+                                    req.body.minutes;
+                                thisFile.review.slicedGrams = req.body.grams;
+                                thisFile.review.printLocation =
+                                    req.body.printLocation;
                             } else {
-                                thisFile.isRejected = true;
-                                thisFile.isPendingPayment = false;
-                                thisFile.isPendingWaive = false;
+                                thisFile.review.descision = "Rejected";
                             }
                         }
-                        if (!thisFile.isReviewed) {
+                        if (thisFile.status != "REVIEWED") {
                             allFilesReviewed = false;
                         }
+
+                        console.log(thisFile.status);
                     }
                     result.allFilesReviewed = allFilesReviewed;
                     result.save(function () {
@@ -260,7 +264,6 @@ module.exports = {
                                     result.files[i].slicedHours +
                                     result.files[i].slicedMinutes / 60;
                             }
-                            console.log(amount);
                             acceptedFiles.push(result.files[i]._id);
                             if (shouldBeWaived) {
                                 result.files[i].isPendingWaive = true;
@@ -872,13 +875,7 @@ module.exports = {
                 } else {
                     var thisFile = result.files.id(fileID);
                     var numLeft = numPickup;
-                    console.log(numLeft);
                     for (var thisCopy of thisFile.completedCopies) {
-                        console.log(
-                            numLeft > 0 &&
-                                !thisCopy.isInTransit &&
-                                thisCopy.timestampPickedUp < new Date("1980")
-                        );
                         if (
                             numLeft > 0 &&
                             !thisCopy.isInTransit &&
@@ -973,15 +970,14 @@ module.exports = {
                 if (err) {
                     console.log(err);
                 } else {
-                    var isGood = true;
-
+                    result.allFilesReviewed = true;
                     for (var thisFile of result.files) {
-                        if (!thisFile.isReviewed) {
-                            isGood = false;
+                        console.log(thisFile.status);
+                        if (thisFile.status != "REVIEWED") {
+                            result.allFilesReviewed = false;
                         }
                     }
 
-                    result.allFilesReviewed = isGood;
                     result.save();
                     callback();
                 }

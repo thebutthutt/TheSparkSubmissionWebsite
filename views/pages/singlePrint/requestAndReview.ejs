@@ -9,30 +9,31 @@
                     >
                 </h4>
                 <p class="lead">
-                    Pickup at: <strong><%=print.pickupLocation%></strong>
+                    Pickup at:
+                    <strong><%=print.request.pickupLocation%></strong>
                 </p>
                 <div class="card mb-3" style="background-color: #f5f5f5">
                     <div class="card-body">
                         <p class="mb-0">
                             <!-- prettier-ignore-->
-                            <i><%=(print.notes.length < 1?"Patron left no notes":print.notes)%></i>
+                            <i><%=(print.request.notes.length < 1?"Patron left no notes":print.request.notes)%></i>
                         </p>
                     </div>
                 </div>
             </div>
             <div class="col-4">
-                <h5 class="mb-1"><%=print.color%></h5>
+                <h5 class="mb-1"><%=print.request.color%></h5>
                 <small class="text-muted">Color</small>
             </div>
             <div class="col-4">
-                <h5 class="mb-1"><%=print.material%></h5>
+                <h5 class="mb-1"><%=print.request.material%></h5>
                 <small class="text-muted">Material</small>
             </div>
             <div class="col-4">
-                <h5 class="mb-1"><%=print.infill%></h5>
+                <h5 class="mb-1"><%=print.request.infill%></h5>
                 <small class="text-muted">Infill</small>
             </div>
-            <% if (print.isReviewed && !print.isRejected) {%>
+            <% if (print.status == "REVIEWED") {%>
             <div class="col-12">
                 <hr />
             </div>
@@ -40,40 +41,43 @@
             <div class="col col-12">
                 <h4 class="mb-3">
                     Approved by <%=print.reviewedBy%> on
-                    <%=print.timestampReviewed.toLocaleDateString('en-US');%>
+                    <%=print.review.timestampReviewed.toLocaleDateString('en-US');%>
                 </h4>
                 <div class="card mb-3" style="background-color: #f5f5f5">
                     <div class="card-body">
                         <p class="mb-0">
                             <!-- prettier-ignore-->
-                            <i><%=(print.patronNotes.length < 1?"Technician left no notes":print.patronNotes)%></i>
+                            <i><%=(print.review.patronNotes.length < 1?"Technician left no notes":print.review.patronNotes)%></i>
                         </p>
                     </div>
                 </div>
             </div>
 
             <div class="col-4">
-                <h5><%=print.slicedPrinter%></h5>
+                <h5><%=print.review.slicedPrinter%></h5>
                 <small class="text-muted">Printer</small>
             </div>
             <div class="col">
-                <h5><%=print.slicedMaterial%></h5>
+                <h5><%=print.review.slicedMaterial%></h5>
                 <small class="text-muted">Material</small>
             </div>
             <div class="col">
-                <h5><%=print.slicedHours%>h <%=print.slicedMinutes%>m</h5>
+                <h5>
+                    <%=print.review.slicedHours%>h
+                    <%=print.review.slicedMinutes%>m
+                </h5>
                 <small class="text-muted">Time</small>
             </div>
             <div class="col">
-                <h5><%=print.slicedGrams%>g</h5>
+                <h5><%=print.review.slicedGrams%>g</h5>
                 <small class="text-muted">Weight</small>
             </div>
             <div class="col-12">
                 <a
-                    href='<%="/prints/download?fileID=" +  print.gcodeName.replace("#", "%23")%>'
+                    href='<%="/prints/download?fileID=" +  print.review.gcodeName.replace("#", "%23")%>'
                     class="btn btn-block btn-primary mt-3"
                 >
-                    Download GCODE <%=print.realGcodeName%>
+                    Download GCODE <%=print.review.realGcodeName%>
                 </a>
             </div>
 

@@ -3,13 +3,16 @@ var path = require("path");
 var numPerPage = 10;
 var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
-var printRequestModel = require("../app/models/newPrintRequest");
+var printRequestModel = require("../app/models/newPrintRequest.js");
 var attemptModel = require("../app/models/attempt");
+var newmailer = require("../app/emailer.js");
+const NodeStl = require("node-stl");
 var printHandler = require("../handlers/printHandler.js");
 var adminRequestHandler = require("../handlers/adminRequestHandler.js");
 var payment = require("../app/payment.js");
 const archiver = require("archiver");
 var fs = require("fs");
+const { newSubmission } = require("../app/emailer.js");
 
 module.exports = function (app) {
     //Metainfo about all the prints we have done
@@ -23,7 +26,152 @@ module.exports = function (app) {
         });
     });
 
-    //-----------------------REVIEW FILE----------------------------
+    /* -------------------------------------------------------------------------- */
+    /*                           Submit A Print Request                           */
+    /* -------------------------------------------------------------------------- */
+
+    app.post(
+        "/submitprint",
+        multer({
+            storage: multer.diskStorage({
+                destination: function (req, file, cb) {
+                    cb(null, path.join(__dirname, "../../Uploads/STLs/"));
+                },
+
+                // By default, multer removes file extensions so let's add them back
+                filename: function (req, file, cb) {
+                    cb(
+                        null,
+                        Date.now() +
+                            "-" +
+                            file.originalname.split(".")[0] +
+                            path.extname(file.originalname)
+                    );
+                },
+            }),
+        }).any(),
+        async function (req, res) {
+            console.log(req.body);
+            console.log(req.files);
+            var materials = Array.isArray(req.body.material)
+                    ? req.body.material
+                    : Array.of(req.body.material),
+                infills = Array.isArray(req.body.infill)
+                    ? req.body.infill
+                    : Array.of(req.body.infill),
+                copies = Array.isArray(req.body.copies)
+                    ? req.body.copies
+                    : Array.of(req.body.copies),
+                colors = Array.isArray(req.body.color)
+                    ? req.body.color
+                    : Array.of(req.body.color),
+                notes = Array.isArray(req.body.notes)
+                    ? req.body.notes
+                    : Array.of(req.body.notes),
+                pickups = Array.isArray(req.body.pickup)
+                    ? req.body.pickup
+                    : Array.of(req.body.pickup),
+                patron = {
+                    fname: req.body.first,
+                    lname: req.body.last,
+                    email: req.body.email,
+                    euid: req.body.euid,
+                    phone: req.body.phone,
+                },
+                numFiles = 0;
+            var submissionDetails = {
+                classDetails: {
+                    classCode: req.body.classCode,
+                    professor: req.body.professor,
+                    projectType: req.body.projectType,
+                },
+                internalDetails: {
+                    department: req.body.department,
+                    project: req.body.project,
+                },
+            };
+            var now = new Date();
+
+            var newSubmission = new printRequestModel();
+            newSubmission.patron = patron;
+            newSubmission.timestampSubmitted = now;
+            newSubmission.files = [];
+            //for each file
+            for (var index = 0; index < req.files.length; index++) {
+                //for each copy of this file
+                for (var thisCopy = 0; thisCopy < copies[index]; thisCopy++) {
+                    numFiles++;
+                    var calcVolume = 0;
+                    try {
+                        var stl = new NodeStl(req.files[index].path, {
+                            density: 1.04,
+                        });
+                        calcVolume = stl.volume;
+                    } catch (error) {
+                        console.log(error);
+                    }
+                    newSubmission.files.push({
+                        fileName: req.files[index].filename,
+                        originalFileName: req.files[index].originalname,
+                        request: {
+                            timestampSubmitted: now,
+                            material: materials[index],
+                            infill: infills[index],
+                            color: colors[index],
+                            notes: notes[index],
+                            pickupLocation: pickups[index],
+                        },
+                        review: {
+                            calculatedVolumeCm: calcVolume,
+                        },
+                        payment: {
+                            isPendingWaive: Object.values(
+                                submissionDetails.classDetails
+                            ).some((x) => x !== null && x !== "")
+                                ? true
+                                : false,
+                        },
+                        printing: {},
+                        pickup: {},
+                    });
+                }
+            }
+            newSubmission.numFiles = numFiles;
+            if (
+                Object.values(submissionDetails.classDetails).some(
+                    (x) => x !== null && x !== ""
+                )
+            ) {
+                newSubmission.isForClass = true;
+                newSubmission.isForDepartment = false;
+                newSubmission.classDetails = submissionDetails.classDetails;
+            }
+            //if at least one department detail is filled
+            else if (
+                Object.values(submissionDetails.classDetails).some(
+                    (x) => x !== null && x !== ""
+                )
+            ) {
+                newSubmission.isForDepartment = true;
+                newSubmission.isForClass = false;
+                newSubmission.internalDetails =
+                    submissionDetails.internalDetails;
+            }
+            console.log(newSubmission);
+            newSubmission.save(function (err, result) {
+                if (err) {
+                    console.log(err);
+                    res.redirect("/prints/error");
+                } else {
+                    res.redirect("/prints/thankyou");
+                }
+            });
+        }
+    );
+
+    /* -------------------------------------------------------------------------- */
+    /*                            Detail View One File                            */
+    /* -------------------------------------------------------------------------- */
 
     //send technician to reveiw page for a specific low level print file
     app.get("/prints/preview", isLoggedIn, async function (req, res) {
@@ -35,16 +183,16 @@ module.exports = function (app) {
             },
             async function (err, result) {
                 var finalGcode = "";
-                if (result.files.id(fileID).gcodeName) {
+                if (result.files.id(fileID).review.gcodeName) {
                     finalGcode = path.join(
                         gcodePath,
-                        result.files.id(fileID).gcodeName
+                        result.files.id(fileID).review.gcodeName
                     );
                 }
 
                 var thisFile = result.files.id(fileID);
                 var attempts = [];
-                for (var thisAttemptID of thisFile.attemptIDs) {
+                for (var thisAttemptID of thisFile.printing.attemptIDs) {
                     attempts.push(await attemptModel.findById(thisAttemptID));
                 }
 
@@ -69,58 +217,81 @@ module.exports = function (app) {
         );
     });
 
-    //-----------------------LANDING AFTER PAYMENT-----------------------
-    //displays to the user once they sucesfully submit payment through 3rd party service
-    app.get("/payment/complete", function (req, res) {
-        var admin = false,
-            superAdmin = false;
-        if (req.isAuthenticated()) {
-            admin = true;
-            if (req.user.isSuperAdmin == true) {
-                isSuperAdmin = true;
-            }
-        }
-        payment.handlePaymentComplete(req, function (success, submissionID) {
-            //tell the payment handler to update our databases
-            if (success == true) {
-                printHandler.recievePayment(
-                    submissionID,
-                    false,
-                    "",
-                    function callback() {}
-                );
-                res.render("pages/prints/thankyoupayment", {
-                    //render the success page
-                    data: req.query,
-                    pgnum: 0,
-                    isAdmin: admin,
-                    isSuperAdmin: superAdmin,
-                });
-            } else {
-                console.log("invalid payment URL");
-            }
-        });
-    });
-
     //-----------------------DELETE FILE-----------------------
     //deletes a database entry and asscoiated files
-    app.post("/prints/delete", isLoggedIn, function (req, res, next) {
+    app.post("/prints/delete", isLoggedIn, async function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
         printHandler.deleteFile(fileID);
+        var result = await printRequestModel.findOne({
+            "files._id": fileID,
+        });
+
+        //delete stl from disk
+        var thisSTLPath = path.join(stlPath, result.files.id(fileID).fileName);
+        try {
+            fs.unlinkSync(thisSTLPath);
+        } catch (error) {
+            console.error("there was an error:", error.message);
+        }
+
+        //delete gcode from disk if it exists
+
+        if (result.files.id(fileID).review.gcodeName) {
+            var thisGcodePath = path.join(
+                gcodePath,
+                result.files.id(fileID).gcodeName
+            );
+            try {
+                fs.unlinkSync(thisGcodePath);
+            } catch (error) {
+                console.error("there was an error:", error.message);
+            }
+        }
+
+        result.files.id(fileID).remove(); //remove the single file from the top level print submission
+        result.numFiles -= 1; //decrement number of files associated with this print request
+        if (result.numFiles < 1) {
+            //if no more files in this request delete the request itself
+            await printRequestModel.deleteOne({
+                _id: result._id,
+            });
+        } else {
+            //else save the top level with one less file
+            result.allFilesReviewed = true;
+            for (var thisFile of result.files) {
+                if (!thisFile.isReviewed) {
+                    result.allFilesReviewed = false;
+                }
+            }
+
+            await result.save();
+        }
         res.json(["done"]); //tell the front end the request is done
     });
 
     //request superadmin to delete
-    app.post("/prints/requestdelete", isLoggedIn, function (req, res, next) {
-        var fileID = req.body.fileID || req.query.fileID;
-        adminRequestHandler.addDelete(fileID, "print");
-        res.json(["done"]); //tell the front end the request is done
-    });
+    app.post(
+        "/prints/requestdelete",
+        isLoggedIn,
+        async function (req, res, next) {
+            var fileID = req.body.fileID || req.query.fileID;
+            var result = await printRequestModel.findOne({
+                "files._id": itemID,
+            });
+            result.files.id(itemID).isPendingDelete = true; //mark that the file is pending delete
+            await result.save();
+            res.json(["done"]); //tell the front end the request is done
+        }
+    );
 
     //undo request SU delete
-    app.post("/prints/undodelete", isLoggedIn, function (req, res, next) {
+    app.post("/prints/undodelete", isLoggedIn, async function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
-        adminRequestHandler.undoDelete(fileID, "print");
+        var result = await printRequestModel.findOne({
+            "files._id": itemID,
+        });
+        result.files.id(itemID).isPendingDelete = false; //mark that the file is pending delete
+        await result.save();
         res.json(["done"]); //tell the front end the request is done
     });
 

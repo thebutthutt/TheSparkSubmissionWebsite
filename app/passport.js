@@ -65,7 +65,6 @@ module.exports = function (passport) {
             function (req, euid, password, done) {
                 // callback with euid and password from our form
                 //var searchDN = "(" + euid + "@unt.ad.unt.edu)";
-                console.log("trying");
                 var employment = ldap.createClient({
                     url: process.env.LDAP_URL,
                     bindDN: process.env.BIND_DN,

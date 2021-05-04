@@ -230,6 +230,7 @@ module.exports = {
             })
             .catch(console.error);
     },
+    filesPickedUp: function (submission, fileIDs) {},
     //one week late
     stillWaiting: function (submission, one) {
         var recipient = submission.patron.email;

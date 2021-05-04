@@ -28,12 +28,12 @@ $(document).ready(function () {
     });
 
     $(".btn-waive").on("click", function () {
-        let fileID = $(this).attr("fileID");
+        let submissionID = $(this).attr("submissionID");
         $.ajax({
             type: "POST",
-            url: "/prints/waiveByFile",
+            url: "/prints/waive",
             data: {
-                fileID: fileID,
+                submissionID: submissionID,
             },
             dataType: "json",
         }).done(function () {

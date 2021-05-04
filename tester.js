@@ -1,21 +1,21 @@
 /** @format */
 
-var printRequestModel = require("./app/models/printRequest");
+var printRequestModel = require("./app/models/newPrintRequest");
 var printHandler = require("./handlers/printHandler.js");
 var emailer = require("./app/emailer.js");
 var payment = require("./app/payment.js");
 var path = require("path");
 
-console.log("here");
+// console.log("here");
 
-printRequestModel.find({ "files.isNewSubmission": true }, function (err, res) {
-    for (var submission of res) {
-        for (file of submission.files) {
-            file.copiesData.unprinted = file.copies;
-        }
-        submission.save();
-    }
-});
+// printRequestModel.find({ "files.isNewSubmission": true }, function (err, res) {
+//     for (var submission of res) {
+//         for (file of submission.files) {
+//             file.copiesData.unprinted = file.copies;
+//         }
+//         submission.save();
+//     }
+// });
 
 // printRequestModel.find({}, function (err, res) {
 //     for (var submission of res) {

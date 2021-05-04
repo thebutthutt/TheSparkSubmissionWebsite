@@ -1,6 +1,7 @@
 var attemptModel = require("../app/models/attempt");
 var fullServicePrinterModel = require("../app/models/fullServicePrinter");
 var selfServicePrinterModel = require("../app/models/selfServicePrinter");
+var printRequestModel = require("../app/models/newPrintRequest");
 
 module.exports = function (app) {
     app.get("/printers/jobs", isLoggedIn, async function (req, res) {
@@ -133,11 +134,15 @@ module.exports = function (app) {
 
             if (req.body.status == "success") {
                 thisFile.isPrinted = true;
+                thisFile.isWaitingForPickup = true;
                 thisFile.timesstampPrinted = now;
                 if (thisAttempt.location != thisFile.pickupLocation) {
                     thisFile.isInTransit = true;
+                } else {
                     thisFile.timestampArrivedAtPickup = now;
                 }
+            } else {
+                thisFile.isReadyToPrint = true;
             }
             await thisSubmission.save();
         }

@@ -1,7 +1,7 @@
 var schedule = require("node-schedule");
 const moment = require("moment");
 var emailer = require("./emailer.js");
-var printRequestModel = require("./models/printRequest");
+var printRequestModel = require("./models/newPrintRequest");
 
 module.exports = function (constants) {
     /*
@@ -43,7 +43,11 @@ module.exports = function (constants) {
                             one = [];
 
                         for (const file of submission.files) {
-                            if (moment(file.datePrinted, "M-D-YY").isBefore(moment(threeWeeks, "M-D-YY"))) {
+                            if (
+                                moment(file.datePrinted, "M-D-YY").isBefore(
+                                    moment(threeWeeks, "M-D-YY")
+                                )
+                            ) {
                                 //file is 3 weeks old, we keep it
                                 if (file.dateOfConfiscation == "Not yet sent") {
                                     //third contact has not been sent
@@ -51,14 +55,24 @@ module.exports = function (constants) {
                                     file.isStaleOnPickup = true;
                                     three.push(file);
                                 }
-                            } else if (moment(file.datePrinted, "M-D-YY").isBefore(moment(twoWeeks, "M-D-YY"))) {
+                            } else if (
+                                moment(file.datePrinted, "M-D-YY").isBefore(
+                                    moment(twoWeeks, "M-D-YY")
+                                )
+                            ) {
                                 //file is 2 weeks old, another contact
-                                if (file.dateOfSecondWarning == "Not yet sent") {
+                                if (
+                                    file.dateOfSecondWarning == "Not yet sent"
+                                ) {
                                     //second contact has not been sent
                                     file.dateOfSecondWarning = today;
                                     two.push(file);
                                 }
-                            } else if (moment(file.datePrinted, "M-D-YY").isBefore(moment(oneWeek, "M-D-YY"))) {
+                            } else if (
+                                moment(file.datePrinted, "M-D-YY").isBefore(
+                                    moment(oneWeek, "M-D-YY")
+                                )
+                            ) {
                                 //file is one week old, send a contact
                                 if (file.dateOfFirstWarning == "Not yet sent") {
                                     //first contact has not been sent

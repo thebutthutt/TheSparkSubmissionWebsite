@@ -1,6 +1,6 @@
 const fs = require("fs");
 var path = require("path");
-var printRequestModel = require("../app/models/printRequest");
+var printRequestModel = require("../app/models/newPrintRequest");
 var userModel = require("../app/models/user");
 
 module.exports = function (app, passport) {
@@ -65,7 +65,7 @@ module.exports = function (app, passport) {
         //     );
         //     whitelist = JSON.parse(rawdata);
         // }
-
+        console.log(req.user);
         printRequestModel.aggregate(
             [
                 {

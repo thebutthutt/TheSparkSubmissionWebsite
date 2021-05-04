@@ -1,9 +1,6 @@
-var fs = require("fs");
-var path = require("path");
-var moment = require("moment");
-var multer = require("multer");
-//var emailer = require("../config/email.js");
-var printHandler = require("../handlers/printHandler.js");
+var printRequestModel = require("../app/models/newPrintRequest");
+var newmailer = require("../app/emailer.js");
+var payment = require("../app/payment.js");
 
 module.exports = function (app) {
     // =====================================
@@ -52,18 +49,6 @@ module.exports = function (app) {
         "/oneprint",
         function (req, res) {
             res.render("partials/submit/oneprint"); //render the html
-        },
-        function (err, html) {
-            res.send(html); //send it to the webapp
-        }
-    );
-
-    //send the HTML from the single print submission segment to the browser
-    //used for adding more than one file in a single submission form
-    app.get(
-        "/onefile",
-        function (req, res) {
-            res.render("partials/submit/onefile"); //render the html
         },
         function (err, html) {
             res.send(html); //send it to the webapp
@@ -177,37 +162,56 @@ module.exports = function (app) {
         });
     });
 
-    app.post("/recievesignature", function (req, res) {
-        printHandler.acceptSignature(req.body.uniqueID, req.body.fileName);
+    app.post("/recievesignature", async function (req, res) {
+        var submission = await printRequestModel.findOne({
+            "files._id": req.body.uniqueID,
+        });
+        submission.files.id(req.body.uniqueID).isSigned = true;
+        await submission.save();
         res.json("done");
     });
 
-    //what do do when the user hits submit
-
-    app.post(
-        "/submitprint",
-        multer({
-            storage: multer.diskStorage({
-                destination: function (req, file, cb) {
-                    cb(null, path.join(__dirname, "../../Uploads/STLs/"));
-                },
-
-                // By default, multer removes file extensions so let's add them back
-                filename: function (req, file, cb) {
-                    cb(null, Date.now() + "-" + file.originalname.split(".")[0] + path.extname(file.originalname));
-                },
-            }),
-        }).any(),
-        function (req, res) {
-            printHandler.handleSubmission(req, function (result) {
-                if (result == "success") {
-                    res.redirect("/prints/thankyou");
-                } else {
-                    res.redirect("/prints/error");
-                }
-            }); //pass the stuff to the print handler
+    //-----------------------LANDING AFTER PAYMENT-----------------------
+    //displays to the user once they sucesfully submit payment through 3rd party service
+    app.get("/payment/complete", async function (req, res) {
+        var admin = false,
+            superAdmin = false;
+        if (req.isAuthenticated()) {
+            admin = true;
+            if (req.user.isSuperAdmin == true) {
+                isSuperAdmin = true;
+            }
         }
-    );
+        var paidSubmissionID = await payment.handlePaymentURL(req);
+        if (paidSubmissionID) {
+            var now = new Date();
+            var submission = await printRequestModel.findById(paidSubmissionID);
+            for (var file of submission.files) {
+                file.isPendingPayment = false;
+                file.isPendingWaive = false;
+                if (file.isRejected == false) {
+                    file.wasPaid = true;
+                    file.timestampPaid = now;
+                    file.isReadyToPrint = true;
+                    file.isPendingWaive = false;
+                }
+            }
+            submission.timestampPaid = now;
+            newmailer.paymentThankYou(submission);
+
+            await submission.save();
+
+            res.render("pages/prints/thankyoupayment", {
+                //render the success page
+                data: req.query,
+                pgnum: 0,
+                isAdmin: admin,
+                isSuperAdmin: superAdmin,
+            });
+        } else {
+            console.log("payment wrong");
+        }
+    });
 
     app.post("/sendbugreport", function (req, res) {
         //emailer.sendBug(req.body);
