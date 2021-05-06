@@ -56,20 +56,8 @@ app.use(
 app.set("view engine", "ejs"); // set up ejs for templating
 app.use("/public", express.static(path.join(__dirname, "/public"))); //allow us to grab local files in the public directory
 app.use("/three", express.static(__dirname + "/node_modules/three/")); //allow website to access the three.js library
-app.use(
-    "/fullcalendar",
-    express.static(__dirname + "/node_modules/fullcalendar/")
-); //allow website to access the three.js library
 app.use("/gui", express.static(__dirname + "/node_modules/dat.gui/")); //allow website to access the uploaded STLs (for in site display)
 app.use("/Uploads", express.static(path.join(__dirname, "../Uploads"))); //allow website to access the uploaded STLs (for in site display)
-app.use(
-    "/qrcode",
-    express.static(__dirname + "/node_modules/qrcode-generator/")
-); //allow website to access the uploaded STLs (for in site display)
-app.use(
-    "/datepicker",
-    express.static(__dirname + "/node_modules/js-datepicker/dist/")
-);
 
 app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 
@@ -92,7 +80,9 @@ require("./routes/printRoutes.js")(app);
 require("./routes/printJobRoutes.js")(app);
 require("./routes/selfServiceRoutes.js")(app);
 require("./routes/managementRoutes.js")(app);
-require("./routes/getRequests.js")(app);
+require("./routes/returnFilteredQueues.js")(app);
+require("./routes/submitAndReview.js")(app);
+require("./routes/paymentRoutes.js")(app);
 require("./routes/userRoutes.js")(app, passport);
 //require("./routes/cleRoutes.js")(app, passport, userModel, cleHandler, cleRequestModel); // load our routes and pass in our app and fully configured passport
 //require("./routes/cameraRoutes.js")(app, bookingModel, cameraHandler); // load our routes and pass in our app and fully configured passport

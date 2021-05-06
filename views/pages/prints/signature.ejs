@@ -2,7 +2,6 @@
 <html>
     <head>
         <%- include ("../../partials/head") %>
-        <script src="../public/js/signature.js"></script>
         <style>
             html,
             body {
@@ -28,7 +27,246 @@
         <div
             class="signature-pad"
             signlocation="<%=signlocation%>"
-            style="width: 100%;"
-        ></div>
+            style="width: 100%"
+        >
+            <div id="sigpad">
+                <div class="container-fluid">
+                    <h1>Picking Up</h1>
+                    <p>Please sign below</p>
+                </div>
+                <canvas
+                    id="drawing-area"
+                    class="drawing-area rounded shadow border"
+                ></canvas>
+                <div class="container-fluid">
+                    <div class="col">
+                        <button
+                            id="clear-button"
+                            class="clear-button shadow btn btn-lg btn-danger float-left"
+                            type="button"
+                        >
+                            Clear
+                        </button>
+                        <button
+                            id="submit-button"
+                            class="submit-button shadow btn btn-lg btn-success float-right"
+                            type="button"
+                        >
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="idle">
+                <div
+                    class="container-fluid text-center"
+                    style="margin-top: 20vh"
+                >
+                    <h1 class="display-1">Please Wait</h1>
+                    <p class="lead">A technician will be with you shortly!</p>
+                </div>
+            </div>
+        </div>
     </body>
+
+    <script>
+        //WEBSOCKET FRONTEND LOGIC
+
+        var ws;
+        var signlocation = `<%=signlocation%>`;
+        var techConnectionID;
+
+        var hidden, visibilityChange;
+        if (typeof document.hidden !== "undefined") {
+            // Opera 12.10 and Firefox 18 and later support
+            hidden = "hidden";
+            visibilityChange = "visibilitychange";
+        } else if (typeof document.msHidden !== "undefined") {
+            hidden = "msHidden";
+            visibilityChange = "msvisibilitychange";
+        } else if (typeof document.webkitHidden !== "undefined") {
+            hidden = "webkitHidden";
+            visibilityChange = "webkitvisibilitychange";
+        }
+
+        function connectWebSocket() {
+            ws = new WebSocket("wss://sparkorders.library.unt.edu:8080");
+            ws.onopen = () => {
+                ws.send(
+                    JSON.stringify({
+                        command: "sigpadConnected",
+                        location: signlocation,
+                    })
+                );
+            };
+
+            $("#idle").show();
+            $("#sigpad").hide();
+
+            ws.addEventListener("message", function (event) {
+                var obj = JSON.parse(event.data);
+                switch (obj.command) {
+                    case "sendClientInfo":
+                        break;
+                    case "requestPatronSignature":
+                        techConnectionID = obj.data.techConnectionID;
+                        patronSignature();
+                        break;
+                    case "resetScreen":
+                        $("#idle").show();
+                        $("#sigpad").hide();
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+
+        function handleVisibilityChange() {
+            if (document[hidden]) {
+                ws.close();
+            } else {
+                connectWebSocket();
+            }
+        }
+
+        document.addEventListener(
+            visibilityChange,
+            handleVisibilityChange,
+            false
+        );
+
+        $(document).ready(function () {
+            signlocation = $(".signature-pad").attr("signlocation");
+            connectWebSocket();
+        });
+
+        var patronSignature = function () {
+            $("#idle").hide();
+            $("#sigpad").show();
+            // =============
+            // == Globals ==
+            // =============
+            const canvas = document.getElementById("drawing-area");
+            const canvasContext = canvas.getContext("2d");
+
+            canvasContext.canvas.width = window.innerWidth - 50;
+            canvasContext.canvas.height = window.innerHeight - 300;
+
+            canvasContext.fillStyle = "white";
+            canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+
+            const clearButton = document.getElementById("clear-button");
+            const state = {
+                mousedown: false,
+            };
+
+            // ===================
+            // == Configuration ==
+            // ===================
+            const lineWidth = 5;
+            const strokeStyle = "#000";
+
+            // =====================
+            // == Event Listeners ==
+            // =====================
+            canvas.addEventListener("mousedown", handleWritingStart);
+            canvas.addEventListener("mousemove", handleWritingInProgress);
+            canvas.addEventListener("mouseup", handleDrawingEnd);
+            canvas.addEventListener("mouseout", handleDrawingEnd);
+
+            canvas.addEventListener("touchstart", handleWritingStart);
+            canvas.addEventListener("touchmove", handleWritingInProgress);
+            canvas.addEventListener("touchend", handleDrawingEnd);
+
+            clearButton.addEventListener("click", handleClearButtonClick);
+
+            // ====================
+            // == Event Handlers ==
+            // ====================
+            function handleWritingStart(event) {
+                event.preventDefault();
+
+                const mousePos = getMosuePositionOnCanvas(event);
+
+                canvasContext.beginPath();
+
+                canvasContext.moveTo(mousePos.x, mousePos.y);
+
+                canvasContext.lineWidth = lineWidth;
+                canvasContext.strokeStyle = strokeStyle;
+                canvasContext.lineCap = "round";
+                canvasContext.lineJoin = "round";
+
+                canvasContext.fill();
+
+                state.mousedown = true;
+            }
+
+            function handleWritingInProgress(event) {
+                event.preventDefault();
+
+                if (state.mousedown) {
+                    const mousePos = getMosuePositionOnCanvas(event);
+
+                    canvasContext.lineTo(mousePos.x, mousePos.y);
+                    canvasContext.stroke();
+                }
+            }
+
+            function handleDrawingEnd(event) {
+                event.preventDefault();
+
+                if (state.mousedown) {
+                    canvasContext.stroke();
+                }
+
+                state.mousedown = false;
+            }
+
+            function handleClearButtonClick(event) {
+                event.preventDefault();
+
+                clearCanvas();
+            }
+
+            // ======================
+            // == Helper Functions ==
+            // ======================
+            function getMosuePositionOnCanvas(event) {
+                const clientX = event.clientX || event.touches[0].clientX;
+                const clientY = event.clientY || event.touches[0].clientY;
+                const { offsetLeft, offsetTop } = event.target;
+                const canvasX = clientX - offsetLeft;
+                const canvasY = clientY - offsetTop;
+
+                return {
+                    x: canvasX,
+                    y: canvasY,
+                };
+            }
+
+            function clearCanvas() {
+                canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+            }
+
+            $(".submit-button").on("click", function () {
+                clearCanvas();
+                ws.send(
+                    JSON.stringify({
+                        sender: "messiah",
+
+                        command: "recievePatronSignature",
+                        data: {
+                            location: signlocation,
+                            techConnectionID: techConnectionID,
+                        },
+                    })
+                );
+                $("#idle").show();
+                $("#sigpad").hide();
+            });
+        };
+    </script>
 </html>

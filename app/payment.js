@@ -150,6 +150,7 @@ module.exports = {
     updateDatabase: async function (submissionID, wasWaived, waivingEUID) {
         var now = new Date();
         var result = await printRequestModel.findById(submissionID);
+        result.timestampPaid = now;
         for (var file of result.files) {
             if (file.status != "REJECTED") {
                 file.status = "READY_TO_PRINT";
@@ -171,5 +172,6 @@ module.exports = {
         }
 
         await result.save(); //save the db entry
+        return true;
     },
 };

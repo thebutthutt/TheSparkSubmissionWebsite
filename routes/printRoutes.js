@@ -1,173 +1,23 @@
-var multer = require("multer");
 var path = require("path");
 var numPerPage = 10;
 var gcodePath = path.join(__dirname, "..", "..", "Uploads", "Gcode");
 var stlPath = path.join(__dirname, "..", "..", "Uploads", "STLs");
 var printRequestModel = require("../app/models/newPrintRequest.js");
 var attemptModel = require("../app/models/attempt");
-var newmailer = require("../app/emailer.js");
-const NodeStl = require("node-stl");
-var printHandler = require("../handlers/printHandler.js");
 var adminRequestHandler = require("../handlers/adminRequestHandler.js");
 var payment = require("../app/payment.js");
 const archiver = require("archiver");
 var fs = require("fs");
-const { newSubmission } = require("../app/emailer.js");
 
 module.exports = function (app) {
     //Metainfo about all the prints we have done
     app.get("/meta", isLoggedIn, async function (req, res) {
-        //grab most recently stored data by default
-        //var metadata = await printHandler.metainfo();
         res.render("pages/prints/meta", {
             pgnum: 5,
             isAdmin: true,
             isSuperAdmin: req.user.isSuperAdmin,
         });
     });
-
-    /* -------------------------------------------------------------------------- */
-    /*                           Submit A Print Request                           */
-    /* -------------------------------------------------------------------------- */
-
-    app.post(
-        "/submitprint",
-        multer({
-            storage: multer.diskStorage({
-                destination: function (req, file, cb) {
-                    cb(null, path.join(__dirname, "../../Uploads/STLs/"));
-                },
-
-                // By default, multer removes file extensions so let's add them back
-                filename: function (req, file, cb) {
-                    cb(
-                        null,
-                        Date.now() +
-                            "-" +
-                            file.originalname.split(".")[0] +
-                            path.extname(file.originalname)
-                    );
-                },
-            }),
-        }).any(),
-        async function (req, res) {
-            console.log(req.body);
-            console.log(req.files);
-            var materials = Array.isArray(req.body.material)
-                    ? req.body.material
-                    : Array.of(req.body.material),
-                infills = Array.isArray(req.body.infill)
-                    ? req.body.infill
-                    : Array.of(req.body.infill),
-                copies = Array.isArray(req.body.copies)
-                    ? req.body.copies
-                    : Array.of(req.body.copies),
-                colors = Array.isArray(req.body.color)
-                    ? req.body.color
-                    : Array.of(req.body.color),
-                notes = Array.isArray(req.body.notes)
-                    ? req.body.notes
-                    : Array.of(req.body.notes),
-                pickups = Array.isArray(req.body.pickup)
-                    ? req.body.pickup
-                    : Array.of(req.body.pickup),
-                patron = {
-                    fname: req.body.first,
-                    lname: req.body.last,
-                    email: req.body.email,
-                    euid: req.body.euid,
-                    phone: req.body.phone,
-                },
-                numFiles = 0;
-            var submissionDetails = {
-                classDetails: {
-                    classCode: req.body.classCode,
-                    professor: req.body.professor,
-                    projectType: req.body.projectType,
-                },
-                internalDetails: {
-                    department: req.body.department,
-                    project: req.body.project,
-                },
-            };
-            var now = new Date();
-
-            var newSubmission = new printRequestModel();
-            newSubmission.patron = patron;
-            newSubmission.timestampSubmitted = now;
-            newSubmission.files = [];
-            //for each file
-            for (var index = 0; index < req.files.length; index++) {
-                //for each copy of this file
-                for (var thisCopy = 0; thisCopy < copies[index]; thisCopy++) {
-                    numFiles++;
-                    var calcVolume = 0;
-                    try {
-                        var stl = new NodeStl(req.files[index].path, {
-                            density: 1.04,
-                        });
-                        calcVolume = stl.volume;
-                    } catch (error) {
-                        console.log(error);
-                    }
-                    newSubmission.files.push({
-                        fileName: req.files[index].filename,
-                        originalFileName: req.files[index].originalname,
-                        request: {
-                            timestampSubmitted: now,
-                            material: materials[index],
-                            infill: infills[index],
-                            color: colors[index],
-                            notes: notes[index],
-                            pickupLocation: pickups[index],
-                        },
-                        review: {
-                            calculatedVolumeCm: calcVolume,
-                        },
-                        payment: {
-                            isPendingWaive: Object.values(
-                                submissionDetails.classDetails
-                            ).some((x) => x !== null && x !== "")
-                                ? true
-                                : false,
-                        },
-                        printing: {},
-                        pickup: {},
-                    });
-                }
-            }
-            newSubmission.numFiles = numFiles;
-            if (
-                Object.values(submissionDetails.classDetails).some(
-                    (x) => x !== null && x !== ""
-                )
-            ) {
-                newSubmission.isForClass = true;
-                newSubmission.isForDepartment = false;
-                newSubmission.classDetails = submissionDetails.classDetails;
-            }
-            //if at least one department detail is filled
-            else if (
-                Object.values(submissionDetails.classDetails).some(
-                    (x) => x !== null && x !== ""
-                )
-            ) {
-                newSubmission.isForDepartment = true;
-                newSubmission.isForClass = false;
-                newSubmission.internalDetails =
-                    submissionDetails.internalDetails;
-            }
-            console.log(newSubmission);
-            newSubmission.save(function (err, result) {
-                if (err) {
-                    console.log(err);
-                    res.redirect("/prints/error");
-                } else {
-                    res.redirect("/prints/thankyou");
-                }
-            });
-        }
-    );
 
     /* -------------------------------------------------------------------------- */
     /*                            Detail View One File                            */
@@ -221,30 +71,41 @@ module.exports = function (app) {
     //deletes a database entry and asscoiated files
     app.post("/prints/delete", isLoggedIn, async function (req, res, next) {
         var fileID = req.body.fileID || req.query.fileID;
-        printHandler.deleteFile(fileID);
         var result = await printRequestModel.findOne({
             "files._id": fileID,
         });
 
         //delete stl from disk
-        var thisSTLPath = path.join(stlPath, result.files.id(fileID).fileName);
+
         try {
+            var thisSTLPath = path.join(
+                stlPath,
+                result.files.id(fileID).fileName
+            );
             fs.unlinkSync(thisSTLPath);
         } catch (error) {
-            console.error("there was an error:", error.message);
+            console.error(
+                "there was STL error:",
+                result.files.id(fileID).fileName,
+                error.message
+            );
         }
 
         //delete gcode from disk if it exists
 
         if (result.files.id(fileID).review.gcodeName) {
-            var thisGcodePath = path.join(
-                gcodePath,
-                result.files.id(fileID).gcodeName
-            );
             try {
+                var thisGcodePath = path.join(
+                    gcodePath,
+                    result.files.id(fileID).gcodeName
+                );
                 fs.unlinkSync(thisGcodePath);
             } catch (error) {
-                console.error("there was an error:", error.message);
+                console.error(
+                    "there was GCODE error:",
+                    result.files.id(fileID).gcodeName,
+                    error.message
+                );
             }
         }
 
@@ -296,35 +157,41 @@ module.exports = function (app) {
     });
 
     //-----------------------WAIVE PAYMENT-----------------------
-    app.post("/prints/waive", isLoggedIn, function (req, res, next) {
+    app.post("/prints/waive", isLoggedIn, async function (req, res, next) {
         var submissionID = req.body.submissionID || req.query.submissionID;
-        printHandler.recievePayment(
-            submissionID,
-            true,
-            req.user.local.euid,
-            function callback() {
-                res.json(["done"]); //tell the front end the request is done
+        if (req.user.isSuperAdmin) {
+            await payment.updateDatabase(
+                submissionID,
+                true,
+                req.user.local.euid
+            );
+        } else {
+            var submissionID = req.body.submissionID || req.query.submissionID;
+            result.isPendingWaive = true;
+            for (var file of result.files) {
+                file.payment.isPendingWaive = true;
             }
-        );
+            await result.save();
+        }
+
+        res.json(["done"]);
     });
 
-    app.post("/prints/waiveByFile", isLoggedIn, function (req, res, next) {
-        var fileID = req.body.fileID || req.query.fileID;
-        printHandler.recievePaymentByFile(
-            fileID,
-            true,
-            req.user.local.euid,
-            function callback() {
-                res.json(["done"]); //tell the front end the request is done
+    app.post(
+        "/prints/requestwaive",
+        isLoggedIn,
+        async function (req, res, next) {
+            var submissionID = req.body.submissionID || req.query.submissionID;
+            var result = await printRequestModel.findById(submissionID);
+            result.isPendingWaive = true;
+            for (var file of result.files) {
+                file.payment.isPendingWaive = true;
             }
-        );
-    });
-
-    app.post("/prints/requestwaive", isLoggedIn, function (req, res, next) {
-        var submissionID = req.body.submissionID || req.query.submissionID;
-        adminRequestHandler.addWaive(submissionID, "print");
-        res.json(["done"]); //tell the front end the request is done
-    });
+            await result.save();
+            //adminRequestHandler.addWaive(submissionID, "print");
+            res.json(["done"]); //tell the front end the request is done
+        }
+    );
 
     app.post("/prints/undowaive", isLoggedIn, function (req, res, next) {
         var submissionID = req.body.submissionID || req.query.submissionID;
@@ -405,37 +272,21 @@ module.exports = function (app) {
 
     //-----------------------PUSH REVIEW-----------------------
     //handle technician updating file by reviewing print file
-    app.post(
-        "/prints/singleReview",
-        multer({
-            storage: multer.diskStorage({
-                destination: function (req, file, cb) {
-                    cb(null, path.join(__dirname, "../../Uploads/Gcode/"));
-                },
 
-                // By default, multer removes file extensions so let's add them back
-                filename: function (req, file, cb) {
-                    cb(
-                        null,
-                        Date.now() +
-                            "-" +
-                            file.originalname.split(".")[0] +
-                            path.extname(file.originalname)
-                    );
-                },
-            }),
-        }).any(),
-        isLoggedIn,
-        function (req, res) {
-            printHandler.updateSingle(req, function () {
-                //send all the stuff to the submission handler
-                res.redirect("/prints/new"); //when we are done tell the review page it's okay to reload now
-            });
+    app.post("/prints/appendNotes", isLoggedIn, async function (req, res) {
+        var result = printRequestModel.findOne({
+            "files._id": req.body.fileID,
+        });
+
+        if (req.body.newNotes != "") {
+            var newNoteObject = {
+                techName: req.body.name,
+                dateAdded: Date.now(),
+                notes: req.body.newNotes,
+            };
+            result.files.id(req.body.fileID).internalNotes.push(newNoteObject);
         }
-    );
-
-    app.post("/prints/appendNotes", isLoggedIn, function (req, res) {
-        printHandler.appendNotes(req);
+        await result.save();
         res.redirect("back");
     });
 
@@ -447,76 +298,29 @@ module.exports = function (app) {
 
         var thisFile = thisSubmission.files.id(req.body.fileID);
 
-        thisFile.isInTransit = false;
-        thisFile.isWaitingForPickup = true;
-        thisFile.timestampArrivedAtPickup = now;
+        thisFile.status = "WAITING_FOR_PICKUP";
+        thisFile.pickup.timestampArrivedAtPickup = now;
 
         await thisSubmission.save();
+
+        var isDone = true;
+        for (var file of thisSubmission.files) {
+            console.log(file.status);
+            if (
+                file.status != "REJECTED" &&
+                file.status != "WAITING_FOR_PICKUP"
+            ) {
+                isDone = false;
+            }
+        }
+
+        if (isDone) {
+            console.log("all done");
+            thisSubmission.timestampPickupRequested = now;
+        }
+        await thisSubmission.save();
+
         res.redirect("/prints/preview?fileID=" + req.body.fileID);
-    });
-
-    //-----------------------CHANGE LOCATION-----------------------
-    //simple change location without reviewing
-    app.post("/prints/changeLocation", isLoggedIn, function (req, res) {
-        var fileID = req.body.fileID || req.query.fileID;
-        printRequestModel.findOne(
-            {
-                "files._id": fileID,
-            },
-            function (err, result) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    if (
-                        result.files.id(fileID).printLocation ==
-                        "Willis Library"
-                    ) {
-                        result.files.id(fileID).printLocation =
-                            "Discovery Park";
-                    } else {
-                        result.files.id(fileID).printLocation =
-                            "Willis Library";
-                    }
-                    result.save();
-                }
-            }
-        );
-        res.json(["done"]);
-    });
-
-    //-----------------------SEND PAYMENT EMAIL-----------------------
-    app.post("/prints/requestPayment", isLoggedIn, function (req, res) {
-        var submissionID = req.body.submissionID || req.query.submissionID;
-        printHandler.requestPayment(submissionID, function callback() {
-            res.json(["done"]); //tell the front end the request is done
-        });
-    });
-
-    //-----------------------HANDLE PAYMENT INCOME-----------------------
-    app.post("/prints/recievePayment", isLoggedIn, function (req, res) {
-        var submissionID = req.body.submissionID || req.query.submissionID;
-        printHandler.recievePayment(
-            submissionID,
-            false,
-            "",
-            function callback() {
-                res.json(["done"]); //tell the front end the request is done
-            }
-        );
-    });
-
-    //-----------------------CLEAR ALL COMPLETED PRINTS-----------------------
-    app.post("/prints/clearAllCompleted", isLoggedIn, function (req, res) {
-        printHandler.clearAllCompleted(function callback() {
-            res.json("done");
-        });
-    });
-
-    //-----------------------CLEAR ALL REJECTED PRINTS-----------------------
-    app.post("/prints/clearAllRejected", isLoggedIn, function (req, res) {
-        printHandler.clearAllRejected(function callback() {
-            res.json("done");
-        });
     });
 };
 

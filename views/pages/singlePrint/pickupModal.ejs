@@ -1,147 +1,231 @@
 <div class="modal fade" id="modalPickup" tabindex="-1" role="dialog">
-            <div
-                class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
-            >
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button
-                            type="button"
-                            class="close"
-                            data-dismiss="modal"
-                            aria-label="Close"
-                        >
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="asklocation">
-                            <h1 class="display-4">Ready for Pickup?</h1>
-                            <p class="lead">
-                                Check the patron's ID card and get an iPad ready
-                                for them to sign on!
-                            </p>
-                            <div class="row my-3">
-                                <div class="col-7">
-                                    <h4>Check the patron's ID</h4>
-                                    <small>
-                                        Next, you'll be directing them to an
-                                        iPad to complete a digital signature.
-                                        Have the iPad connected to the
-                                        appropriate URL for the location the
-                                        print is being picked up at. For willis,
-                                        this is
-                                        <a href="/signaturewillis"
-                                            >sparkorders.library.unt.edu/signaturewillis</a
-                                        >
-                                        and for Discovery Park this is
-                                        <a href="/signaturedp"
-                                            >sparkorders.library.unt.edu/signaturedp</a
-                                        >
-                                    </p>
-                                </div>
-                                <div class="col-5">
-                                    <img
-                                        src="/public/images/id.jpg"
-                                        style="width: 100%; height: auto"
-                                    />
-                                </div>
-                            </div>
-                            <h4>Select your current location:</h4>
-                            <div class="row">
-                                <div class="col">
-                                    <button
-                                        class="btn btn-lg btn-primary connect-button"
-                                        style="width: 100%"
-                                        location="willis"
-                                    >
-                                        Willis Library
-                                    </button>
-                                </div>
-                                <div class="col">
-                                    <button
-                                        class="btn btn-lg btn-primary connect-button"
-                                        style="width: 100%"
-                                        location="dp"
-                                    >
-                                        Discovery Park
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="nopad" style="display: none">
-                            <h1 class="display-4">
-                                Please Connect a Signature Pad!
-                            </h1>
-                            <p class="lead">
-                                Use an iPad and navigate to
+    <div
+        class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
+    >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="asklocation">
+                    <h1 class="display-4">Ready for Pickup?</h1>
+                    <p class="lead">
+                        Check the patron's ID card and get an iPad ready for
+                        them to sign on!
+                    </p>
+                    <div class="row my-3">
+                        <div class="col-7">
+                            <h4>Check the patron's ID</h4>
+                            <small>
+                                Next, you'll be directing them to an iPad to
+                                complete a digital signature. Have the iPad
+                                connected to the appropriate URL for the
+                                location the print is being picked up at. For
+                                willis, this is
                                 <a href="/signaturewillis"
                                     >sparkorders.library.unt.edu/signaturewillis</a
                                 >
-                                or
+                                and for Discovery Park this is
                                 <a href="/signaturedp"
                                     >sparkorders.library.unt.edu/signaturedp</a
                                 >
-                                to get started.
-                            </p>
-                            <small>
-                                In the future, these links will be pinned on the
-                                home screen of all our iPads for easy access.
-                                For now we must suffer.
-                            </p>
+                            </small>
                         </div>
-                        <div class="asksig" style="display: none">
-                            <h1 class="display-4">
-                                Please Do Not Close This Window!
-                            </h1>
-                            <p class="lead">
-                                Ask the patron to sign on the iPad in front of
-                                them.
-                            </p>
+                        <div class="col-5">
+                            <img
+                                src="/public/images/id.jpg"
+                                style="width: 100%; height: auto"
+                            />
                         </div>
-                        <div class="verify" style="display: none">
-                            <h1 class="display-4">Verify Your Credentials</h1>
-                            <p class="lead">
-                                Please confirm your password below. By
-                                confirming your password you are signing as a
-                                witness that the patron has picked up their
-                                print.
-                            </p>
-                            <form class="verification">
-                                <div class="form-group">
-                                    <label class="sr-only">EUID</label>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        name="euid"
-                                        placeholder="EUID"
-                                    />
-                                </div>
-                                <div class="form-group">
-                                    <label class="sr-only">Password</label>
-                                    <input
-                                        type="password"
-                                        class="form-control"
-                                        name="password"
-                                        placeholder="Password"
-                                    />
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-lg btn-primary btn-block verification-button"
-                                >
-                                    Submit
-                                </button>
-                            </form>
-                            <div
-                                class="alert alert-danger wrong-password"
-                                role="alert"
-                                style="display: none"
+                    </div>
+                    <h4>Select your current location:</h4>
+                    <div class="row">
+                        <div class="col">
+                            <button
+                                class="btn btn-lg btn-primary connect-button"
+                                style="width: 100%"
+                                location="willis"
                             >
-                                That didn't work. Try again?
-                            </div>
+                                Willis Library
+                            </button>
                         </div>
+                        <div class="col">
+                            <button
+                                class="btn btn-lg btn-primary connect-button"
+                                style="width: 100%"
+                                location="dp"
+                            >
+                                Discovery Park
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="nopad" style="display: none">
+                    <h1 class="display-4">Please Connect a Signature Pad!</h1>
+                    <p class="lead">
+                        Use an iPad and navigate to
+                        <a href="/signaturewillis"
+                            >sparkorders.library.unt.edu/signaturewillis</a
+                        >
+                        or
+                        <a href="/signaturedp"
+                            >sparkorders.library.unt.edu/signaturedp</a
+                        >
+                        to get started.
+                    </p>
+                    <small>
+                        In the future, these links will be pinned on the home
+                        screen of all our iPads for easy access. For now we must
+                        suffer.
+                    </small>
+                </div>
+                <div class="asksig" style="display: none">
+                    <h1 class="display-4">Please Do Not Close This Window!</h1>
+                    <p class="lead">
+                        Ask the patron to sign on the iPad in front of them.
+                    </p>
+                </div>
+                <div class="verify" style="display: none">
+                    <h1 class="display-4">Verify Your Credentials</h1>
+                    <p class="lead">
+                        Please confirm your password below. By confirming your
+                        password you are signing as a witness that the patron
+                        has picked up their print.
+                    </p>
+                    <form class="verification">
+                        <div class="form-group">
+                            <label class="sr-only">EUID</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="euid"
+                                placeholder="EUID"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only">Password</label>
+                            <input
+                                type="password"
+                                class="form-control"
+                                name="password"
+                                placeholder="Password"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-lg btn-primary btn-block verification-button"
+                        >
+                            Submit
+                        </button>
+                    </form>
+                    <div
+                        class="alert alert-danger wrong-password"
+                        role="alert"
+                        style="display: none"
+                    >
+                        That didn't work. Try again?
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<script>
+    var pickupLocation, fileName, submissionID;
+    $("#modalPickup").on("show.bs.modal", function (event) {
+        var button = $(event.relatedTarget);
+        submissionID = button.data("submissionid");
+        fileID = button.data("fileid");
+    });
+
+    $(".connect-button").on("click", function () {
+        const ws = new WebSocket("wss://sparkorders.library.unt.edu:8080");
+        pickupLocation = $(this).attr("location");
+        var printData = {
+            fileID: fileID,
+            submissionID: submissionID,
+            location: pickupLocation,
+        };
+
+        ws.onopen = () => {
+            console.log("Now connected");
+
+            ws.addEventListener("message", function (message) {
+                var obj = JSON.parse(message.data);
+                switch (obj.command) {
+                    case "sendClientInfo":
+                        if (obj.data.sigPadIDs[pickupLocation] == -1) {
+                            $(".asklocation").hide();
+                            $(".nopad").show();
+                            $(".asksig").hide();
+                            $(".verify").hide();
+                        } else {
+                            $(".asklocation").hide();
+                            $(".nopad").hide();
+                            $(".asksig").show();
+                            $(".verify").hide();
+                            console.log("send1");
+                            ws.send(
+                                JSON.stringify({
+                                    sender: "tech",
+                                    command: "requestPatronSignature",
+                                    data: printData,
+                                })
+                            );
+                        }
+                        break;
+                    case "requestAdminLogin":
+                        $(".asklocation").hide();
+                        $(".nopad").hide();
+                        $(".asksig").hide();
+                        $(".verify").show();
+                        break;
+                    case "success":
+                        ws.close();
+                        location.reload();
+                        break;
+                    default:
+                        break;
+                }
+            });
+
+            $(".verification-button").click(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: "/verify",
+                    data: $(".verification").serialize(),
+                }).always(function (data) {
+                    if (data == "yes") {
+                        $(".verification").hide();
+                        ws.send(
+                            JSON.stringify({
+                                sender: "tech",
+                                command: "recieveAdminLogin",
+                                data: printData,
+                            })
+                        );
+                        ws.close();
+                        $(".modal").modal("hide");
+                    } else {
+                        //verification failed
+                        $(".wrong-password").show();
+                    }
+                });
+            });
+        };
+    });
+
+    $(".modal").on("hidden.bs.modal", function (e) {
+        location.reload();
+    });
+</script>

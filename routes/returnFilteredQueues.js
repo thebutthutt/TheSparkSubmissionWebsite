@@ -13,9 +13,16 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $lt: [
-                                        "$$item.timestampPaymentRequested",
-                                        new Date("1980"),
+                                    $or: [
+                                        {
+                                            $eq: [
+                                                "$$item.status",
+                                                "UNREVIEWED",
+                                            ],
+                                        },
+                                        {
+                                            $eq: ["$$item.status", "REVIEWED"],
+                                        },
                                     ],
                                 },
                             },
@@ -48,30 +55,7 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $and: [
-                                        {
-                                            $or: [
-                                                {
-                                                    $eq: [
-                                                        "$$item.isPendingPayment",
-                                                        true,
-                                                    ],
-                                                },
-                                                {
-                                                    $eq: [
-                                                        "$$item.isPendingWaive",
-                                                        true,
-                                                    ],
-                                                },
-                                            ],
-                                        },
-                                        {
-                                            $ne: [
-                                                "$$item.isStaleOnPayment",
-                                                true,
-                                            ],
-                                        },
-                                    ],
+                                    $eq: ["$$item.status", "PENDING_PAYMENT"],
                                 },
                             },
                         },
@@ -105,7 +89,7 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $eq: ["$$item.isStaleOnPayment", true],
+                                    $eq: ["$$item.status", "STALE_ON_PAYMENT"],
                                 },
                             },
                         },
@@ -141,7 +125,7 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $eq: ["$$item.isReadyToPrint", true],
+                                    $eq: ["$$item.status", "READY_TO_PRINT"],
                                 },
                             },
                         },
@@ -178,13 +162,13 @@ module.exports = function (app) {
                                     $and: [
                                         {
                                             $eq: [
-                                                "$$item.isReadyToPrint",
-                                                true,
+                                                "$$item.status",
+                                                "READY_TO_PRINT",
                                             ],
                                         },
                                         {
                                             $eq: [
-                                                "$$item.printLocation",
+                                                "$$item.review.printLocation",
                                                 "Willis Library",
                                             ],
                                         },
@@ -225,13 +209,13 @@ module.exports = function (app) {
                                     $and: [
                                         {
                                             $eq: [
-                                                "$$item.isReadyToPrint",
-                                                true,
+                                                "$$item.status",
+                                                "READY_TO_PRINT",
                                             ],
                                         },
                                         {
                                             $eq: [
-                                                "$$item.printLocation",
+                                                "$$item.review.printLocation",
                                                 "Discovery Park",
                                             ],
                                         },
@@ -266,7 +250,9 @@ module.exports = function (app) {
                             $filter: {
                                 input: "$files",
                                 as: "item",
-                                cond: { $eq: ["$$item.isPrinting", true] },
+                                cond: {
+                                    $eq: ["$$item.status", "PRINTING"],
+                                },
                             },
                         },
                     },
@@ -277,9 +263,11 @@ module.exports = function (app) {
                 for (var thisSubmission of data) {
                     for (var thisFile of thisSubmission.files) {
                         var thisAttempt = await attemptModel.findById(
-                            thisFile.attemptIDs[thisFile.attemptIDs.length - 1]
+                            thisFile.printing.attemptIDs[
+                                thisFile.printing.attemptIDs.length - 1
+                            ]
                         );
-                        thisFile.printerName = thisAttempt.printerName;
+                        thisFile.attempt = thisAttempt;
                     }
                 }
                 res.render("pages/printList/allPrints", {
@@ -304,7 +292,17 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $eq: ["$$item.isPrintingWillis", true],
+                                    $and: [
+                                        {
+                                            $eq: ["$$item.status", "PRINTING"],
+                                        },
+                                        {
+                                            $eq: [
+                                                "$$item.printing.printingLocation",
+                                                "Willis Library",
+                                            ],
+                                        },
+                                    ],
                                 },
                             },
                         },
@@ -316,9 +314,11 @@ module.exports = function (app) {
                 for (var thisSubmission of data) {
                     for (var thisFile of thisSubmission.files) {
                         var thisAttempt = await attemptModel.findById(
-                            thisFile.attemptIDs[thisFile.attemptIDs.length - 1]
+                            thisFile.printing.attemptIDs[
+                                thisFile.printing.attemptIDs.length - 1
+                            ]
                         );
-                        thisFile.printerName = thisAttempt.printerName;
+                        thisFile.attempt = thisAttempt;
                     }
                 }
                 res.render("pages/printList/allPrints", {
@@ -343,7 +343,17 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $eq: ["$$item.isPrintingDP", true],
+                                    $and: [
+                                        {
+                                            $eq: ["$$item.status", "PRINTING"],
+                                        },
+                                        {
+                                            $eq: [
+                                                "$$item.printing.printingLocation",
+                                                "Discovery Park",
+                                            ],
+                                        },
+                                    ],
                                 },
                             },
                         },
@@ -355,9 +365,11 @@ module.exports = function (app) {
                 for (var thisSubmission of data) {
                     for (var thisFile of thisSubmission.files) {
                         var thisAttempt = await attemptModel.findById(
-                            thisFile.attemptIDs[thisFile.attemptIDs.length - 1]
+                            thisFile.printing.attemptIDs[
+                                thisFile.printing.attemptIDs.length - 1
+                            ]
                         );
-                        thisFile.printerName = thisAttempt.printerName;
+                        thisFile.attempt = thisAttempt;
                     }
                 }
                 res.render("pages/printList/allPrints", {
@@ -382,7 +394,7 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $eq: ["$$item.isInTransit", true],
+                                    $eq: ["$$item.status", "IN_TRANSIT"],
                                 },
                             },
                         },
@@ -413,7 +425,10 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $eq: ["$$item.isWaitingForPickup", true],
+                                    $eq: [
+                                        "$$item.status",
+                                        "WAITING_FOR_PICKUP",
+                                    ],
                                 },
                             },
                         },
@@ -447,13 +462,13 @@ module.exports = function (app) {
                                     $and: [
                                         {
                                             $eq: [
-                                                "$$item.isWaitingForPickup",
-                                                true,
+                                                "$$item.status",
+                                                "WAITING_FOR_PICKUP",
                                             ],
                                         },
                                         {
                                             $eq: [
-                                                "$$item.pickupLocation",
+                                                "$$item.request.pickupLocation",
                                                 "Willis Library",
                                             ],
                                         },
@@ -491,13 +506,13 @@ module.exports = function (app) {
                                     $and: [
                                         {
                                             $eq: [
-                                                "$$item.isWaitingForPickup",
-                                                true,
+                                                "$$item.status",
+                                                "WAITING_FOR_PICKUP",
                                             ],
                                         },
                                         {
                                             $eq: [
-                                                "$$item.pickupLocation",
+                                                "$$item.request.pickupLocation",
                                                 "Discovery Park",
                                             ],
                                         },
@@ -533,7 +548,7 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $eq: ["$$item.isPickedUp", true],
+                                    $eq: ["$$item.status", "PICKED_UP"],
                                 },
                             },
                         },
@@ -568,7 +583,7 @@ module.exports = function (app) {
                                 input: "$files",
                                 as: "item",
                                 cond: {
-                                    $eq: ["$$item.isRejected", true],
+                                    $eq: ["$$item.status", "REJECTED"],
                                 },
                             },
                         },

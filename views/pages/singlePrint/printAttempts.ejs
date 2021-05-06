@@ -55,7 +55,7 @@
         <%- include('./singleAttempt', {thisAttempt: thisAttempt, index:
         index})%> <%}%>
     </ul>
-    <%}%> <%if (!print.isPrinted) {%>
+    <%}%> <%if (print.status=="READY_TO_PRINT") {%>
     <div class="card-body">
         <a class="btn btn-primary btn-block" href="/printers/jobs"
             >Start new attempt</a

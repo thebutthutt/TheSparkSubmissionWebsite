@@ -108,13 +108,14 @@
                         <div class="card-body">
                             <h5>Going to Willis Library</h5>
                             <ol class="list-group">
-                                <%for (var submission of inTransit) {%> <%for
-                                (var file of submission.files) {%> <%if
-                                (file.pickupLocation == "Willis Library") {%>
+                                <!-- prettier-ignore -->
+                                <%for (var submission of inTransit) {%> 
+                                <%for (var file of submission.files) {%> 
+                                <%if (file.request.pickupLocation == "Willis Library") {%>
                                 <li class="list-group-item">
                                     <a
                                         href='<%= "/prints/preview/?fileID=" + file._id%>'
-                                        ><%=file.realFileName%></a
+                                        ><%=file.fileName%></a
                                     >
                                 </li>
                                 <%}%> <%}%> <%}%>
@@ -123,13 +124,14 @@
                             <h5>Going to Discovery Park</h5>
 
                             <ol class="list-group">
-                                <%for (var submission of inTransit) {%> <%for
-                                (var file of submission.files) {%> <%if
-                                (file.pickupLocation == "Discovery Park") {%>
+                                <!-- prettier-ignore -->
+                                <%for (var submission of inTransit) {%> 
+                                <%for (var file of submission.files) {%> 
+                                <%if (file.request.pickupLocation == "Discovery Park") {%>
                                 <li class="list-group-item">
                                     <a
                                         href='<%= "/prints/preview/?fileID=" + file._id%>'
-                                        ><%=file.realFileName%></a
+                                        ><%=file.fileName%></a
                                     >
                                 </li>
                                 <%}%> <%}%> <%}%>
@@ -140,6 +142,29 @@
                     <div id="actionQueue">
                         <div class="shadow card mb-4">
                             <div class="card-header border-bottom">
+                                <h4 class="mb-0">Submissions Pending Waive</h4>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <%for (var thisSubmission of pendingWaive) {%>
+                                <li class="list-group-item">
+                                    <p class="mb-0 float-left">
+                                        <!-- prettier-ignore -->
+                                        <strong><%=thisSubmission.patron.fname + " " + thisSubmission.patron.lname%>:</strong>
+                                        <!-- prettier-ignore -->
+                                        <%=thisSubmission.numFiles%> files
+                                    </p>
+                                    <a
+                                        class="mb-0 float-right"
+                                        href="/prints/pendpay"
+                                    >
+                                        Waive This Submission
+                                    </a>
+                                </li>
+                                <%}%>
+                            </ul>
+                        </div>
+                        <div class="shadow card mb-4">
+                            <div class="card-header border-bottom">
                                 <h4 class="mb-0">Files Pending Delete</h4>
                             </div>
                             <ul
@@ -147,20 +172,6 @@
                             >
                                 <li class="list-group-item">
                                     No files pending delete
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="shadow card mb-4">
-                            <div class="card-header border-bottom">
-                                <h4 class="mb-0">
-                                    Files Pending Payment Waive
-                                </h4>
-                            </div>
-                            <ul
-                                class="list-group list-group-flush appendWaiveHere"
-                            >
-                                <li class="list-group-item">
-                                    No files pending waive
                                 </li>
                             </ul>
                         </div>

@@ -2,6 +2,7 @@ var attemptModel = require("../app/models/attempt");
 var fullServicePrinterModel = require("../app/models/fullServicePrinter");
 var selfServicePrinterModel = require("../app/models/selfServicePrinter");
 var printRequestModel = require("../app/models/newPrintRequest");
+var emailer = require("../app/emailer");
 
 module.exports = function (app) {
     app.get("/printers/jobs", isLoggedIn, async function (req, res) {
@@ -38,7 +39,7 @@ module.exports = function (app) {
                             input: "$files",
                             as: "item",
                             cond: {
-                                $eq: ["$$item.isReadyToPrint", true],
+                                $eq: ["$$item.status", "READY_TO_PRINT"],
                             },
                         },
                     },
@@ -88,14 +89,9 @@ module.exports = function (app) {
                 "files._id": thisFileID,
             });
             var thisFile = thisSubmission.files.id(thisFileID);
-            thisFile.isReadyToPrint = false;
-            thisFile.isPrinting = true;
-            thisFile.isPrintingWillis =
-                req.body.printerLocation == "Willis Library" ? true : false;
-            thisFile.isPrintingDP =
-                req.body.printerLocation == "Discovery Park" ? true : false;
-
-            thisFile.attemptIDs.push(newAttempt._id);
+            thisFile.status = "PRINTING";
+            thisFile.printing.printingLocation = req.body.printerLocation;
+            thisFile.printing.attemptIDs.push(newAttempt._id);
             await thisSubmission.save();
         }
 
@@ -128,22 +124,36 @@ module.exports = function (app) {
                 "files._id": thisFileID,
             });
             var thisFile = thisSubmission.files.id(thisFileID);
-            thisFile.isPrinting = false;
-            thisFile.isPrintingWillis = false;
-            thisFile.isPrintingDP = false;
 
             if (req.body.status == "success") {
-                thisFile.isPrinted = true;
-                thisFile.isWaitingForPickup = true;
-                thisFile.timesstampPrinted = now;
-                if (thisAttempt.location != thisFile.pickupLocation) {
-                    thisFile.isInTransit = true;
+                thisFile.status = "WAITING_FOR_PICKUP";
+                thisFile.printing.timestampPrinted = now;
+                if (thisAttempt.location != thisFile.request.pickupLocation) {
+                    thisFile.status = "IN_TRANSIT";
                 } else {
-                    thisFile.timestampArrivedAtPickup = now;
+                    thisFile.pickup.timestampArrivedAtPickup = now;
                 }
             } else {
-                thisFile.isReadyToPrint = true;
+                thisFile.status = "READY_TO_PRINT";
             }
+            await thisSubmission.save();
+            //check if all files completed to send done email
+            var isDone = true;
+            for (var thisFile of thisSubmission.files) {
+                if (
+                    thisFile.status != "REJECTED" &&
+                    thisFile.status != "WAITING_FOR_PICKUP"
+                ) {
+                    isDone = false;
+                }
+            }
+
+            if (isDone) {
+                //done email
+                console.log("submission complete");
+                thisSubmission.timestampPickupRequested = now;
+            }
+
             await thisSubmission.save();
         }
         res.redirect("/printers/jobs");

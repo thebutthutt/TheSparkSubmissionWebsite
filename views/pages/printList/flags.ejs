@@ -1,23 +1,26 @@
-<!-- prettier-ignore -->
-<%if (printPage == 'newSub') { %>
-    <% if (file.isReviewed) { %> 
-        <% if (file.isRejected) { %>
-<span class="badge font-weight-normal alert-danger">Rejected</span>
-<% } else { %>
-<span class="badge font-weight-normal alert-success">Accepted</span>
-<% } %> <% } else { %>
-<span class="badge font-weight-normal alert-primary">Unreviewed</span>
-<% } %> <%}%>
+<!-- ----------------------------------------------------------------------- -->
+<!--                             New Submissions                             -->
+<!-- ----------------------------------------------------------------------- -->
 
-<!-- prettier-ignore -->
-<% if (printPage == 'pendpay' || printPage == 'pendpaystale') { %>
-<span class="badge font-weight-normal alert-light"
-    >Print at <%=file.printLocation%></span
+<%if (printPage == 'newSub') {%>
+<span
+    class="badge font-weight-normal alert-<%=file.status=='UNREVIEWED'?'primary':file.review.descision=='Accepted'?'success':'danger'%>"
+    ><%=file.status=='UNREVIEWED'?'Unreviewed':file.review.descision%></span
 >
-<!-- prettier-ignore -->
+<%}%>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                   Pending Payment or Stale on Payment                   -->
+<!-- ----------------------------------------------------------------------- -->
+
+<% if (printPage == 'pendpay' || printPage == 'pendpaystale') { %>
+<span
+    class="badge font-weight-normal alert-<%=file.payment.isPendingWaive?'warning':'light'%>"
+    ><%=file.payment.isPendingWaive?'Pending Waive':'Payment Required'%></span
+>
 <%} %>
 
-<!-- ---------------------------- <Ready files ----------------------------- -->
+<!-- ---------------------------- Ready files ----------------------------- -->
 <% if (printPage == 'ready') { %>
 <span class="badge font-weight-normal alert-light"
     >Reviewed for <%=file.printLocation%></span

@@ -91,29 +91,6 @@ module.exports = function (app) {
         });
     });
 
-    //patrial containing signature canvas
-    app.get(
-        "/signaturepad",
-        function (req, res) {
-            res.render("partials/PrintDetails/signaturePad", {
-                fileName: req.body.fileName,
-            });
-        },
-        function (err, html) {
-            res.send(html);
-        }
-    );
-
-    app.get(
-        "/sigwaitscreen",
-        function (req, res) {
-            res.render("partials/PrintDetails/waitontech");
-        },
-        function (err, html) {
-            res.send(html);
-        }
-    );
-
     app.get("/bugreport", function (req, res) {
         var admin = false,
             superAdmin = false;
