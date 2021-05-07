@@ -42,16 +42,11 @@ require("./app/passport")(passport); // pass passport for configuration
 // set up our express application
 app.use(cookieParser()); // read cookies (needed for auth)
 app.use(
-    bodyParser.urlencoded({
+    express.urlencoded({
         extended: true,
-        limit: "1024MB",
     })
 );
-app.use(
-    bodyParser.json({
-        limit: "1024mb",
-    })
-); // get information from html forms
+app.use(express.json());
 
 app.set("view engine", "ejs"); // set up ejs for templating
 app.use("/public", express.static(path.join(__dirname, "/public"))); //allow us to grab local files in the public directory
@@ -78,6 +73,7 @@ app.use(cors());
 require("./routes/routes.js")(app);
 require("./routes/printRoutes.js")(app);
 require("./routes/printJobRoutes.js")(app);
+require("./routes/metaRoutes.js")(app);
 require("./routes/selfServiceRoutes.js")(app);
 require("./routes/managementRoutes.js")(app);
 require("./routes/returnFilteredQueues.js")(app);

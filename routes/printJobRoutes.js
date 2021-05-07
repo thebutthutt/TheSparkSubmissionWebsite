@@ -65,7 +65,15 @@ module.exports = function (app) {
          */
         var selectedFiles = req.body.selectedFileIDs.split(",");
         var selectedFileNames = req.body.selectedFileNames.split(",");
+
+        var now = new Date();
+        var yearStart = new Date(now.getFullYear(), 0, 1);
+        var diffMilis = now - yearStart;
+        var diffMinutes = Math.round(diffMilis / 60000); //how many minutes since the year began
+        var minutesEncoded = diffMinutes.toString(36);
+
         var newAttempt = new attemptModel({
+            prettyID: "",
             timestampStarted: new Date(),
             location: req.body.printerLocation,
             printerName: req.body.printerName,
@@ -94,6 +102,8 @@ module.exports = function (app) {
             thisFile.printing.attemptIDs.push(newAttempt._id);
             await thisSubmission.save();
         }
+
+        sendPrintSlip(newAttempt);
 
         res.redirect("/printers/jobs");
     });
@@ -159,6 +169,20 @@ module.exports = function (app) {
         res.redirect("/printers/jobs");
     });
 };
+
+function sendPrintSlip(attempt) {
+    axios
+        .post("129.120.93.30:5000/print", {
+            lines: ["00112233445566778899aabbccddeeff", "LadyLavender07f3f9"],
+        })
+        .then((res) => {
+            console.log("printed");
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+}
+
 function isLoggedIn(req, res, next) {
     // if user is authenticated in the session, carry on
     if (req.isAuthenticated()) return next();

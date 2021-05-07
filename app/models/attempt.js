@@ -1,6 +1,10 @@
 var mongoose = require("mongoose");
 
 var attemptSchema = mongoose.Schema({
+    prettyID: {
+        type: String,
+        required: true,
+    },
     timestampStarted: {
         type: Date,
         default: "1970",

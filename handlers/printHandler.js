@@ -22,10 +22,10 @@ module.exports = {
         }
         await result.save();
 
-        result.allPickedUp = true;
+        result.allFilesPickedUp = true;
         for (var file of result.files) {
             if (file.status != "PICKED_UP" && file.status != "REJECTED") {
-                result.allPickedUp = false;
+                result.allFilesPickedUp = false;
             }
         }
 

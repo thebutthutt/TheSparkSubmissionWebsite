@@ -11,13 +11,6 @@ var fs = require("fs");
 
 module.exports = function (app) {
     //Metainfo about all the prints we have done
-    app.get("/meta", isLoggedIn, async function (req, res) {
-        res.render("pages/prints/meta", {
-            pgnum: 5,
-            isAdmin: true,
-            isSuperAdmin: req.user.isSuperAdmin,
-        });
-    });
 
     /* -------------------------------------------------------------------------- */
     /*                            Detail View One File                            */
