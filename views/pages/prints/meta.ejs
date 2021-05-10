@@ -5,11 +5,139 @@
         <!--
         <link type="text/css" rel="stylesheet" href="../../public/css/meta.css" />
         <script src="/public/js/meta.js"></script>-->
+
+        <style>
+            td > table tr td {
+                text-align: end;
+            }
+        </style>
     </head>
 
     <body>
         <%- include ("../../partials/header") %>
-        <div class="container-xl mt-5" style="margin-bottom: 100px"></div>
+        <div class="container-xl mt-5" style="margin-bottom: 100px">
+            <div class="row row-cols-3">
+                <%for (var attempt of results) {%>
+                <div class="col">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5>
+                                <!-- prettier-ignore -->
+                                <%=attempt.includedFiles[0].patron.lname%><%=attempt.id%>
+                            </h5>
+                        </div>
+
+                        <table class="table mb-0">
+                            <tr>
+                                <th scope="row">Printer</th>
+                                <td>
+                                    <%=attempt.printerName + " @ " +
+                                    attempt.location%>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row">Roll ID</th>
+                                <td><%=attempt.rollID%></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Weight</th>
+                                <td class="p-0">
+                                    <table class="table mb-0">
+                                        <tr class="text-muted">
+                                            <th
+                                                class="border-top-0"
+                                                scope="row"
+                                            >
+                                                Estimated
+                                            </th>
+                                            <td class="border-top-0">
+                                                <%=attempt.totalEstimatedGrams%>g
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Actual</th>
+                                            <td>
+                                                <%=attempt.totalUsedGrams%>g
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Duration</th>
+
+                                <!-- prettier-ignore -->
+                                <% 
+                                var seconds = attempt.attemptDuration /1000; 
+                                var hours = parseInt( seconds / 3600 ); 
+                                seconds = seconds % 3600; 
+                                minutes = Math.ceil( seconds / 60 ); %>
+                                <td class="p-0">
+                                    <table class="table mb-0">
+                                        <tr class="text-muted">
+                                            <th
+                                                class="border-top-0"
+                                                scope="row"
+                                            >
+                                                Estimated
+                                            </th>
+                                            <td class="border-top-0">
+                                                <%=Math.ceil(attempt.totalRequestedPrice)%>h
+                                                <%=Math.ceil(attempt.totalRequestedPrice
+                                                %
+                                                Math.ceil(attempt.totalRequestedPrice))%>m
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Actual</th>
+                                            <td><%=hours%>h <%=minutes%>m</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Price</th>
+                                <td class="p-0">
+                                    <table class="table mb-0">
+                                        <tr class="text-muted">
+                                            <th
+                                                class="border-top-0"
+                                                scope="row"
+                                            >
+                                                Requested
+                                            </th>
+                                            <td class="border-top-0">
+                                                $<%=attempt.totalRequestedPrice.toFixed(2)%>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Paid</th>
+                                            <td>
+                                                $<%=attempt.totalPaidPrice.toFixed(2)%>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Files</th>
+                                <td>
+                                    <%for (var thisFile of
+                                    attempt.includedFiles) {%>
+                                    <p class="mb-0">
+                                        <%=thisFile.files.originalFileName%>
+                                    </p>
+
+                                    <%}%>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <%}%>
+            </div>
+        </div>
         <%- include ("../../partials/footer") %>
     </body>
 </html>

@@ -1,0 +1,99 @@
+<div
+    class="modal fade"
+    id="exampleModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form action="/attempts/start" method="POST">
+                    <input type="hidden" name="printerID" id="printerID" />
+                    <input type="hidden" name="selectedFileIDs" id="fileList" />
+                    <input
+                        type="hidden"
+                        name="selectedFileNames"
+                        id="nameList"
+                    />
+                    <div class="row">
+                        <div class="col-5">
+                            <h5>Selected Files</h5>
+                            <ul
+                                class="list-group mb-3"
+                                id="selected-files"
+                            ></ul>
+                        </div>
+                        <div class="col">
+                            <h5>Printing Data</h5>
+                            <div class="row mb-3">
+                                <label class="col-4 col-form-label"
+                                    >Printer</label
+                                >
+                                <div class="col">
+                                    <input
+                                        type="text"
+                                        readonly
+                                        class="form-control-plaintext"
+                                        id="printerName"
+                                        name="printerName"
+                                    />
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-4 col-form-label"
+                                    >Location</label
+                                >
+                                <div class="col">
+                                    <input
+                                        type="text"
+                                        readonly
+                                        class="form-control-plaintext"
+                                        id="printerLocation"
+                                        name="printerLocation"
+                                    />
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-4 col-form-label"
+                                    >Filament Roll ID</label
+                                >
+                                <div class="col">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="rollID"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-4 col-form-label"
+                                    >Inital Weight</label
+                                >
+                                <div class="col">
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        name="startWeight"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-success float-right"
+                                    >
+                                        Start Job
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

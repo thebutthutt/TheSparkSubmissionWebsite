@@ -1,0 +1,237 @@
+<div class="list-group shadow">
+    <a
+        href="/prints/new"
+        class="list-group-item list-group-item-action <% if (printPage == 'newSub') { %> active <%}%>"
+    >
+        New Submissions</a
+    >
+    <a
+        href="/prints/pendpay"
+        class="list-group-item list-group-item-action <% if (printPage == 'pendpay') { %> active <%}%>"
+    >
+        Pending Payment</a
+    >
+    <ul class="list-group list-group-horizontal border-left border-right">
+        <a
+            href="/prints/ready"
+            class="list-group-item list-group-item-action <% if (printPage == 'ready' && sparkLocation == 'all') { %> active <%}%> rounded-0 border-0"
+        >
+            Ready to Print
+        </a>
+        <button
+            class="list-group-item list-group-item-action rounded-0 border-0 <% if (printPage == 'ready' && sparkLocation == 'all') { %> active <%}%>"
+            style="width: unset"
+            type="button"
+            data-toggle="collapse"
+            data-target="#readyCollapse"
+            aria-expanded="false"
+            aria-controls="readyCollapse"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-caret-down-fill"
+                viewBox="0 0 16 16"
+                id="readyCarat"
+            >
+                <path
+                    d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+                />
+            </svg>
+        </button>
+    </ul>
+    <div class="collapse" id="readyCollapse">
+        <a
+            href="/prints/readywillis"
+            class="rounded-0 list-group-item list-group-item-action <% if (printPage == 'ready' && sparkLocation == 'Willis Library') { %> active <%}%>"
+        >
+            Ready To Print Willis</a
+        >
+        <a
+            href="/prints/readydp"
+            class="rounded-0 border-bottom-0 list-group-item list-group-item-action <% if (printPage == 'ready' && sparkLocation == 'Discovery Park') { %> active <%}%>"
+        >
+            Ready To Print DP</a
+        >
+    </div>
+
+    <ul class="list-group list-group-horizontal border-left border-right">
+        <a
+            href="/prints/printing"
+            class="list-group-item list-group-item-action <% if (printPage == 'printing' && sparkLocation == 'all') { %> active <%}%> rounded-0 border-bottom-0 border-left-0 border-right-0"
+        >
+            Printing</a
+        >
+        <button
+            class="list-group-item list-group-item-action rounded-0 border-bottom-0 border-left-0 border-right-0 <% if (printPage == 'printing' && sparkLocation == 'all') { %> active <%}%>"
+            style="width: unset"
+            type="button"
+            data-toggle="collapse"
+            data-target="#printingCollapse"
+            aria-expanded="false"
+            aria-controls="printingCollapse"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-caret-down-fill"
+                viewBox="0 0 16 16"
+                id="printingCarat"
+            >
+                <path
+                    d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+                />
+            </svg>
+        </button>
+    </ul>
+    <div class="collapse" id="printingCollapse">
+        <a
+            href="/prints/printingwillis"
+            class="rounded-0 list-group-item list-group-item-action <% if (printPage == 'printing' && sparkLocation == 'Willis Library') { %> active <%}%>"
+        >
+            Printing Willis</a
+        >
+        <a
+            href="/prints/printingdp"
+            class="rounded-0 border-bottom-0 list-group-item list-group-item-action <% if (printPage == 'printing' && sparkLocation == 'Discovery Park') { %> active <%}%>"
+        >
+            Printing DP</a
+        >
+    </div>
+
+    <a
+        href="/prints/intransit"
+        class="list-group-item list-group-item-action <% if (printPage == 'inTransit') { %> active <%}%>"
+    >
+        In Transit</a
+    >
+
+    <ul class="list-group list-group-horizontal border-left border-right">
+        <a
+            href="/prints/pickup"
+            class="list-group-item list-group-item-action <% if (printPage == 'pickup' && sparkLocation == 'all') { %> active <%}%> rounded-0 border-0"
+        >
+            Waiting for Pickup</a
+        >
+        <button
+            class="list-group-item list-group-item-action rounded-0 border-0 <% if (printPage == 'pickup' && sparkLocation == 'all') { %> active <%}%>"
+            style="width: unset"
+            type="button"
+            data-toggle="collapse"
+            data-target="#pickupCollapse"
+            aria-expanded="false"
+            aria-controls="pickupCollapse"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-caret-down-fill"
+                viewBox="0 0 16 16"
+                id="pickupCarat"
+            >
+                <path
+                    d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+                />
+            </svg>
+        </button>
+    </ul>
+    <div class="collapse" id="pickupCollapse">
+        <a
+            href="/prints/pickupwillis"
+            class="rounded-0 list-group-item list-group-item-action <% if (printPage == 'pickup' && sparkLocation == 'Willis Library') { %> active <%}%>"
+        >
+            Waiting for Pickup Willis</a
+        >
+        <a
+            href="/prints/pickupdp"
+            class="rounded-0 border-bottom-0 list-group-item list-group-item-action <% if (printPage == 'pickup' && sparkLocation == 'Discovery Park') { %> active <%}%>"
+        >
+            Waiting for Pickup DP</a
+        >
+    </div>
+    <a
+        href="/prints/completed"
+        class="list-group-item list-group-item-action <% if (printPage == 'completed') { %> active <%}%>"
+    >
+        Completed</a
+    >
+    <a
+        href="/prints/rejected"
+        class="list-group-item list-group-item-action <% if (printPage == 'rejected') { %> active <%}%>"
+    >
+        Rejected</a
+    >
+    <a
+        href="/prints/pendpaystale"
+        class="list-group-item list-group-item-action <% if (printPage == 'pendpaystale') { %> active <%}%>"
+    >
+        Stale on Payment</a
+    >
+    <a
+        href="/prints/pickupstale"
+        class="list-group-item list-group-item-action <% if (printPage == 'pickupstale') { %> active <%}%>"
+    >
+        Stale on Pickup</a
+    >
+    <a
+        href="/prints/all"
+        class="list-group-item list-group-item-action <% if (printPage == 'all') { %> active <%}%>"
+    >
+        All</a
+    >
+</div>
+
+<script>
+    var printPage = `<%=printPage%>`;
+    var sparkLocation = `<%=sparkLocation%>`;
+    $("#readyCollapse").collapse({
+        toggle:
+            printPage != "ready"
+                ? false
+                : sparkLocation == "all"
+                ? false
+                : true,
+    });
+    $("#readyCollapse").on("show.bs.collapse", function () {
+        $("#readyCarat").css({ transform: "rotate(" + 180 + "deg)" });
+    });
+    $("#readyCollapse").on("hide.bs.collapse", function () {
+        $("#readyCarat").css({ transform: "rotate(" + 0 + "deg)" });
+    });
+
+    $("#printingCollapse").collapse({
+        toggle:
+            printPage != "printing"
+                ? false
+                : sparkLocation == "all"
+                ? false
+                : true,
+    });
+    $("#printingCollapse").on("show.bs.collapse", function () {
+        $("#printingCarat").css({ transform: "rotate(" + 180 + "deg)" });
+    });
+    $("#printingCollapse").on("hide.bs.collapse", function () {
+        $("#printingCarat").css({ transform: "rotate(" + 0 + "deg)" });
+    });
+
+    $("#pickupCollapse").collapse({
+        toggle:
+            printPage != "pickup"
+                ? false
+                : sparkLocation == "all"
+                ? false
+                : true,
+    });
+    $("#pickupCollapse").on("show.bs.collapse", function () {
+        $("#pickupCarat").css({ transform: "rotate(" + 180 + "deg)" });
+    });
+    $("#pickupCollapse").on("hide.bs.collapse", function () {
+        $("#pickupCarat").css({ transform: "rotate(" + 0 + "deg)" });
+    });
+</script>

@@ -6,7 +6,7 @@ module.exports = function (app) {
             .find({})
             .sort({ printerBarcode: 1 });
         var allFull = await fullServicePrinterModel.find({});
-        res.render("pages/printers", {
+        res.render("pages/printers/printers", {
             pgnum: 7, //printers'
             selfService: allSelf,
             fullService: allFull,

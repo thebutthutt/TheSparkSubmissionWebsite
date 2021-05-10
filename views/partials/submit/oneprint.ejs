@@ -14,14 +14,16 @@
                 data-content="File must be an STL!"
                 required
             />
-            <label class="custom-file-label" for="exampleInputFile"> Select file... </label>
+            <label class="custom-file-label" for="exampleInputFile">
+                Select file...
+            </label>
         </div>
     </div>
 
     <div class="form-group row">
         <label class="col-form-label col-sm-3">Material</label>
         <select name="material" class="form-control col-sm-9 top" required>
-            <option value="No Preference">No preference</option>
+            <option value="Any Material">Any Material</option>
             <option value="PLA">PLA</option>
             <option value="ABS">ABS</option>
             <option value="Other">Other (requires prior approval)</option>
@@ -30,17 +32,35 @@
 
     <div class="form-group row">
         <label class="col-form-label col-sm-3">Infill</label>
-        <input name="infill" type="text" class="form-control col-sm-9 inner" value="12.5%" required />
+        <input
+            name="infill"
+            type="text"
+            class="form-control col-sm-9 inner"
+            value="12.5%"
+            required
+        />
     </div>
 
     <div class="form-group row">
         <label class="col-form-label col-sm-3">Color</label>
-        <input name="color" type="text" class="form-control col-sm-9 inner" value="No preference" required />
+        <input
+            name="color"
+            type="text"
+            class="form-control col-sm-9 inner"
+            value="Any Color"
+            required
+        />
     </div>
 
     <div class="form-group row">
         <label class="col-form-label col-sm-3">Copies</label>
-        <input name="copies" type="number" class="form-control col-sm-9 inner" value="1" required />
+        <input
+            name="copies"
+            type="number"
+            class="form-control col-sm-9 inner"
+            value="1"
+            required
+        />
     </div>
 
     <div class="form-group row contains-select">
@@ -52,7 +72,9 @@
     </div>
 
     <div class="form-group row">
-        <label class="col-form-label col-sm-3" for="notes">Additional Notes</label>
+        <label class="col-form-label col-sm-3" for="notes"
+            >Additional Notes</label
+        >
         <textarea
             name="notes"
             class="form-control col-sm-9 bottom"

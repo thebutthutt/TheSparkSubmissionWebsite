@@ -203,7 +203,6 @@ function STLViewer(model, elementID) {
             animate();
 
             var nonIndexedModel = geometry.toNonIndexed();
-            console.log("trying" + getVolume(nonIndexedModel));
         },
         onProgress
     );

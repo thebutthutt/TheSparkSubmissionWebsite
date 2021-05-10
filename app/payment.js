@@ -2,6 +2,7 @@
 
 const base_url = "https://payments.library.unt.edu/payment/";
 const account = process.env.PAYMENT_ACCOUNT;
+var printRequestModel = require("../app/models/newPrintRequest");
 var fs = require("fs");
 var path = require("path");
 //var emailer = require("./email.js");
@@ -25,9 +26,18 @@ module.exports = {
     ) {
         var concatString = "";
         var newURL = new URL(base_url);
-        concatString = concatString.concat(account, amount, contact_name, submissionID, secret_key);
+        concatString = concatString.concat(
+            account,
+            amount,
+            contact_name,
+            submissionID,
+            secret_key
+        );
 
-        var otherHash = crypto.createHash("md5").update(concatString).digest("hex");
+        var otherHash = crypto
+            .createHash("md5")
+            .update(concatString)
+            .digest("hex");
 
         newURL.searchParams.append("account", account);
         newURL.searchParams.append("amount", amount);
@@ -36,19 +46,39 @@ module.exports = {
         newURL.searchParams.append("libhash", otherHash);
 
         emailer
-            .requestPayment(email, acceptedFiles, acceptedMessages, rejectedFiles, rejectedMessages, newURL.href)
+            .requestPayment(
+                email,
+                acceptedFiles,
+                acceptedMessages,
+                rejectedFiles,
+                rejectedMessages,
+                newURL.href
+            )
             .catch(console.error);
     },
 
     sendPaymentEmail: function (submission, amount, numRejected) {
         var nameString = "";
-        nameString = nameString.concat(submission.patron.fname, " ", submission.patron.lname);
+        nameString = nameString.concat(
+            submission.patron.fname,
+            " ",
+            submission.patron.lname
+        );
 
         var concatString = "";
         var newURL = new URL(base_url);
-        concatString = concatString.concat(account, amount, nameString, submission._id, secret_key);
+        concatString = concatString.concat(
+            account,
+            amount,
+            nameString,
+            submission._id,
+            secret_key
+        );
 
-        var otherHash = crypto.createHash("md5").update(concatString).digest("hex");
+        var otherHash = crypto
+            .createHash("md5")
+            .update(concatString)
+            .digest("hex");
 
         newURL.searchParams.append("account", account);
         newURL.searchParams.append("amount", amount);
@@ -63,8 +93,8 @@ module.exports = {
         }
     },
 
-    //validate an incoming payment confirmation url
-    validatePaymentURL: function (query, callback) {
+    handlePaymentURL: async function (req) {
+        var query = req.query;
         concatString = "";
         var innerMatch = false,
             outerMatch = false;
@@ -81,7 +111,10 @@ module.exports = {
         );
 
         //hash the params
-        var otherHash = crypto.createHash("md5").update(concatString).digest("hex");
+        var otherHash = crypto
+            .createHash("md5")
+            .update(concatString)
+            .digest("hex");
 
         //does is match the hash sent over?
         if (otherHash == request_contents.libhash) {
@@ -104,20 +137,41 @@ module.exports = {
             outerMatch = true;
         }
 
-        if (typeof callback == "function") {
-            callback(innerMatch, outerMatch, request_contents.submissionID);
+        if (innerMatch == true && outerMatch == true) {
+            return request_contents.submissionID;
+        } else {
+            console.log("Hashes invalid");
+            return false;
         }
     },
 
-    handlePaymentComplete: function (req, callback) {
-        //validate the incoming payment confirmation
-        this.validatePaymentURL(req.query, function (innerMatch, outerMatch, submissionID) {
-            if (innerMatch == true && outerMatch == true) {
-                callback(true, submissionID);
-            } else {
-                console.log("Hashes invalid");
-                callback(false, submissionID);
+    handlePaymentWaive: async function (submissionID, fileID) {},
+
+    updateDatabase: async function (submissionID, wasWaived, waivingEUID) {
+        var now = new Date();
+        var result = await printRequestModel.findById(submissionID);
+        result.timestampPaid = now;
+        for (var file of result.files) {
+            if (file.status != "REJECTED") {
+                file.status = "READY_TO_PRINT";
             }
-        });
+
+            if (wasWaived) {
+                file.payment.paymentType = "WAIVED";
+                file.payment.waivedBy = waivingEUID;
+            } else {
+                file.payment.paymentType = "PAID";
+            }
+
+            file.payment.timestampPaid = now;
+        }
+        if (wasWaived) {
+            newmailer.paymentWaived(result);
+        } else {
+            newmailer.paymentThankYou(result);
+        }
+
+        await result.save(); //save the db entry
+        return true;
     },
 };

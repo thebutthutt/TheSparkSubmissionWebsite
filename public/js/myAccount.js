@@ -1,5 +1,4 @@
 var fillSuper = function () {
-    showActionQueue();
     showUsers();
 };
 
@@ -132,29 +131,4 @@ $(document).ready(function () {
     if ($(".hidden-extras").attr("isSuperAdmin") == "true") {
         fillSuper();
     }
-
-    $(".cleantoggle").on("click", function () {
-        var itemName = $(this).attr("itemname");
-        var isCleaned = $(this).attr("isclean");
-
-        if (isCleaned == "false") {
-            $.ajax({
-                type: "POST",
-                url: "/cameras/clean",
-                data: { object: itemName },
-                success: function () {
-                    location.reload();
-                },
-            });
-        } else {
-            $.ajax({
-                type: "POST",
-                url: "/cameras/unclean",
-                data: { object: itemName },
-                success: function () {
-                    location.reload();
-                },
-            });
-        }
-    });
 });

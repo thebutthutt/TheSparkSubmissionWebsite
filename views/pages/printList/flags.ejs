@@ -1,0 +1,71 @@
+<!-- ----------------------------------------------------------------------- -->
+<!--                             New Submissions                             -->
+<!-- ----------------------------------------------------------------------- -->
+
+<%if (printPage == 'newSub') {%>
+<span
+    class="badge font-weight-normal alert-<%=file.status=='UNREVIEWED'?'primary':file.review.descision=='Accepted'?'success':'danger'%>"
+    ><%=file.status=='UNREVIEWED'?'Unreviewed':file.review.descision%></span
+>
+<%}%>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                   Pending Payment or Stale on Payment                   -->
+<!-- ----------------------------------------------------------------------- -->
+
+<% if (printPage == 'pendpay' || printPage == 'pendpaystale') { %>
+<span
+    class="badge font-weight-normal alert-<%=file.payment.isPendingWaive?'warning':'light'%>"
+    ><%=file.payment.isPendingWaive?'Pending Waive':'Payment Required'%></span
+>
+<%} %>
+
+<!-- ---------------------------- Ready files ----------------------------- -->
+<% if (printPage == 'ready') { %>
+<span class="badge font-weight-normal alert-light"
+    >Reviewed for <%=file.printLocation%></span
+>
+
+<%}%>
+<!-- --------------------------- Printing Files ---------------------------- -->
+<%if(printPage == 'printing') {%>
+<span class="badge font-weight-normal alert-success"
+    >Printing on <%=file.printerName%></span
+>
+<%} %>
+<!-- ----------------------------- In transit ------------------------------ -->
+
+<% if (printPage == 'inTransit') { %>
+<span class="badge font-weight-normal alert-warning"
+    >In transit to <%=file.pickupLocation%></span
+>
+<%}%>
+
+<!-- ------------------------------ all files ------------------------------ -->
+
+<%if (printPage == 'all') {%> <% if (!file.isReviewed) { %>
+<span class="badge font-weight-normal alert-primary">Unreviewed</span>
+<% } %> <% if (file.isReadyToPrint) { %> <% if (file.isStarted) { %> <%if
+(file.printingData) {%>
+<span class="badge font-weight-normal alert-success"
+    >Printing at <%=file.printingData.location%></span
+>
+<%} else {%>
+<span class="badge font-weight-normal alert-success">Printing</span>
+<%}%> <%} else {%>
+<span class="badge font-weight-normal alert-info"
+    >Print at <%=file.printLocation%></span
+>
+<%}%> <%}%> <%if (file.isPrinted && !file.isPickedUp) {%>
+<span class="badge font-weight-normal alert-info"
+    >Pickup at <%=file.printLocation%></span
+>
+<%}%> <%}%>
+
+<!-- ----------------------------- always show ----------------------------- -->
+
+<% if (file.isPendingWaive) { %>
+<span class="badge font-weight-normal alert-warning">Pending Waive</span>
+<% } %> <% if (file.isPendingDelete) { %>
+<span class="badge font-weight-normal alert-danger">Pending Delete</span>
+<% } %>

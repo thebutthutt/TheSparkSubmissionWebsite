@@ -1,0 +1,90 @@
+<div
+    class="modal fade"
+    id="finishJob"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">
+                    Finish Printing Attempt
+                </h5>
+                <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/attempts/finish" method="POST">
+                    <input
+                        type="hidden"
+                        class="form-control"
+                        name="attemptID"
+                        id="attemptID"
+                    />
+                    <div class="row mb-3">
+                        <label class="col-4 col-form-label"
+                            >Final Roll Weight</label
+                        >
+                        <div class="col">
+                            <input
+                                type="number"
+                                class="form-control"
+                                name="endWeight"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-4 col-form-label"
+                            >Attempt Status</label
+                        >
+                        <div class="col">
+                            <div
+                                class="btn-group w-100 btn-group-toggle"
+                                data-toggle="buttons"
+                            >
+                                <label class="btn btn-outline-success active">
+                                    <input
+                                        type="radio"
+                                        name="status"
+                                        id="option1"
+                                        value="success"
+                                        checked
+                                    />
+                                    Success
+                                </label>
+                                <label class="btn btn-outline-danger">
+                                    <input
+                                        type="radio"
+                                        name="status"
+                                        value="failure"
+                                        id="option2"
+                                    />
+                                    Failure
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <button
+                                type="submit"
+                                class="btn btn-block btn-primary"
+                            >
+                                Complete
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

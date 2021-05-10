@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ("../../partials/head") %>
+        <style>
+            .card-body {
+                padding: 0.7em;
+            }
+        </style>
+    </head>
+    <body>
+        <%- include ("../../partials/header") %>
+        <div class="container-flush mx-5 mt-4" style="margin-bottom: 100px">
+            <div class="row">
+                <div class="col-md-4 col-xl-2">
+                    <div class="card shadow mb-3">
+                        <div class="card-header">
+                            <strong>Select Files</strong>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <% for (var thisPrint of readyPrints){%>
+                            <!-- prettier-ignore -->
+                            <%for (var thisFile of thisPrint.files){%>
+                            <li
+                                class="list-group-item file-select"
+                                fileID="<%=thisFile._id%>"
+                            >
+                                <%=thisFile.originalFileName%>
+                            </li>
+                            <%}%> <%}%>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-8 col-xl-10">
+                    <div class="row">
+                        <div class="col-lg-6 col-xl-4">
+                            <div class="card shadow mb-3">
+                                <div class="card-header">
+                                    <strong>Discovery Park</strong>
+                                    <a
+                                        href="/printers"
+                                        class="text-muted float-right"
+                                        >Manage</a
+                                    >
+                                </div>
+                                <div class="card-body">
+                                    <div
+                                        class="row row-cols-1 row-cols-sm-2 mx-n2"
+                                    >
+                                        <%for (var thisPrinter of dpFull) {%>
+                                        <div class="col px-2 mb-3">
+                                            <%- include('./singlePrinter.ejs',
+                                            {thisPrinter: thisPrinter})%>
+                                        </div>
+                                        <%}%>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-xl-4">
+                            <div class="card shadow mb-3">
+                                <div class="card-header">
+                                    <strong>Willis Full Service</strong>
+                                    <a
+                                        href="/printers"
+                                        class="text-muted float-right"
+                                        >Manage</a
+                                    >
+                                </div>
+                                <div class="card-body">
+                                    <div
+                                        class="row row-cols-1 row-cols-sm-2 mx-n2"
+                                    >
+                                        <!-- prettier-ignore -->
+                                        <%for (var thisPrinter of willisFull) {%>
+                                        <div class="col px-2 mb-3">
+                                            <%- include('./singlePrinter.ejs',
+                                            {thisPrinter: thisPrinter})%>
+                                        </div>
+                                        <%}%>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-xl-4">
+                            <div class="card shadow mb-3">
+                                <div class="card-header">
+                                    <strong>Self Service</strong>
+                                    <a
+                                        href="/printers"
+                                        class="text-muted float-right"
+                                        >Manage</a
+                                    >
+                                </div>
+                                <div class="card-body">
+                                    <div
+                                        class="row row-cols-1 row-cols-sm-2 mx-n2"
+                                    >
+                                        <!-- prettier-ignore -->
+                                        <%for (var thisPrinter of selfService) {%>
+                                        <div class="col px-2 mb-3">
+                                            <%- include('./singlePrinter.ejs',
+                                            {thisPrinter: thisPrinter})%>
+                                        </div>
+                                        <%}%>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- prettier-ignore -->
+        <%- include ("./startAttemptModal") %>
+        <%- include ("./finishAttemptModal") %>
+        <%- include ("../../partials/footer") %>
+    </body>
+    <script>
+        var selectedFileIDs = [];
+        var selectedFileNames = [];
+        $(".start-job").prop("disabled", true);
+
+        $("#exampleModal").on("show.bs.modal", function (event) {
+            var button = $(event.relatedTarget);
+            var printerName = button.data("printer");
+            var printerID = button.data("printer-id");
+            var printerLocation = button.data("printer-location");
+            console.log(printerName);
+            console.log(printerLocation);
+            var modal = $(this);
+            console.log($("#printerName"));
+            $("#printerName").attr("value", printerName);
+            $("#printerLocation").attr("value", printerLocation);
+            $("#printerID").attr("value", printerID);
+            $("#fileList").attr("value", selectedFileIDs.join(","));
+            $("#nameList").attr("value", selectedFileNames.join(","));
+            var chosenFiles = modal.find("#selected-files");
+            chosenFiles.empty();
+            for (var i = 0; i < selectedFileIDs.length; i++) {
+                chosenFiles.append(
+                    $("<li>")
+                        .html(selectedFileNames[i])
+                        .addClass("list-group-item")
+                );
+            }
+        });
+
+        $("#finishJob").on("show.bs.modal", function (event) {
+            var button = $(event.relatedTarget);
+            var attemptID = button.data("attempt-id");
+            var modal = $(this);
+            $("#attemptID").attr("value", attemptID);
+        });
+
+        $(".file-select").click(function () {
+            var thisFileID = $(this).attr("fileID");
+            var thisFileName = $(this).html();
+            if ($(this).hasClass("active")) {
+                $(this).removeClass("active");
+
+                const indexID = selectedFileIDs.indexOf(thisFileID);
+                if (indexID > -1) {
+                    selectedFileIDs.splice(indexID, 1);
+                }
+
+                const indexName = selectedFileNames.indexOf(thisFileName);
+                if (indexName > -1) {
+                    selectedFileNames.splice(indexName, 1);
+                }
+            } else {
+                $(this).addClass("active");
+                selectedFileIDs.push(thisFileID);
+                selectedFileNames.push(thisFileName);
+            }
+
+            if (selectedFileIDs.length > 0) {
+                $(".start-job").prop("disabled", false);
+            } else {
+                $(".start-job").prop("disabled", true);
+            }
+        });
+    </script>
+</html>

@@ -1,0 +1,253 @@
+<form action="/prints/singleReview" method="post" enctype="multipart/form-data">
+    <div class="hiddenExtras" style="display: none">
+        <input type="text" name="fileID" value="<%= print._id%>" />
+    </div>
+
+    <div class="form-group">
+        <div class="form-row">
+            <label class="col-3 col-form-label">Review Descision</label>
+            <div class="col">
+                <select
+                    class="form-control"
+                    id="decision"
+                    name="decision"
+                    required
+                >
+                    <%if (print.review.descision == "Rejected") {%>
+                    <option value="rejected">Rejected</option>
+                    <option value="accepted">Accepted</option>
+
+                    <%} else {%>
+                    <option value="accepted">Accepted</option>
+                    <option value="rejected">Rejected</option>
+                    <%}%>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="accepted-controls">
+        <hr />
+        <div class="form-group">
+            <label class="mb-0">Estimated Time and Weight</label>
+            <label class="small text-muted"
+                >Total weight and duration will be calculated based on
+                estimations for the given number of copies.</label
+            >
+            <div class="form-row mb-3">
+                <input
+                    type="hidden"
+                    name="fileName"
+                    value="<%=print.fileName%>"
+                />
+                <div class="col">
+                    <label class="text-muted">Hours</label>
+                    <input
+                        onClick="this.select();"
+                        type="number"
+                        id="hoursInput"
+                        class="form-control"
+                        name="hours"
+                        placeholder="Hours"
+                        value="<%=print.review.slicedHours || 0%>"
+                        required
+                    />
+                </div>
+                <div class="col">
+                    <label class="text-muted">Minutes</label>
+
+                    <input
+                        onClick="this.select();"
+                        type="number"
+                        id="minutesInput"
+                        class="form-control"
+                        name="minutes"
+                        placeholder="Minutes"
+                        value="<%=print.review.slicedMinutes || 0%>"
+                        required
+                    />
+                </div>
+                <div class="col">
+                    <label class="text-muted">Grams</label>
+                    <input
+                        onClick="this.select();"
+                        type="number"
+                        id="gramsInput"
+                        class="form-control"
+                        name="grams"
+                        placeholder="Weight"
+                        value="<%=print.review.slicedGrams || 0%>"
+                        required
+                    />
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="mb-2">
+            <div class="form-row">
+                <label class="col-3 col-form-label">Print Location</label>
+                <div class="col">
+                    <select
+                        class="form-control"
+                        id="locationSelector"
+                        name="printLocation"
+                        required
+                    >
+                        <!-- prettier-ignore -->
+                        <% if (print.status == "REVIEWED") { %>
+                        <!-- prettier-ignore -->
+
+                        <% if (print.review.printLocation == "Willis Library") { %>
+                        <option value="Willis Library">Willis Library</option>
+                        <option value="Discovery Park">Discovery Park</option>
+                        <%} else {%>
+                        <option value="Discovery Park">Discovery Park</option>
+                        <option value="Willis Library">Willis Library</option>
+                        <%}%>
+                        <!-- prettier-ignore -->
+
+                        <% } else {%>
+                        <!-- prettier-ignore -->
+
+                        <% if (print.review.pickupLocation == "Willis Library") { %>
+                        <option value="Willis Library">Willis Library</option>
+                        <option value="Discovery Park">Discovery Park</option>
+                        <%} else {%>
+                        <option value="Discovery Park">Discovery Park</option>
+                        <option value="Willis Library">Willis Library</option>
+                        <%}%> <% } %>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-2">
+            <div class="form-row">
+                <label class="col-3 col-form-label">Slicing Details</label>
+                <div class="col">
+                    <select
+                        class="form-control"
+                        id="slicedPrinter"
+                        name="printer"
+                        required
+                    >
+                        <option <%=(print.review.slicedPrinter=='Ender 5 Pro'?'selected':'')%>>Ender 5 Pro</option>
+                        <option <%=(print.review.slicedPrinter=='Ender 3'?'selected':'')%>>Ender 3</option>
+                        <option <%=(print.review.slicedPrinter=='Prusa i3 MK3'?'selected':'')%>>Prusa i3 MK3</option>
+                        <option <%=(print.review.slicedPrinter=='PolyPrinter 229'?'selected':'')%>>PolyPrinter 229</option>
+                        <option <%=(print.review.slicedPrinter=='Other (write in technician notes)'?'selected':'')%>>Other (write in technician notes)</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="material"
+                        placeholder="Sliced for material..."
+                        value="<%=print.review.slicedMaterial%>"
+                        required
+                    />
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <div class="form-row">
+                <label class="col-3 col-form-label">GCODE File</label>
+                <div class="col">
+                    <!-- prettier-ignore -->
+                    <div class="custom-file" id="customFile" lang="es">
+                        <input 
+                            name="uploadedFile" 
+                            type="file"
+                            class="custom-file-input" 
+                            id="gcodeFile"
+                            previous-gcode="<%=print.review.gcodeName%>"
+                            aria-describedby="fileHelp" 
+                            data-toggle="popover"
+                            data-placement="right" 
+                            data-trigger="focus"
+                            data-content="File must be a GCODE file!"
+                        />
+                        <label class="custom-file-label" for="gcodeFile">
+                            <%=(print.review.gcodeName.length >
+                            1?print.review.gcodeName:"Upload GCODE")%>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+
+        <div class="form-group">
+            <label for="technotes">Technician Notes</label>
+            <textarea
+                name="technotes"
+                placeholder="These are internal notes for other team members, and will not be sent to the patron. It might be helpful to include details on how you sliced this file!"
+                class="form-control"
+                rows="5"
+            ></textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="patronNotes">Notes to Patron</label>
+        <!-- prettier-ignore -->
+        <textarea
+            name="patronNotes"
+            placeholder="This is what will be sent to the patron."
+            class="form-control"
+            rows="5"
+        ><%= print.review.patronNotes%></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-block btn-success submit-btn">
+        Submit
+    </button>
+</form>
+
+<script>
+    var initDecision = $("#decision").children("option:selected").val();
+    var originalGcode = `<%=print.review.gcodeName%>`;
+    changeDecision(initDecision);
+
+    $("#decision").change(function () {
+        //may change if other request types need extra options
+        changeDecision($(this).val());
+    });
+
+    $(".custom-file-input").on("change", function () {
+        if (
+            $(this)
+                .val()
+                .substring($(this).val().length - 6)
+                .toUpperCase() != ".GCODE"
+        ) {
+            $(this).attr("type", "text");
+            $(this).attr("type", "file");
+            $(this).popover({
+                trigger: "focus",
+            });
+            $(this).popover("show");
+        } else {
+            $(this).popover("hide");
+            let fileName = $(this).val().split("\\").pop();
+            $(this)
+                .siblings(".custom-file-label")
+                .addClass("selected")
+                .html(fileName);
+        }
+    });
+
+    function changeDecision(decision) {
+        if (decision == "accepted") {
+            $(".accepted-controls").show();
+            $("#gcodeFile").prop(
+                "required",
+                originalGcode.length > 1 ? false : true
+            );
+        } else {
+            $(".accepted-controls").hide();
+            $(".accepted-controls input").prop("required", false);
+        }
+    }
+</script>

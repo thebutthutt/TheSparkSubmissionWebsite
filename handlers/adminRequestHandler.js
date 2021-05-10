@@ -1,6 +1,6 @@
 const moment = require("moment");
 const constants = require("../app/constants");
-var printRequestModel = require("../app/models/printRequest");
+var printRequestModel = require("../app/models/newPrintRequest");
 //var cleRequestModel = require("../app/models/cleRequest");
 
 module.exports = {

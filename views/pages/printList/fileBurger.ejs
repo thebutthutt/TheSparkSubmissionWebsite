@@ -1,0 +1,58 @@
+<span class="dropright icon-btn">
+    <svg
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        class="bi bi-three-dots-vertical"
+        width="1em"
+        height="1em"
+        viewBox="0 0 16 16"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <path
+            fill-rule="evenodd"
+            d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"
+        />
+    </svg>
+    <div class="dropdown-menu">
+        <a
+            class="dropdown-item"
+            href='<%="/prints/download?fileID=" +  file.fileName%>'
+            >Download</a
+        >
+        <a class="dropdown-item preview-btn" id="<%= file._id%>" href="#"
+            >Review</a
+        >
+
+        <% if (file.isPendingDelete) { %>
+        <a class="dropdown-item undo-delete-btn" id="<%= file._id%>" href="#"
+            >Undo Delete Request</a
+        >
+        <%} else { %>
+        <a
+            class="dropdown-item delete-btn"
+            id="<%= file._id%>"
+            issuperadmin="<%=isSuperAdmin%>"
+            href="#"
+            >Delete</a
+        >
+        <% } %> <% if (file.status=='PENDING_PAYMENT') { %>
+        <a class="dropdown-item resend-btn" id="<%= item._id%>" href="#"
+            >Resend Payment Email</a
+        >
+        <% if (file.payment.isPendingWaive) { %>
+        <a class="dropdown-item undo-waive-btn" id="<%= item._id%>" href="#"
+            >Undo Waive Payment Request</a
+        >
+        <%} else { %>
+        <a
+            class="dropdown-item waive-btn"
+            id="<%= item._id%>"
+            issuperadmin="<%=isSuperAdmin%>"
+            href="#"
+            >Waive Payment</a
+        >
+        <%}%> <%}%>
+    </div>
+</span>

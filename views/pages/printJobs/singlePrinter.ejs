@@ -1,0 +1,49 @@
+<div class="card h-100 <%=thisPrinter.runningJobID!=null?'alert-success':''%>">
+    <img
+        src="<%=(thisPrinter.printerBarcode!=null||thisPrinter.printerType.toLowerCase().includes('ender')&&thisPrinter.printerType.includes('3')?'/public/images/ender3.jpg'
+            :thisPrinter.printerType.toLowerCase().includes('ender')&&thisPrinter.printerType.includes('5')?'/public/images/ender5.jpg'
+            :thisPrinter.printerType.includes('229')?'/public/images/poly229.png'
+            :thisPrinter.printerType.toLowerCase().includes('prusa')?'/public/images/prusa.jpg'
+            :thisPrinter.printerType.toLowerCase().includes('poly')&&thisPrinter.printerType.toLowerCase().includes('dual')?'/public/images/polydual.jpg'
+            :'/public/images/generic.png')%>"
+        style="
+            position: absolute;
+            right: 0.2rem;
+            top: 0.2rem;
+            width: 2em;
+            height: auto;
+        "
+        alt="printer image"
+    />
+    <div class="card-body">
+        <h5 class="card-title"><%=thisPrinter.printerName%></h5>
+        <!-- prettier-ignore -->
+        <%if (!thisPrinter.runningJobID) {%>
+        <button
+            type="button"
+            class="btn btn-light btn-block start-job"
+            data-toggle="modal"
+            data-target="#exampleModal"
+            data-printer="<%=thisPrinter.printerName%>"
+            data-printer-id="<%=thisPrinter._id%>"
+            data-printer-location="<%=thisPrinter.printerLocation%>"
+        >
+            Start New Attempt
+        </button>
+        <%} else {%>
+        <!-- prettier-ignore -->
+        <%for (var thisFile of thisPrinter.printJob[0].fileNames) {%>
+        <p><%=thisFile%></p>
+        <%}%>
+        <button
+            type="button"
+            class="btn btn-success btn-block"
+            data-toggle="modal"
+            data-attempt-id="<%=thisPrinter.runningJobID%>"
+            data-target="#finishJob"
+        >
+            Finish Job
+        </button>
+        <%}%>
+    </div>
+</div>

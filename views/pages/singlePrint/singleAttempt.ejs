@@ -1,0 +1,69 @@
+<li class="list-group-item">
+    <button
+        class="btn btn-block text-left text-reset p-0"
+        type="button"
+        data-toggle="collapse"
+        id="heading<%=index%>"
+        data-target="#collapse<%=index%>"
+        aria-expanded="<%=!thisAttempt.isFinished?'true':'false'%>"
+        aria-controls="collapse<%=index%>"
+    >
+        <h6 class="mb-0 float-left">
+            Attempt #<%=index%> - <%=!thisAttempt.isFinished?'In Progress'
+            :thisAttempt.isFailure?'Failed'
+            :thisAttempt.isSuccess?'Success':''%>
+        </h6>
+
+        <a href="/printers/jobs" class="float-right">Update Attempt</a>
+    </button>
+
+    <div
+        id="collapse<%=index%>"
+        class="collapse <%=!thisAttempt.isFinished?'show':''%>"
+        aria-labelledby="heading<%=index%>"
+        data-parent="#attempts"
+    >
+        <table class="table table-sm table-borderless mb-0 mt-2">
+            <tbody>
+                <tr>
+                    <th scope="row">Status</th>
+                    <td>
+                        <%=!thisAttempt.isFinished?'In Progress'
+                        :thisAttempt.isFailure?'Failed'
+                        :thisAttempt.isSuccess?'Success':''%>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Printer</th>
+                    <td>
+                        <%=thisAttempt.printerName%> - <%=thisAttempt.location%>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Filament</th>
+                    <td><%=thisAttempt.rollID%></td>
+                </tr>
+                <tr>
+                    <th scope="row">Started</th>
+                    <td>
+                        <%=thisAttempt.timestampStarted.toLocaleDateString('en-US')%>
+                        - <%=thisAttempt.timestampStarted.toLocaleTimeString([],
+                        {hour: '2-digit', minute:'2-digit'})%> -
+                        <%=thisAttempt.startedBy%>
+                    </td>
+                </tr>
+                <%if (thisAttempt.isFinished) {%>
+                <tr>
+                    <th scope="row">Ended</th>
+                    <td>
+                        <%=thisAttempt.timestampEnded.toLocaleDateString('en-US')%>
+                        - <%=thisAttempt.timestampEnded.toLocaleTimeString([],
+                        {hour: '2-digit', minute:'2-digit'})%> -
+                        <%=thisAttempt.finishedBy%>
+                    </td>
+                </tr>
+                <%}%>
+            </tbody>
+        </table>
+    </div>
+</li>

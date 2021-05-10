@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ("../../partials/head") %>
+        <link
+            type="text/css"
+            rel="stylesheet"
+            href="../../public/css/prints.css"
+        />
+        <script src="../public/js/prints.js"></script>
+
+        <style>
+            th {
+                border-top: none !important;
+            }
+
+            .highlight-card {
+                box-shadow: 0 0 10px 6px rgb(0 133 62 / 20%),
+                    0 0 0 0.1rem rgb(0 133 62 / 31%) !important;
+                background-color: rgb(235, 255, 244);
+            }
+
+            .spacer-row {
+                background-color: #f0f0f0;
+            }
+
+            .spacer-row td {
+                padding: 5px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <%- include ("../../partials/header") %> <% if (printPage == 'all') {var
+        isall = true} else {var isall = false}%> <%var i = 0%>
+        <div class="container-fluid mt-5 px-5" style="margin-bottom: 100px">
+            <div class="row">
+                <div class="col-auto"><%- include ("./printNav") %></div>
+                <div class="col">
+                    <%if (dbdata.length < 1) {%>
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <h5 class="mb-0">No Items</h5>
+                        </div>
+                        <div class="card-body">Nothing here</div>
+                    </div>
+                    <%}%> <%dbdata.forEach(function (item) {%>
+                    <div
+                        class="card shadow mb-3 <%=(item.allFilesReviewed && printPage=='newSub'?'highlight-card':'')%>"
+                    >
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <%= item.patron.fname %> <%= item.patron.lname
+                                %> &nbsp; &nbsp;
+                                <button
+                                    type="button"
+                                    style="
+                                        border: none;
+                                        background: transparent;
+                                    "
+                                    data-toggle="tooltip"
+                                    data-placement="right"
+                                    title="Download all files in this submission"
+                                    class="zip-btn p-0"
+                                    id="<%= item._id%>"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        style="vertical-align: unset"
+                                        width="16"
+                                        height="16"
+                                        fill="currentColor"
+                                        class="bi bi-save"
+                                        viewBox="0 0 16 16"
+                                    >
+                                        <path
+                                            d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"
+                                        />
+                                    </svg>
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <table
+                                        class="table table-borderless table-sm"
+                                    >
+                                        <tr>
+                                            <td class="pl-0 text-muted">
+                                                Submitted
+                                            </td>
+                                            <td>
+                                                <%=item.timestampSubmitted.toLocaleDateString('en-US')%>
+                                            </td>
+                                            <td>
+                                                <%=item.timestampSubmitted.toLocaleTimeString('en-US',
+                                                { hour: 'numeric', minute:
+                                                '2-digit' })%>
+                                            </td>
+                                        </tr>
+                                        <!-- prettier-ignore -->
+                                        <%if (printPage != "newSub") { %>
+                                        <tr>
+                                            <td class="pl-0 text-muted">
+                                                Reviewed
+                                            </td>
+                                            <td>
+                                                <%=item.timestampPaymentRequested.toLocaleDateString('en-US')%>
+                                            </td>
+                                            <td>
+                                                <%=item.timestampPaymentRequested.toLocaleTimeString('en-US',
+                                                { hour: 'numeric', minute:
+                                                '2-digit' })%>
+                                            </td>
+                                        </tr>
+                                        <%}%>
+
+                                        <!-- prettier-ignore -->
+                                        <%if (printPage != "newSub" && printPage != "pendpay" && printPage != "rejected") { %>
+                                        <tr>
+                                            <td class="pl-0 text-muted">
+                                                Paid
+                                            </td>
+                                            <td>
+                                                <%=item.timestampPaid.toLocaleDateString('en-US')%>
+                                            </td>
+                                            <td>
+                                                <%=item.timestampPaid.toLocaleTimeString('en-US',
+                                                { hour: 'numeric', minute:
+                                                '2-digit' })%>
+                                            </td>
+                                        </tr>
+                                        <%}%>
+                                    </table>
+                                    <%if (printPage == 'newSub'){%>
+                                    <%if(!item.allFilesReviewed){%>
+                                    <span
+                                        class="d-inline-block"
+                                        tabindex="0"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="<% if (!item.allFilesReviewed) { %> Please review all files first! <%} else {%>Send to Patron<% } %>"
+                                    >
+                                        <svg
+                                            class="bi bi-person-check"
+                                            width="25px"
+                                            height="25px"
+                                            viewBox="0 0 16 16"
+                                            fill="#aaa"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z"
+                                            />
+                                            <rect
+                                                width="3"
+                                                height="3"
+                                                x="2"
+                                                y="9"
+                                                rx="1"
+                                            />
+                                            <path d="M1 5h14v2H1z" />
+                                        </svg>
+                                        <%} else {%>
+                                        <button
+                                            type="button"
+                                            style="
+                                                border: none;
+                                                background: transparent;
+                                            "
+                                            class="submit-btn p-0"
+                                            id="<%= item._id%>"
+                                        >
+                                            <svg
+                                                class="bi bi-person-check"
+                                                width="25px"
+                                                height="25px"
+                                                viewBox="0 0 16 16"
+                                                fill="#000"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z"
+                                                />
+                                                <rect
+                                                    width="3"
+                                                    height="3"
+                                                    x="2"
+                                                    y="9"
+                                                    rx="1"
+                                                />
+                                                <path d="M1 5h14v2H1z" />
+                                            </svg>
+                                        </button>
+                                    </span>
+                                    <%}%> <%}%> <%if (printPage == 'pendpay' &&
+                                    item.isPendingWaive && isSuperAdmin) {%>
+                                    <button
+                                        class="mt-3 btn btn-warning waive-submission"
+                                        submissionID="<%=item._id%>"
+                                    >
+                                        Waive Submission
+                                    </button>
+                                    <%}%> <%if (printPage == 'pickup') {%>
+                                    <button
+                                        class="mt-3 btn btn-success"
+                                        data-toggle="modal"
+                                        data-target="#modalPickup"
+                                        data-submissionid="<%=item._id%>"
+                                    >
+                                        Pickup Full Submission
+                                    </button>
+                                    <%}%>
+                                </div>
+                                <div class="col">
+                                    <table
+                                        class="table <%=(item.allFilesReviewed && printPage=='newSub'?'bg-transparent':'')%>"
+                                        style="margin-top: -0.75rem"
+                                    >
+                                        <thead>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <!-- prettier-ignore -->
+                                                <%if (printPage == 'newSub') {%>
+                                                <th>Review Status</th>
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'pendpay') { %>
+                                                <th>Payment Type</th>
+                                                <th>Requested Price</th>
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'ready') { %>
+                                                <th>Material</th>
+                                                <%if (sparkLocation == 'all')
+                                                {%>
+                                                <th>Reviewed For</th>
+                                                <%}%>
+                                                <th>Attempts</th>
+                                                <th>Estimated Time</th>
+                                                <th>Calculated Volume</th>
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'printing') { %>
+                                                <th>Location</th>
+                                                <th>Current Attempt</th>
+                                                <th>Time Started</th>
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'inTransit') { %>
+                                                <th>Completed On</th>
+                                                <th>Destination</th>
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'pickup') { %>
+                                                <th>Pick Up</th>
+                                                <%if (sparkLocation == 'all')
+                                                {%>
+                                                <th>Pickup At</th>
+                                                <%}%>
+                                                <th>Completed</th>
+                                                <th>Location</th>
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'completed') { %>
+                                                <th>Picked Up</th>
+                                                <th>Payment Type</th>
+                                                <th>Amount Paid</th>
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'rejected') { %>
+                                                <th>Rejected On</th>
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'all') { %>
+                                                <th>Status</th>
+                                                <%}%>
+                                                <th>More</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <%i = 0%> <%
+                                            item.files.forEach(function (file)
+                                            {%>
+                                            <tr>
+                                                <td style="width: 25%">
+                                                    <a
+                                                        class="no font-weight-bold"
+                                                        href='<%= "/prints/preview?fileID=" + file._id%>'
+                                                    >
+                                                        <%=file.originalFileName%>
+                                                    </a>
+                                                </td>
+
+                                                <!-- --------------------------- New Submissions --------------------------- -->
+
+                                                <!-- prettier-ignore -->
+                                                <%if (printPage == 'newSub') {%>
+                                                <td>
+                                                    <%=file.status=='UNREVIEWED'?'Unreviewed':file.review.descision%>
+                                                </td>
+
+                                                <!-- --------------------------- Pending Payment --------------------------- -->
+
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'pendpay') { %>
+                                                <td>
+                                                    <!-- prettier-ignore -->
+                                                    <%=file.payment.isPendingWaive?'Pending Waive':'Payment Required'%>
+                                                </td>
+                                                <td>
+                                                    $<%=file.payment.price.toFixed(2)%>
+                                                </td>
+
+                                                <!-- --------------------------- Ready to Print ---------------------------- -->
+
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'ready') { %>
+                                                <td>
+                                                    <!-- prettier-ignore -->
+                                                    <%=
+                                                        (file.request.color == 'Any Color' && file.request.material == 'Any Material' ?
+                                                            'Any Filament'
+                                                            :(file.request.color != 'Any Color'?file.request.color:'') + ' ' + (file.request.material != 'Any Material'?file.request.material:'')
+                                                        )
+                                                    %>
+                                                </td>
+                                                <%if (sparkLocation == 'all')
+                                                {%>
+                                                <td>
+                                                    <%=file.review.printLocation%>
+                                                </td>
+                                                <%}%>
+                                                <td>
+                                                    <%=file.printing.attemptIDs.length%>
+                                                </td>
+                                                <td>
+                                                    <%=file.review.slicedHours%>h
+                                                    <%=file.review.slicedMinutes%>m
+                                                </td>
+                                                <td>
+                                                    <%=file.review.calculatedVolumeCm.toFixed(2)%>
+                                                    cm<sup>3</sup>
+                                                </td>
+
+                                                <!-- ------------------------------ Printing ------------------------------- -->
+
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'printing') { %>
+                                                <td>
+                                                    <%=file.attempt.printerName%>
+                                                    at
+                                                    <%=file.attempt.location%>
+                                                </td>
+                                                <td>
+                                                    <%=file.printing.attemptIDs.length%>
+                                                </td>
+                                                <td>
+                                                    <%=file.attempt.timestampStarted.toLocaleDateString('en-US')
+                                                    + " " +
+                                                    file.attempt.timestampStarted.toLocaleTimeString('en-US',{
+                                                    hour: 'numeric',
+                                                    minute:'2-digit' })%>
+                                                </td>
+
+                                                <!-- ----------------------------- In Transit ------------------------------ -->
+
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'inTransit') { %>
+                                                <td>
+                                                    <%=file.printing.timestampPrinted.toLocaleDateString('en-US')
+                                                    + " " +
+                                                    file.printing.timestampPrinted.toLocaleTimeString('en-US',{
+                                                    hour: 'numeric',
+                                                    minute:'2-digit' })%>
+                                                </td>
+                                                <td>
+                                                    <%=file.request.pickupLocation%>
+                                                </td>
+                                                <!-- prettier-ignore -->
+
+                                                <!-- -------------------------- Ready For Pickup --------------------------- -->
+
+                                                <%} else if (printPage ==
+                                                'pickup') { %>
+                                                <td>
+                                                    <button
+                                                        class="btn btn-primary"
+                                                        data-toggle="modal"
+                                                        data-target="#modalPickup"
+                                                        data-filename="<%=file.originalFileName%>"
+                                                        data-fileid="<%=file._id%>"
+                                                    >
+                                                        Pick Up
+                                                    </button>
+                                                </td>
+                                                <%if (sparkLocation == 'all')
+                                                {%>
+                                                <td>
+                                                    <%=file.request.pickupLocation%>
+                                                </td>
+                                                <%}%>
+
+                                                <td>
+                                                    <%=file.printing.timestampPrinted.toLocaleDateString('en-US')
+                                                    + " " +
+                                                    file.printing.timestampPrinted.toLocaleTimeString('en-US',{
+                                                    hour: 'numeric',
+                                                    minute:'2-digit' })%>
+                                                </td>
+                                                <td>
+                                                    <%=file.pickup.timestampArrivedAtPickup.toLocaleDateString('en-US')
+                                                    + " " +
+                                                    file.pickup.timestampArrivedAtPickup.toLocaleTimeString('en-US',{
+                                                    hour: 'numeric',
+                                                    minute:'2-digit' })%>
+                                                </td>
+
+                                                <!-- ------------------------------ Completed ------------------------------ -->
+
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'completed') { %>
+                                                <td>
+                                                    <%=file.pickup.timestampPickedUp.toLocaleDateString('en-US')
+                                                    + " " +
+                                                    file.pickup.timestampPickedUp.toLocaleTimeString('en-US',{
+                                                    hour: 'numeric',
+                                                    minute:'2-digit' })%>
+                                                </td>
+                                                <th>Payment Type</th>
+                                                <th>Amount Paid</th>
+
+                                                <!-- ------------------------------ Rejected ------------------------------- -->
+
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'rejected') { %>
+                                                <th>Rejected On</th>
+
+                                                <!-- ----------------------------- All Prints ------------------------------ -->
+
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'all') { %>
+                                                <th>Status</th>
+                                                <%}%>
+                                                <td style="width: 11%">
+                                                    <%- include ("./fileBurger",
+                                                    {file:file, item:item}) %>
+                                                </td>
+                                            </tr>
+
+                                            <%i++%> <%})%>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <%})%>
+                </div>
+            </div>
+        </div>
+        <%- include ("../singlePrint/pickupModal") %> <%- include
+        ("../../partials/footer") %>
+    </body>
+    <script>
+        $(".waive-submission").on("click", function () {
+            var submissionID = $(this).attr("submissionID");
+            $.ajax({
+                method: "POST",
+                url: "/prints/waive",
+                data: {
+                    submissionID: submissionID,
+                },
+                dataType: "json",
+            }).done(function () {
+                location.reload();
+            });
+        });
+    </script>
+</html>

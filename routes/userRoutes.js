@@ -1,6 +1,6 @@
 const fs = require("fs");
 var path = require("path");
-var printRequestModel = require("../app/models/printRequest");
+var printRequestModel = require("../app/models/newPrintRequest");
 var userModel = require("../app/models/user");
 
 module.exports = function (app, passport) {
@@ -55,40 +55,102 @@ module.exports = function (app, passport) {
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get("/profile", isLoggedIn, function (req, res) {
-        //database cleanup
-        // var numNew;
-        // var numPrint;
-        // var whitelist = null;
-        // if (req.user.isSuperAdmin) {
-        //     let rawdata = fs.readFileSync(
-        //         path.join(__dirname, "../app/whitelist.txt")
-        //     );
-        //     whitelist = JSON.parse(rawdata);
-        // }
-
         printRequestModel.aggregate(
             [
                 {
-                    $set: {
-                        files: {
-                            $filter: {
-                                input: "$files",
-                                as: "item",
-                                cond: { $eq: ["$$item.isInTransit", true] },
+                    $facet: {
+                        inTransit: [
+                            {
+                                $set: {
+                                    files: {
+                                        $filter: {
+                                            input: "$files",
+                                            as: "item",
+                                            cond: {
+                                                $eq: [
+                                                    "$$item.status",
+                                                    "IN_TRANSIT",
+                                                ],
+                                            },
+                                        },
+                                    },
+                                },
                             },
-                        },
+                            { $match: { "files.0": { $exists: true } } },
+                        ],
+                        pendingWaive: [
+                            {
+                                $set: {
+                                    files: {
+                                        $filter: {
+                                            input: "$files",
+                                            as: "item",
+                                            cond: {
+                                                $and: [
+                                                    {
+                                                        $eq: [
+                                                            "$$item.status",
+                                                            "PENDING_PAYMENT",
+                                                        ],
+                                                    },
+                                                    {
+                                                        $eq: [
+                                                            "$$item.payment.isPendingWaive",
+                                                            true,
+                                                        ],
+                                                    },
+                                                    {
+                                                        $eq: [
+                                                            "$$item.review.descision",
+                                                            "Accepted",
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                $set: {
+                                    numFiles: { $size: "$files" },
+                                },
+                            },
+                            { $match: { "files.0": { $exists: true } } },
+                        ],
+                        pendingDelete: [
+                            {
+                                $set: {
+                                    files: {
+                                        $filter: {
+                                            input: "$files",
+                                            as: "item",
+                                            cond: {
+                                                $eq: [
+                                                    "$$item.isPendingDelete",
+                                                    true,
+                                                ],
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            { $match: { "files.0": { $exists: true } } },
+                        ],
                     },
                 },
-                { $match: { "files.0": { $exists: true } } },
             ],
             function (err, data) {
+                console.log(data);
                 res.render("pages/users/profile", {
                     message: req.flash("logoutMessage"),
                     pgnum: 3, //tells the navbar what page to highlight
                     user: req.user, // get the user out of session and pass to template
                     isAdmin: true,
                     isSuperAdmin: req.user.isSuperAdmin,
-                    inTransit: data,
+                    inTransit: data[0].inTransit,
+                    pendingWaive: data[0].pendingWaive,
+                    pendingDelete: data[0].pendingDelete,
                 });
             }
         );
