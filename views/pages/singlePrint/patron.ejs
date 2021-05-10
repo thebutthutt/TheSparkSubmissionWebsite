@@ -74,25 +74,25 @@
                         <% if (submission.isForClass) {%>
                         <tr>
                             <th scope="row">Class Code:</th>
-                            <td><%=submission.classDetails.classCode%></td>
+                            <td><%=submission.classCode%></td>
                         </tr>
                         <tr>
                             <th scope="row">Professor:</th>
-                            <td><%=submission.classDetails.professor%></td>
+                            <td><%=submission.professor%></td>
                         </tr>
                         <tr>
                             <th scope="row">Project type:</th>
-                            <td><%=submission.classDetails.projectType%></td>
+                            <td><%=submission.projectType%></td>
                         </tr>
                         <!-- prettier-ignore -->
                         <%} else if (submission.isForDepartment) {%>
                         <tr>
                             <th scope="row">Class Code:</th>
-                            <td><%=submission.internalDetails.department%></td>
+                            <td><%=submission.department%></td>
                         </tr>
                         <tr>
                             <th scope="row">Professor:</th>
-                            <td><%=submission.internalDetails.project%></td>
+                            <td><%=submission.project%></td>
                         </tr>
 
                         <%}%>
