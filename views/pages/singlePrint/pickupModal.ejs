@@ -148,7 +148,7 @@
     });
 
     $(".connect-button").on("click", function () {
-        const ws = new WebSocket("wss://sparkorders.library.unt.edu:8080");
+        const ws = new WebSocket("wss://sparkorders.library.unt.edu");
         pickupLocation = $(this).attr("location");
         var printData = {
             fileID: fileID,

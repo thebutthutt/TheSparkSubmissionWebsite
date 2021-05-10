@@ -91,7 +91,7 @@
         }
 
         function connectWebSocket() {
-            ws = new WebSocket("wss://sparkorders.library.unt.edu:8080");
+            ws = new WebSocket("wss://sparkorders.library.unt.edu");
             ws.onopen = () => {
                 ws.send(
                     JSON.stringify({
