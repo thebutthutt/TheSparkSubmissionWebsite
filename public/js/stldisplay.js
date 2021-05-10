@@ -1,6 +1,6 @@
-import * as THREE from "/three/build/three.module.js";
-import { OrbitControls } from "/three/examples/jsm/controls/OrbitControls.js";
-import { STLLoader } from "/three/examples/jsm/loaders/STLLoader.js";
+import * as THREE from "/public/js/three/three.module.js";
+import { OrbitControls } from "/public/js/three/OrbitControls.js";
+import { STLLoader } from "/public/js/three/STLLoader.js";
 import { GUI } from "/gui/build/dat.gui.module.js";
 
 const fitCameraToObject = function (camera, object, offset, controls) {

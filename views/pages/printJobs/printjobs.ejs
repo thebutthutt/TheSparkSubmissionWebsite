@@ -47,10 +47,12 @@
                                     <div
                                         class="row row-cols-1 row-cols-sm-2 mx-n2"
                                     >
-                                        <%for (var thisPrinter of dpFull) {%>
+                                        <%for (var i = 0; i < dpFull.length;
+                                        i++) {%>
+                                        <!-- prettier-ignore -->
                                         <div class="col px-2 mb-3">
                                             <%- include('./singlePrinter.ejs',
-                                            {thisPrinter: thisPrinter})%>
+                                            {thisPrinter: dpFull[i], index: i, loc:"dpFull"})%>
                                         </div>
                                         <%}%>
                                     </div>
@@ -72,10 +74,11 @@
                                         class="row row-cols-1 row-cols-sm-2 mx-n2"
                                     >
                                         <!-- prettier-ignore -->
-                                        <%for (var thisPrinter of willisFull) {%>
+                                        <%for (var i = 0; i < willisFull.length; i++) {%>
+                                        <!-- prettier-ignore -->
                                         <div class="col px-2 mb-3">
                                             <%- include('./singlePrinter.ejs',
-                                            {thisPrinter: thisPrinter})%>
+                                            {thisPrinter: willisFull[i], index: i, loc:"willisFull"})%>
                                         </div>
                                         <%}%>
                                     </div>
@@ -97,10 +100,11 @@
                                         class="row row-cols-1 row-cols-sm-2 mx-n2"
                                     >
                                         <!-- prettier-ignore -->
-                                        <%for (var thisPrinter of selfService) {%>
+                                        <%for (var i = 0; i < selfService.length; i++) {%>
+                                        <!-- prettier-ignore -->
                                         <div class="col px-2 mb-3">
                                             <%- include('./singlePrinter.ejs',
-                                            {thisPrinter: thisPrinter})%>
+                                            {thisPrinter: selfService[i], index: i, loc:"selfService"})%>
                                         </div>
                                         <%}%>
                                     </div>
@@ -115,9 +119,17 @@
         <!-- prettier-ignore -->
         <%- include ("./startAttemptModal") %>
         <%- include ("./finishAttemptModal") %>
+        <%- include ("./detailsModal", {dpFull: dpFull, willisFull: willisFull, selfService: selfService}) %>
         <%- include ("../../partials/footer") %>
     </body>
     <script>
+        //prettier-ignore
+        var printerLists = {
+            dpFull: JSON.parse('<%- JSON.stringify(dpFull) %>'),
+            willisFull: JSON.parse('<%- JSON.stringify(willisFull) %>'),
+            selfService: JSON.parse('<%- JSON.stringify(selfService) %>'),
+        };
+
         var selectedFileIDs = [];
         var selectedFileNames = [];
         $(".start-job").prop("disabled", true);
@@ -154,6 +166,50 @@
             $("#attemptID").attr("value", attemptID);
         });
 
+        $("#detailsModal").on("show.bs.modal", function (event) {
+            var button = $(event.relatedTarget);
+            var list = button.data("printer-location");
+            var index = button.data("printer-index");
+            var modal = $(this);
+            var timestampStarted = new Date(
+                printerLists[list][index].printJob[0].timestampStarted
+            );
+            $("#attemptid").html(
+                printerLists[list][index].printJob[0].prettyID
+            );
+            $("#startedtime").html(
+                timestampStarted.toLocaleDateString("en-US", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                }) +
+                    " @ " +
+                    timestampStarted.toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                    })
+            );
+            $("#makereuid").html(
+                printerLists[list][index].printJob[0].startedBy
+            );
+            $("#printername").html(
+                printerLists[list][index].printJob[0].printerName
+            );
+            $("#printerlocation").html(
+                printerLists[list][index].printJob[0].location
+            );
+            $("#numfiles").html(
+                printerLists[list][index].printJob[0].fileNames.length
+            );
+            $("#files").html(
+                printerLists[list][index].printJob[0].fileNames.join("<br>")
+            );
+            $("#printSlip").attr(
+                "attemptID",
+                printerLists[list][index].printJob[0]._id
+            );
+        });
+
         $(".file-select").click(function () {
             var thisFileID = $(this).attr("fileID");
             var thisFileName = $(this).html();
@@ -180,6 +236,15 @@
             } else {
                 $(".start-job").prop("disabled", true);
             }
+        });
+
+        $("#printSlip").click(function () {
+            var attemptID = $(this).attr("attemptID");
+            $.ajax({
+                type: "POST",
+                url: "/attempts/reprint",
+                data: { attemptID: attemptID },
+            });
         });
     </script>
 </html>
