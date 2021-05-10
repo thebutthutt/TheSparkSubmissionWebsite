@@ -49,10 +49,10 @@ app.use(
 app.use(express.json());
 
 app.set("view engine", "ejs"); // set up ejs for templating
-app.use("/public", express.static(path.join(__dirname, "/public"))); //allow us to grab local files in the public directory
-app.use("/three", express.static(__dirname + "/node_modules/three/")); //allow website to access the three.js library
-app.use("/gui", express.static(__dirname + "/node_modules/dat.gui/")); //allow website to access the uploaded STLs (for in site display)
-app.use("/Uploads", express.static(path.join(__dirname, "../Uploads"))); //allow website to access the uploaded STLs (for in site display)
+app.use("/public/", express.static(path.join(__dirname, "/public"))); //allow us to grab local files in the public directory
+app.use("/three/", express.static(__dirname + "/node_modules/three")); //allow website to access the three.js library
+app.use("/gui/", express.static(__dirname + "/node_modules/dat.gui")); //allow website to access the uploaded STLs (for in site display)
+app.use("/Uploads/", express.static(path.join(__dirname, "../Uploads"))); //allow website to access the uploaded STLs (for in site display)
 
 app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 

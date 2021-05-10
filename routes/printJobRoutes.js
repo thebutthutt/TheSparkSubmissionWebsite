@@ -3,12 +3,29 @@ var fullServicePrinterModel = require("../app/models/fullServicePrinter");
 var selfServicePrinterModel = require("../app/models/selfServicePrinter");
 var printRequestModel = require("../app/models/newPrintRequest");
 var emailer = require("../app/emailer");
+var axios = require("axios");
+const { table } = require("table");
 
 module.exports = function (app) {
     app.get("/printers/jobs", isLoggedIn, async function (req, res) {
-        var allSelf = await selfServicePrinterModel
-            .find({})
-            .sort({ printerBarcode: 1 });
+        // get all self service printers and their currently running jobs
+        var allSelf = await selfServicePrinterModel.aggregate([
+            {
+                $lookup: {
+                    from: "attempts",
+                    localField: "runningJobID",
+                    foreignField: "_id",
+                    as: "printJob",
+                },
+            },
+            {
+                $sort: {
+                    printerBarcode: 1,
+                },
+            },
+        ]);
+
+        //get all willis printers with their current running jobs
         var willisFull = await fullServicePrinterModel.aggregate([
             { $match: { printerLocation: "Willis Library" } },
             {
@@ -20,6 +37,8 @@ module.exports = function (app) {
                 },
             },
         ]);
+
+        //get all DP printers with their current running jobs
         var dpFull = await fullServicePrinterModel.aggregate([
             { $match: { printerLocation: "Discovery Park" } },
             {
@@ -31,6 +50,8 @@ module.exports = function (app) {
                 },
             },
         ]);
+
+        //get all files ready to print
         var readyPrints = await printRequestModel.aggregate([
             {
                 $set: {
@@ -61,20 +82,34 @@ module.exports = function (app) {
 
     app.post("/attempts/start", isLoggedIn, async function (req, res) {
         /**
-         * printerID, printerName, printerLocation, rollID, startWeight, selectedFileIDs, selectedFileNames
+         * printerID,
+         * printerName,
+         * printerLocation,
+         * rollID,
+         * startWeight,
+         * selectedFileIDs,
+         * selectedFileNames
          */
+
+        //Grab filenames and IDs
         var selectedFiles = req.body.selectedFileIDs.split(",");
+        selectedFiles = selectedFiles.map((x) => x.trim());
+
         var selectedFileNames = req.body.selectedFileNames.split(",");
+        selectedFileNames = selectedFileNames.map((x) => x.trim());
 
+        //Generate unique ID
         var now = new Date();
-        var yearStart = new Date(now.getFullYear(), 0, 1);
-        var diffMilis = now - yearStart;
-        var diffMinutes = Math.round(diffMilis / 60000); //how many minutes since the year began
-        var minutesEncoded = diffMinutes.toString(36);
+        var diffMinutes = Math.round((now - (now.getFullYear(), 0, 1)) / 60000); //how many minutes since the year began
+        var attemptID =
+            req.body.printerName.replace(/\s+/g, "") +
+            "-" +
+            diffMinutes.toString(36);
 
+        //Create new attempt
         var newAttempt = new attemptModel({
-            prettyID: "",
-            timestampStarted: new Date(),
+            prettyID: attemptID,
+            timestampStarted: now,
             location: req.body.printerLocation,
             printerName: req.body.printerName,
             printerID: req.body.printerID,
@@ -86,12 +121,14 @@ module.exports = function (app) {
         });
         await newAttempt.save();
 
+        //set this printer current running attempt
         var thisPrinter = await fullServicePrinterModel.findOne({
             _id: req.body.printerID,
         });
         thisPrinter.runningJobID = newAttempt._id;
         await thisPrinter.save();
 
+        //update status of all selected files
         for await (var thisFileID of selectedFiles) {
             var thisSubmission = await printRequestModel.findOne({
                 "files._id": thisFileID,
@@ -103,9 +140,20 @@ module.exports = function (app) {
             await thisSubmission.save();
         }
 
+        //outsource reciept printing
         sendPrintSlip(newAttempt);
 
+        //done
         res.redirect("/printers/jobs");
+    });
+
+    app.post("/attempts/reprint", isLoggedIn, async function (req, res) {
+        try {
+            var thisAttempt = await attemptModel.findById(req.body.attemptID);
+            sendPrintSlip(thisAttempt);
+        } catch (err) {
+            console.log(err);
+        }
     });
 
     app.post("/attempts/finish", isLoggedIn, async function (req, res) {
@@ -171,15 +219,77 @@ module.exports = function (app) {
 };
 
 function sendPrintSlip(attempt) {
+    const attemptData = [
+        [
+            "Started",
+            attempt.timestampStarted.toLocaleDateString("en-US", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+            }) +
+                " @ " +
+                attempt.timestampStarted.toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                }),
+        ],
+        ["Maker", attempt.startedBy],
+        ["Printer", attempt.printerName],
+        ["Location", attempt.location],
+        ["Files", attempt.fileNames.length],
+    ];
+
+    const attemptConfig = {
+        drawVerticalLine: (lineIndex, columnCount) => {
+            return false;
+        },
+        drawHorizontalLine: (lineIndex, rowCount) => {
+            return (
+                lineIndex === 0 ||
+                lineIndex === 1 ||
+                lineIndex === 3 ||
+                lineIndex === rowCount - 1 ||
+                lineIndex === rowCount
+            );
+        },
+        columns: [
+            { alignment: "left", width: 8 },
+            { alignment: "right", width: 19 },
+        ],
+        header: {
+            alignment: "center",
+            content: attempt.prettyID,
+        },
+    };
+
+    var filesData = [];
+    for (var thisFile of attempt.fileNames) {
+        filesData.push([thisFile]);
+    }
+
+    const filesConfig = {
+        columns: [{ width: 30 }],
+        drawVerticalLine: (lineIndex, columnCount) => {
+            //return lineIndex === 0 || lineIndex === columnCount;
+            return false;
+        },
+        drawHorizontalLine: (lineIndex, rowCount) => {
+            return lineIndex === rowCount;
+        },
+    };
+
+    const finalTable =
+        table(attemptData, attemptConfig) +
+        table(filesData, filesConfig).trimEnd();
+
+    const finalLines = finalTable.split(/\r\n|\r|\n/);
     axios
-        .post("129.120.93.30:5000/print", {
-            lines: ["00112233445566778899aabbccddeeff", "LadyLavender07f3f9"],
-        })
+        .post("http://129.120.93.30:5000/print", { lines: finalLines })
         .then((res) => {
-            console.log("printed");
+            console.log("Printed");
         })
         .catch((error) => {
-            console.error(error);
+            console.error("Error Printing");
         });
 }
 

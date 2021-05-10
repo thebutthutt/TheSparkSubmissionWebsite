@@ -5,6 +5,84 @@ var printHandler = require("./handlers/printHandler.js");
 var emailer = require("./app/emailer.js");
 var payment = require("./app/payment.js");
 var path = require("path");
+const { table } = require("table");
+const axios = require("axios");
+var attemptModel = require("./app/models/attempt");
+
+// attemptModel.findById("6099668ef82e2ba364c64096", function (err, attempt) {
+//     const attemptData = [
+//         [
+//             "Started",
+//             attempt.timestampStarted.toLocaleDateString("en-US", {
+//                 day: "2-digit",
+//                 month: "2-digit",
+//                 year: "2-digit",
+//             }) +
+//                 " @ " +
+//                 attempt.timestampStarted.toLocaleTimeString("en-US", {
+//                     hour: "numeric",
+//                     minute: "2-digit",
+//                 }),
+//         ],
+//         ["Maker", attempt.startedBy],
+//         ["Printer", attempt.printerName],
+//         ["Location", attempt.location],
+//         ["Files", attempt.fileNames.length],
+//     ];
+
+//     const attemptConfig = {
+//         drawVerticalLine: (lineIndex, columnCount) => {
+//             return false;
+//         },
+//         drawHorizontalLine: (lineIndex, rowCount) => {
+//             return (
+//                 lineIndex === 0 ||
+//                 lineIndex === 1 ||
+//                 lineIndex === 3 ||
+//                 lineIndex === rowCount - 1 ||
+//                 lineIndex === rowCount
+//             );
+//         },
+//         columns: [
+//             { alignment: "left", width: 8 },
+//             { alignment: "right", width: 19 },
+//         ],
+//         header: {
+//             alignment: "center",
+//             content: attempt.prettyID,
+//         },
+//     };
+
+//     var filesData = [];
+//     for (var thisFile of attempt.fileNames) {
+//         filesData.push([thisFile]);
+//     }
+
+//     const filesConfig = {
+//         columns: [{ width: 30 }],
+//         drawVerticalLine: (lineIndex, columnCount) => {
+//             //return lineIndex === 0 || lineIndex === columnCount;
+//             return false;
+//         },
+//         drawHorizontalLine: (lineIndex, rowCount) => {
+//             return lineIndex === rowCount;
+//         },
+//     };
+
+//     const finalTable =
+//         table(attemptData, attemptConfig) +
+//         table(filesData, filesConfig).trimEnd();
+
+//     const finalLines = finalTable.split(/\r\n|\r|\n/);
+//     axios
+//         .post("http://129.120.93.30:5000/print", { lines: finalLines })
+//         .then((res) => {
+//             console.log("Printed");
+//         })
+//         .catch((error) => {
+//             console.error(error);
+//         });
+// });
 
 // console.log("here");
 

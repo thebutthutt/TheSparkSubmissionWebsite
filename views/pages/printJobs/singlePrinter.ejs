@@ -32,9 +32,17 @@
         </button>
         <%} else {%>
         <!-- prettier-ignore -->
-        <%for (var thisFile of thisPrinter.printJob[0].fileNames) {%>
-        <p><%=thisFile%></p>
-        <%}%>
+        <p>Printing <%=thisPrinter.printJob[0].fileNames.length%> files</p>
+        <button
+            type="button"
+            class="btn btn-primary btn-block"
+            data-toggle="modal"
+            data-printer-location="<%=loc%>"
+            data-printer-index="<%=index%>"
+            data-target="#detailsModal"
+        >
+            More Details
+        </button>
         <button
             type="button"
             class="btn btn-success btn-block"

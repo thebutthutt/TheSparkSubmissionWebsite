@@ -1,0 +1,51 @@
+<div
+    class="modal fade"
+    id="detailsModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <table class="table mb-0 border-bottom">
+                <thead>
+                    <tr>
+                        <th colspan="2" id="attemptid" class="border-top-0">
+                            Title
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Started:</td>
+                        <td id="startedtime"></td>
+                    </tr>
+                    <tr>
+                        <td>Maker:</td>
+                        <td id="makereuid"></td>
+                    </tr>
+                    <tr>
+                        <td>Printer:</td>
+                        <td id="printername"></td>
+                    </tr>
+                    <tr>
+                        <td>Location:</td>
+                        <td id="printerlocation"></td>
+                    </tr>
+                    <tr>
+                        <td>Files:</td>
+                        <td id="numfiles"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" id="files"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="modal-body">
+                <button class="btn btn-link" id="printSlip" attemptID="none">
+                    Print this attempt slip again?
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
