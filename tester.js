@@ -9,6 +9,161 @@ const { table } = require("table");
 const axios = require("axios");
 var attemptModel = require("./app/models/attempt");
 
+var migrationData = require("./printrequests.json");
+
+printRequestModel.find({}, function (err, results) {
+    for (var submission of results) {
+        for (var file of submission.files) {
+            if (
+                file.status == "WAITING_FOR_PICKUP" &&
+                file.printing.timestampPrinted < new Date("4/27/2021")
+            ) {
+                file.status = "STALE_ON_PICKUP";
+                console.log("0");
+            }
+        }
+        submission.save();
+    }
+});
+
+// for (var thisSubmission of migrationData) {
+//     var newSubmission = thisSubmission;
+//     var theseFiles = newSubmission.files;
+//     newSubmission.files = [];
+
+//     delete newSubmission._id;
+//     delete newSubmission.__v;
+//     delete newSubmission.patron._id;
+//     delete newSubmission.patron.__v;
+
+//     for (var [key, value] of Object.entries(newSubmission)) {
+//         if (key.includes("timestamp")) {
+//             newSubmission[key] = value["$date"];
+//         }
+//     }
+
+//     newSubmission.classCode = thisSubmission.classDetails.classCode;
+//     newSubmission.professor = thisSubmission.classDetails.professor;
+//     newSubmission.projectType = thisSubmission.classDetails.projectType;
+
+//     for (var thisFile of theseFiles) {
+//         delete thisFile._id;
+//         delete thisFile.__v;
+//         for (var [key, value] of Object.entries(thisFile)) {
+//             if (key.includes("timestamp")) {
+//                 thisFile[key] = value["$date"];
+//             }
+//         }
+
+//         if (thisFile.newTechNotes) {
+//             for (var thisNote of thisFile.newTechNotes) {
+//                 delete thisNote._id;
+//                 delete thisNote.__v;
+//                 thisNote.dateAdded = thisNote.dateAdded["$date"];
+//             }
+//         }
+
+//         var status;
+
+//         if (thisFile.isNewSubmission) {
+//             status = "UNREVIEWED";
+//         } else if (
+//             (thisFile.isPendingPayment || thisFile.isPendingWaive) &&
+//             !thisFile.isPaid
+//         ) {
+//             status = "PENDING_PAYMENT";
+//         } else if (thisFile.isReadyToPrint) {
+//             status = "READY_TO_PRINT";
+//         } else if (thisFile.isInTransit) {
+//             status = "IN_TRANSIT";
+//         } else if (thisFile.isPrinted && !thisFile.isPickedUp) {
+//             status = "WAITING_FOR_PICKUP";
+//         } else if (thisFile.isRejected) {
+//             status = "REJECTED";
+//         } else if (thisFile.isPickedUp) {
+//             status = "PICKED_UP";
+//         }
+
+//         thisFile.status = status;
+
+//         if (
+//             status == "PENDING_PAYMENT" &&
+//             thisFile.timestampReviewed < new Date("2021-04-29")
+//         ) {
+//             thisFile.status = "STALE_ON_PAYMENT";
+//         }
+
+//         if (
+//             status == "WAITING_FOR_PICKUP" &&
+//             thisFile.timestampPrinted < new Date("2021-04-29")
+//         ) {
+//             thisFile.status = "STALE_ON_PICKUP";
+//         }
+
+//         var newFile = {
+//             fileName: thisFile.fileName,
+//             originalFileName: thisFile.realFileName,
+//             status: status,
+//             request: {
+//                 timestampSubmitted: thisFile.timestampSubmitted,
+//                 material: thisFile.material,
+//                 infill: thisFile.infill,
+//                 color: thisFile.color,
+//                 notes: thisFile.notes,
+//                 pickupLocation: thisFile.pickupLocation,
+//             },
+//             review: {
+//                 descision: thisFile.isRejected ? "Rejected" : "Accepted",
+//                 reviewedBy: thisFile.approvedBy,
+//                 timestampReviewed: thisFile.timestampReviewed,
+//                 internalNotes: thisFile.newTechNotes,
+//                 patronNotes: thisFile.patronNotes,
+//                 slicedHours: thisFile.timeHours,
+//                 slicedMinutes: thisFile.timeMinutes,
+//                 slicedGrams: thisFile.grams,
+//                 gcodeName: thisFile.realGcodeName,
+//                 originalGcodeName: thisFile.originalGcodeName,
+//                 slicedPrinter: thisFile.slicedPrinter,
+//                 slicedMaterial: thisFile.slicedMaterial,
+//                 printLocation: thisFile.printLocation,
+//                 calculatedVolumeCm: thisFile.calculatedVolumeCm,
+//             },
+//             payment: {
+//                 isPendingWaive: thisFile.isPendingWaive ? true : false,
+//                 timestampPaymentRequested:
+//                     thisSubmission.timestampPaymentRequested,
+//                 timestampPaid: thisSubmission.timestampPaid,
+//                 paymentType: thisFile.overrideNotes.includes("waived")
+//                     ? "WAIVED"
+//                     : "PAID",
+//                 waivedBy: thisFile.overrideNotes.includes("waived")
+//                     ? "jkh0010"
+//                     : "",
+//                 price: thisFile.timeHours + thisFile.timeMinutes / 60 || 0,
+//             },
+//             printing: {
+//                 printingLocation: thisFile.printLocation,
+//                 attemptIDs: [],
+//                 timestampPrinted: thisFile.timestampPrinted,
+//             },
+//         };
+
+//         for (var i = 0; i < thisFile.copies; i++) {
+//             newSubmission.files.push(newFile);
+//         }
+//     }
+
+//     newSubmission.numFiles = newSubmission.files.length;
+
+//     var newSubmission = new printRequestModel(thisSubmission);
+
+//     // newSubmission.validate().catch((err) => {
+//     //     console.log(err);
+//     // });
+
+//     newSubmission.save();
+// }
+
 // attemptModel.findById("6099668ef82e2ba364c64096", function (err, attempt) {
 //     const attemptData = [
 //         [
