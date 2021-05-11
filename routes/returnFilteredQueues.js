@@ -606,6 +606,40 @@ module.exports = function (app) {
         );
     });
 
+    //show pending payment prints
+    app.get("/prints/pickupstale", isLoggedIn, function (req, res) {
+        //load the submission page and flash any messages
+        printRequestModel.aggregate(
+            [
+                {
+                    $set: {
+                        files: {
+                            $filter: {
+                                input: "$files",
+                                as: "item",
+                                cond: {
+                                    $eq: ["$$item.status", "STALE_ON_PICKUP"],
+                                },
+                            },
+                        },
+                    },
+                },
+                { $match: { "files.0": { $exists: true } } },
+            ],
+            function (err, data) {
+                //loading every single top level request FOR NOW
+                res.render("pages/printList/allPrints", {
+                    pgnum: 4, //prints
+                    dbdata: data,
+                    printPage: "pickupstale",
+                    sparkLocation: "all",
+                    isAdmin: true,
+                    isSuperAdmin: req.user.isSuperAdmin,
+                });
+            }
+        );
+    });
+
     //-----------------------ALL-----------------------
     app.get("/prints/all", isLoggedIn, function (req, res) {
         //load the submission page and flash any messages
