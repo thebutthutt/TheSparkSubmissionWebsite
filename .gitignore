@@ -9,3 +9,9 @@ node_modules
 package-lock.json
 logs/
 logs/*
+.gitignore
+Work.json
+printrequests.json
+tester.js
+New.json
+tester.js
