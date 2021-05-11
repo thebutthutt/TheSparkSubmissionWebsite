@@ -46,7 +46,14 @@
                     </div>
                     <%}%> <%dbdata.forEach(function (item) {%>
                     <div
-                        class="card shadow mb-3 <%=(item.allFilesReviewed && printPage=='newSub'?'highlight-card':'')%>"
+                        class="
+                            card
+                            shadow
+                            mb-3
+                            <%=(item.allFilesReviewed
+                            &&
+                            printPage=='newSub'?'highlight-card':'')%>
+                        "
                     >
                         <div class="card-header">
                             <h5 class="mb-0">
@@ -117,7 +124,7 @@
                                         <%}%>
 
                                         <!-- prettier-ignore -->
-                                        <%if (printPage != "newSub" && printPage != "pendpay" && printPage != "rejected") { %>
+                                        <%if (printPage != "newSub" && printPage != "pendpay" && printPage != "rejected" && printPage != "pendpaystale") { %>
                                         <tr>
                                             <td class="pl-0 text-muted">
                                                 Paid
@@ -199,7 +206,11 @@
                                     <%}%> <%}%> <%if (printPage == 'pendpay' &&
                                     item.isPendingWaive && isSuperAdmin) {%>
                                     <button
-                                        class="mt-3 btn btn-warning waive-submission"
+                                        class="
+                                            mt-3
+                                            btn btn-warning
+                                            waive-submission
+                                        "
                                         submissionID="<%=item._id%>"
                                     >
                                         Waive Submission
@@ -217,7 +228,12 @@
                                 </div>
                                 <div class="col">
                                     <table
-                                        class="table <%=(item.allFilesReviewed && printPage=='newSub'?'bg-transparent':'')%>"
+                                        class="
+                                            table
+                                            <%=(item.allFilesReviewed
+                                            &&
+                                            printPage=='newSub'?'bg-transparent':'')%>
+                                        "
                                         style="margin-top: -0.75rem"
                                     >
                                         <thead>
@@ -269,6 +285,12 @@
                                                 <!-- prettier-ignore -->
                                                 <%} else if (printPage == 'all') { %>
                                                 <th>Status</th>
+                                                <%} else if (printPage ==
+                                                'pickupstale') {%>
+                                                <th>Printed On</th>
+                                                <%} else if(printPage ==
+                                                'pendpaystale') {%>
+                                                <th>Reviewed On</th>
                                                 <%}%>
                                                 <th>More</th>
                                             </tr>
@@ -280,7 +302,10 @@
                                             <tr>
                                                 <td style="width: 25%">
                                                     <a
-                                                        class="no font-weight-bold"
+                                                        class="
+                                                            no
+                                                            font-weight-bold
+                                                        "
                                                         href='<%= "/prints/preview?fileID=" + file._id%>'
                                                     >
                                                         <%=file.originalFileName%>
@@ -422,14 +447,50 @@
                                                     hour: 'numeric',
                                                     minute:'2-digit' })%>
                                                 </td>
-                                                <th>Payment Type</th>
-                                                <th>Amount Paid</th>
+                                                <td>
+                                                    <%=file.payment.paymentType=="WAIVED"?"Waived":"Paid"%>
+                                                </td>
+                                                <td>
+                                                    <%=file.payment.paymentType=="WAIVED"?"$0.00":"$"
+                                                    +
+                                                    file.payment.price.toFixed(2)%>
+                                                </td>
+
+                                                <!-- ------------------------------ Pickup Stale ------------------------------ -->
+
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'pickupstale') { %>
+                                                <td>
+                                                    <%=file.payment.timestampPaymentRequested.toLocaleDateString('en-US')
+                                                    + " " +
+                                                    file.payment.timestampPaymentRequested.toLocaleTimeString('en-US',{
+                                                    hour: 'numeric',
+                                                    minute:'2-digit' })%>
+                                                </td>
+
+                                                <!-- ------------------------------ Payment Stale ------------------------------ -->
+
+                                                <!-- prettier-ignore -->
+                                                <%} else if (printPage == 'pendpaystale') { %>
+                                                <td>
+                                                    <%=file.review.timestampReviewed.toLocaleDateString('en-US')
+                                                    + " " +
+                                                    file.review.timestampReviewed.toLocaleTimeString('en-US',{
+                                                    hour: 'numeric',
+                                                    minute:'2-digit' })%>
+                                                </td>
 
                                                 <!-- ------------------------------ Rejected ------------------------------- -->
 
                                                 <!-- prettier-ignore -->
                                                 <%} else if (printPage == 'rejected') { %>
-                                                <th>Rejected On</th>
+                                                <td>
+                                                    <%=file.review.timestampReviewed.toLocaleDateString('en-US')
+                                                    + " " +
+                                                    file.review.timestampReviewed.toLocaleTimeString('en-US',{
+                                                    hour: 'numeric',
+                                                    minute:'2-digit' })%>
+                                                </td>
 
                                                 <!-- ----------------------------- All Prints ------------------------------ -->
 

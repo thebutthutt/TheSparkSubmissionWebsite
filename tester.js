@@ -11,20 +11,20 @@ var attemptModel = require("./app/models/attempt");
 
 var migrationData = require("./printrequests.json");
 
-printRequestModel.find({}, function (err, results) {
-    for (var submission of results) {
-        for (var file of submission.files) {
-            if (
-                file.status == "WAITING_FOR_PICKUP" &&
-                file.printing.timestampPrinted < new Date("4/27/2021")
-            ) {
-                file.status = "STALE_ON_PICKUP";
-                console.log("0");
-            }
-        }
-        submission.save();
-    }
-});
+// printRequestModel.find({}, function (err, results) {
+//     for (var submission of results) {
+//         for (var file of submission.files) {
+//             if (
+//                 file.status == "WAITING_FOR_PICKUP" &&
+//                 file.printing.timestampPrinted < new Date("4/27/2021")
+//             ) {
+//                 file.status = "STALE_ON_PICKUP";
+//                 console.log("0");
+//             }
+//         }
+//         submission.save();
+//     }
+// });
 
 // for (var thisSubmission of migrationData) {
 //     var newSubmission = thisSubmission;
