@@ -61,7 +61,7 @@ module.exports = {
         var recipient = submission.patron.email;
         var files = submission.files;
         var fileNames = files.map(function (file) {
-            return file.realFileName;
+            return file.originalFileName;
         });
         email
             .send({
@@ -82,11 +82,11 @@ module.exports = {
         var files = submission.files;
         var inputData = files.map(function (file) {
             return {
-                fileName: file.realFileName,
-                grams: file.slicedGrams,
-                timeHours: file.slicedHours,
-                timeMinutes: file.slicedMinutes,
-                notes: file.patronNotes,
+                fileName: file.originalFileName,
+                grams: file.review.slicedGrams,
+                timeHours: file.review.slicedHours,
+                timeMinutes: file.review.slicedMinutes,
+                notes: file.review.patronNotes,
             };
         });
         email
@@ -110,23 +110,23 @@ module.exports = {
         var files = submission.files;
 
         var acceptedFiles = files.reduce(function (result, file) {
-            if (file.isRejected == false) {
+            if (file.review.descision == "Accepted") {
                 result.push({
-                    fileName: file.realFileName,
-                    grams: file.slicedGrams,
-                    timeHours: file.slicedHours,
-                    timeMinutes: file.slicedMinutes,
-                    notes: file.patronNotes,
+                    fileName: file.originalFileName,
+                    grams: file.review.slicedGrams,
+                    timeHours: file.review.slicedHours,
+                    timeMinutes: file.review.slicedMinutes,
+                    notes: file.review.patronNotes,
                 });
             }
             return result;
         }, []);
 
         var rejectedFiles = files.reduce(function (result, file) {
-            if (file.isRejected == true) {
+            if (file.review.descision == "Rejected") {
                 result.push({
-                    fileName: file.realFileName,
-                    notes: file.patronNotes,
+                    fileName: file.originalFileName,
+                    notes: file.review.patronNotes,
                 });
             }
             return result;
@@ -158,8 +158,8 @@ module.exports = {
 
         var inputData = files.map(function (file) {
             return {
-                fileName: file.realFileName,
-                notes: file.patronNotes,
+                fileName: file.originalFileName,
+                notes: file.review.patronNotes,
             };
         });
 
@@ -183,7 +183,7 @@ module.exports = {
         var recipient = submission.patron.email;
         var files = submission.files;
         var fileNames = files.map(function (file) {
-            return file.realFileName;
+            return file.originalFileName;
         });
 
         email

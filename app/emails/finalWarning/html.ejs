@@ -17,7 +17,8 @@
                 margin: 0;
                 padding: 0;
                 font-size: 100%;
-                font-family: "Avenir Next", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+                font-family: "Avenir Next", "Helvetica Neue", "Helvetica",
+                    Helvetica, Arial, sans-serif;
                 line-height: 1.65;
             }
 
@@ -188,9 +189,11 @@
                                 <h2>Hello <%= submission.patron.fname%>,</h2>
 
                                 <p>
-                                    It looks like your prints have been finished for two weeks, but have not been picked
-                                    up. At this time we assume you no longer want these prints and have taken them off
-                                    the pickup shelf.
+                                    It looks like your prints have been finished
+                                    for two weeks, but have not been picked up.
+                                    At this time we assume you no longer want
+                                    these prints and have taken them off the
+                                    pickup shelf.
                                 </p>
 
                                 <table style="table-layout: fixed">
@@ -205,18 +208,30 @@
                                     <% allFiles.forEach(function(file){ %>
                                     <tr>
                                         <td>
-                                            <p style="margin-bottom: 0px"><strong><%= file.realFileName %></strong></p>
+                                            <p style="margin-bottom: 0px">
+                                                <strong
+                                                    ><%= file.originalFileName
+                                                    %></strong
+                                                >
+                                            </p>
                                         </td>
                                         <td>
-                                            <p style="margin-bottom: 0px"><%= file.datePrinted %></p>
+                                            <p style="margin-bottom: 0px">
+                                                <%=
+                                                file.printing.timestampPrinted
+                                                %>
+                                            </p>
                                         </td>
                                     </tr>
                                     <% }); %>
                                 </table>
 
                                 <p style="margin-top: 3em">
-                                    If you have any questions, please reach out to us at
-                                    <a href="mailto:TheSpark@unt.edu">TheSpark@unt.edu</a>
+                                    If you have any questions, please reach out
+                                    to us at
+                                    <a href="mailto:TheSpark@unt.edu"
+                                        >TheSpark@unt.edu</a
+                                    >
                                 </p>
                             </td>
                         </tr>
@@ -253,11 +268,17 @@
                                     valign="top"
                                 >
                                     <strong
-                                        ><span style="font-size: 14pt; color: #008000"
+                                        ><span
+                                            style="
+                                                font-size: 14pt;
+                                                color: #008000;
+                                            "
                                             >The Spark Makerspace</span
                                         ></strong
                                     ><br />
-                                    <span style="font-size: 10pt">University of North Texas</span>
+                                    <span style="font-size: 10pt"
+                                        >University of North Texas</span
+                                    >
                                 </td>
                             </tr>
                             <tr>
@@ -273,8 +294,11 @@
                                     "
                                 >
                                     <span
-                                        >Email us any time at <a href="mailto:thespark@unt.edu">TheSpark@unt.edu</a> or
-                                        call us at the numbers below:</span
+                                        >Email us any time at
+                                        <a href="mailto:thespark@unt.edu"
+                                            >TheSpark@unt.edu</a
+                                        >
+                                        or call us at the numbers below:</span
                                     >
                                 </td>
                             </tr>
@@ -293,10 +317,12 @@
                                     valign="top"
                                 >
                                     <span style="font-size: 10pt"
-                                        ><strong>Willis Library</strong> - Room 135<span><br /></span
+                                        ><strong>Willis Library</strong> - Room
+                                        135<span><br /></span
                                     ></span>
                                     <span style="font-size: 10pt"
-                                        ><strong>Discovery Park</strong> - Room M130<span><br /></span
+                                        ><strong>Discovery Park</strong> - Room
+                                        M130<span><br /></span
                                     ></span>
                                 </td>
                                 <td
@@ -334,7 +360,8 @@
                                 >
                                     <span style="font-size: 10pt"
                                         >Please visit us at
-                                        <a href="https://guides.library.unt.edu/spark"
+                                        <a
+                                            href="https://guides.library.unt.edu/spark"
                                             >https://guides.library.unt.edu/spark</a
                                         >
                                         for our hours.</span
@@ -343,13 +370,32 @@
                             </tr>
                             <tr>
                                 <td width="33%" style="padding-top: 20px">
-                                    <span> <a href="https://untmakerspace.podbean.com">PodBean</a></span>
+                                    <span>
+                                        <a
+                                            href="https://untmakerspace.podbean.com"
+                                            >PodBean</a
+                                        ></span
+                                    >
                                 </td>
-                                <td width="33%" style="padding-top: 20px; text-align: center">
+                                <td
+                                    width="33%"
+                                    style="
+                                        padding-top: 20px;
+                                        text-align: center;
+                                    "
+                                >
                                     <span>Apple Podcasts</span>
                                 </td>
-                                <td width="33%" style="padding-top: 20px; text-align: end">
-                                    <span><a href="https://blogs.library.unt.edu/spark/ ">Check out our blog!</a></span>
+                                <td
+                                    width="33%"
+                                    style="padding-top: 20px; text-align: end"
+                                >
+                                    <span
+                                        ><a
+                                            href="https://blogs.library.unt.edu/spark/ "
+                                            >Check out our blog!</a
+                                        ></span
+                                    >
                                 </td>
                             </tr>
                         </tbody>

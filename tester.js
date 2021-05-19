@@ -9,8 +9,6 @@ const { table } = require("table");
 const axios = require("axios");
 var attemptModel = require("./app/models/attempt");
 
-var migrationData = require("./printrequests.json");
-
 // printRequestModel.find({}, function (err, results) {
 //     for (var submission of results) {
 //         for (var file of submission.files) {

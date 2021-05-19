@@ -4,7 +4,11 @@
 
 <%if (printPage == 'newSub') {%>
 <span
-    class="badge font-weight-normal alert-<%=file.status=='UNREVIEWED'?'primary':file.review.descision=='Accepted'?'success':'danger'%>"
+    class="
+        badge
+        font-weight-normal
+        alert-<%=file.status=='UNREVIEWED'?'primary':file.review.descision=='Accepted'?'success':'danger'%>
+    "
     ><%=file.status=='UNREVIEWED'?'Unreviewed':file.review.descision%></span
 >
 <%}%>
@@ -15,7 +19,11 @@
 
 <% if (printPage == 'pendpay' || printPage == 'pendpaystale') { %>
 <span
-    class="badge font-weight-normal alert-<%=file.payment.isPendingWaive?'warning':'light'%>"
+    class="
+        badge
+        font-weight-normal
+        alert-<%=file.payment.isPendingWaive?'warning':'light'%>
+    "
     ><%=file.payment.isPendingWaive?'Pending Waive':'Payment Required'%></span
 >
 <%} %>
@@ -37,7 +45,7 @@
 
 <% if (printPage == 'inTransit') { %>
 <span class="badge font-weight-normal alert-warning"
-    >In transit to <%=file.pickupLocation%></span
+    >In transit to <%=file.request.pickupLocation%></span
 >
 <%}%>
 

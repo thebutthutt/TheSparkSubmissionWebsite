@@ -196,7 +196,9 @@
                                             <p>File Name:</p>
                                         </td>
                                         <td class="bold">
-                                            <p><%= readyFile.realFileName%></p>
+                                            <p>
+                                                <%= readyFile.originalFileName%>
+                                            </p>
                                         </td>
                                     </tr>
                                     <tr>
@@ -205,7 +207,8 @@
                                         </td>
                                         <td class="bold">
                                             <p>
-                                                <%= readyFile.pickupLocation%>
+                                                <%=
+                                                readyFile.request.pickupLocation%>
                                             </p>
                                         </td>
                                     </tr>
