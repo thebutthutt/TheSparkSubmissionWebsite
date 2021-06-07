@@ -256,7 +256,7 @@ module.exports = {
                 },
                 locals: {
                     submission: submission,
-                    inTransit: inTransit,
+                    //inTransit: inTransit,
                     atLocation: atLocation,
                 },
             })
