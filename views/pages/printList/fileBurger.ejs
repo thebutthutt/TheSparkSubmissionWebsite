@@ -37,7 +37,7 @@
             href="#"
             >Delete</a
         >
-        <% } %> <% if (true) { %>
+        <% } %> <% if (file.status=='PENDING_PAYMENT') { %>
         <a
             class="dropdown-item resend-btn"
             submissionID="<%= item._id%>"
