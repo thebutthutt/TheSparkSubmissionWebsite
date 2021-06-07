@@ -197,17 +197,33 @@ module.exports = function (app) {
             await thisSubmission.save();
             //check if all files completed to send done email
             var isDone = true;
+
+            var inTransit = [],
+                atLocation = [];
+
             for (var thisFile of thisSubmission.files) {
                 if (
-                    thisFile.status != "REJECTED" &&
-                    thisFile.status != "WAITING_FOR_PICKUP"
+                    !["REJECTED", "WAITING_FOR_PICKUP", "IN_TRANSIT"].includes(
+                        thisFile.status
+                    )
                 ) {
                     isDone = false;
+                } else {
+                    if (thisFile.status == "WAITING_FOR_PICKUP") {
+                        atLocation.push(thisFile);
+                    } else if (thisFile.status == "IN_TRANSIT") {
+                        inTransit.push(thisFile);
+                    }
                 }
             }
 
             if (isDone) {
                 //done email
+                emailer.allFinishedPrinting(
+                    thisSubmission,
+                    inTransit,
+                    atLocation
+                );
                 console.log("submission complete");
                 thisSubmission.timestampPickupRequested = now;
             }

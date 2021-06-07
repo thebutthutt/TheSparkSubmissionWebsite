@@ -230,6 +230,38 @@ module.exports = {
             })
             .catch(console.error);
     },
+    allFinishedPrinting: function (submission, inTransit, atLocation) {
+        var recipient = submission.patron.email;
+        email
+            .send({
+                template: path.join(__dirname, "emails", "pickupSubmission"),
+                message: {
+                    to: recipient,
+                },
+                locals: {
+                    submission: submission,
+                    inTransit: inTransit,
+                    atLocation: atLocation,
+                },
+            })
+            .catch(console.error);
+    },
+    oneArrived: function (submission, arrived) {
+        var recipient = submission.patron.email;
+        email
+            .send({
+                template: path.join(__dirname, "emails", "fileArrived"),
+                message: {
+                    to: recipient,
+                },
+                locals: {
+                    submission: submission,
+                    inTransit: inTransit,
+                    atLocation: atLocation,
+                },
+            })
+            .catch(console.error);
+    },
     filesPickedUp: function (submission, fileIDs) {},
     //one week late
     stillWaiting: function (submission, one) {

@@ -8,6 +8,8 @@ var adminRequestHandler = require("../handlers/adminRequestHandler.js");
 var payment = require("../app/payment.js");
 const archiver = require("archiver");
 var fs = require("fs");
+var mongoose = require("mongoose");
+const emailer = require("../app/emailer.js");
 
 module.exports = function (app) {
     //Metainfo about all the prints we have done
@@ -267,8 +269,10 @@ module.exports = function (app) {
     //handle technician updating file by reviewing print file
 
     app.post("/prints/appendNotes", isLoggedIn, async function (req, res) {
-        var result = printRequestModel.findOne({
-            "files._id": req.body.fileID,
+        console.log(req.body);
+        var id = mongoose.Types.ObjectId(req.body.fileID);
+        var result = await printRequestModel.findOne({
+            "files._id": id,
         });
 
         if (req.body.newNotes != "") {
@@ -277,7 +281,7 @@ module.exports = function (app) {
                 dateAdded: Date.now(),
                 notes: req.body.newNotes,
             };
-            result.files.id(req.body.fileID).internalNotes.push(newNoteObject);
+            result.files.id(id).review.internalNotes.push(newNoteObject);
         }
         await result.save();
         res.redirect("back");
@@ -296,22 +300,7 @@ module.exports = function (app) {
 
         await thisSubmission.save();
 
-        var isDone = true;
-        for (var file of thisSubmission.files) {
-            console.log(file.status);
-            if (
-                file.status != "REJECTED" &&
-                file.status != "WAITING_FOR_PICKUP"
-            ) {
-                isDone = false;
-            }
-        }
-
-        if (isDone) {
-            console.log("all done");
-            thisSubmission.timestampPickupRequested = now;
-        }
-        await thisSubmission.save();
+        emailer.oneArrived(thisSubmission, thisFile);
 
         res.redirect("/prints/preview?fileID=" + req.body.fileID);
     });
