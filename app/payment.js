@@ -94,6 +94,7 @@ module.exports = {
     },
 
     handlePaymentURL: async function (req) {
+        console.log("handel paymnt");
         var query = req.query;
         concatString = "";
         var innerMatch = false,

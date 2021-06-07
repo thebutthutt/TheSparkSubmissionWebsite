@@ -87,7 +87,8 @@ $(document).ready(function () {
     });
 
     $(".resend-btn").on("click", function () {
-        let submissionID = $(this).attr("id");
+        let submissionID = $(this).attr("submissionID");
+        console.log(submissionID);
         $.ajax({
             type: "POST",
             url: "/prints/requestPayment",
@@ -101,7 +102,7 @@ $(document).ready(function () {
     });
 
     $(".waive-btn").on("click", function () {
-        let submissionID = $(this).attr("id");
+        let submissionID = $(this).attr("submissionID");
         var isSuperAdmin = $(this).attr("issuperadmin");
 
         if (isSuperAdmin == "true") {

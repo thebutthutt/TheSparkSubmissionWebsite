@@ -1,11 +1,12 @@
 var printRequestModel = require("../app/models/newPrintRequest.js");
 var payment = require("../app/payment.js");
+var newmailer = require("../app/emailer");
 
 module.exports = function (app) {
     //-----------------------SEND PAYMENT EMAIL-----------------------
     app.post("/prints/requestPayment", isLoggedIn, async function (req, res) {
         var submissionID = req.body.submissionID || req.query.submissionID;
-
+        console.log(submissionID);
         var now = new Date();
         var result = await printRequestModel.findOne({
             _id: submissionID,
@@ -20,7 +21,7 @@ module.exports = function (app) {
         for (var file of result.files) {
             if (
                 file.review.descision == "Accepted" &&
-                file.status == "REVIEWED"
+                (file.status == "REVIEWED" || file.status == "PENDING_PAYMENT")
             ) {
                 var thisFilePrice = Math.max(
                     file.review.slicedHours + file.review.slicedMinutes / 60,
@@ -45,7 +46,7 @@ module.exports = function (app) {
         //if the submission had any accepted files, we will ask for payment
         if (acceptedFiles.length > 0) {
             result.timestampPaymentRequested = now;
-            payment.sendPaymentEmail(result, amount, rejectedFiles.length);
+            payment.sendPaymentEmail(result, 0.01, rejectedFiles.length);
             if (shouldBeWaived) {
                 result.isPendingWaive = true;
             }

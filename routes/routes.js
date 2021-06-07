@@ -159,18 +159,17 @@ module.exports = function (app) {
                 isSuperAdmin = true;
             }
         }
+        console.log("in payment conpmete");
         var paidSubmissionID = await payment.handlePaymentURL(req);
         if (paidSubmissionID) {
             var now = new Date();
             var submission = await printRequestModel.findById(paidSubmissionID);
+
             for (var file of submission.files) {
-                file.isPendingPayment = false;
-                file.isPendingWaive = false;
-                if (file.isRejected == false) {
-                    file.wasPaid = true;
-                    file.timestampPaid = now;
-                    file.isReadyToPrint = true;
-                    file.isPendingWaive = false;
+                if (file.status != "REJECTED") {
+                    file.status = "READY_TO_PRINT";
+                    file.payment.paymentType = "PAID";
+                    file.payment.timestampPaid = now;
                 }
             }
             submission.timestampPaid = now;

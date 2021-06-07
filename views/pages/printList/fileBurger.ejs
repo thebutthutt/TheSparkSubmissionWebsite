@@ -37,12 +37,18 @@
             href="#"
             >Delete</a
         >
-        <% } %> <% if (file.status=='PENDING_PAYMENT') { %>
-        <a class="dropdown-item resend-btn" id="<%= item._id%>" href="#"
+        <% } %> <% if (true) { %>
+        <a
+            class="dropdown-item resend-btn"
+            submissionID="<%= item._id%>"
+            href="#"
             >Resend Payment Email</a
         >
         <% if (file.payment.isPendingWaive) { %>
-        <a class="dropdown-item undo-waive-btn" id="<%= item._id%>" href="#"
+        <a
+            class="dropdown-item undo-waive-btn"
+            submissionID="<%= item._id%>"
+            href="#"
             >Undo Waive Payment Request</a
         >
         <%} else { %>
@@ -56,3 +62,5 @@
         <%}%> <%}%>
     </div>
 </span>
+
+<!--file.status=='PENDING_PAYMENT'-->
